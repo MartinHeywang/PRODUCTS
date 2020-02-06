@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.martin.view.ResearchContrôle">
+   <center>
+      <BorderPane minHeight="300.0" minWidth="300.0" prefHeight="500.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+         <top>
+            <Label alignment="CENTER" minWidth="300.0" prefWidth="500.0" stylesheets="@Appareil.css" text="Recherche : cliquez pour améliorer" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Label>
+         </top>
+         <center>
+            <GridPane BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="125.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="125.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="125.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="116.0" prefHeight="125.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="116.0" prefHeight="125.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="116.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="116.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" fx:id="électricité">
+                     <children>
+                        <BorderPane layoutX="-16.0" layoutY="-38.0" onMouseClicked="#électricité" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                           <top>
+                              <Label alignment="CENTER_RIGHT" maxHeight="60.0" maxWidth="150.0" text="Réduction du coût en électricité des appareils" textAlignment="RIGHT" textFill="WHITE" wrapText="true" BorderPane.alignment="CENTER_RIGHT">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </top>
+                           <center>
+                              <Label fx:id="prixElectricité" text="Prix : 150K €" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <bottom>
+                              <Label fx:id="actuElectricité" text="Actuel : 5 €" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </bottom>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" fx:id="maxAcheteur" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
+                     <children>
+                        <BorderPane layoutX="39.0" layoutY="-9.0" onMouseClicked="#maxAcheteur" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: darkgray;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                           <bottom>
+                              <Label alignment="BOTTOM_LEFT" maxHeight="60.0" maxWidth="150.0" minHeight="60.0" minWidth="150.0" prefHeight="60.0" prefWidth="150.0" text="Augmentation du nombre d'acheteur maximum" textFill="WHITE" wrapText="true" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </bottom>
+                           <center>
+                              <Label fx:id="prixMaxAcheteur" text="Prix : 150K €" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <top>
+                              <Label fx:id="actuMaxAcheteur" text="Actuel : 8" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </top>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" fx:id="schéma" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                     <children>
+                        <BorderPane layoutX="7.0" layoutY="-42.0" onMouseClicked="#schéma" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: lightgray;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+                           <bottom>
+                              <Label alignment="CENTER_RIGHT" maxHeight="20.0" maxWidth="200.0" minHeight="20.0" minWidth="150.0" prefHeight="20.0" prefWidth="200.0" text="Débloquage du schéma suivant" textAlignment="RIGHT" textFill="WHITE" wrapText="true" BorderPane.alignment="BOTTOM_RIGHT">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </bottom>
+                           <center>
+                              <Label fx:id="prixSchéma" text="Prix : 50K €" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" fx:id="niveau" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                     <children>
+                        <BorderPane layoutX="5.0" layoutY="3.0" onMouseClicked="#niveau" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: darkgray;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+                           <left>
+                              <Label alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0" minWidth="200.0" prefHeight="40.0" prefWidth="200.0" text="Augmentation du niveau maximum des appareils" textFill="WHITE" wrapText="true" BorderPane.alignment="BOTTOM_LEFT">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </left>
+                           <center>
+                              <Label fx:id="prixNiveau" text="Prix : 1m €" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <top>
+                              <Label fx:id="actuNiveau" text="Actuel : niveau 1" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </top>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </GridPane>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>
