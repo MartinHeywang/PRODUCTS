@@ -22,7 +22,7 @@ public class Appareil_Acheteur extends Appareil {
 	private static SimpleIntegerProperty prix;
 	public static ArrayList<Coordonnées> liste = new ArrayList<Coordonnées>();
 	
-	public Appareil_Acheteur(Coordonnées xy, NiveauAppareil niveau, Direction direction, 
+	public Appareil_Acheteur(Coordonnées xy, Direction direction, NiveauAppareil niveau,  
 			JeuContrôle controller) throws FileNotFoundException {
 		
 		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);

@@ -2,6 +2,7 @@ package com.martin.model.appareils.comportement;
 
 import com.martin.model.Ressource;
 import com.martin.model.appareils.Direction;
+import com.martin.model.exceptions.NegativeArgentException;
 
 public class Comportement_Aucun implements Comportement {
 	
@@ -17,7 +18,7 @@ public class Comportement_Aucun implements Comportement {
 	 * 
 	*/
 	@Override
-	public void action(Ressource resATraiter) {
+	public void action(Ressource resATraiter) throws NegativeArgentException{
 		/*Cette méthode ne définit aucun comportement mais est nécessaire
 		 * pour les appareils comme les sols.*/
 

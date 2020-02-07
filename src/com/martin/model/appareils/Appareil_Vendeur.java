@@ -16,7 +16,7 @@ public class Appareil_Vendeur extends Appareil {
 
 	private static SimpleIntegerProperty prix;
 	
-	public Appareil_Vendeur(Coordonnées xy, NiveauAppareil niveau, Direction direction, 
+	public Appareil_Vendeur(Coordonnées xy, Direction direction, NiveauAppareil niveau,  
 			JeuContrôle controller) throws FileNotFoundException {
 		super(xy, TypeAppareil.VENDEUR, direction, niveau, controller);
 		

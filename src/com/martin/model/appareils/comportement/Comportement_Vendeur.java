@@ -7,8 +7,6 @@ import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
-import javafx.scene.paint.Color;
-
 public class Comportement_Vendeur implements Comportement {
 
 	private NiveauAppareil niveau;
@@ -21,15 +19,9 @@ public class Comportement_Vendeur implements Comportement {
 	}
 	
 	@Override
-	public void action(Ressource resATraiter) {
+	public void action(Ressource resATraiter) throws NegativeArgentException{
 		for(int i = 0; i < niveau.getNiveau(); i++) {
-			try {
-				if(!resATraiter.equals(Ressource.NONE))
-					controller.setArgent(resATraiter.getValue()-Appareil.getÉlectricité(), true);
-			} catch (NegativeArgentException e) {
-				controller.setReport(e.getLocalizedMessage(), Color.DARKRED);
-				
-			}
+			controller.setArgent(resATraiter.getValue()-Appareil.getÉlectricité(), true);
 		}
 	}
 

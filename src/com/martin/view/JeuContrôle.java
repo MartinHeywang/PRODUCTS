@@ -104,9 +104,9 @@ public class JeuContrôle {
 					Direction direction2 = Direction.valueOf(rotation);
 					NiveauAppareil niveau2 = NiveauAppareil.valueOf(niveau);
 					
-					this.appareil[x][y] = type2.getClasse().getConstructor(Coordonnées.class, 
-							TypeAppareil.class, Direction.class, NiveauAppareil.class, JeuContrôle.class)
-							.newInstance(new Coordonnées(x, y), type2, direction2, niveau2, this);
+					this.appareil[x][y] = type2.getClasse().getConstructor(Coordonnées.class,
+							Direction.class, NiveauAppareil.class, JeuContrôle.class)
+							.newInstance(new Coordonnées(x, y), direction2, niveau2, this);
 					this.grille.add(this.appareil[x][y], x, y);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -169,7 +169,13 @@ public class JeuContrôle {
 				while(true){
 					Thread.sleep(1000);
 					for(int i = 0; i < Appareil_Acheteur.liste.size(); i++){
-						getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(Ressource.NONE);
+						try {
+							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(Ressource.NONE);
+							argentLabel.setTextFill(Color.WHITE);
+						} catch (NegativeArgentException e) {
+							argentLabel.setTextFill(Color.DARKRED);
+							
+						}
 					}
 				}
 			} catch (IllegalArgumentException | InterruptedException e) {

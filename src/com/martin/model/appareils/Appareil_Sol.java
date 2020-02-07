@@ -22,7 +22,7 @@ public class Appareil_Sol extends Appareil {
 	
 	private static SimpleIntegerProperty prix;
 	
-	public Appareil_Sol(Coordonnées xy, TypeAppareil type, Direction direction, NiveauAppareil niveau, JeuContrôle controller) 
+	public Appareil_Sol(Coordonnées xy, Direction direction, NiveauAppareil niveau, JeuContrôle controller) 
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.SOL, direction, niveau, controller);
 		
@@ -50,10 +50,10 @@ public class Appareil_Sol extends Appareil {
 					if(!dialog.getResult().getClass().equals(ButtonType.class)){
 						controller.setAppareil(new Coordonnées(xy.getX(), xy.getY()), 
 								((TypeAppareil) dialog.getResult()).getClasse().getConstructor(
-								Coordonnées.class, NiveauAppareil.class, Direction.class, 
+								Coordonnées.class, Direction.class, NiveauAppareil.class,  
 								JeuContrôle.class).newInstance(
 										new Coordonnées(xy.getX(), xy.getY()), 
-										NiveauAppareil.NIVEAU_1, Direction.UP, controller));
+										Direction.UP, NiveauAppareil.NIVEAU_1, controller));
 					}
 				}catch (Exception e) {
 					controller.setReport("ERREUR dans Appareil_Sol.Appareil_Sol(...).new EventHandler() {...} dans la méthode "

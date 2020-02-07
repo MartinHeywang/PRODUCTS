@@ -2,8 +2,10 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.model.Coordonnées;
 import com.martin.model.LocatedImage;
@@ -14,6 +16,7 @@ import com.martin.model.appareils.orientation.Entrées;
 import com.martin.model.appareils.orientation.Entrées_Aucune;
 import com.martin.model.appareils.orientation.Sorties;
 import com.martin.model.appareils.orientation.Sorties_Aucune;
+import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.AppareilsContrôle;
 import com.martin.view.JeuContrôle;
 
@@ -33,7 +36,6 @@ public abstract class Appareil extends ImageView{
 	// FAIRE les listes publiques statiques de coordonnées de référencement des appareils
 	
 	protected ArrayList<Ressource> ressources = new ArrayList<Ressource>();
-	
 	
 	protected TypeAppareil type;
 	protected Direction direction;
@@ -77,6 +79,15 @@ public abstract class Appareil extends ImageView{
 		this.niveau = niveau;
 		this.controller = controller;
 		
+		try {
+			Connect_SQLite.getInstance().createStatement()
+			.executeUpdate("UPDATE appareils SET '"+(xy.getX()+1)+"' = "
+					+ "'"+type.toString()+"*"+niveau.toString()+"|"+direction.toString()+"' WHERE id = "+(xy.getY()+1));
+		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
+			
+		}
+		
 		//Quand on clique sur l'image
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -110,7 +121,11 @@ public abstract class Appareil extends ImageView{
 			}
 		});
 	}
-	public void action(Ressource resATraiter){
+	/**
+	 * 
+	 * @param resATraiter la ressource à traiter par l'appareil lors de son action
+	 */
+	public void action(Ressource resATraiter) throws NegativeArgentException{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			

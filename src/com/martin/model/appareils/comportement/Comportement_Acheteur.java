@@ -35,15 +35,10 @@ public class Comportement_Acheteur implements Comportement {
 	}
 	
 	@Override
-	public void action(Ressource resATraiter) {
+	public void action(Ressource resATraiter) throws NegativeArgentException{
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
-			try {
-				controller.getGrilleAppareils(pointer).action(resDistribuée);
-				controller.setArgent(5+Appareil.getÉlectricité(), false);
-			} catch (NegativeArgentException e) {
-				System.out.println("ERREUR dans Comportement_Acheteur dans la méthode action. Raison :\n"
-						+ e.getLocalizedMessage());
-			}
+			controller.getGrilleAppareils(pointer).action(resDistribuée);
+			controller.setArgent(5+Appareil.getÉlectricité(), false);
 		}
 	}	
 }
