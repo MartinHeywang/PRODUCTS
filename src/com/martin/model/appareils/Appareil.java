@@ -114,7 +114,10 @@ public abstract class Appareil extends ImageView{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			
-			comportement.action(resATraiter);
+			if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus()
+					, xy.getY()+pointerExit.getyPlus())).getPointerEnter()) || this 
+					instanceof Appareil_Vendeur)
+				comportement.action(resATraiter);
 		}
 	}
 	
@@ -147,6 +150,20 @@ public abstract class Appareil extends ImageView{
 	 */
 	public Direction getDirection() {
 		return direction;
+	}
+	/**
+	 * 
+	 * @return the pointerEnter
+	 */
+	public Direction getPointerEnter() {
+		return pointerEnter;
+	}
+	/**
+	 * 
+	 * @return the pointerExit
+	 */
+	public Direction getPointerExit() {
+		return pointerExit;
 	}
 	/**
 	 * @return the niveau
