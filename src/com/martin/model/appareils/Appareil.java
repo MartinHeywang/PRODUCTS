@@ -3,7 +3,6 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
@@ -34,8 +33,6 @@ public abstract class Appareil extends ImageView{
 	// FAIRE les méthodes getPrix()
 	// FAIRE les méthodes destructions()
 	// FAIRE les listes publiques statiques de coordonnées de référencement des appareils
-	
-	protected ArrayList<Ressource> ressources = new ArrayList<Ressource>();
 	
 	protected TypeAppareil type;
 	protected Direction direction;
@@ -145,13 +142,14 @@ public abstract class Appareil extends ImageView{
 	 * 
 	*/
 	public void destruction(){
-		//FAIRE méthode destruction
-	}
-	/**
-	 * @return the ressources
-	 */
-	public ArrayList<Ressource> getRessources() {
-		return ressources;
+		try {
+			Connect_SQLite.getInstance().createStatement().executeUpdate(
+					"UPDATE appareils SET '"+(xy.getX()+1)+"' = \"SOL*NIVEAU_1|UP\" WHERE id = "+(xy.getY()+1)+";");
+			Connect_SQLite.getInstance().createStatement().executeUpdate(
+					"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \"NONE\" WHERE id = "+(xy.getY()+1)+";");
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * @return the type
@@ -220,12 +218,6 @@ public abstract class Appareil extends ImageView{
 	 */
 	public static int getÉlectricité() {
 		return électricité;
-	}
-	/**
-	 * @param ressources the ressources to set
-	 */
-	public void setRessources(ArrayList<Ressource> ressources) {
-		this.ressources = ressources;
 	}
 	/**
 	 * @param type the type to set

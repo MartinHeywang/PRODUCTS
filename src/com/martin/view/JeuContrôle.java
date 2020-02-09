@@ -52,7 +52,7 @@ public class JeuContrôle {
 	private static StringProperty reportProperty = new SimpleStringProperty("");
 	private Thread t;
 	
-	private int tailleGrille = 20;
+	private int tailleGrille = 5;
 	
 	/*Quelques erreurs là-dedans, ne faire que quand les appareils seront complets 
 	 (tous les classes filles comprises)
@@ -176,7 +176,7 @@ public class JeuContrôle {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									setReport(e.getMessage(), Color.DARKORANGE);
+									setReport(e.getMessage(), Color.DARKRED);
 									argentLabel.setTextFill(Color.DARKRED);
 								}
 							});
@@ -207,6 +207,8 @@ public class JeuContrôle {
 		upgradeGrid.setText("AGRANDIR LA GRILLE");
 	}
 	/**
+	 * <h1>setReport</h1>
+	 * <p>Add a dialog in the bottom right corner of the grid</p>
 	 * 
 	 * @param text the text to display
 	 * @param border the color of the border of the dialog

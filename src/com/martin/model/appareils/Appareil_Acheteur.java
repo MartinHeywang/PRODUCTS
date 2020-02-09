@@ -26,19 +26,15 @@ public class Appareil_Acheteur extends Appareil {
 			JeuContrôle controller) throws FileNotFoundException {
 		
 		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
-		
-		ressources = new ArrayList<Ressource>();
-		prix = new SimpleIntegerProperty(500);
 		liste.add(xy);
 		
 		entrées = new Entrées_Aucune();
-		pointerEnter = Direction.NONE;
+		pointerEnter = entrées.getPointerEnter(direction);
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Acheteur(xy, niveau, pointerExit.getxPlus(), 
 				pointerExit.getyPlus(), controller);
 	}
-	
 	@Override 
 	public void destruction() {
 		try {
