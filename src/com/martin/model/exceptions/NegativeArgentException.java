@@ -9,4 +9,8 @@ public class NegativeArgentException extends Exception {
 				+ "des 0 €, et le jeu serai...bloqué.");
 	}
 
+	public NegativeArgentException(String string) {
+		super(string);
+	}
+
 }

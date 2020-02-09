@@ -79,15 +79,6 @@ public abstract class Appareil extends ImageView{
 		this.niveau = niveau;
 		this.controller = controller;
 		
-		try {
-			Connect_SQLite.getInstance().createStatement()
-			.executeUpdate("UPDATE appareils SET '"+(xy.getX()+1)+"' = "
-					+ "'"+type.toString()+"*"+niveau.toString()+"|"+direction.toString()+"' WHERE id = "+(xy.getY()+1));
-		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
-			
-		}
-		
 		//Quand on clique sur l'image
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -120,6 +111,14 @@ public abstract class Appareil extends ImageView{
 				}
 			}
 		});
+		try {
+			Connect_SQLite.getInstance().createStatement()
+			.executeUpdate("UPDATE appareils SET '"+(xy.getX()+1)+"' = "
+					+ "'"+type.toString()+"*"+niveau.toString()+"|"+direction.toString()+"' WHERE id = "+(xy.getY()+1));
+		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
+			
+		}
 	}
 	/**
 	 * 

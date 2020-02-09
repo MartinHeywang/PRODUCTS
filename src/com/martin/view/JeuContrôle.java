@@ -52,7 +52,7 @@ public class JeuContrôle {
 	private static StringProperty reportProperty = new SimpleStringProperty("");
 	private Thread t;
 	
-	private int tailleGrille = 5;
+	private int tailleGrille = 20;
 	
 	/*Quelques erreurs là-dedans, ne faire que quand les appareils seront complets 
 	 (tous les classes filles comprises)
@@ -167,13 +167,19 @@ public class JeuContrôle {
 		public void run() {
 			try {
 				while(true){
-					Thread.sleep(1000);
+					Thread.sleep(500);
 					for(int i = 0; i < Appareil_Acheteur.liste.size(); i++){
 						try {
 							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(Ressource.NONE);
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (NegativeArgentException e) {
-							argentLabel.setTextFill(Color.DARKRED);
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									setReport(e.getMessage(), Color.DARKORANGE);
+									argentLabel.setTextFill(Color.DARKRED);
+								}
+							});
 							
 						}
 					}
@@ -197,15 +203,14 @@ public class JeuContrôle {
 	@FXML private void upgradeGridEntered() {
 		upgradeGrid.setText("-"+Stats.prixAgrandissement+" €");
 	}
-	
 	@FXML private void upgradeGridExited() {
 		upgradeGrid.setText("AGRANDIR LA GRILLE");
 	}
-	
-	//Quand on a demandé l'amélioration de la grille à la pause du Thread
-	/*private void améliorerGrille() {
-		
-	}*/
+	/**
+	 * 
+	 * @param text the text to display
+	 * @param border the color of the border of the dialog
+	 */
 	public  void setReport(String text, Color border) {
 		reportProperty.set(text);
 		final String hex = String.format("#%02X%02X%02X", ((int)(border.getRed()*255)), 

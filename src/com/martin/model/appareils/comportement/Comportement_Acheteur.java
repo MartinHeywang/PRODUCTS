@@ -37,6 +37,9 @@ public class Comportement_Acheteur implements Comportement {
 	@Override
 	public void action(Ressource resATraiter) throws NegativeArgentException{
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
+			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
+				throw new NegativeArgentException("Le comportement d'un appareil "
+						+ "n'a pas pu être réalisé car le solde d'argent n'était pas assez important.");
 			controller.getGrilleAppareils(pointer).action(resDistribuée);
 			controller.setArgent(5+Appareil.getÉlectricité(), false);
 		}
