@@ -15,29 +15,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
-/*
- * Martin
- * 20/01/2020
- * 
- * Rôle : Écran à ressource ou à appareil, principalement utilisé dans SolContrôle.java et AppareilsContrôle.java*/
 public class Displayer extends BorderPane {
 	
-	//Labels nom, infos et image pour avoir un aperçu de la ressource ou de l'appareil
+	
 	private Label nom;
 	private ImageView image;
 	private Label infos;
 	
-	//Stock pour avoir obtenir l'élément à l'origine de l'écran
+	
 	private Ressource ressource;
 	private TypeAppareil typeAppareil;
 	
-	/*
-	 * Martin
-	 * 20/01/2020
-	 * 
-	 * --- CONSTRUCTEUR ---
-	 * 
-	 * Rôle : Construit un écran à partir d'une ressource*/
+	/**
+	 * <h1>Displayer</h1>
+	 * <p>Create an object who displays the object in parameter.</p>
+	 * @param ressource the object to display
+	 */
 	public Displayer(Ressource ressource) {
 		
 		try {
@@ -66,13 +59,11 @@ public class Displayer extends BorderPane {
 		}
 	}
 	
-	/*
-	 * Martin
-	 * 21/01/2020
-	 * 
-	 * --- CONSTRUCUTEUR ---
-	 * 
-	 * Rôle : Construit un écran à partir d'un type d'appareil*/
+	/**
+	 * <h1>Displayer</h1>
+	 * <p>Creat an object who displays the object in parameter</p>
+	 * @param appareil the object to display
+	 */
 	public Displayer(TypeAppareil appareil){
 		try {
 			this.typeAppareil = appareil;
@@ -129,36 +120,39 @@ public class Displayer extends BorderPane {
 		});
 	}
 	
-	
-	/*
-	 * Martin
-	 * 20/01/2020
-	 * 
-	 * --- GETTERS ---
-	 * 
-	 * Rôles : Permettent d'obtenir les widgets utilisés.*/
+	/**
+	 * <h1>getNom</h1>
+	 * @return nom the label who displays the name
+	 */
 	public Label getNom() {
 		return nom;
 	}
+	/**
+	 * <h1>getImage</h1>
+	 * @return image the imageview who displays the preview
+	 */
 	public ImageView getImage() {
 		return image;
 	}
+	/**
+	 * <h1>getInfos</h1>
+	 * @return infos the label who displays the others informations.
+	 */
 	public Label getInfos() {
 		return infos;
 	}
 	
-	/*
-	 * Martin 
-	 * 21/01/2020
-	 * 
-	 * --- GETTERS ---
-	 * 
-	 * Rôles : Permettent d'obtenir l'élément à l'origine de l'appareil.
-	 * 	Peut retourner null si l'origine demandée ne correspond pas à celle utilisée
-	 * 	  (Ex : construit avec un appareil, et demande une ressource)*/
+	/**
+	 * <p>Warning : may return null if the displayed object isn't a Ressource</p>
+	 * @return ressource the displayed resources
+	 */
 	public Ressource getRessource() {
 		return ressource;
 	}
+	/**
+	 * <p>Warning : may return null if the displayed object isn't a TypeAppareil</p>
+	 * @return typeAppareil the displayed device
+	 */
 	public TypeAppareil getTypeAppareil() {
 		return typeAppareil;
 	}

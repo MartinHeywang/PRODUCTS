@@ -11,6 +11,10 @@ public class Connect_SQLite {
 	private static final String url = "jdbc:sqlite:Data_File.db";
 	private static Connection connect;
 	
+	/**
+	 * <h1>getInstance</h1>
+	 * @return the instance to the SQLite database
+	 */
 	public static Connection getInstance() {
 		if(connect == null) {
 			try {

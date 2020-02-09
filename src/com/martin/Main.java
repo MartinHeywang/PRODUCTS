@@ -24,17 +24,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-/*
- * Martin
- * --/--/----
- * 
- * Rôle : Lance l'application*/
 public class Main extends Application {
 	
 	
 	public static Stage stage;  //La fenêtre
 	
-	//La méthode main
 	public static void main(String[] args) {
 		/*
 		 * La ligne ci-dessous éxécute quelques paramètres systèmes puis 
@@ -77,7 +71,13 @@ public class Main extends Application {
 		stage.show(); //On ouvre la fenêtre/le stage.
 	}
 	
-	
+	/**
+	 * <h1>initAccueil</h1>
+	 * <p>Initialize the stage with the view Accueil.fxml, who corresponds to a the first start page 
+	 * (when no login is registered).</p>
+	 * 
+	 * @see src/com/martin/view/Accueil.fxml
+	 */
 	public void initAccueil() {
 		FXMLLoader loader = new FXMLLoader();	//Permet de charger des fichier .fxml
 		loader.setLocation(Main.class.getResource("view/Accueil.fxml"));	//Définit l'emplacement où chercher
@@ -109,6 +109,11 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * <h1>initAccueil2</h1>
+	 * <p>Initialize the stage with the view Accueil2.fxml, who demands to load the registered game or to begin a 
+	 * new game. (when a login is regestered)</p>
+	 */
 	public void initAccueil2() {
 		FXMLLoader loader = new FXMLLoader();	//Permet de charger des fichier .fxml
 		loader.setLocation(Main.class.getResource("view/Accueil2.fxml"));	//Définit l'emplacement où chercher
@@ -128,9 +133,14 @@ public class Main extends Application {
 		}
 	
 	}
-	
+	/**
+	 * <h1>initGame</h1>
+	 * <p>Initialize the stage with the view Jeu.fxml, who loads all the images and resources to do this game
+	 * functionnal.</p>
+	 */
 	public void initGame() {
 		try {
+			
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(Main.class.getResource("view/Jeu.fxml"));
 			
@@ -163,9 +173,6 @@ public class Main extends Application {
 		} catch (IOException e) {
 			System.out.println("ERREUR dans Main dans la méthode " + "initGame. Raison :\n" + e.getLocalizedMessage());
 		}
-	}
-	public Stage getStage() {
-		return stage;
 	}
 
 }

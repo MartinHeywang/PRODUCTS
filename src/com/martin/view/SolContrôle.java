@@ -1,5 +1,6 @@
 package com.martin.view;
 
+import com.martin.model.Coordonnées;
 import com.martin.model.appareils.TypeAppareil;
 
 import javafx.event.EventHandler;
@@ -9,12 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-/*
- * Martin
- * 21/01/2020
- * 
- * Contrôleur de Sol.fxml qui sert pour la construction des appareils.*/
-
 public class SolContrôle {
 	
 	@FXML private Label coordonnées; //Label des coordonnées situé en haut de la page
@@ -22,11 +17,11 @@ public class SolContrôle {
 	
 	private Dialog<Object> dialog;
 	
-	/*
-	 * Martin
-	 * 21/01/2020
-	 * 
-	 * Rôle : Mettre en forme la fenêtre, ajouter les layouts et les widgets.*/
+	/**
+	 * <h1>initialize</h1>
+	 * <p>Initialize the build dialog, where we can build devices on the ground at the cooresponding coordinates.
+	 * Called automatically as a constructor.</p>
+	 */
 	public void initialize() {
 		for(int i = 0; i < TypeAppareil.values().length-1; i++) {
 			//On ajoute les displayers des appareils dans la liste prévue à cet effet
@@ -50,16 +45,13 @@ public class SolContrôle {
 		
 	}
 	
-	/*
-	 * Martin
-	 * 21/01/2020
+	/**
 	 * 
-	 * Rôle : met à jour les labels en fonction de données passées en paramètres.
-	 * Args : x -> coordonnées x de l'appareil
-	 * 		  y -> coordonnées y de l'appareil
-	 *        dialog -> la boîte de dialogue à fermer*/
-	public void setMainApp(int x, int y, Dialog<Object> dialog) {
-		coordonnées.setText("X: "+x+" Y: "+y);
+	 * @param xy the xy coordinates corresponding to a device.
+	 * @param dialog the dialog who is displayed 
+	 */
+	public void setMainApp(Coordonnées xy, Dialog<Object> dialog) {
+		coordonnées.setText("X: "+xy.getX()+" Y: "+xy.getY());
 		this.dialog = dialog;
 	}
 }

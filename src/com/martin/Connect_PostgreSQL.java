@@ -11,11 +11,15 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class Connect_PostgreSQL {
-	private static String url = "jdbc:postgresql://localhost:5432/PRODUCTS.";
-	private static String user = "postgres";
-	private static String passwd = "postgres";
+	private final static String url = "jdbc:postgresql://localhost:5432/PRODUCTS.";
+	private final static String user = "postgres";
+	private final static String passwd = "postgres";
 	private static Connection connect;
 	
+	/**
+	 * <h1>getInstance</h1>
+	 * @return the instance to the database PostgreSQL
+	 */
 	public static Connection getInstance() {
 		if(connect == null) {
 			try {

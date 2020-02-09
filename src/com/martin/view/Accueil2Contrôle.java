@@ -26,8 +26,11 @@ public class Accueil2Contrôle {
 	
 	Main main;
 	
-	public Accueil2Contrôle() {}
-	
+	/**
+	 * <h1>initialize</h1>
+	 * <p>Iniialize the start page (when a login is registered) and search the login in the database. Called 
+	 * automatically as a constructor.</p>
+	 */
 	public void initialize() {
 		try {
 			image.setImage(new Image(new FileInputStream(new File("images/Logo.png"))));
@@ -43,11 +46,19 @@ public class Accueil2Contrôle {
 		
 	}
 	
+	/**
+	 * <h1>charger</h1>
+	 * <p>Launches the game.</p>
+	 */
 	@FXML
 	private void charger() {
 		main.initGame();
 	}
 	
+	/**
+	 * <h1>charger</h1>
+	 * <p>Resets the database (except the login) and launches the game.</p>
+	 */
 	@FXML
 	private void nouvelle() {
 		
@@ -73,6 +84,10 @@ public class Accueil2Contrôle {
 		progress.show();
 	}
 
+	/**
+	 * <h1>Sets the object main</p>
+	 * @param main the object to set
+	 */
 	public void setMainApp(Main main) {
 		this.main = main;
 	}

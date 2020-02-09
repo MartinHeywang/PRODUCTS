@@ -21,6 +21,10 @@ public class AccueilContrôle {
 	
 	Main main;
 	
+	/**
+	 * <h1>initialize</h1>
+	 * <p>Initialize the start stage, who asks for a login. Called automatically as a constructor.</p>
+	 */
 	public void initialize() {
 		try {
 			image.setImage(new Image(new FileInputStream(new File("images/Logo.png"))));
@@ -29,6 +33,10 @@ public class AccueilContrôle {
 		}
 	}
 	
+	/**
+	 * <h1>seConnecter</h1>
+	 * <p>Launches the real game and registers the login in the database</p>	 
+	 * */
 	@FXML
 	public void seConnecter() {
 		if(!field.getText().isEmpty()){
@@ -42,6 +50,11 @@ public class AccueilContrôle {
 		}
 	}
 
+	/**
+	 * <h1>setMainApp</h1>
+	 * <p>Sets the object main.</p>
+	 * @param main the object to set
+	 */
 	public void setMainApp(Main main) {
 		this.main = main;
 	}
