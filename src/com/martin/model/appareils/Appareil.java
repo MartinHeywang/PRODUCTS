@@ -25,6 +25,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 
 public abstract class Appareil extends ImageView{
@@ -54,29 +55,27 @@ public abstract class Appareil extends ImageView{
 	 * @author Martin
 	 * 26 janv. 2020 | 11:30:04
 	 * 
-	 * <b>Appareil.init</b>
-	 * <p>Crée un objet Appareil.</p>
+	 * <b> constructor Appareil</b>
+	 * <p>Creates a device.</p>
 	 * 
 	 * Args :
-	 * @param xy les coordonnées de l'appareil construit
-	 * @param type le type d'appareil
-	 * @param direction l'orientation de l'appareil
-	 * @param niveau le niveau de l'appareil
-	 * @param controller le controller de l'interface de jeu
+	 * @param xy the coordinate or this device
+	 * @param type the kind of the device
+	 * @param direction the rotate of this device
+	 * @param niveau the level of this device
+	 * @param controller the game controller
 	 * 
 	*/
 	protected Appareil(Coordonnées xy, TypeAppareil type, Direction direction, NiveauAppareil niveau,
 			JeuContrôle controller) throws FileNotFoundException {
 		super(new LocatedImage(niveau.getURL()+type.getURL()));
 		
-		//Définition de l'objet avec les paramètres demandés
 		this.xy = xy;
 		this.type = type;
 		this.direction = direction;
 		this.niveau = niveau;
 		this.controller = controller;
 		
-		//Quand on clique sur l'image
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -113,13 +112,14 @@ public abstract class Appareil extends ImageView{
 			.executeUpdate("UPDATE appareils SET '"+(xy.getX()+1)+"' = "
 					+ "'"+type.toString()+"*"+niveau.toString()+"|"+direction.toString()+"' WHERE id = "+(xy.getY()+1));
 		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
+			controller.setReport("L'appareil n'a pas pu être enregistré dans la base de données.", Color.DARKRED);
 			
 		}
 	}
 	/**
-	 * 
-	 * @param resATraiter la ressource à traiter par l'appareil lors de son action
+	 * <h1>action</h1>
+	 * <p>This method do the action of the device. It calls the defined behaviour.</p>
+	 * @param resATraiter the resource who will be used by this device
 	 */
 	public void action(Ressource resATraiter) throws NegativeArgentException{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
@@ -133,12 +133,8 @@ public abstract class Appareil extends ImageView{
 	}
 	
 	/**
-	 * @author Martin
-	 * 26 janv. 2020 | 11:25:02
-	 * 
-	 * <b>destruction</b>
-	 * <p>Cette méthode permet d'effacer toutes le données stockées par les appareils
-	 * (base de données, coordonnées...)</p>
+	 * <h1>destruction</h1>
+	 * <p>This methode resets the database at the coordinates, and do the necessary to destruct properly this device</p>
 	 * 
 	*/
 	public void destruction(){
@@ -151,6 +147,8 @@ public abstract class Appareil extends ImageView{
 			e.printStackTrace();
 		}
 	}
+	
+	//GETTERS, THEN SETTERS
 	/**
 	 * @return the type
 	 */
