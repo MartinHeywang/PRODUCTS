@@ -85,7 +85,8 @@ public class Accueil2Contrôle {
 	}
 
 	/**
-	 * <h1>Sets the object main</p>
+	 * <h1>setMainApp</h1>
+	 * <p>Sets the object main</p>
 	 * @param main the object to set
 	 */
 	public void setMainApp(Main main) {

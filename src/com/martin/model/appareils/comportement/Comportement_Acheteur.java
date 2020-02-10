@@ -10,13 +10,15 @@ import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
+import javafx.scene.paint.Color;
+
 public class Comportement_Acheteur implements Comportement {
 	
 	private Coordonnées pointer;
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 	
-	private Ressource resDistribuée;
+	private Ressource resDistribuée = Ressource.NONE;
 	
 	public Comportement_Acheteur(Coordonnées xy, NiveauAppareil niveau, 
 			int xToAdd, int yToAdd, JeuContrôle controller){
@@ -29,8 +31,7 @@ public class Comportement_Acheteur implements Comportement {
 					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
 					.getString(""+(xy.getY()+1)+""));
 		} catch (SQLException e) {
-			System.out.println("ERREUR dans Comportement_Acheteur dans la méthode "
-					+ "Comportement_Acheteur. Raison :\n" + e.getLocalizedMessage());
+			controller.setReport("Attention : un acheteur n'a pas pu charger la ressource qu'il doit distribuer", Color.ORANGE.darker());
 		}
 	}
 	
