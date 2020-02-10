@@ -44,7 +44,7 @@ public class Appareil_Sol extends Appareil {
 					dialog.initModality(Modality.NONE);
 							
 					SolContrôle SController = loader.getController();
-					SController.setMainApp(xy.getX(), xy.getY(), dialog);
+					SController.setMainApp(new Coordonnées(xy.getX(), xy.getY()), dialog);
 							
 					dialog.showAndWait();
 					if(!dialog.getResult().getClass().equals(ButtonType.class)){
