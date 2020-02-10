@@ -1,53 +1,47 @@
 package com.martin.model;
 
 /**
- * @author Heywang
- * 24/01/2020
- * 
- * Rôle : objet regroupant des valeurs x et y. Utilisé par les appareils.
+ * <h1>class Coordonnées</h1>
+ * <p>Object who defines x and y coordinates.<br/>Mainly used by devices.</p>
  *
  */
 public class Coordonnées {
 	
-	/**
-	 * @serialField x and y*/
 	private int x, y;
 	
 	/**
-	 * @author Heywang
-	 * 24/01/2020
+	 * <h1>constructor Coordonnées</h1>
+	 * <p>Creates coordinates.</p>
 	 * 
-	 * @category constructor
-	 * 
-	 * Rôle : Crée un objet Coordonnées*/
+	 * @param x x coordinates of the object
+	 * @param y y coordinates of the object
+	 * */
 	public Coordonnées(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 	
 	/**
-	 * @author Heywang
-	 * 24/01/2020
-	 * 
-	 * @category getter
-	 * 
-	 * Rôle : @return le champ x représenté par cet objet Coordonnées*/
+	 * <h1>getX</h1>
+	 * @return the field x of this object
+	 */
 	public int getX() {
 		return x;
 	}
 	/**
-	 * @author Heywang
-	 * 
-	 * @category getter
-	 * @return le champ y représenté par cet objet Coordonnées
+	 * <h1>getY</h1>
+	 * @return the field y of this object
 	 */
 	public int getY() {
 		return y;
 	}
 	/**
-	 * 
-	 * @param tailleMax
-	 * @return si les coordonnées se situent toutes les deux entre 0 et la taille passée en paramètre
+	 * <h1>isInGrid</h1>
+	 * @param tailleMax the current size of the grid.
+	 * @return <ul>
+	 * 			<li>true if the coordinate is in the grid
+	 * 			<li>false if the coordinate isn't in grid
+	 * 		   </ul>
 	 */
 	public boolean isInGrid(int tailleMax) {
 		if(x < 0 || y < 0 || x > tailleMax || y > tailleMax) {
@@ -56,9 +50,12 @@ public class Coordonnées {
 		return true;
 	}
 	/**
-	 * 
-	 * @param coordonnées
-	 * @return si l'objet Coordonnées en paramètre et cet objet lui-même se situe près l'un de l'autre
+	 * <h1>isNearFrom</h1>
+	 * @return <ul>
+	 * 			<li>true if the coordinate is near from the other
+	 * 			<li>false if the coordinate isn't near from the other
+	 * 		   </ul>
+	 * @param coordonnées a coordinate object to compare
 	 */
 	public boolean isNearFrom(Coordonnées coordonnées){
 		if(this.x == coordonnées.getX()+1 || this.x == coordonnées.getX()-1){
