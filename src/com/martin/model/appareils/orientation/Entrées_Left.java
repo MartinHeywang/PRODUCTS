@@ -1,23 +1,30 @@
 package com.martin.model.appareils.orientation;
 
+import java.util.ArrayList;
+
 import com.martin.model.appareils.Direction;
 
 public class Entrées_Left implements Entrées {
 
 	@Override
-	public Direction getPointerEnter(Direction direction) {
+	public ArrayList<Direction> getPointers(Direction direction) {
+		
+		ArrayList<Direction> liste = new ArrayList<Direction>();
+		
 		switch(direction) {
 		case UP:			
-			return Direction.RIGHT;
+			liste.add(Direction.RIGHT);
 		case RIGHT:
-			return Direction.UP;
+			liste.add(Direction.UP);
 		case DOWN:
-			return Direction.LEFT;
+			liste.add(Direction.LEFT);
 		case LEFT:
-			return Direction.DOWN;
+			liste.add(Direction.DOWN);
 		default:
-			return direction;
+			liste.add(Direction.NONE);
 		}
+		
+		return liste;
 	}
 
 }

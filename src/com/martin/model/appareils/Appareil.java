@@ -3,6 +3,7 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
@@ -48,7 +49,7 @@ public abstract class Appareil extends ImageView{
 	
 	protected static int électricité = 5;
 	protected Direction pointerExit;
-	protected Direction pointerEnter;
+	protected ArrayList<Direction> pointersEnters;
 	
 	
 	/**
@@ -125,10 +126,12 @@ public abstract class Appareil extends ImageView{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			
-			if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus()
-					, xy.getY()+pointerExit.getyPlus())).getPointerEnter()) || this 
+			for(int i = 0; i < pointersEnters.size(); i++) {
+				if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus()
+					, xy.getY()+pointerExit.getyPlus())).getPointerEnter().get(i)) || this 
 					instanceof Appareil_Vendeur)
-				comportement.action(resATraiter);
+						comportement.action(resATraiter);
+			}
 		}
 	}
 	
@@ -165,8 +168,8 @@ public abstract class Appareil extends ImageView{
 	 * 
 	 * @return the pointerEnter
 	 */
-	public Direction getPointerEnter() {
-		return pointerEnter;
+	public ArrayList<Direction> getPointerEnter() {
+		return pointersEnters;
 	}
 	/**
 	 * 

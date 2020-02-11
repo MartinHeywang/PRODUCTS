@@ -23,7 +23,7 @@ public class Appareil_Vendeur extends Appareil {
 		prix = new SimpleIntegerProperty(500);
 		
 		entrées = new Entrées_Center();
-		pointerEnter = entrées.getPointerEnter(direction);
+		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Aucune();
 		pointerExit = sorties.getPointer(direction);
 		

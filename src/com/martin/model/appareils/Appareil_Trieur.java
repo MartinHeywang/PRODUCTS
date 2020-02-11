@@ -90,6 +90,8 @@ public class Appareil_Trieur extends Appareil {
 
 	@Override
 	public void action() {
+		// REMPLACER cette méthode et faire un Comportement
+		
 		for(int i = 0; i < niveau; i++) {
 		if(ressources.get(0) == crit1) {
 			switch(rotate) {
@@ -169,6 +171,7 @@ public class Appareil_Trieur extends Appareil {
 					JeuContrôle.images[X][Y].getAppareil().ressources.add(ressources.get(0));
 					
 					Platform.runLater(new Runnable() {
+						@Override
 						public void run() {
 							if(JeuContrôle.images[x][y].getStage().isShowing()) {
 								try {

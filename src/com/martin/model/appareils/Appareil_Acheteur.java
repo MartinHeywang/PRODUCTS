@@ -29,7 +29,7 @@ public class Appareil_Acheteur extends Appareil {
 		liste.add(xy);
 		
 		entrées = new Entrées_Aucune();
-		pointerEnter = entrées.getPointerEnter(direction);
+		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Acheteur(xy, niveau, pointerExit.getxPlus(), 

@@ -19,7 +19,7 @@ private static SimpleIntegerProperty prix;
 		super(xy, TypeAppareil.CONVOYEUR_GAUCHE, direction, niveau, controller);
 		
 		entrées = new Entrées_Center();
-		pointerEnter = entrées.getPointerEnter(direction);
+		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Left();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Convoyeur(xy, niveau, pointerExit.getxPlus(), 

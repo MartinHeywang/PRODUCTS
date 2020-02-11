@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
+import com.martin.model.appareils.comportement.Comportement_Assembleur;
+import com.martin.model.appareils.orientation.Entrées_LeftAndCenter;
+import com.martin.model.appareils.orientation.Sorties_Right;
 import com.martin.view.JeuContrôle;
 
 import javafx.beans.property.SimpleIntegerProperty;
@@ -22,60 +25,13 @@ public class Appareil_Assembleur extends Appareil {
 	public Appareil_Assembleur(Coordonnées xy, NiveauAppareil niveau, Direction direction, JeuContrôle controller) throws FileNotFoundException {
 		super(xy, TypeAppareil.ASSEMBLEUR, direction, niveau, controller);
 		
-		ressources.clear();
-		
-		try {
-			produit = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
-					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
-					.getString(""+(xy.getY()+1)+""));
-		} catch (SQLException e) {
-			System.out.println("ERREUR dans Appareil_Assembleur.java entre les lignes 31 et 35 excluses. Raison :\n"+e.getMessage());
-		}
-		
-		checkRotation(direction);
+		entrées = new Entrées_LeftAndCenter();
+		pointersEnters = entrées.getPointers(direction);
+		sorties = new Sorties_Right();
+		pointerExit = sorties.getPointer(direction);
+		comportement = new Comportement_Assembleur(xy, niveau, pointerExit.getxPlus(), 
+				pointerExit.getyPlus(), controller);
 	}
-	
-	public void checkRotation(Direction direction) {
-		entrées.clear();
-		sorties.clear();
-		switch(direction) {
-		case UP:
-			entrées.add(Direction.LEFT);
-			entrées.add(Direction.DOWN);
-			
-			sorties.add(Direction.RIGHT);
-			
-			pointerExit = new Coordonnées(this.xy.getX()+1, this.xy.getY());
-			break;
-		case RIGHT:
-			entrées.add(Direction.DOWN);
-			entrées.add(Direction.RIGHT);
-			
-			sorties.add(Direction.UP);
-			
-			pointerExit = new Coordonnées(this.xy.getX(), this.xy.getY()-1);
-			break;
-		case DOWN:
-			entrées.add(Direction.RIGHT);
-			entrées.add(Direction.UP);
-			
-			sorties.add(Direction.LEFT);
-			
-			pointerExit = new Coordonnées(this.xy.getX()-1, this.xy.getY());
-			break;
-		case LEFT:
-			entrées.add(Direction.UP);
-			entrées.add(Direction.LEFT);
-			
-			sorties.add(Direction.DOWN);
-			
-			pointerExit = new Coordonnées(this.xy.getX(), this.xy.getY()+1);
-			break;
-		}
-	}
-
-	
-
 	
 	@Override
 	public void destruction() {

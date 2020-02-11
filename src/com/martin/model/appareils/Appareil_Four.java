@@ -21,7 +21,7 @@ public class Appareil_Four extends Appareil {
 		super(xy, TypeAppareil.FOUR, direction, niveau, controller);
 		
 		entrées = new Entrées_Center();
-		pointerEnter = entrées.getPointerEnter(direction);
+		pointersEnters = entrées.getPointerEnters(direction);
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Four(xy, niveau, pointerExit.getxPlus(), 

@@ -19,7 +19,7 @@ public class Appareil_Convoyeur_Droite extends Appareil {
 		super(xy, TypeAppareil.CONVOYEUR_DROITE, direction, niveau, controller);
 		
 		entrées = new Entrées_Center();
-		pointerEnter = entrées.getPointerEnter(direction);
+		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Right();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Convoyeur(xy, niveau, pointerExit.getxPlus(), 
