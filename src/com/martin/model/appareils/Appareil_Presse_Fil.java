@@ -21,7 +21,7 @@ public class Appareil_Presse_Fil extends Appareil {
 		super(xy, TypeAppareil.PRESSE_FIL, direction, niveau, controller);
 		
 		entrées = new Entrées_Center();
-		pointersEnters = entrées.getPointerEnters(direction);
+		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Presse_Fil(xy, niveau, pointerExit.getxPlus(), 

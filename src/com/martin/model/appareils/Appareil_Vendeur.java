@@ -5,9 +5,11 @@ import java.sql.SQLException;
 
 import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnées;
+import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Vendeur;
 import com.martin.model.appareils.orientation.Entrées_Center;
 import com.martin.model.appareils.orientation.Sorties_Aucune;
+import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
 import javafx.beans.property.SimpleIntegerProperty;
@@ -29,6 +31,11 @@ public class Appareil_Vendeur extends Appareil {
 		
 		comportement = new Comportement_Vendeur(xy, niveau, direction.getxPlus(), direction.getyPlus(), controller);
 	}
+	@Override
+	public void action(Ressource resATraiter) throws NegativeArgentException {
+		comportement.action(resATraiter);
+	}
+	
 	public static void initializeData() {
 		try {
 			prix = new SimpleIntegerProperty(Connect_SQLite.getInstance().createStatement().executeQuery(

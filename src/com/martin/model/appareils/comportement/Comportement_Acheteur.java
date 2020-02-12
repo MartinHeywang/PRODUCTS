@@ -30,6 +30,7 @@ public class Comportement_Acheteur implements Comportement {
 			resDistribuée = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
 					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
 					.getString(""+(xy.getY()+1)+""));
+			resDistribuée = Ressource.FER;
 		} catch (SQLException e) {
 			controller.setReport("Attention : un acheteur n'a pas pu charger la ressource qu'il doit distribuer", Color.ORANGE.darker());
 		}
@@ -39,10 +40,11 @@ public class Comportement_Acheteur implements Comportement {
 	public void action(Ressource resATraiter) throws NegativeArgentException{
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
 			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
-				throw new NegativeArgentException("Le comportement d'un appareil "
+				throw new NegativeArgentException("Le comportement d'un acheteur "
 						+ "n'a pas pu être réalisé car le solde d'argent n'était pas assez important.");
 			controller.getGrilleAppareils(pointer).action(resDistribuée);
-			controller.setArgent(5+Appareil.getÉlectricité(), false);
+			if(!resDistribuée.equals(Ressource.NONE))
+				controller.setArgent(5+Appareil.getÉlectricité(), false);
 		}
 	}	
 }

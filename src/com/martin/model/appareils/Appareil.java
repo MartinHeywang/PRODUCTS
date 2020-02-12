@@ -126,11 +126,28 @@ public abstract class Appareil extends ImageView{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			
+			System.out.println(this.getClass());
+			
 			for(int i = 0; i < pointersEnters.size(); i++) {
-				if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus()
-					, xy.getY()+pointerExit.getyPlus())).getPointerEnter().get(i)) || this 
-					instanceof Appareil_Vendeur)
-						comportement.action(resATraiter);
+				if(pointerExit
+						.equals(
+								controller
+								.getGrilleAppareils(
+										new Coordonnées(
+												xy
+												.getX()+
+												pointerExit
+												.getxPlus()
+					, xy
+					.getY()
+					+pointerExit
+					.getyPlus()))
+								.getPointerEnter()
+								.get(
+										i)))
+						comportement
+						.action(
+								resATraiter);
 			}
 		}
 	}

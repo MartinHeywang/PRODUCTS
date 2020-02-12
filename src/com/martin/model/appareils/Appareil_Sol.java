@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import com.martin.Main;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
+import com.martin.model.appareils.comportement.Comportement_Aucun;
+import com.martin.model.appareils.orientation.Entrées_Aucune;
+import com.martin.model.appareils.orientation.Sorties_Aucune;
 import com.martin.view.JeuContrôle;
 import com.martin.view.SolContrôle;
 
@@ -62,6 +65,12 @@ public class Appareil_Sol extends Appareil {
 				}
 			}
 		});
+		
+		entrées = new Entrées_Aucune();
+		pointersEnters = entrées.getPointers(direction);
+		sorties = new Sorties_Aucune();
+		pointerExit = sorties.getPointer(direction);
+		comportement = new Comportement_Aucun();
 	}
 	
 	

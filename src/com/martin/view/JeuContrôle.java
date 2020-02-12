@@ -167,7 +167,7 @@ public class JeuContrôle {
 		public void run() {
 			try {
 				while(true){
-					Thread.sleep(500);
+					Thread.sleep(750);
 					for(int i = 0; i < Appareil_Acheteur.liste.size(); i++){
 						try {
 							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(Ressource.NONE);
@@ -176,7 +176,6 @@ public class JeuContrôle {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									setReport(e.getMessage(), Color.DARKRED);
 									argentLabel.setTextFill(Color.DARKRED);
 								}
 							});
