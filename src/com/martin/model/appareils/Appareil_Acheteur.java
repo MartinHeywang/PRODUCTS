@@ -55,7 +55,7 @@ public class Appareil_Acheteur extends Appareil {
 		
 		this.resDistribuée = res;
 		
-		
+		((Appareil_Acheteur) comportement).setRessourceDistribuée(resDistribuée);
 		Connect_SQLite.getInstance().createStatement().executeUpdate(
 				"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \""+res.toString()+"\" "
 						+ "WHERE id = "+(xy.getY()+1)+";");

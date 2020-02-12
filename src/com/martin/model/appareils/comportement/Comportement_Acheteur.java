@@ -46,5 +46,25 @@ public class Comportement_Acheteur implements Comportement {
 			if(!resDistribuée.equals(Ressource.NONE))
 				controller.setArgent(5+Appareil.getÉlectricité(), false);
 		}
-	}	
+	}
+	
+	/**
+	 * <h1>setProduit</h1>
+	 * <p>Sets the products to the new value, after checking if it is a valid resource.</p>
+	 * @param produit the resource to set
+	 */
+	public void setProduit(Ressource resDistribuée) {
+		switch(resDistribuée) {
+		case FER: 
+		case OR:
+		case CUIVRE:
+		case ARGENT:
+		case DIAMANT:
+		case ALUMINIUM:
+			this.resDistribuée = resDistribuée;
+		default:
+			break;
+		}
+			
+	}
 }
