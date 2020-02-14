@@ -5,36 +5,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.martin.Connect_SQLite;
-import com.martin.Stats;
+import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
+import com.martin.model.appareils.comportement.Comportement_Convoyeur;
+import com.martin.model.appareils.orientation.Entrées_Center;
+import com.martin.model.appareils.orientation.Sorties_Aucune;
+import com.martin.model.appareils.orientation.Sorties_Center;
+import com.martin.model.appareils.orientation.Sorties_Left;
+import com.martin.model.appareils.orientation.Sorties_Right;
+import com.martin.model.appareils.orientation.Sorties_Up;
+import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class Appareil_Trieur extends Appareil {
 	
-	int X = 0, Y = 0;
-	private Ressource crit1 = Ressource.NONE, crit2 = Ressource.NONE;
-	private Direction sortieActu;
-	
 	private static SimpleIntegerProperty prix;
+	
+	private Ressource crit1, crit2;
 
-	public Appareil_Trieur(int x, int y, NiveauAppareil niveau, Direction direction, JeuContrôle controller) {
-		super(x, y, TypeAppareil.TRIEUR, direction, niveau, controller);
+	public Appareil_Trieur(Coordonnées xy, NiveauAppareil niveau, Direction direction, JeuContrôle controller) 
+			throws FileNotFoundException {
+		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);
 		
 		prix = new SimpleIntegerProperty(7500);
 		
 		try {
 			String strCrit1, strCrit2;
 			ResultSet res = Connect_SQLite.getInstance().prepareStatement(
-					"SELECT * FROM appareils_infos WHERE id = "+y+";").executeQuery();
+					"SELECT * FROM appareils_infos WHERE id = "+xy.getY()+";").executeQuery();
 			
-			for(int i = 0; i < res.getString(""+x+"").length(); i++) {
-				if(res.getString(""+x+"").substring(i, i+1).equals("|")) {
+			for(int i = 0; i < res.getString(""+xy.getX()+"").length(); i++) {
+				if(res.getString(""+xy.getX()+"").substring(i, i+1).equals("|")) {
 					
-					strCrit1 = res.getString(""+x+"").substring(0, i);
-					strCrit2 = res.getString(""+x+"").substring(i+1);
+					strCrit1 = res.getString(""+xy.getX()+"").substring(0, i);
+					strCrit2 = res.getString(""+xy.getX()+"").substring(i+1);
 					
 					crit1 = Ressource.valueOf(strCrit1);
 					crit2 = Ressource.valueOf(strCrit2);
@@ -42,174 +48,89 @@ public class Appareil_Trieur extends Appareil {
 				}
 				
 			}
-			
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		checkRotation(direction);
-	}
-	public void checkRotation(Direction direction) {
-		entrées.clear();
-		
-		switch(direction) {
-		case UP:
-			entrées.add(Direction.DOWN);
-			
-			sorties.add(Direction.UP);
-			sorties.add(Direction.RIGHT);
-			sorties.add(Direction.LEFT);
-			break;
-		case RIGHT:
-			entrées.add(Direction.RIGHT);
-			
-			sorties.add(Direction.UP);
-			sorties.add(Direction.DOWN);
-			sorties.add(Direction.LEFT);
-			
-			break;
-		case DOWN:
-			entrées.add(Direction.UP);
-			
-			sorties.add(Direction.DOWN);
-			sorties.add(Direction.RIGHT);
-			sorties.add(Direction.LEFT);
-
-			break;
-		case LEFT:
-			entrées.add(Direction.LEFT);
-			
-			sorties.add(Direction.UP);
-			sorties.add(Direction.RIGHT);
-			sorties.add(Direction.DOWN);
-			
-			break;
-		}
+		entrées = new Entrées_Center();
+		pointersEnters = entrées.getPointers(direction);
+		sorties = new Sorties_Aucune();
+		pointerExit = sorties.getPointer(direction);
+		comportement = new Comportement_Convoyeur(xy, niveau, pointerExit.getxPlus(), 
+				pointerExit.getyPlus(), controller);
 	}
 
 	@Override
-	public void action() {
-		// REMPLACER cette méthode et faire un Comportement
+	public void action(Ressource resATraiter) throws NegativeArgentException {
 		
-		for(int i = 0; i < niveau; i++) {
-		if(ressources.get(0) == crit1) {
-			switch(rotate) {
-			case "000":
-				X = this.x-1;
-				Y = this.y;
-				sortieActu = Direction.RIGHT;
+		if(resATraiter == crit1) {
+			switch(direction) {
+			case UP:
+				sorties = new Sorties_Right();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "090":
-				X = this.x;
-				Y = this.y+1;
-				sortieActu = Direction.DOWN;
+			case RIGHT:
+				sorties = new Sorties_Center();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "180":
-				X = this.x+1;
-				Y = this.y;
-				sortieActu = Direction.LEFT;
+			case DOWN:
+				sorties = new Sorties_Left();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "270":
-				X = this.x;
-				Y = this.y-1;
-				sortieActu = Direction.UP;
+			case LEFT:
+				sorties = new Sorties_Up();
+				pointerExit = sorties.getPointer(direction);
+				break;
+			default:
 				break;
 			}
-		}else if(ressources.get(0) == crit2) {
-			switch(rotate) {
-			case "000":
-				X = this.x+1;
-				Y = this.y;
-				sortieActu = Direction.LEFT;
+		}else if(resATraiter == crit2) {
+			switch(direction) {
+			case UP:
+				sorties = new Sorties_Left();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "090":
-				X = this.x;
-				Y = this.y-1;
-				sortieActu = Direction.UP;
+			case RIGHT:
+				sorties = new Sorties_Up();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "180":
-				X = this.x-1;
-				Y = this.y;
-				sortieActu = Direction.RIGHT;
+			case DOWN:
+				sorties = new Sorties_Right();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "270":
-				X = this.x;
-				Y = this.y+1;
-				sortieActu = Direction.DOWN;
+			case LEFT:
+				sorties = new Sorties_Left();
+				pointerExit = sorties.getPointer(direction);
+				break;
+			default:
 				break;
 			}
 		}else {
-			switch(rotate) {
-			case "000":
-				X = this.x;
-				Y = this.y+1;
-				sortieActu = Direction.DOWN;
+			switch(direction) {
+			case UP:
+				sorties = new Sorties_Left();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "090":
-				X = this.x-1;
-				Y = this.y;
-				sortieActu = Direction.RIGHT;
+			case RIGHT:
+				sorties = new Sorties_Left();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "180":
-				X = this.x;
-				Y = this.y-1;
-				sortieActu = Direction.UP;
+			case DOWN:
+				sorties = new Sorties_Up();
+				pointerExit = sorties.getPointer(direction);
 				break;
-			case "270":
-				X = this.x+1;
-				Y = this.y;
-				sortieActu = Direction.LEFT;
+			case LEFT:
+				sorties = new Sorties_Right();
+				pointerExit = sorties.getPointer(direction);
+				break;
+			default:
 				break;
 			}
 		}
-		if(X>-1 && Y>-1 && X<Stats.largeurGrille && Y<Stats.longueurGrille) {
-			for(int j = 0; j < JeuContrôle.images[X][Y].getAppareil().getEntréesList().size(); j++) {
-				if((sortieActu == JeuContrôle.images[X][Y].getAppareil().getEntréesList().get(j)) && (ressources.size() > 0)) {
-					
-					
-					JeuContrôle.images[X][Y].getAppareil().ressources.add(ressources.get(0));
-					
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							if(JeuContrôle.images[x][y].getStage().isShowing()) {
-								try {
-									JeuContrôle.images[x][y].getControler().setLabelSortie(ressources.get(0).getNom());
-									JeuContrôle.images[x][y].getControler().setImgSortie(ressources.get(0).getURL());
-									ressources.remove(0);
-								} catch (FileNotFoundException e) {
-									e.printStackTrace();
-								}
-							}
-							else if(JeuContrôle.images[X][Y].getStage().isShowing()) {
-								try {
-									JeuContrôle.images[X][Y].getControler().setLabelEntrée(ressources.get(0).getNom());
-									JeuContrôle.images[X][Y].getControler().setImgEntrée(ressources.get(0).getURL());
-									ressources.remove(0);
-								} catch (FileNotFoundException e) {
-									e.printStackTrace();
-								}
-							}
-							ressources.remove(0);
-						}
-					});
-					
-					JeuContrôle.argent.set(JeuContrôle.argent.get()-Stats.électricité);
-				}
-			}
-		}
-		}
-	}
-	
-	
-	public void destroy() {
-		try {
-			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils_infos SET '"+(x+1)+"' = 'NONE' WHERE id = '"+(y+1)+"';");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+		comportement = new Comportement_Convoyeur(xy, niveau, pointerExit.getxPlus(), 
+				pointerExit.getyPlus(), controller);
+		comportement.action(resATraiter);
 	}
 	
 	public static void initializeData() {
@@ -231,7 +152,7 @@ public class Appareil_Trieur extends Appareil {
 		
 		try {
 			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils_infos SET '"+(x+1)+"' = \""+(res.toString()+"|"+crit2.toString())+"\" WHERE id = "+(y+1)+";");
+					"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \""+(res.toString()+"|"+crit2.toString())+"\" WHERE id = "+(xy.getY()+1)+";");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -241,7 +162,7 @@ public class Appareil_Trieur extends Appareil {
 		
 		try {
 			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils_infos SET '"+(x+1)+"' = \""+(crit1.toString()+"|"+res.toString())+"\" WHERE id = "+(y+1)+";");
+					"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \""+(crit1.toString()+"|"+res.toString())+"\" WHERE id = "+(xy.getY()+1)+";");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

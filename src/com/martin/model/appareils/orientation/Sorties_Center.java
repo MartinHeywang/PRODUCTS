@@ -17,7 +17,7 @@ public class Sorties_Center implements Sorties {
 		case LEFT:
 			return Direction.LEFT;
 		default:
-			return direction;
+			return Direction.NONE;
 		}
 	}
 
