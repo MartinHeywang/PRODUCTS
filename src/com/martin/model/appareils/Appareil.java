@@ -31,11 +31,6 @@ import javafx.stage.Modality;
 
 public abstract class Appareil extends ImageView{
 	
-	// FAIRE les méthodes initializeData()
-	// FAIRE les méthodes getPrix()
-	// FAIRE les méthodes destructions()
-	// FAIRE les listes publiques statiques de coordonnées de référencement des appareils
-	
 	protected TypeAppareil type;
 	protected Direction direction;
 	protected NiveauAppareil niveau;
@@ -129,25 +124,10 @@ public abstract class Appareil extends ImageView{
 			System.out.println(this.getClass());
 			
 			for(int i = 0; i < pointersEnters.size(); i++) {
-				if(pointerExit
-						.equals(
-								controller
-								.getGrilleAppareils(
-										new Coordonnées(
-												xy
-												.getX()+
-												pointerExit
-												.getxPlus()
-					, xy
-					.getY()
-					+pointerExit
-					.getyPlus()))
-								.getPointerEnter()
-								.get(
-										i)))
-						comportement
-						.action(
-								resATraiter);
+				if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
+						xy.getY()+pointerExit.getyPlus()))	.getPointerEnter().get(i)))
+						
+					comportement.action(resATraiter);
 			}
 		}
 	}
