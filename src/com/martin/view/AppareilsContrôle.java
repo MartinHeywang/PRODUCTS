@@ -1,31 +1,21 @@
 package com.martin.view;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.SQLException;
-
-import com.martin.model.appareils.TypeAppareil;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
 
 public class AppareilsContrôle {
 
 	@FXML
 	Label coordonnées;
 	@FXML
-	VBox listeAppareils;
+	ScrollPane scrollPane;
 
 	public AppareilsContrôle() {
 	}
 
 	public void initialize() {
-		for (int i = 0; i < TypeAppareil.values().length - 1; i++) {
-			listeAppareils.getChildren().add(new Displayer(TypeAppareil.values()[i]));
-		}
+		
 
 		//CORRIGER l'ouverture de la fenêtre d'un appareil
 		/*
@@ -83,95 +73,8 @@ public class AppareilsContrôle {
 		 */
 
 	}
-
-	// Le setMainApp perdu au milieu de la jungle avec du STATIQUE en plus avec des
-	// paramètres qui servent à rien
-
-	public void setMainApp(int i, int j) {
+	public void setMainApp(int i, int j, Dashboard dashboard) {
 		coordonnées.setText("Hello les appareils !!");
-
+		scrollPane.setContent(dashboard);
 	}
-
-	@FXML private void sauvegarder() { //J'appelle cela du gros bricolage...
-	  if(appareils.isSelected()) { if(cost.get() <= JeuContrôle.argent.get()) {
-	  //Sans oublier de fermer la fenêtre try {
-	  
-	  //Des defs statiques qui m'horripile(rota, url...)
-	  
-	  //Conversion de la rotation
-	  
-	  //Retrait de l'argent
-	  
-	  //GROS SWITCH DE MORT
-	  
-	  //Set database la case
-	  
-	  } catch (FileNotFoundException | SQLException e) { e.printStackTrace(); } }
-	  else { //Un va te faire foutre tu n'a pas assez d'argent dans la console } }
-	  else if(actions.isSelected()) { //Fermer la fenêtre if(upgradeBoolean == 1) {
-	  //Clause if avec int soit-disant boolean //Ancienne commande avec
-	  LocatedImageView
-	  
-	  //Conversion rota (comme une sensation de déjà vu
-	  
-	  //Set database la case } else if(upgradeBoolean == 2){ //Quand destroy sets
-	  case, database
-	  
-	  } } }**
-
-	@FXML private void annuler() { // Rien qu'une méthode juste pour quitter }
-
-	@FXML private void UpgradePressed() { //Quand on clique sur upgrade sets
-	  argent si assez et appel sauvagarder plus haut }**
-
-	@FXML private void upgradeEntered() { //Quand on entre sur la case upgrade
-	  GROS SWITCH DE MORT avec le set de cost }**
-
-	@FXML private void upgradeExited() { // Reset on quitte la case }
-
-	@FXML private void DestroyPressed() { //Quand on clique sur la case destroy
-	  GROS SWITCH DE MORT et le set de cost
-	  
-	  sauvegarder(); }**
-
-	@FXML private void DestroyEntered() { //Quand on arrive sur la case avec GROS
-	  SWITCH DE MORT }**
-
-	@FXML private void DestroyExited() { //Reset quand on quitte la case }
-	  
-	  //Des setters pour les labels et images d'entrées sorties par un moyen
-	  carrément pas LÉGAL
-
-	public void setLabelEntrée(String str) {
-
-	}
-
-	public void setLabelSortie(String str) {
-		labelSortie.setText(str);
-	}
-
-	public static void setImgCrit1(String url) {
-		try {
-			img1.setImage(new Image(new FileInputStream(new File(url))));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void setImgCrit2(String url) {
-		try {
-			img2.setImage(new Image(new FileInputStream(new File(url))));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void setImgEntrée(String str) throws FileNotFoundException {
-		imgEntrée.setImage(new Image(new FileInputStream(new File(str))));
-	}
-
-	public void setImgSortie(String str) throws FileNotFoundException {
-		imgSortie.setImage(new Image(new FileInputStream(new File(str))));
-	}
-
 }

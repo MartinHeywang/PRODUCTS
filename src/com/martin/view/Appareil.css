@@ -19,3 +19,11 @@
 	-fx-font-weight: bold;
 	-fx-background-color: #242729;
 }
+#ameliorer{
+	-fx-border-color: darkgreen;
+	-fx-text-fill: darkgreen;
+}
+#ameliorer:hover{
+	-fx-text-fill:  #242729;
+	-fx-background-color: darkgreen;
+}

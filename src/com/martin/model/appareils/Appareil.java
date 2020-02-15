@@ -18,6 +18,7 @@ import com.martin.model.appareils.orientation.Sorties;
 import com.martin.model.appareils.orientation.Sorties_Aucune;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.AppareilsContrôle;
+import com.martin.view.Dashboard;
 import com.martin.view.JeuContrôle;
 
 import javafx.event.EventHandler;
@@ -46,7 +47,7 @@ public abstract class Appareil extends ImageView{
 	protected Direction pointerExit;
 	protected ArrayList<Direction> pointersEnters;
 	
-	
+	protected Dashboard dashboard;
 	/**
 	 * @author Martin
 	 * 26 janv. 2020 | 11:30:04
@@ -91,7 +92,7 @@ public abstract class Appareil extends ImageView{
 					dialog.initModality(Modality.NONE);
 					
 					AppareilsContrôle controller = loader.getController();
-					controller.setMainApp(xy.getX(), xy.getY());
+					controller.setMainApp(xy.getX(), xy.getY(), dashboard);
 					
 					dialog.showAndWait();
 					
@@ -120,8 +121,6 @@ public abstract class Appareil extends ImageView{
 	public void action(Ressource resATraiter) throws NegativeArgentException{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
-			
-			System.out.println(this.getClass());
 			
 			for(int i = 0; i < pointersEnters.size(); i++) {
 				if(pointerExit.equals(controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 

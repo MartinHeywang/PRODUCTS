@@ -290,7 +290,6 @@ public class JeuContrôle {
 	 * 
 	 */
 	public void setArgent(long somme, boolean increase) throws NegativeArgentException{
-		System.out.println("setArgent "+somme+" "+increase);
 		if(increase)
 			argent.set(argent.get()+somme);
 		else {
