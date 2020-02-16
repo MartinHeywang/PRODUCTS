@@ -10,7 +10,6 @@ import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Acheteur;
 import com.martin.model.appareils.orientation.Entrées_Aucune;
 import com.martin.model.appareils.orientation.Sorties_Center;
-import com.martin.view.Dashboard;
 import com.martin.view.JeuContrôle;
 
 import javafx.beans.property.SimpleIntegerProperty;
@@ -35,9 +34,6 @@ public class Appareil_Acheteur extends Appareil {
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Acheteur(xy, niveau, pointerExit.getxPlus(), 
 				pointerExit.getyPlus(), controller);
-		
-		dashboard = new Dashboard();
-		dashboard.addSecond();
 	}
 	@Override 
 	public void destruction() {

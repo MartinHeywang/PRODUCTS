@@ -18,7 +18,7 @@ public class Comportement_Acheteur implements Comportement {
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 	
-	private Ressource resDistribuée = Ressource.NONE;
+	private Ressource[] resDistribuée = {Ressource.NONE};
 	
 	public Comportement_Acheteur(Coordonnées xy, NiveauAppareil niveau, 
 			int xToAdd, int yToAdd, JeuContrôle controller){
@@ -27,23 +27,23 @@ public class Comportement_Acheteur implements Comportement {
 		this.pointer = new Coordonnées(xy.getX()+xToAdd, xy.getY()+yToAdd);
 		
 		try {
-			resDistribuée = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
+			resDistribuée[0] = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
 					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
 					.getString(""+(xy.getY()+1)+""));
-			resDistribuée = Ressource.FER;
+			resDistribuée[0] = Ressource.FER;
 		} catch (SQLException e) {
 			controller.setReport("Attention : un acheteur n'a pas pu charger la ressource qu'il doit distribuer", Color.ORANGE.darker());
 		}
 	}
 	
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException{
+	public void action(Ressource[] resATraiter) throws NegativeArgentException{
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
 			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
 				throw new NegativeArgentException("Le comportement d'un acheteur "
 						+ "n'a pas pu être réalisé car le solde d'argent n'était pas assez important.");
 			controller.getGrilleAppareils(pointer).action(resDistribuée);
-			if(!resDistribuée.equals(Ressource.NONE))
+			if(!resDistribuée[0].equals(Ressource.NONE))
 				controller.setArgent(5+Appareil.getÉlectricité(), false);
 		}
 	}
@@ -61,7 +61,7 @@ public class Comportement_Acheteur implements Comportement {
 		case ARGENT:
 		case DIAMANT:
 		case ALUMINIUM:
-			this.resDistribuée = resDistribuée;
+			this.resDistribuée[0] = resDistribuée;
 		default:
 			break;
 		}

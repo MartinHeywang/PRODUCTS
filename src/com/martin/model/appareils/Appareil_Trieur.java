@@ -61,9 +61,9 @@ public class Appareil_Trieur extends Appareil {
 	}
 
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException {
+	public void action(Ressource[] resATraiter) throws NegativeArgentException {
 		
-		if(resATraiter == crit1) {
+		if(resATraiter[0] == crit1) {
 			switch(direction) {
 			case UP:
 				sorties = new Sorties_Right();
@@ -84,7 +84,7 @@ public class Appareil_Trieur extends Appareil {
 			default:
 				break;
 			}
-		}else if(resATraiter == crit2) {
+		}else if(resATraiter[0] == crit2) {
 			switch(direction) {
 			case UP:
 				sorties = new Sorties_Left();

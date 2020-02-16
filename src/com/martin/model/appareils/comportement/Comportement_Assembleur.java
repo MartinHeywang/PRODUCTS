@@ -19,7 +19,7 @@ public class Comportement_Assembleur implements Comportement {
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 	
-	private Ressource produit = Ressource.NONE;
+	private Ressource[] produit = {Ressource.NONE};
 	private ArrayList<Ressource> ressources = new ArrayList<Ressource>();
 	private ArrayList<Ressource> recette = new ArrayList<Ressource>();
 	
@@ -30,7 +30,7 @@ public class Comportement_Assembleur implements Comportement {
 		this.pointer = new Coordonnées(xy.getX()+xToAdd, xy.getY()+yToAdd);
 		
 		try {
-			produit = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
+			produit[0] = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
 					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
 					.getString(""+(xy.getY()+1)+""));
 		} catch (SQLException e) {
@@ -38,41 +38,42 @@ public class Comportement_Assembleur implements Comportement {
 		}
 	}
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException{
+	public void action(Ressource[] resATraiter) throws NegativeArgentException{
+		Ressource[] toSend = new Ressource[niveau.getNiveau()];
+		
 		for(int level = 0; level < niveau.getNiveau(); level++) {
 			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
 				throw new NegativeArgentException("Le comportement d'un acheteur "
 						+ "n'a pas pu être réalisé car le solde d'argent n'était pas assez important.");
 			
 			if(checkIngrédients()) {
-				controller.getGrilleAppareils(pointer).action(produit);
+				toSend[level] = produit[0];
 				controller.setArgent(Appareil.getÉlectricité(), false);
 			}
 		}
+		
+		controller.getGrilleAppareils(pointer).action(toSend);
 	}
 	
 	/**
-	 * @author Martin
-	 * 26 janv. 2020 | 11:46:55
 	 * 
-	 * <b>checkIngrédients()</b>
+	 * <h1>checkIngrédients</h1>
 	 * <p>Vérifie si les ressources de l'appareil sont suffisantes pour créer l'objet de la recette</p>
 	 * 
-	 * Return type :
-	 * @return boolean
+	 * @return boolean if the requires resources are available
 	 * 
 	*/
 	private boolean checkIngrédients() {
 		ArrayList<Ressource> stock = new ArrayList<Ressource>();
 		recette = new ArrayList<Ressource>();
-		for(int i = 0; i<produit.getRecette().get(0).getQuantité(); i++) {
-			recette.add(produit.getRecette().get(0).getRessource());
+		for(int i = 0; i<produit[0].getRecette().get(0).getQuantité(); i++) {
+			recette.add(produit[0].getRecette().get(0).getRessource());
 		}
-		for(int i = 0; i<produit.getRecette().get(1).getQuantité(); i++) {
-			recette.add(produit.getRecette().get(1).getRessource());
+		for(int i = 0; i<produit[0].getRecette().get(1).getQuantité(); i++) {
+			recette.add(produit[0].getRecette().get(1).getRessource());
 		}
 		
-		for(int j = 0; j < produit.getRecette().size(); j++) {
+		for(int j = 0; j < produit[0].getRecette().size(); j++) {
 			if(ressources.contains(recette .get(j))) {
 				stock.add(recette.get(j));
 				ressources.remove(recette.get(j));
@@ -101,7 +102,7 @@ public class Comportement_Assembleur implements Comportement {
 		case ALUMINIUM:
 			break;
 		default:
-			this.produit = produit;
+			this.produit[0] = produit;
 		}
 			
 	}

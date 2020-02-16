@@ -21,22 +21,24 @@ public class Comportement_Presse_Fil implements Comportement {
 	}
 	
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException {
+	public void action(Ressource[] resATraiter) throws NegativeArgentException {
+		Ressource[] toSend = new Ressource[niveau.getNiveau()];
+		
 		for(int i = 0; i < this.niveau.getNiveau(); i++) {
-			switch(resATraiter) {
+			switch(resATraiter[i]) {
 			case FER:
 			case OR:
 			case CUIVRE:
 			case ARGENT:
 			case ALUMINIUM:
-				Ressource resTransformée;
-				resTransformée = Ressource.valueOf("FIL_DE_"+resATraiter.toString());
-				controller.getGrilleAppareils(pointer).action(resTransformée);
+				toSend[i] = Ressource.valueOf("FIL_DE_"+resATraiter[i].toString());
+				
 				controller.setArgent(Appareil.getÉlectricité(), false);
 			default:
 				break;
 			}
 		}
+		controller.getGrilleAppareils(pointer).action(toSend);
 
 	}
 

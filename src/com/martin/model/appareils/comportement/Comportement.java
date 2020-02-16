@@ -11,5 +11,5 @@ public interface Comportement {
 	 * @param resATraiter the resource to use by this device
 	 * @throws NegativeArgentException if money reaches 0 or less
 	 */
-	public void action(Ressource resATraiter) throws NegativeArgentException;
+	public void action(Ressource[] resATraiter) throws NegativeArgentException;
 }

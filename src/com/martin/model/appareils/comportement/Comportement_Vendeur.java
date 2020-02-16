@@ -19,10 +19,10 @@ public class Comportement_Vendeur implements Comportement {
 	}
 	
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException{
+	public void action(Ressource[] resATraiter) throws NegativeArgentException{
 		for(int i = 0; i < this.niveau.getNiveau(); i++) {
-			if(!resATraiter.equals(Ressource.NONE))
-				controller.setArgent(resATraiter.getValue()-Appareil.getÉlectricité(), true);
+			if(!resATraiter[i].equals(Ressource.NONE))
+				controller.setArgent(resATraiter[i].getValue()-Appareil.getÉlectricité(), true);
 		}
 	}
 

@@ -32,7 +32,7 @@ public class Appareil_Vendeur extends Appareil {
 		comportement = new Comportement_Vendeur(xy, niveau, direction.getxPlus(), direction.getyPlus(), controller);
 	}
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException {
+	public void action(Ressource[] resATraiter) throws NegativeArgentException {
 		comportement.action(resATraiter);
 	}
 	

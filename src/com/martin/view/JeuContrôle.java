@@ -170,7 +170,8 @@ public class JeuContrôle {
 					Thread.sleep(750);
 					for(int i = 0; i < Appareil_Acheteur.liste.size(); i++){
 						try {
-							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(Ressource.NONE);
+							Ressource[] res = {Ressource.NONE};
+							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(res);
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (NegativeArgentException e) {
 							Platform.runLater(new Runnable() {

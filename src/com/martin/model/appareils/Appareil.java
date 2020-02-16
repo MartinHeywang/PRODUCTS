@@ -47,7 +47,7 @@ public abstract class Appareil extends ImageView{
 	protected Direction pointerExit;
 	protected ArrayList<Direction> pointersEnters;
 	
-	protected Dashboard dashboard;
+	protected Dashboard dashboard = new Dashboard();
 	/**
 	 * @author Martin
 	 * 26 janv. 2020 | 11:30:04
@@ -118,7 +118,7 @@ public abstract class Appareil extends ImageView{
 	 * <p>This method do the action of the device. It calls the defined behaviour.</p>
 	 * @param resATraiter the resource who will be used by this device
 	 */
-	public void action(Ressource resATraiter) throws NegativeArgentException{
+	public void action(Ressource[] resATraiter) throws NegativeArgentException{
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			

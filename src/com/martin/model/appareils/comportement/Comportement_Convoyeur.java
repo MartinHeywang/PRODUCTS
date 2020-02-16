@@ -21,7 +21,7 @@ public class Comportement_Convoyeur implements Comportement {
 	}
 
 	@Override
-	public void action(Ressource resATraiter) throws NegativeArgentException {
+	public void action(Ressource[] resATraiter) throws NegativeArgentException {
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
 			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
 				throw new NegativeArgentException("Le comportement d'un appareil "
