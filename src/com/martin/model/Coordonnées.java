@@ -1,12 +1,19 @@
 package com.martin.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * <h1>class Coordonnées</h1>
  * <p>Object who defines x and y coordinates.<br/>Mainly used by devices.</p>
  *
  */
+@DatabaseTable(tableName = "coordonnées")
 public class Coordonnées {
 	
+	@DatabaseField(generatedId = true, unique = true, columnName = "idCoordonnées")
+	private int idCoordonnées;
+	@DatabaseField
 	private int x, y;
 	
 	/**
@@ -20,6 +27,7 @@ public class Coordonnées {
 		this.x = x;
 		this.y = y;
 	}
+	public Coordonnées() {}
 	
 	/**
 	 * <h1>getX</h1>

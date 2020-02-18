@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.martin.view.Accueil2Contrôle;
@@ -41,31 +40,14 @@ public class Main extends Application {
 	}
 	@Override
 	public void start(Stage primaryStage) {
-		/*
-		 * Le fichier Stats contient des données du jeu qui doivent être accesible 
-		 * partout.
-		 * La méthode initialize charge les données de la base de données pour un accès plus rapide
-		 * et plus clair plus tard dans le programme.*/
-		Stats.initialize();
-		
 		try {
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
 			stage.setResizable(false);
 			stage.getIcons().add(new Image(new FileInputStream(new File("images/Icone.png"))));
-			//On charge le pseudo
-			ResultSet res = Connect_SQLite.getInstance().createStatement().executeQuery(
-					"SELECT pseudo FROM infos;");
-			//Si le pseudo est vide, on demande le pseudo, sinon on passe à l'étape suivante.
-			while(res.next()) {
-				if(res.getString(1) != null) {
-					initAccueil2();
-				}
-				else {
-					initAccueil();
-				}
-			}
-		} catch (SQLException | FileNotFoundException e) {
+			
+			Connect_SQLite.createConnection();
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		stage.show(); //On ouvre la fenêtre/le stage.

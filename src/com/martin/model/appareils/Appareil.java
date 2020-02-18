@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.model.Coordonnées;
@@ -30,11 +32,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 
+@DatabaseTable(tableName = "appareils")
 public abstract class Appareil extends ImageView{
 	
+	@DatabaseField(columnName = "id", generatedId = true)
+	private int idAppareil;
+	
+	@DatabaseField
 	protected TypeAppareil type;
+	@DatabaseField
 	protected Direction direction;
+	@DatabaseField
 	protected NiveauAppareil niveau;
+	@DatabaseField(canBeNull = false, foreign = true, 
+			foreignColumnName = "idCoordonnées", foreignAutoCreate = true)
 	protected Coordonnées xy;
 	
 	protected Comportement comportement = new Comportement_Aucun();
@@ -48,6 +59,8 @@ public abstract class Appareil extends ImageView{
 	protected ArrayList<Direction> pointersEnters;
 	
 	protected Dashboard dashboard = new Dashboard();
+	
+	public Appareil() {}
 	/**
 	 * @author Martin
 	 * 26 janv. 2020 | 11:30:04
@@ -105,9 +118,7 @@ public abstract class Appareil extends ImageView{
 			}
 		});
 		try {
-			Connect_SQLite.getInstance().createStatement()
-			.executeUpdate("UPDATE appareils SET '"+(xy.getX()+1)+"' = "
-					+ "'"+type.toString()+"*"+niveau.toString()+"|"+direction.toString()+"' WHERE id = "+(xy.getY()+1));
+			Connect_SQLite.getAppareilDao().createOrUpdate(this);
 		} catch (SQLException e) {
 			controller.setReport("L'appareil n'a pas pu être enregistré dans la base de données.", Color.DARKRED);
 			
@@ -138,12 +149,11 @@ public abstract class Appareil extends ImageView{
 	*/
 	public void destruction(){
 		try {
-			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils SET '"+(xy.getX()+1)+"' = \"SOL*NIVEAU_1|UP\" WHERE id = "+(xy.getY()+1)+";");
-			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \"NONE\" WHERE id = "+(xy.getY()+1)+";");
-		}catch (SQLException e) {
-			e.printStackTrace();
+			Connect_SQLite.getAppareilDao().updateId(
+					new Appareil_Sol(xy, Direction.UP, NiveauAppareil.NIVEAU_1, controller),
+					idAppareil);
+		}catch (Exception e) {
+			controller.setReport("L'appareil ne s'est pas correctement détruit en base de données", Color.DARKRED);
 		}
 	}
 	
