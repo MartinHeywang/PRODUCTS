@@ -29,7 +29,7 @@
                   <Font name="System Bold" size="60.0" />
                </font>
             </Label>
-            <ImageView fitHeight="125.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" fx:id="image" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <ImageView fx:id="image" fitHeight="125.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <image> 
                   <Image url="@../../../../images/Logo.png" />
                </image>
@@ -52,7 +52,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label id="label" alignment="CENTER" prefHeight="50.0" prefWidth="600.0" text="Pour commencer, entre ton pseudo ci-dessous :" GridPane.columnSpan="5">
+            <Label id="label" alignment="CENTER" prefHeight="50.0" prefWidth="600.0" text="Pour commencer, entre le nom de ta première partie :" GridPane.columnSpan="5">
                <font>
                   <Font name="System Bold" size="23.0" />
                </font>
@@ -62,7 +62,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-            <TextField fx:id="field" promptText="Pseudo" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+            <TextField fx:id="field" promptText="Entre-le ici !" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </bottom>

@@ -1,7 +1,3 @@
-.label{
-	-fx-text-fill: white;
-}
-
 .text-field{
 	-fx-border-color: darkgreen;
 	-fx-border-width: 3px;
@@ -24,4 +20,5 @@
 *{
 	-fx-font-weight: bold;
 	-fx-background-color: #242729;
+	-fx-text-fill: white;
 }

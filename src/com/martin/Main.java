@@ -29,28 +29,36 @@ public class Main extends Application {
 	public static Stage stage;  //La fenêtre
 	
 	public static void main(String[] args) {
-		/*
-		 * La ligne ci-dessous éxécute quelques paramètres systèmes puis 
-		 * lance la méthode start juste en-dessous.
-		 * Elle se charge de faire le setup du programme pour tout poser sur de 
-		 * bonnes bases.
-		*/
-		
 		launch(args);
+	
 	}
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			//Définition principale du stage
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
 			stage.setResizable(false);
 			stage.getIcons().add(new Image(new FileInputStream(new File("images/Icone.png"))));
 			
-			Connect_SQLite.createConnection();
+			//Tests pour savoir si des parties sont disponibles
+			if(Connect_SQLite.getPartieDao().queryForAll().size() == 0) {
+				//Si il n'y en a pas, alors on dirige l'utilisateur de création de partie
+				initAccueil();
+			}
+			else {
+				//Sinon, on le dirige vers la sélection de partie
+				initAccueil2();
+			}
 		} catch (FileNotFoundException e) {
+			System.err.println("Petit problème... L'icône n'a pas pu être chargé correctement.");
+		} catch (SQLException e) {
+			System.err.println("Petit problème... La connexion à la base de données a échoué.");
 			e.printStackTrace();
+			
 		}
-		stage.show(); //On ouvre la fenêtre/le stage.
+		stage.show(); //Et on oublit pas d'afficher la fenêtre
 	}
 	
 	/**
@@ -58,7 +66,6 @@ public class Main extends Application {
 	 * <p>Initialize the stage with the view Accueil.fxml, who corresponds to a the first start page 
 	 * (when no login is registered).</p>
 	 * 
-	 * @see src/com/martin/view/Accueil.fxml
 	 */
 	public void initAccueil() {
 		FXMLLoader loader = new FXMLLoader();	//Permet de charger des fichier .fxml
@@ -120,7 +127,7 @@ public class Main extends Application {
 	 * <p>Initialize the stage with the view Jeu.fxml, who loads all the images and resources to do this game
 	 * functionnal.</p>
 	 */
-	public void initGame() {
+	public void initGame(Partie partie) {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader();
@@ -133,7 +140,7 @@ public class Main extends Application {
 			stage.setResizable(true);
 			
 			JeuContrôle controler = loader.getController();
-			controler.setMainApp(this);
+			controler.setMainApp(this, partie);
 			
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 

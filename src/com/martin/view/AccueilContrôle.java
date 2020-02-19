@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
+import com.martin.Partie;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -22,18 +22,6 @@ public class AccueilContrôle {
 	Main main;
 	
 	/**
-	 * <h1>initialize</h1>
-	 * <p>Initialize the start stage, who asks for a login. Called automatically as a constructor.</p>
-	 */
-	public void initialize() {
-		try {
-			image.setImage(new Image(new FileInputStream(new File("images/Logo.png"))));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
 	 * <h1>seConnecter</h1>
 	 * <p>Launches the real game and registers the login in the database</p>	 
 	 * */
@@ -41,22 +29,27 @@ public class AccueilContrôle {
 	public void seConnecter() {
 		if(!field.getText().isEmpty()){
 			try {
-				Statement state = Connect_SQLite.getInstance().createStatement();
-				state.executeUpdate("UPDATE infos SET pseudo = '"+field.getText()+"';");
-			} catch (SQLException e) {
-				e.printStackTrace();
+				Partie partie = new Partie(field.getText());
+				Connect_SQLite.getPartieDao().create(partie);
+				main.initGame(partie);
+			}catch(SQLException e) {
+				System.out.println("La partie n'a pas pu être enregistrée.");
 			}
-			main.initGame();
 		}
 	}
 
 	/**
 	 * <h1>setMainApp</h1>
-	 * <p>Sets the object main.</p>
+	 * <p>Sets the object main and initialize the data in the widgets.</p>
 	 * @param main the object to set
 	 */
 	public void setMainApp(Main main) {
 		this.main = main;
+		try {
+			image.setImage(new Image(new FileInputStream(new File("images/Logo.png"))));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

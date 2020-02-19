@@ -13,7 +13,7 @@ public class Coordonnées {
 	
 	@DatabaseField(generatedId = true, unique = true, columnName = "idCoordonnées")
 	private int idCoordonnées;
-	@DatabaseField
+	@DatabaseField(uniqueCombo = true)
 	private int x, y;
 	
 	/**

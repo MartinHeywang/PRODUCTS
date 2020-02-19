@@ -1,9 +1,10 @@
 package com.martin.view;
 
-import java.sql.SQLException;
+import java.util.List;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
+import com.martin.Partie;
 import com.martin.Stats;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
@@ -18,17 +19,11 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -48,15 +43,12 @@ public class JeuContrôle {
 	
 	//---Variables ci-dessous à revoir, modifiers et déclaration.
 	private Appareil[][] appareil = new Appareil[20][20];
-	private SimpleLongProperty argent;
-	private static StringProperty reportProperty = new SimpleStringProperty("");
+	private StringProperty reportProperty = new SimpleStringProperty();
 	private Thread t;
 	
-	private int tailleGrille = 5;
+	private Partie partieEnCours;
 	
-	/*Quelques erreurs là-dedans, ne faire que quand les appareils seront complets 
-	 (tous les classes filles comprises)
-	 */
+	
 	public void initialize() {
 		for(int i = 0; i < TypeAppareil.values().length; i++) {
 			try {
@@ -66,70 +58,27 @@ public class JeuContrôle {
 			}
 		}
 		
-		try {
-			argent = new SimpleLongProperty(		//Set l'argent sur la somme précédemment enregistrée
-					Connect_SQLite.getInstance()
-						.createStatement()
-						.executeQuery("SELECT argent FROM infos").getInt(1));
-		} catch (SQLException e) {
-			e.printStackTrace();
+		
+	}
+	public void setMainApp(Main main, Partie partieToLoad) {
+		this.main = main;
+		this.partieEnCours = partieToLoad;
+		
+		argentLabel.setText(String.valueOf(partieToLoad.getArgent()));
+		
+		List<Appareil> listeAppareils = 
+				Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie", partieToLoad).query();
+		
+		for(Appareil appareil : listeAppareils) {
+			final int x = appareil.getXy().getX();
+			final int y = appareil.getXy().getY();
+			this.appareil[x][y] = appareil.getType().getClasse().getConstructor(Coordonnées.class,
+					Direction.class, NiveauAppareil.class, JeuContrôle.class, Partie.class)
+					.newInstance(new Coordonnées(x, y), appareil.getDirection(), appareil.getNiveau(), this);
+			this.grille.add(this.appareil[x][y], x, y);
 		}
 		
-		for(int x = 0; x < tailleGrille; x++) {
-			grille.getColumnConstraints().add(new ColumnConstraints(96));
-			grille.getRowConstraints().add(new RowConstraints(96));
-			for(int y = 0; y < tailleGrille; y++) {
-				try {
-					
-					String general = getTexte(x, y);
-					String niveau = "", type = "", rotation = "";
-					int tempoIndex = 0;
-					for(int i = 0; i < general.length(); i++) {
-						
-						if(general.substring(i, i+1).equals("*")) {
-							
-							type = general.substring(0, i);
-							tempoIndex = i;
-						}
-						
-						else if(general.substring(i, i+1).equals("|")) {
-							
-							niveau = general.substring(tempoIndex+1, i);
-							tempoIndex = i;
-						}
-					}
-					rotation = general.substring(tempoIndex+1);
-					
-					TypeAppareil type2 = TypeAppareil.valueOf(type);
-					Direction direction2 = Direction.valueOf(rotation);
-					NiveauAppareil niveau2 = NiveauAppareil.valueOf(niveau);
-					
-					this.appareil[x][y] = type2.getClasse().getConstructor(Coordonnées.class,
-							Direction.class, NiveauAppareil.class, JeuContrôle.class)
-							.newInstance(new Coordonnées(x, y), direction2, niveau2, this);
-					this.grille.add(this.appareil[x][y], x, y);
-				} catch (Exception e) {
-					e.printStackTrace();
-					setReport(e.getMessage(), Color.DARKRED);
-				}
-			}
-		}
 		grille.setFocusTraversable(true);
-		grille.setOnKeyPressed(new EventHandler<KeyEvent>(){
-
-			@Override
-			public void handle(KeyEvent arg0) {
-				if(arg0.getCode() == KeyCode.M)
-					try {
-						setArgent(1_000_000_000, true);
-					} catch (NegativeArgentException e) {
-						System.out.println(e.getLocalizedMessage());
-						
-					}
-				
-			}
-			
-		});
 		argentLabel.setText(String.valueOf(argent.get())+" €");
 		
 		t = new Thread(new Play());
@@ -139,23 +88,6 @@ public class JeuContrôle {
 		report.setVisible(false);
 		report.setTooltip(new Tooltip("Cliquez pour fermer..."));
 		
-		report.setOnMouseClicked(new EventHandler<MouseEvent>(){
-
-			@Override
-			public void handle(MouseEvent arg0) {
-				report.setVisible(false);
-			}
-			
-		});
-		
-	}
-	//Tirait la case de texte demandée.
-	private String getTexte(int x, int y) throws SQLException {
-		return Connect_SQLite.getInstance().createStatement().executeQuery("SELECT * FROM appareils WHERE id = "+(y+1)+";").getString(""+(x+1)+"");
-	}
-	//A déplacer : sert à définir sur quelle instance de main on se base pour changer les fenêtres.
-	public void setMainApp(Main main) {
-		this.main = main;
 	}
 	/*La définition du Thread à refaire : 
 	 * J'ai pensé faire un système de liste de chose à faire via une liste publique et statique

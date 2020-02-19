@@ -9,6 +9,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martin.Connect_SQLite;
 import com.martin.Main;
+import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.LocatedImage;
 import com.martin.model.Ressource;
@@ -35,8 +36,12 @@ import javafx.stage.Modality;
 @DatabaseTable(tableName = "appareils")
 public abstract class Appareil extends ImageView{
 	
-	@DatabaseField(columnName = "id", generatedId = true)
-	private int idAppareil;
+	@DatabaseField(columnName = "id", generatedId = true, unique = true)
+	protected int idAppareil;
+	
+	@DatabaseField(canBeNull = false, foreign = true, 
+			foreignColumnName = "idPartie", foreignAutoCreate = true, uniqueCombo = true)
+	protected Partie partie;
 	
 	@DatabaseField
 	protected TypeAppareil type;
@@ -45,7 +50,7 @@ public abstract class Appareil extends ImageView{
 	@DatabaseField
 	protected NiveauAppareil niveau;
 	@DatabaseField(canBeNull = false, foreign = true, 
-			foreignColumnName = "idCoordonnées", foreignAutoCreate = true)
+			foreignColumnName = "idCoordonnées", foreignAutoCreate = true, uniqueCombo = true)
 	protected Coordonnées xy;
 	
 	protected Comportement comportement = new Comportement_Aucun();
@@ -77,7 +82,7 @@ public abstract class Appareil extends ImageView{
 	 * 
 	*/
 	protected Appareil(Coordonnées xy, TypeAppareil type, Direction direction, NiveauAppareil niveau,
-			JeuContrôle controller) throws FileNotFoundException {
+			JeuContrôle controller, Partie partie) throws FileNotFoundException {
 		super(new LocatedImage(niveau.getURL()+type.getURL()));
 		
 		this.xy = xy;
@@ -85,6 +90,7 @@ public abstract class Appareil extends ImageView{
 		this.direction = direction;
 		this.niveau = niveau;
 		this.controller = controller;
+		this.partie = partie;
 		
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
