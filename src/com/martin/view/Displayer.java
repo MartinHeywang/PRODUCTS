@@ -3,6 +3,7 @@ package com.martin.view;
 import java.io.File;
 import java.io.FileInputStream;
 
+import com.martin.Partie;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.TypeAppareil;
 
@@ -25,6 +26,7 @@ public class Displayer extends BorderPane {
 	
 	private Ressource ressource;
 	private TypeAppareil typeAppareil;
+	private Partie partie;
 	
 	/**
 	 * <h1>Displayer</h1>
@@ -119,41 +121,81 @@ public class Displayer extends BorderPane {
 			}
 		});
 	}
+	/**
+	 * <h1>Displayer</h1>
+	 * <p>Creat an object who displays the object in parameter</p>
+	 * @param appareil the object to display
+	 */
+	public Displayer(Partie partie){
+		try {
+			this.partie = partie;
+			
+			nom = new Label();
+			nom.setUnderline(true);
+			nom.setAlignment(Pos.TOP_CENTER);
+			nom.setText(partie.getNom());
+			nom.setWrapText(true);
+			this.setTop(nom);
+			
+			infos = new Label();
+			infos.setText("Dernière sauvegarde : "+partie.getLastView().toLocalDate().toString()
+					+"  "+partie.getLastView().toLocalTime().toString()+"\nArgent en compte : "
+					+partie.getArgent()+" €");
+			this.setLeft(infos);
+			
+			this.setPadding(new Insets(3, 3, 3, 3));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				final String style = "-fx-background-color: #3b4044;";
+				
+				((Displayer) e.getSource()).setStyle(style);
+				nom.setStyle(style);
+				infos.setStyle(style);
+				
+			}
+		});
+		this.setOnMouseExited(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				final String style = "-fx-background-color: #242729;";
+				
+				((Displayer) e.getSource()).setStyle(style);
+				nom.setStyle(style);
+				infos.setStyle(style);
+				
+			}
+		});
+	}
 	
 	/**
-	 * <h1>getNom</h1>
-	 * @return nom the label who displays the name
-	 */
-	public Label getNom() {
-		return nom;
-	}
-	/**
-	 * <h1>getImage</h1>
-	 * @return image the imageview who displays the preview
-	 */
-	public ImageView getImage() {
-		return image;
-	}
-	/**
-	 * <h1>getInfos</h1>
-	 * @return infos the label who displays the others informations.
-	 */
-	public Label getInfos() {
-		return infos;
-	}
-	
-	/**
-	 * <p>Warning : may return null if the displayed object isn't a Ressource</p>
 	 * @return ressource the displayed resources
+	 * @throws NullPointerException if the property Ressource is null (this object wasn't created from a Ressource)
 	 */
-	public Ressource getRessource() {
+	public Ressource getRessource() throws NullPointerException{
 		return ressource;
 	}
 	/**
-	 * <p>Warning : may return null if the displayed object isn't a TypeAppareil</p>
 	 * @return typeAppareil the displayed device
+	 * @throws NullPointerException if the property TypeAppareil is null 
+	 * (this object wasn't created from a TypeAppareil)
 	 */
-	public TypeAppareil getTypeAppareil() {
+	public TypeAppareil getTypeAppareil() throws NullPointerException{
 		return typeAppareil;
+	}
+	/**
+	 * @return partie the displayed game
+	 * @throws NullPointerException if the property Partie is null 
+	 * (this object wasn't created from a Partie)
+	 */
+	public Partie getPartie() throws NullPointerException{
+		return partie;
 	}
 }

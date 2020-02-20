@@ -126,8 +126,9 @@ public class Main extends Application {
 	 * <h1>initGame</h1>
 	 * <p>Initialize the stage with the view Jeu.fxml, who loads all the images and resources to do this game
 	 * functionnal.</p>
+	 * @throws Exception 
 	 */
-	public void initGame(Partie partie) {
+	public void initGame(Partie partie) throws Exception {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader();
@@ -153,14 +154,14 @@ public class Main extends Application {
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setHeaderText("Petit problème... Nous n'avons pas pu sauvegarder vos données !");
 						alert.setContentText("Vous avez peut-être supprimer le fichier de données ! \n"
-								+ "Je vous conseille de réinstaller le jeu, même si vos données seront perdu à jamais !!");
+								+ "Je vous conseille de réinstaller le jeu, même si vos données seront perdues à jamais !!");
 						alert.initOwner(stage);
 						alert.show();
 					}
 				}
 			});
 		} catch (IOException e) {
-			System.out.println("ERREUR dans Main dans la méthode " + "initGame. Raison :\n" + e.getLocalizedMessage());
+			System.err.println("ERREUR dans Main dans la méthode " + "initGame. Raison :\n" + e.getLocalizedMessage());
 		}
 	}
 

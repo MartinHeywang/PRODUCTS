@@ -2,7 +2,6 @@ package com.martin;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -15,7 +14,7 @@ import com.martin.model.appareils.Appareil;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
-public class Connect_SQLite{
+public class Connect_SQLite {
 	private static final String DATABASE_URL = "jdbc:sqlite:PRODUCTS.db";
 	private static final String DATABASE_DRIVER = "org.sqlite.JDBC";
 	private static ConnectionSource connect;
@@ -26,20 +25,10 @@ public class Connect_SQLite{
 			DriverManager.getConnection(DATABASE_URL);
 			connect = new JdbcConnectionSource(DATABASE_URL);
 			
-			List<Appareil> appareil = DaoManager.createDao(connect, Appareil.class);
-			List<Coordonnées> coordonnées = DaoManager.createDao(connect, Coordonnées.class);
-			List<Partie> partie = DaoManager.createDao(connect, Partie.class);
-			
-			TableUtils.dropTable(connect, Appareil.class, true);
-			TableUtils.dropTable(connect, Coordonnées.class, true);
-			TableUtils.dropTable(connect, Partie.class, true);
-			
 			TableUtils.createTableIfNotExists(connect, Appareil.class);
-			DaoManager.createDao(connect, Appareil.class).create(appareil);
 			TableUtils.createTableIfNotExists(connect, Coordonnées.class);
-			DaoManager.createDao(connect, Coordonnées.class).create(coordonnées);
 			TableUtils.createTableIfNotExists(connect, Partie.class);
-			DaoManager.createDao(connect, Partie.class).create(partie);
+			
 			
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();

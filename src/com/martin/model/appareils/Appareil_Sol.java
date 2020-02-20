@@ -3,6 +3,7 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 
 import com.martin.Main;
+import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Aucun;
@@ -25,9 +26,9 @@ public class Appareil_Sol extends Appareil {
 	
 	private static SimpleIntegerProperty prix;
 	
-	public Appareil_Sol(Coordonnées xy, Direction direction, NiveauAppareil niveau, JeuContrôle controller) 
+	public Appareil_Sol(Coordonnées xy, Direction direction, NiveauAppareil niveau, JeuContrôle controller, Partie partie) 
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.SOL, direction, niveau, controller);
+		super(xy, TypeAppareil.SOL, direction, niveau, controller, partie);
 		
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -78,7 +79,7 @@ public class Appareil_Sol extends Appareil {
 	public void checkRotation(String rotate) {
 	}
 	@Override
-	public void action(Ressource resATraiter) {}
+	public void action(Ressource[] resATraiter) {}
 	@Override
 	public void destruction() {}
 	

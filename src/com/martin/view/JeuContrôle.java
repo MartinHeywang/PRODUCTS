@@ -10,13 +10,12 @@ import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
+import com.martin.model.appareils.Appareil_Sol;
 import com.martin.model.appareils.Direction;
 import com.martin.model.appareils.NiveauAppareil;
-import com.martin.model.appareils.TypeAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -49,37 +48,33 @@ public class JeuContrôle {
 	private Partie partieEnCours;
 	
 	
-	public void initialize() {
-		for(int i = 0; i < TypeAppareil.values().length; i++) {
-			try {
-				TypeAppareil.values()[i].getClasse().getMethod("initializeData").invoke(null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		
-	}
-	public void setMainApp(Main main, Partie partieToLoad) {
+	public void initialize() {}
+	public void setMainApp(Main main, Partie partieToLoad) throws Exception {
 		this.main = main;
 		this.partieEnCours = partieToLoad;
 		
 		argentLabel.setText(String.valueOf(partieToLoad.getArgent()));
 		
 		List<Appareil> listeAppareils = 
-				Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie", partieToLoad).query();
+				Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", partieToLoad).query();
 		
 		for(Appareil appareil : listeAppareils) {
 			final int x = appareil.getXy().getX();
 			final int y = appareil.getXy().getY();
-			this.appareil[x][y] = appareil.getType().getClasse().getConstructor(Coordonnées.class,
-					Direction.class, NiveauAppareil.class, JeuContrôle.class, Partie.class)
-					.newInstance(new Coordonnées(x, y), appareil.getDirection(), appareil.getNiveau(), this);
+			this.appareil[x][y] = Appareil.getInstance(appareil);
 			this.grille.add(this.appareil[x][y], x, y);
+		}
+		for(int x = 0; x < partieToLoad.getTailleGrille(); x++) {
+			for(int y = 0; y < partieToLoad.getTailleGrille(); y++) {
+				if(this.appareil[x][y] == null) {
+					setAppareil(new Coordonnées(x, y), new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
+							NiveauAppareil.NIVEAU_1, this, partieToLoad), true);
+				}
+			}
 		}
 		
 		grille.setFocusTraversable(true);
-		argentLabel.setText(String.valueOf(argent.get())+" €");
+		argentLabel.setText(String.valueOf(partieToLoad.getArgent())+" €");
 		
 		t = new Thread(new Play());
 		t.start();
@@ -173,14 +168,14 @@ public class JeuContrôle {
 	/**
 	 * @return the argent property
 	 */
-	public SimpleLongProperty getArgentProperty() {
-		return argent;
+	public long getArgent() {
+		return partieEnCours.getArgent();
 	}
 	/**
 	 * @return la taille de la grille
 	 */
 	public int getTailleGrille() {
-		return tailleGrille;
+		return partieEnCours.getTailleGrille();
 	}
 	
 	/**
@@ -195,12 +190,14 @@ public class JeuContrôle {
 	 * @param appareil l'appareil qui remplace
 	 * 
 	*/
-	public void setAppareil(Coordonnées xy, Appareil appareil) {
+	public void setAppareil(Coordonnées xy, Appareil appareil, boolean ignoreCost) {
 		try {
-			setArgent(((int) appareil.getType().getClasse().getMethod("getPrix").invoke(null))
-					, false);
+			if(!ignoreCost)
+				setArgent(((int) appareil.getType().getClasse().getMethod("getPrix").invoke(null))
+						, false);
 			this.appareil[xy.getX()][xy.getY()] = appareil;
 			grille.add(this.appareil[xy.getX()][xy.getY()], xy.getX(), xy.getY());
+			Connect_SQLite.getAppareilDao().createOrUpdate(appareil);
 		} catch (NegativeArgentException e) {
 			setReport(e.getMessage(), Color.DARKRED);
 		} catch(Exception e){
@@ -224,10 +221,10 @@ public class JeuContrôle {
 	 */
 	public void setArgent(long somme, boolean increase) throws NegativeArgentException{
 		if(increase)
-			argent.set(argent.get()+somme);
+			partieEnCours.setArgent(partieEnCours.getArgent()+somme);
 		else {
-			if(argent.get() >= somme)
-				argent.set(argent.get()-somme);
+			if(partieEnCours.getArgent() >= somme)
+				partieEnCours.setArgent(partieEnCours.getArgent()-somme);
 			else {
 				throw new NegativeArgentException();
 			}
@@ -236,7 +233,7 @@ public class JeuContrôle {
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run(){
-				argentLabel.setText(String.valueOf(argent.get())+" €");
+				argentLabel.setText(String.valueOf(partieEnCours.getArgent()+" €"));
 			}
 		});
 	}

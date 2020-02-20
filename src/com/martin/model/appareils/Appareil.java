@@ -34,7 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 
 @DatabaseTable(tableName = "appareils")
-public abstract class Appareil extends ImageView{
+public class Appareil extends ImageView{
 	
 	@DatabaseField(columnName = "id", generatedId = true, unique = true)
 	protected int idAppareil;
@@ -52,6 +52,11 @@ public abstract class Appareil extends ImageView{
 	@DatabaseField(canBeNull = false, foreign = true, 
 			foreignColumnName = "idCoordonnées", foreignAutoCreate = true, uniqueCombo = true)
 	protected Coordonnées xy;
+	
+	@DatabaseField(columnName = "Stock 1")
+	protected Ressource stock1;
+	@DatabaseField(columnName = "Stock 2")
+	protected Ressource stock2;
 	
 	protected Comportement comportement = new Comportement_Aucun();
 	protected Sorties sorties = new Sorties_Aucune();
@@ -156,13 +161,19 @@ public abstract class Appareil extends ImageView{
 	public void destruction(){
 		try {
 			Connect_SQLite.getAppareilDao().updateId(
-					new Appareil_Sol(xy, Direction.UP, NiveauAppareil.NIVEAU_1, controller),
+					new Appareil_Sol(xy, Direction.UP, NiveauAppareil.NIVEAU_1, controller, partie),
 					idAppareil);
 		}catch (Exception e) {
 			controller.setReport("L'appareil ne s'est pas correctement détruit en base de données", Color.DARKRED);
 		}
 	}
 	
+	public static Appareil getInstance(Appareil appareil) throws Exception {
+		return appareil.getType().getClasse().getConstructor(Coordonnées.class, Direction.class, 
+				NiveauAppareil.class, JeuContrôle.class, Partie.class).newInstance(appareil.getXy(), 
+						appareil.getDirection(), appareil.getNiveau(), appareil.getController(), 
+						appareil.getPartie());
+	}
 	//GETTERS, THEN SETTERS
 	/**
 	 * @return the type
@@ -231,6 +242,9 @@ public abstract class Appareil extends ImageView{
 	 */
 	public static int getÉlectricité() {
 		return électricité;
+	}
+	public Partie getPartie() {
+		return partie;
 	}
 	/**
 	 * @param type the type to set

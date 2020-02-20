@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.j256.ormlite.field.DatabaseField;
 import com.martin.Connect_SQLite;
+import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Acheteur;
@@ -13,19 +15,21 @@ import com.martin.model.appareils.orientation.Sorties_Center;
 import com.martin.view.JeuContrôle;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.paint.Color;
 
 public class Appareil_Acheteur extends Appareil {
 	
 	//La ressource distribuée par l'acheteur
+	@DatabaseField(columnName = "Stock 1")
 	Ressource resDistribuée = Ressource.NONE;
 	
 	private static SimpleIntegerProperty prix;
 	public static ArrayList<Coordonnées> liste = new ArrayList<Coordonnées>();
 	
 	public Appareil_Acheteur(Coordonnées xy, Direction direction, NiveauAppareil niveau,  
-			JeuContrôle controller) throws FileNotFoundException {
+			JeuContrôle controller, Partie partie) throws FileNotFoundException {
 		
-		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
+		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller, partie);
 		liste.add(xy);
 		
 		entrées = new Entrées_Aucune();
@@ -38,12 +42,9 @@ public class Appareil_Acheteur extends Appareil {
 	@Override 
 	public void destruction() {
 		try {
-			Connect_SQLite.getInstance().createStatement().executeUpdate(
-					"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = 'NONE' WHERE id = '"+(
-							xy.getY()+1)+"';");
+			Connect_SQLite.getAppareilDao().delete(this);
 		} catch (Exception e) {
-			System.out.println("ERREUR dans Appareil_Acheteur dans la méthode " + "destruction. Raison :\n"
-					+ e.getLocalizedMessage());
+			controller.setReport("L'appareil n'a pas été détruit correctement.", Color.DARKRED);
 		}
 	}
 	//Retourne la ressource distribuée
@@ -56,9 +57,7 @@ public class Appareil_Acheteur extends Appareil {
 		this.resDistribuée = res;
 		
 		((Appareil_Acheteur) comportement).setRessourceDistribuée(resDistribuée);
-		Connect_SQLite.getInstance().createStatement().executeUpdate(
-				"UPDATE appareils_infos SET '"+(xy.getX()+1)+"' = \""+res.toString()+"\" "
-						+ "WHERE id = "+(xy.getY()+1)+";");
+		Connect_SQLite.getAppareilDao().update(this);
 	}
 	
 	public static void initializeData() {

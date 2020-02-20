@@ -3,9 +3,7 @@ package com.martin.view;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 
-import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.Partie;
 
@@ -30,10 +28,9 @@ public class AccueilContrôle {
 		if(!field.getText().isEmpty()){
 			try {
 				Partie partie = new Partie(field.getText());
-				Connect_SQLite.getPartieDao().create(partie);
 				main.initGame(partie);
-			}catch(SQLException e) {
-				System.out.println("La partie n'a pas pu être enregistrée.");
+			}catch(Exception e) {
+				System.err.println("La partie n'a pas pu être enregistrée.");
 			}
 		}
 	}
