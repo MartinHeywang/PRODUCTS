@@ -2,7 +2,6 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -36,11 +35,11 @@ import javafx.stage.Modality;
 @DatabaseTable(tableName = "appareils")
 public class Appareil extends ImageView{
 	
-	@DatabaseField(columnName = "id", generatedId = true, unique = true)
+	@DatabaseField(generatedId = true, canBeNull = false, unique = true)
 	protected int idAppareil;
 	
-	@DatabaseField(canBeNull = false, foreign = true, 
-			foreignColumnName = "idPartie", foreignAutoCreate = true, uniqueCombo = true)
+	@DatabaseField(foreign = true, foreignAutoCreate = true, 
+			foreignColumnName = "idPartie", uniqueCombo = true)
 	protected Partie partie;
 	
 	@DatabaseField
@@ -49,8 +48,8 @@ public class Appareil extends ImageView{
 	protected Direction direction;
 	@DatabaseField
 	protected NiveauAppareil niveau;
-	@DatabaseField(canBeNull = false, foreign = true, 
-			foreignColumnName = "idCoordonnées", foreignAutoCreate = true, uniqueCombo = true)
+	@DatabaseField(foreign = true, foreignAutoCreate = true, 
+			foreignColumnName = "idCoordonnées", uniqueCombo = true)
 	protected Coordonnées xy;
 	
 	@DatabaseField(columnName = "Stock 1")
@@ -128,12 +127,6 @@ public class Appareil extends ImageView{
 				}
 			}
 		});
-		try {
-			Connect_SQLite.getAppareilDao().createOrUpdate(this);
-		} catch (SQLException e) {
-			controller.setReport("L'appareil n'a pas pu être enregistré dans la base de données.", Color.DARKRED);
-			
-		}
 	}
 	/**
 	 * <h1>action</h1>
@@ -175,6 +168,9 @@ public class Appareil extends ImageView{
 						appareil.getPartie());
 	}
 	//GETTERS, THEN SETTERS
+	public int getID() {
+		return idAppareil;
+	}
 	/**
 	 * @return the type
 	 */
@@ -243,8 +239,25 @@ public class Appareil extends ImageView{
 	public static int getÉlectricité() {
 		return électricité;
 	}
+	/**
+	 * 
+	 * @return partie the partie property
+	 */
 	public Partie getPartie() {
 		return partie;
+	}
+	/**
+	 * @return stock1 the memory case 1 of the device
+	 */
+	public Ressource getStock1() {
+		return stock1;
+	}
+	/**
+	 * 
+	 * @return stock2 the memory case 2 of the device
+	 */
+	public Ressource getStock2() {
+		return stock2;
 	}
 	/**
 	 * @param type the type to set

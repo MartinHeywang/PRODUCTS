@@ -137,6 +137,7 @@ public class Displayer extends BorderPane {
 			nom.setWrapText(true);
 			this.setTop(nom);
 			
+			
 			infos = new Label();
 			infos.setText("Dernière sauvegarde : "+partie.getLastView().toLocalDate().toString()
 					+"  "+partie.getLastView().toLocalTime().toString()+"\nArgent en compte : "

@@ -56,13 +56,10 @@ public class JeuContrôle {
 		argentLabel.setText(String.valueOf(partieToLoad.getArgent()));
 		
 		List<Appareil> listeAppareils = 
-				Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", partieToLoad).query();
+				Connect_SQLite.getAppareilDao().queryForEq("partie_idPartie", partieToLoad.getID());
 		
 		for(Appareil appareil : listeAppareils) {
-			final int x = appareil.getXy().getX();
-			final int y = appareil.getXy().getY();
-			this.appareil[x][y] = Appareil.getInstance(appareil);
-			this.grille.add(this.appareil[x][y], x, y);
+			setAppareil(appareil.getXy(), Appareil.getInstance(appareil), true);
 		}
 		for(int x = 0; x < partieToLoad.getTailleGrille(); x++) {
 			for(int y = 0; y < partieToLoad.getTailleGrille(); y++) {

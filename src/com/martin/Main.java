@@ -14,8 +14,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -58,6 +56,12 @@ public class Main extends Application {
 			e.printStackTrace();
 			
 		}
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent e) {
+				System.exit(0);
+			}
+		});
 		stage.show(); //Et on oublit pas d'afficher la fenêtre
 	}
 	
@@ -142,24 +146,6 @@ public class Main extends Application {
 			
 			JeuContrôle controler = loader.getController();
 			controler.setMainApp(this, partie);
-			
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent event) {
-					try {
-							Stats.sauvegarder();
-							System.exit(0);
-					}catch(SQLException e) {
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setHeaderText("Petit problème... Nous n'avons pas pu sauvegarder vos données !");
-						alert.setContentText("Vous avez peut-être supprimer le fichier de données ! \n"
-								+ "Je vous conseille de réinstaller le jeu, même si vos données seront perdues à jamais !!");
-						alert.initOwner(stage);
-						alert.show();
-					}
-				}
-			});
 		} catch (IOException e) {
 			System.err.println("ERREUR dans Main dans la méthode " + "initGame. Raison :\n" + e.getLocalizedMessage());
 		}

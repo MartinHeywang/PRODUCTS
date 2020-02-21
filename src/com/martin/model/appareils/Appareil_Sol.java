@@ -57,7 +57,7 @@ public class Appareil_Sol extends Appareil {
 								Coordonnées.class, Direction.class, NiveauAppareil.class,  
 								JeuContrôle.class).newInstance(
 										new Coordonnées(xy.getX(), xy.getY()), 
-										Direction.UP, NiveauAppareil.NIVEAU_1, controller));
+										Direction.UP, NiveauAppareil.NIVEAU_1, controller), false);
 					}
 				}catch (Exception e) {
 					controller.setReport("ERREUR dans Appareil_Sol.Appareil_Sol(...).new EventHandler() {...} dans la méthode "

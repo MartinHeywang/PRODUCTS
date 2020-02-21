@@ -6,51 +6,68 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@Accueils.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martin.view.Accueil2Contrôle">
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS" HBox.hgrow="SOMETIMES">
+               <content>
+                  <VBox fx:id="listePartie" maxWidth="1.7976931348623157E308" spacing="2.0" style="-fx-border-color: white;">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sélectionnez une partie..." VBox.vgrow="NEVER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </content>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </ScrollPane>
+            <BorderPane maxWidth="1.7976931348623157E308" style="-fx-border-color: gray;" HBox.hgrow="NEVER">
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+               <center>
+                  <TextField fx:id="field" focusTraversable="false" promptText="Nom de la nouvelle partie" BorderPane.alignment="CENTER" />
+               </center>
+               <top>
+                  <Label alignment="CENTER" text="...Ou créez-en une nouvelle !" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </top>
+               <bottom>
+                  <Button mnemonicParsing="false" onMouseClicked="#nouvelle" text="Créer" BorderPane.alignment="CENTER" />
+               </bottom>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </BorderPane>
+         </children>
+      </HBox>
+   </center>
    <top>
-      <Label text="PRODUCTS." BorderPane.alignment="CENTER">
-         <font>
-            <Font name="System Bold" size="60.0" />
-         </font>
-      </Label>
+      <VBox maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="PRODUCTS.">
+               <font>
+                  <Font name="System Bold" size="60.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Content de vous revoir, gérant(e) ! Que voulez-vous faire ?">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
    </top>
-   <bottom>
-      <Label text="En attente d'une sélection de partie..." BorderPane.alignment="CENTER">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-   </bottom>
-   <right>
-      <BorderPane maxWidth="1.7976931348623157E308" style="-fx-border-color: gray;" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-         </padding>
-         <center>
-            <TextField fx:id="field" focusTraversable="false" promptText="Nom de la nouvelle partie" BorderPane.alignment="CENTER" />
-         </center>
-         <top>
-            <Label text="Pour créer une nouvelle partie, c'est par ici !!" wrapText="true" BorderPane.alignment="CENTER" />
-         </top>
-         <bottom>
-            <Button mnemonicParsing="false" onMouseClicked="#nouvelle" text="Créer" BorderPane.alignment="CENTER" />
-         </bottom>
-      </BorderPane>
-   </right>
-   <left>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </BorderPane.margin>
-         <content>
-            <VBox fx:id="listePartie" maxWidth="1.7976931348623157E308" spacing="2.0" style="-fx-border-color: white;" />
-         </content>
-      </ScrollPane>
-   </left>
 </BorderPane>

@@ -21,16 +21,13 @@ public class Comportement_Acheteur implements Comportement {
 	private Ressource[] resDistribuée = {Ressource.NONE};
 	
 	public Comportement_Acheteur(Coordonnées xy, NiveauAppareil niveau, 
-			int xToAdd, int yToAdd, JeuContrôle controller){
+			int xToAdd, int yToAdd, JeuContrôle controller, int idAppareil){
 		this.niveau = niveau;
 		this.controller = controller;
 		this.pointer = new Coordonnées(xy.getX()+xToAdd, xy.getY()+yToAdd);
 		
 		try {
-			resDistribuée[0] = Ressource.valueOf(Connect_SQLite.getInstance().prepareStatement(
-					"SELECT * FROM appareils_infos WHERE id = "+(xy.getX()+1)+";").executeQuery()
-					.getString(""+(xy.getY()+1)+""));
-			resDistribuée[0] = Ressource.FER;
+			resDistribuée[0] = Connect_SQLite.getAppareilDao().queryForId(idAppareil).getStock1();
 		} catch (SQLException e) {
 			controller.setReport("Attention : un acheteur n'a pas pu charger la ressource qu'il doit distribuer", Color.ORANGE.darker());
 		}
@@ -39,7 +36,7 @@ public class Comportement_Acheteur implements Comportement {
 	@Override
 	public void action(Ressource[] resATraiter) throws NegativeArgentException{
 		for(int niveau = 0; this.niveau.getNiveau() == niveau+1; niveau++) {
-			if(controller.getArgentProperty().get() < 5+Appareil.getÉlectricité())
+			if(controller.getArgent() < 5+Appareil.getÉlectricité())
 				throw new NegativeArgentException("Le comportement d'un acheteur "
 						+ "n'a pas pu être réalisé car le solde d'argent n'était pas assez important.");
 			controller.getGrilleAppareils(pointer).action(resDistribuée);

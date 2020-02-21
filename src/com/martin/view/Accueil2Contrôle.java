@@ -22,7 +22,6 @@ public class Accueil2Contrôle {
 	private void nouvelle() {
 		try {
 			Partie partie = new Partie(field.getText());
-			Connect_SQLite.getPartieDao().create(partie);
 			main.initGame(partie);
 		}catch(Exception e) {
 			System.err.println("La partie n'a pas pu être enregistrée.");

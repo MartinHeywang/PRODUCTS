@@ -25,6 +25,10 @@ public class Connect_SQLite {
 			DriverManager.getConnection(DATABASE_URL);
 			connect = new JdbcConnectionSource(DATABASE_URL);
 			
+			//TableUtils.dropTable(connect, Appareil.class, true);
+			//TableUtils.dropTable(connect, Coordonnées.class, true);
+			//TableUtils.dropTable(connect, Partie.class, true);
+			
 			TableUtils.createTableIfNotExists(connect, Appareil.class);
 			TableUtils.createTableIfNotExists(connect, Coordonnées.class);
 			TableUtils.createTableIfNotExists(connect, Partie.class);

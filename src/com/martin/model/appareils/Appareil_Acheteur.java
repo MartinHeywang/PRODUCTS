@@ -14,7 +14,6 @@ import com.martin.model.appareils.orientation.Entrées_Aucune;
 import com.martin.model.appareils.orientation.Sorties_Center;
 import com.martin.view.JeuContrôle;
 
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 
 public class Appareil_Acheteur extends Appareil {
@@ -23,7 +22,6 @@ public class Appareil_Acheteur extends Appareil {
 	@DatabaseField(columnName = "Stock 1")
 	Ressource resDistribuée = Ressource.NONE;
 	
-	private static SimpleIntegerProperty prix;
 	public static ArrayList<Coordonnées> liste = new ArrayList<Coordonnées>();
 	
 	public Appareil_Acheteur(Coordonnées xy, Direction direction, NiveauAppareil niveau,  
@@ -37,7 +35,7 @@ public class Appareil_Acheteur extends Appareil {
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Acheteur(xy, niveau, pointerExit.getxPlus(), 
-				pointerExit.getyPlus(), controller);
+				pointerExit.getyPlus(), controller, idAppareil);
 	}
 	@Override 
 	public void destruction() {
@@ -58,19 +56,5 @@ public class Appareil_Acheteur extends Appareil {
 		
 		((Appareil_Acheteur) comportement).setRessourceDistribuée(resDistribuée);
 		Connect_SQLite.getAppareilDao().update(this);
-	}
-	
-	public static void initializeData() {
-		try {
-			prix = new SimpleIntegerProperty(Connect_SQLite.getInstance().createStatement().executeQuery(
-					"SELECT * FROM infos").getInt("prixAcheteur"));
-		} catch (SQLException e) {
-			System.out.println("ERREUR LORS D'UNE TENTATIVE DE RÉCUPÉRATION DES DONNÉES du "
-					+ "prix de l'acheteur"+e.getMessage());
-			prix = new SimpleIntegerProperty(999_999_999);
-		}
-	}
-	public static int getPrix() {
-		return prix.get();
 	}
 }
