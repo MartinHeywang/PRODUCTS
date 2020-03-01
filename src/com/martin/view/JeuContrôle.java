@@ -29,9 +29,8 @@ import javafx.stage.Stage;
 public class JeuContrôle {
 	
 	//L'instance de main, pour charger les différentes pages
-	Main main;
+	public static Main main;
 	
-	//La grille principale de jeu
 	@FXML GridPane grille;
 	@FXML private Label argentLabel;
 	@FXML private Label report;
@@ -45,13 +44,13 @@ public class JeuContrôle {
 	private StringProperty reportProperty = new SimpleStringProperty();
 	private Thread t;
 	
-	private Partie partieEnCours;
+	private static Partie partieEnCours;
 	
 	
 	public void initialize() {}
 	public void setMainApp(Main main, Partie partieToLoad) throws Exception {
-		this.main = main;
-		this.partieEnCours = partieToLoad;
+		JeuContrôle.main = main;
+		JeuContrôle.partieEnCours = partieToLoad;
 		
 		argentLabel.setText(String.valueOf(partieToLoad.getArgent()));
 		
@@ -79,6 +78,8 @@ public class JeuContrôle {
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
 		report.setTooltip(new Tooltip("Cliquez pour fermer..."));
+		
+		partieToLoad.save();
 		
 	}
 	/*La définition du Thread à refaire : 
@@ -174,6 +175,16 @@ public class JeuContrôle {
 	public int getTailleGrille() {
 		return partieEnCours.getTailleGrille();
 	}
+	public static JeuContrôle get() {
+		try {
+			JeuContrôle controller = new JeuContrôle();
+			controller.initialize();
+			controller.setMainApp(main, partieEnCours);
+			return controller;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	/**
 	 * @author Martin
@@ -194,9 +205,6 @@ public class JeuContrôle {
 						, false);
 			this.appareil[xy.getX()][xy.getY()] = appareil;
 			grille.add(this.appareil[xy.getX()][xy.getY()], xy.getX(), xy.getY());
-			Connect_SQLite.getAppareilDao().createOrUpdate(appareil);
-		} catch (NegativeArgentException e) {
-			setReport(e.getMessage(), Color.DARKRED);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -210,27 +218,23 @@ public class JeuContrôle {
 	 *         Modifie le solde d'argent en jeu
 	 *         </p>
 	 * 
-	 * @param somme    la somme d'argent à enlever ou supprimer
+	 * @param somme la somme d'argent à enlever ou supprimer
 	 * @param increase vaut true pour ajouter, vaut false pour enlever de l'argent
 	 * 
 	 * @throws NegativeArgentException Si la somme d'argent devient négative
 	 * 
 	 */
-	public void setArgent(long somme, boolean increase) throws NegativeArgentException{
-		if(increase)
-			partieEnCours.setArgent(partieEnCours.getArgent()+somme);
-		else {
-			if(partieEnCours.getArgent() >= somme)
-				partieEnCours.setArgent(partieEnCours.getArgent()-somme);
-			else {
-				throw new NegativeArgentException();
-			}
-		}
+	public void setArgent(long somme, boolean increase){
+		//Modifie le solde d'argent de la partie en cours
+		final boolean edit = partieEnCours.setArgent(somme, increase);
 		
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run(){
-				argentLabel.setText(String.valueOf(partieEnCours.getArgent()+" €"));
+				if(edit){
+					//Modifie le libéllé d'argent
+					argentLabel.setText(String.valueOf(partieEnCours.getArgent()+" €"));
+				}
 			}
 		});
 	}
