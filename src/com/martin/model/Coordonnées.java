@@ -75,4 +75,7 @@ public class Coordonnées {
 		}
 		return false;
 	}
+	public int getID() {
+		return idCoordonnées;
+	}
 }

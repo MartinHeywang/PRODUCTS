@@ -44,14 +44,16 @@ public class Partie {
 		for(int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
-					Connect_SQLite.getAppareilDao().create(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
+					Connect_SQLite.getAppareilDao().createIfNotExists(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
 							NiveauAppareil.NIVEAU_1, JeuContrôle.get(), this));
-				} catch (NullPointerException | FileNotFoundException e) {
+				} catch (FileNotFoundException e) {
 					System.out.println(e.getLocalizedMessage());
 					
 				}
 			}
 		}
+		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
+				.query();
 		
 		this.save();
 	}
@@ -63,14 +65,16 @@ public class Partie {
 		for(int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
-					Connect_SQLite.getAppareilDao().create(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
+					Connect_SQLite.getAppareilDao().createIfNotExists(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
 							NiveauAppareil.NIVEAU_1, JeuContrôle.get(), this));
-				} catch (NullPointerException | FileNotFoundException e) {
+				} catch (FileNotFoundException e) {
 					System.out.println(e.getLocalizedMessage());
 					
 				}
 			}
 		}
+		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
+				.query();
 		
 		this.save();
 	}
@@ -84,8 +88,8 @@ public class Partie {
 			for(int i = 0; i < this.getAppareils().size(); i++) {
 				Connect_SQLite.getAppareilDao().createOrUpdate(this.getAppareils().get(i));
 			}
-		} catch (NullPointerException | SQLException e) {
-			System.err.println(e.getLocalizedMessage());
+		} catch (SQLException e) {
+			System.err.println("La partie n'a pas pu être sauvegardée.");
 			
 		}
 		// Todo : save method
@@ -107,7 +111,25 @@ public class Partie {
 		return tailleGrille;
 	}
 	public List<? extends Appareil> getAppareils(){
+		try {
+			listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
+					.query();
+		} catch (SQLException e) {
+			System.err.println(e.getLocalizedMessage());
+			
+		}
 		return listAppareils;
+	}
+	public Appareil getAppareilsWithCoordinates(Coordonnées xy) throws NullPointerException{
+		try {
+			return Connect_SQLite.getAppareilDao().queryBuilder().where()
+					.eq("partie_idPartie", idPartie).and()
+					.eq("xy_idCoordonnées", xy.getID())
+					.queryForFirst();
+		} catch (SQLException e) {
+			System.err.println(e.getLocalizedMessage());
+			return null;
+		}
 	}
 	public LocalDateTime getLastView() {
 		return LocalDateTime.parse(lastView);

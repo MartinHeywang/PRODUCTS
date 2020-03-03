@@ -1,6 +1,6 @@
 package com.martin.view;
 
-import java.util.List;
+import java.sql.SQLException;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
@@ -10,9 +10,6 @@ import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
-import com.martin.model.appareils.Appareil_Sol;
-import com.martin.model.appareils.Direction;
-import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
@@ -39,8 +36,7 @@ public class JeuContrôle {
 	//Le stage de recherche
 	Stage research = new Stage();
 	
-	//---Variables ci-dessous à revoir, modifiers et déclaration.
-	private Appareil[][] appareil = new Appareil[20][20];
+	//Variables ci-dessous à revoir, modifiers et déclaration.
 	private StringProperty reportProperty = new SimpleStringProperty();
 	private Thread t;
 	
@@ -49,23 +45,17 @@ public class JeuContrôle {
 	
 	public void initialize() {}
 	public void setMainApp(Main main, Partie partieToLoad) throws Exception {
+		// Todo : setMainApp method when Partie is working properly
+		
 		JeuContrôle.main = main;
 		JeuContrôle.partieEnCours = partieToLoad;
 		
-		argentLabel.setText(String.valueOf(partieToLoad.getArgent()));
-		
-		List<Appareil> listeAppareils = 
-				Connect_SQLite.getAppareilDao().queryForEq("partie_idPartie", partieToLoad.getID());
-		
-		for(Appareil appareil : listeAppareils) {
-			setAppareil(appareil.getXy(), Appareil.getInstance(appareil), true);
-		}
 		for(int x = 0; x < partieToLoad.getTailleGrille(); x++) {
 			for(int y = 0; y < partieToLoad.getTailleGrille(); y++) {
-				if(this.appareil[x][y] == null) {
-					setAppareil(new Coordonnées(x, y), new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
-							NiveauAppareil.NIVEAU_1, this, partieToLoad), true);
-				}
+				setAppareil(partieToLoad.getAppareilsWithCoordinates(
+						Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
+						.eq("x", x).and()
+						.eq("y", y).queryForFirst()), true);
 			}
 		}
 		
@@ -160,8 +150,16 @@ public class JeuContrôle {
 	 * @param xy les coordonnées
 	 * @return un Appareil au coordonnées données
 	 */
-	public Appareil getGrilleAppareils(Coordonnées xy){
-		return appareil[xy.getX()][xy.getY()];
+	public Appareil getGrilleAppareils(Coordonnées xy) throws NullPointerException{
+		try {
+			return Connect_SQLite.getAppareilDao().queryBuilder().where()
+					.eq("partie_idPartie", partieEnCours.getID()).and()
+					.eq("xy_idCoordonnées", xy.getID())
+					.queryForFirst();
+		} catch (SQLException e) {
+			System.err.println(e.getLocalizedMessage());
+			return null;
+		}
 	}
 	/**
 	 * @return the argent property
@@ -198,13 +196,12 @@ public class JeuContrôle {
 	 * @param appareil l'appareil qui remplace
 	 * 
 	*/
-	public void setAppareil(Coordonnées xy, Appareil appareil, boolean ignoreCost) {
+	public void setAppareil(Appareil appareil, boolean ignoreCost) {
 		try {
 			if(!ignoreCost)
 				setArgent(((int) appareil.getType().getClasse().getMethod("getPrix").invoke(null))
 						, false);
-			this.appareil[xy.getX()][xy.getY()] = appareil;
-			grille.add(this.appareil[xy.getX()][xy.getY()], xy.getX(), xy.getY());
+			grille.add(appareil, appareil.getXy().getY(), appareil.getXy().getX());
 		} catch(Exception e){
 			e.printStackTrace();
 		}

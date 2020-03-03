@@ -30,7 +30,7 @@ public class AccueilContrôle {
 				Partie partie = new Partie(field.getText());
 				main.initGame(partie);
 			}catch(Exception e) {
-				System.err.println("La partie n'a pas pu être enregistrée.");
+				e.printStackTrace();
 			}
 		}
 	}
