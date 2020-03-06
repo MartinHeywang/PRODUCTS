@@ -41,19 +41,23 @@ public class Partie {
 		this.lastView = LocalDateTime.now().toString();
 		this.tailleGrille = 3;
 		this.argent = 1250;
+		
+		Connect_SQLite.getPartieDao().createIfNotExists(this);
+		
 		for(int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
 					Connect_SQLite.getAppareilDao().createIfNotExists(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
 							NiveauAppareil.NIVEAU_1, JeuContrôle.get(), this));
 				} catch (FileNotFoundException e) {
-					System.out.println(e.getLocalizedMessage());
+					e.printStackTrace();
 					
 				}
 			}
 		}
 		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
 				.query();
+		
 		
 		this.save();
 	}
@@ -62,13 +66,14 @@ public class Partie {
 		this.lastView = lastView;
 		this.tailleGrille = 3;
 		
+		Connect_SQLite.getPartieDao().createIfNotExists(this);
 		for(int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
 					Connect_SQLite.getAppareilDao().createIfNotExists(new Appareil_Sol(new Coordonnées(x, y), Direction.UP, 
 							NiveauAppareil.NIVEAU_1, JeuContrôle.get(), this));
 				} catch (FileNotFoundException e) {
-					System.out.println(e.getLocalizedMessage());
+					e.printStackTrace();
 					
 				}
 			}
@@ -76,23 +81,32 @@ public class Partie {
 		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
 				.query();
 		
+		
 		this.save();
 	}
 	
+	/**
+	 * <h1>rename</h1>
+	 * <p>Renames this object</p>
+	 * @param newName the new name
+	 */
 	public void rename(String newName) {
 		this.nom = newName;
 	}
+	/**
+	 * <h1>save</h1>
+	 * <p>Saves this object in the database properly and all its device</p>
+	 */
 	public void save() {
 		try {
 			Connect_SQLite.getPartieDao().createOrUpdate(this);
 			for(int i = 0; i < this.getAppareils().size(); i++) {
-				Connect_SQLite.getAppareilDao().createOrUpdate(this.getAppareils().get(i));
+				this.getAppareils().get(i).save();
 			}
 		} catch (SQLException e) {
 			System.err.println("La partie n'a pas pu être sauvegardée.");
 			
 		}
-		// Todo : save method
 	}
 	public void delete() {
 		// Todo : delete method
@@ -110,12 +124,13 @@ public class Partie {
 	public int getTailleGrille() {
 		return tailleGrille;
 	}
+	
 	public List<? extends Appareil> getAppareils(){
 		try {
 			listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where().eq("partie_idPartie", idPartie)
 					.query();
 		} catch (SQLException e) {
-			System.err.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			
 		}
 		return listAppareils;
@@ -123,11 +138,11 @@ public class Partie {
 	public Appareil getAppareilsWithCoordinates(Coordonnées xy) throws NullPointerException{
 		try {
 			return Connect_SQLite.getAppareilDao().queryBuilder().where()
-					.eq("partie_idPartie", idPartie).and()
+					.eq("partie_idPartie", this.idPartie).and()
 					.eq("xy_idCoordonnées", xy.getID())
-					.queryForFirst();
+					.queryForFirst().toInstance();
 		} catch (SQLException e) {
-			System.err.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -150,5 +165,13 @@ public class Partie {
 			}
 		}
 	}
-	
+	public boolean setAppareil(Appareil appareil, int idOldAppareil, boolean ignoreCost) {
+		try {
+			Connect_SQLite.getAppareilDao().updateId(appareil, idOldAppareil);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

@@ -41,8 +41,7 @@ public class Appareil_Vendeur extends Appareil {
 			prix = new SimpleIntegerProperty(Connect_SQLite.getInstance().createStatement().executeQuery(
 					"SELECT * FROM infos").getInt("prixVendeur"));
 		} catch (SQLException e) {
-			System.out.println("ERREUR LORS D'UNE TENTATIVE DE RÉCUPÉRATION DES DONNÉES du "
-					+ "prix du vendeur"+e.getLocalizedMessage());
+			e.printStackTrace();
 			prix = new SimpleIntegerProperty(999_999_999);
 		}
 	}

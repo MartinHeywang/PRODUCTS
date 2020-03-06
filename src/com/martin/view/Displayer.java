@@ -129,6 +129,7 @@ public class Displayer extends BorderPane {
 	public Displayer(Partie partie){
 		try {
 			this.partie = partie;
+			this.setMinHeight(70.0);
 			
 			nom = new Label();
 			nom.setUnderline(true);

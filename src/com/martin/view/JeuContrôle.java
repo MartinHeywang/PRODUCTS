@@ -45,17 +45,18 @@ public class JeuContrôle {
 	
 	public void initialize() {}
 	public void setMainApp(Main main, Partie partieToLoad) throws Exception {
-		// Todo : setMainApp method when Partie is working properly
+		// Todo : setMainApp method
 		
 		JeuContrôle.main = main;
 		JeuContrôle.partieEnCours = partieToLoad;
 		
 		for(int x = 0; x < partieToLoad.getTailleGrille(); x++) {
 			for(int y = 0; y < partieToLoad.getTailleGrille(); y++) {
-				setAppareil(partieToLoad.getAppareilsWithCoordinates(
-						Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
+				final Appareil appareil = Connect_SQLite.getAppareil(Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
 						.eq("x", x).and()
-						.eq("y", y).queryForFirst()), true);
+						.eq("y", y).queryForFirst(), partieToLoad);
+				
+				grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
 			}
 		}
 		
@@ -67,7 +68,7 @@ public class JeuContrôle {
 		
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
-		report.setTooltip(new Tooltip("Cliquez pour fermer..."));
+		report.setTooltip(new Tooltip("Cliquez pour cacher..."));
 		
 		partieToLoad.save();
 		
@@ -100,8 +101,7 @@ public class JeuContrôle {
 					}
 				}
 			} catch (IllegalArgumentException | InterruptedException e) {
-				System.out.println(
-						"ERREUR dans JeuContrôle.Play dans la méthode run. Raison :\n" + e.getLocalizedMessage());
+				e.printStackTrace();
 			}
 		}
 		
@@ -157,7 +157,7 @@ public class JeuContrôle {
 					.eq("xy_idCoordonnées", xy.getID())
 					.queryForFirst();
 		} catch (SQLException e) {
-			System.err.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -173,6 +173,12 @@ public class JeuContrôle {
 	public int getTailleGrille() {
 		return partieEnCours.getTailleGrille();
 	}
+	/**
+	 * @return partieEnCours the current game
+	 */
+	public Partie getPartieEnCours() {
+		return partieEnCours;
+	}
 	public static JeuContrôle get() {
 		try {
 			JeuContrôle controller = new JeuContrôle();
@@ -185,22 +191,21 @@ public class JeuContrôle {
 	}
 	
 	/**
-	 * @author Martin
-	 * 28 janv. 2020 | 15:14:44
 	 * 
-	 * <b>setAppareil</b>
-	 * <p>Modifie une case d'appareil.</p>
+	 * <h2>setAppareil</h2>
+	 * <br/>Modifie une case d'appareil.
 	 * 
-	 * Args :
-	 * @param xy coordonnées du nouvel appareil
 	 * @param appareil l'appareil qui remplace
+	 * @param idOldAppareil id of the old device
+	 * @param ignoreCost if the cost will be ignrored
 	 * 
 	*/
-	public void setAppareil(Appareil appareil, boolean ignoreCost) {
+	public void setAppareil(Appareil appareil, int idOldAppareil, boolean ignoreCost) {
 		try {
 			if(!ignoreCost)
 				setArgent(((int) appareil.getType().getClasse().getMethod("getPrix").invoke(null))
 						, false);
+			partieEnCours.setAppareil(appareil, idOldAppareil, ignoreCost);
 			grille.add(appareil, appareil.getXy().getY(), appareil.getXy().getX());
 		} catch(Exception e){
 			e.printStackTrace();

@@ -133,22 +133,21 @@ public class Main extends Application {
 	 * @throws Exception 
 	 */
 	public void initGame(Partie partie) throws Exception {
-		try {
+			try {
 			
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("view/Jeu.fxml"));
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(Main.class.getResource("view/Jeu.fxml"));
 			
-			BorderPane Bp = (BorderPane) loader.load();
-			Scene scene = new Scene(Bp);
-			stage.setScene(scene);
+				BorderPane Bp = (BorderPane) loader.load();
+				Scene scene = new Scene(Bp);
+				stage.setScene(scene);
+				
+				stage.setResizable(true);
 			
-			stage.setResizable(true);
-			
-			JeuContrôle controler = loader.getController();
-			controler.setMainApp(this, partie);
-		} catch (IOException e) {
-			System.err.println("ERREUR dans Main dans la méthode " + "initGame. Raison :\n" + e.getLocalizedMessage());
+				JeuContrôle controler = loader.getController();
+				controler.setMainApp(this, partie);
+			} catch (IOException e) {
+				e.printStackTrace();
 		}
 	}
-
 }

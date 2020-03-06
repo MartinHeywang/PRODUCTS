@@ -10,6 +10,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.martin.model.Coordonnées;
 import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.Stock;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -32,6 +33,7 @@ public class Connect_SQLite {
 			TableUtils.createTableIfNotExists(connect, Appareil.class);
 			TableUtils.createTableIfNotExists(connect, Coordonnées.class);
 			TableUtils.createTableIfNotExists(connect, Partie.class);
+			TableUtils.createTableIfNotExists(connect, Stock.class);
 			
 			
 		} catch (SQLException | ClassNotFoundException e) {
@@ -58,7 +60,7 @@ public class Connect_SQLite {
 			dao = DaoManager.createDao(connect, Appareil.class);
 			return dao;
 		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -72,7 +74,7 @@ public class Connect_SQLite {
 			dao = DaoManager.createDao(connect, Coordonnées.class);
 			return dao;
 		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -86,9 +88,34 @@ public class Connect_SQLite {
 			dao = DaoManager.createDao(connect, Partie.class);
 			return dao;
 		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 		
+	}
+	
+	public static Appareil getAppareil(Coordonnées xy, Partie partie) throws NullPointerException {
+		try {
+			return Connect_SQLite.getAppareilDao().queryBuilder().where()
+					.eq("partie_idPartie", partie.getID()).and()
+					.eq("xy_idCoordonnées", xy.getID())
+					.queryForFirst().toInstance();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static Dao<Stock, Integer> getStockDao() {
+		if(connect == null) {
+			createConnection();
+		}
+		Dao<Stock, Integer> dao;
+		try {
+			dao = DaoManager.createDao(connect, Stock.class);
+			return dao;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

@@ -2,6 +2,7 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -38,8 +39,8 @@ public class Appareil extends ImageView{
 	@DatabaseField(generatedId = true, canBeNull = false, unique = true)
 	protected int idAppareil;
 	
-	@DatabaseField(foreign = true, foreignAutoCreate = true, 
-			foreignColumnName = "idPartie", uniqueCombo = true)
+	@DatabaseField(foreign = true, foreignColumnName = "idPartie", 
+			uniqueCombo = true)
 	protected Partie partie;
 	
 	@DatabaseField
@@ -48,14 +49,9 @@ public class Appareil extends ImageView{
 	protected Direction direction;
 	@DatabaseField
 	protected NiveauAppareil niveau;
-	@DatabaseField(foreign = true, foreignAutoCreate = true, 
-			foreignColumnName = "idCoordonnées", uniqueCombo = true)
+	@DatabaseField(foreign = true, foreignColumnName = "idCoordonnées", uniqueCombo = true)
 	protected Coordonnées xy;
 	
-	@DatabaseField(columnName = "Stock 1")
-	protected Ressource stock1;
-	@DatabaseField(columnName = "Stock 2")
-	protected Ressource stock2;
 	
 	protected Comportement comportement = new Comportement_Aucun();
 	protected Sorties sorties = new Sorties_Aucune();
@@ -122,18 +118,33 @@ public class Appareil extends ImageView{
 				}catch(IOException e) {
 					/*Si une erreur est survenue lors du chargement de la fenêtre,
 					 afficher le message plus la raison donnée par Java.*/
-					System.out.println("ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
+					System.err.println("ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
 							+ "Raison :\n"+e.getMessage());
 				}
 			}
 		});
+		
+		try {
+			if(Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
+				.eq("x", xy.getX()).and()
+				.eq("y", xy.getY()).query().size() == 0)
+					Connect_SQLite.getCoordonnéesDao().create(xy);
+			
+			this.xy = Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
+					.eq("x", xy.getX()).and()
+					.eq("y", xy.getY()).query().get(0);
+			this.save();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
 	}
 	/**
 	 * <h1>action</h1>
 	 * <p>This method do the action of the device. It calls the defined behaviour.</p>
 	 * @param resATraiter the resource who will be used by this device
 	 */
-	public void action(Ressource[] resATraiter) throws NegativeArgentException{
+	public void action(Ressource[] resATraiter) throws NegativeArgentException {
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			
@@ -146,6 +157,14 @@ public class Appareil extends ImageView{
 		}
 	}
 	
+	public void save() {
+		try {
+			Connect_SQLite.getAppareilDao().update(this);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+	}
 	/**
 	 * <h1>destruction</h1>
 	 * <p>This methode resets the database at the coordinates, and do the necessary to destruct properly this device</p>
@@ -160,12 +179,15 @@ public class Appareil extends ImageView{
 			controller.setReport("L'appareil ne s'est pas correctement détruit en base de données", Color.DARKRED);
 		}
 	}
-	
-	public static Appareil getInstance(Appareil appareil) throws Exception {
-		return appareil.getType().getClasse().getConstructor(Coordonnées.class, Direction.class, 
-				NiveauAppareil.class, JeuContrôle.class, Partie.class).newInstance(appareil.getXy(), 
-						appareil.getDirection(), appareil.getNiveau(), appareil.getController(), 
-						appareil.getPartie());
+	public Appareil toInstance() throws NullPointerException{
+		try {
+			return this.getType().getClasse().getConstructor(Coordonnées.class, Direction.class, 
+					NiveauAppareil.class, JeuContrôle.class, Partie.class)
+					.newInstance(xy, direction, niveau, controller, partie);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	//GETTERS, THEN SETTERS
 	public int getID() {
@@ -245,19 +267,6 @@ public class Appareil extends ImageView{
 	 */
 	public Partie getPartie() {
 		return partie;
-	}
-	/**
-	 * @return stock1 the memory case 1 of the device
-	 */
-	public Ressource getStock1() {
-		return stock1;
-	}
-	/**
-	 * 
-	 * @return stock2 the memory case 2 of the device
-	 */
-	public Ressource getStock2() {
-		return stock2;
 	}
 	/**
 	 * @param type the type to set

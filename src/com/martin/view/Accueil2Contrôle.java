@@ -20,11 +20,13 @@ public class Accueil2Contrôle {
 
 	@FXML
 	private void nouvelle() {
-		try {
-			Partie partie = new Partie(field.getText());
-			main.initGame(partie);
-		}catch(Exception e) {
-			System.err.println("La partie n'a pas pu être enregistrée.");
+		if(!field.getText().isEmpty()) {
+			try {
+				Partie partie = new Partie(field.getText());
+				main.initGame(partie);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -52,7 +54,7 @@ public class Accueil2Contrôle {
 				});
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
 			
 		}
 	}

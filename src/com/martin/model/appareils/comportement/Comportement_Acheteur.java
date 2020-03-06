@@ -1,16 +1,11 @@
 package com.martin.model.appareils.comportement;
 
-import java.sql.SQLException;
-
-import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
-
-import javafx.scene.paint.Color;
 
 public class Comportement_Acheteur implements Comportement {
 	
@@ -26,11 +21,8 @@ public class Comportement_Acheteur implements Comportement {
 		this.controller = controller;
 		this.pointer = new Coordonnées(xy.getX()+xToAdd, xy.getY()+yToAdd);
 		
-		try {
-			resDistribuée[0] = Connect_SQLite.getAppareilDao().queryForId(idAppareil).getStock1();
-		} catch (SQLException e) {
-			controller.setReport("Attention : un acheteur n'a pas pu charger la ressource qu'il doit distribuer", Color.ORANGE.darker());
-		}
+		// FixMe : charger la ressource
+		resDistribuée[0] = Ressource.OR;
 	}
 	
 	@Override

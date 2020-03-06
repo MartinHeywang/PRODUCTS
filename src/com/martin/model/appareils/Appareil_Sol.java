@@ -19,7 +19,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 
 public class Appareil_Sol extends Appareil {
@@ -60,8 +59,6 @@ public class Appareil_Sol extends Appareil {
 										Direction.UP, NiveauAppareil.NIVEAU_1, controller), false);
 					}
 				}catch (Exception e) {
-					controller.setReport("ERREUR dans Appareil_Sol.Appareil_Sol(...).new EventHandler() {...} dans la méthode "
-									+ "handle. Raison :\n" + e.getLocalizedMessage(), Color.DARKRED);
 					e.printStackTrace();
 				}
 			}
