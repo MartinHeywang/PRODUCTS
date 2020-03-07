@@ -54,10 +54,14 @@
          <children>
             <Label id="label" alignment="CENTER" prefHeight="50.0" prefWidth="600.0" text="Pour commencer, entre le nom de ta première partie :" GridPane.columnSpan="5">
                <font>
-                  <Font size="23.0" />
+                  <Font name="System Bold" size="23.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" onAction="#seConnecter" text="C'EST PARTI !" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#seConnecter" text="C'EST PARTI !" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
             <TextField fx:id="field" promptText="Entre-le ici !" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>

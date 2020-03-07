@@ -9,8 +9,9 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.martin.model.Coordonnées;
+import com.martin.model.Paquet;
+import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
-import com.martin.model.appareils.Stock;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -105,13 +106,13 @@ public class Connect_SQLite {
 			return null;
 		}
 	}
-	public static Dao<Stock, Integer> getStockDao() {
+	public static Dao<Paquet, Integer> getPaquetDao() {
 		if(connect == null) {
 			createConnection();
 		}
-		Dao<Stock, Integer> dao;
+		Dao<Paquet, Integer> dao;
 		try {
-			dao = DaoManager.createDao(connect, Stock.class);
+			dao = DaoManager.createDao(connect, Paquet.class);
 			return dao;
 		} catch (SQLException e) {
 			e.printStackTrace();

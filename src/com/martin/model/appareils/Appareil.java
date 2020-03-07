@@ -12,7 +12,7 @@ import com.martin.Main;
 import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.LocatedImage;
-import com.martin.model.Ressource;
+import com.martin.model.Stock;
 import com.martin.model.appareils.comportement.Comportement;
 import com.martin.model.appareils.comportement.Comportement_Aucun;
 import com.martin.model.appareils.orientation.Entrées;
@@ -144,7 +144,7 @@ public class Appareil extends ImageView{
 	 * <p>This method do the action of the device. It calls the defined behaviour.</p>
 	 * @param resATraiter the resource who will be used by this device
 	 */
-	public void action(Ressource[] resATraiter) throws NegativeArgentException {
+	public void action(Stock resATraiter) throws NegativeArgentException {
 		if(this.controller.getGrilleAppareils(new Coordonnées(xy.getX()+pointerExit.getxPlus(), 
 				xy.getY()+pointerExit.getyPlus())).getXy().isNearFrom(xy)){
 			
