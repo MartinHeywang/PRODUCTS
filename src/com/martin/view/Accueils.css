@@ -1,8 +1,8 @@
-.text-field{
+.text-area, .text-field{
 	-fx-border-color: darkgreen;
 	-fx-border-width: 3px;
 }
-.text-field:hover{
+.text-area:hover, .text-field:hover{
 	-fx-border-color: green;
 }
 .button{
@@ -26,8 +26,10 @@
 	-fx-border-color: darkred;
 	-fx-text-fill: #242729;
 }
-*{
+.important{
 	-fx-font-weight: bold;
+}
+*{
 	-fx-background-color: #242729;
 	-fx-text-fill: white;
 }

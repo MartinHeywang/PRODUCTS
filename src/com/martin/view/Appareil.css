@@ -1,7 +1,3 @@
-.label{
-	-fx-text-fill: white;
-}
-
 .button{
 	-fx-border-color: #a50105;
 	-fx-text-fill:#a50105;
@@ -16,9 +12,13 @@
 }
 
 *{
-	-fx-font-weight: bold;
+	-fx-text-fill: white;
 	-fx-background-color: #242729;
 }
+.important{
+	-fx-font-weight: bold;
+}
+
 #ameliorer{
 	-fx-border-color: darkgreen;
 	-fx-text-fill: darkgreen;
