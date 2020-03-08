@@ -1,13 +1,12 @@
 package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.j256.ormlite.field.DatabaseField;
 import com.martin.Connect_SQLite;
 import com.martin.Partie;
 import com.martin.model.Coordonnées;
+import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Acheteur;
 import com.martin.model.appareils.orientation.Entrées_Aucune;
@@ -17,44 +16,57 @@ import com.martin.view.JeuContrôle;
 import javafx.scene.paint.Color;
 
 public class Appareil_Acheteur extends Appareil {
-	
-	//La ressource distribuée par l'acheteur
-	@DatabaseField(columnName = "Stock 1")
-	Ressource resDistribuée = Ressource.NONE;
-	
+
 	public static ArrayList<Coordonnées> liste = new ArrayList<Coordonnées>();
-	
-	public Appareil_Acheteur(Coordonnées xy, Direction direction, NiveauAppareil niveau,  
-			JeuContrôle controller, Partie partie) throws FileNotFoundException {
-		
+
+	public Appareil_Acheteur(Coordonnées xy, Direction direction,
+			NiveauAppareil niveau,
+			JeuContrôle controller, Partie partie)
+			throws FileNotFoundException {
+
 		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller, partie);
 		liste.add(xy);
-		
+
 		entrées = new Entrées_Aucune();
 		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Center();
 		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Acheteur(xy, niveau, pointerExit.getxPlus(), 
-				pointerExit.getyPlus(), controller, idAppareil);
+		comportement = new Comportement_Acheteur(xy, niveau,
+				pointerExit.getxPlus(),
+				pointerExit.getyPlus(), controller);
 	}
-	@Override 
+
+	@Override
 	public void destruction() {
 		try {
 			Connect_SQLite.getAppareilDao().delete(this);
 		} catch (Exception e) {
-			controller.setReport("L'appareil n'a pas été détruit correctement.", Color.DARKRED);
+			controller.setReport("L'appareil n'a pas été détruit correctement.",
+					Color.DARKRED);
 		}
 	}
-	//Retourne la ressource distribuée
-	public Ressource getRessourceDistribuée() {
-		return resDistribuée;
+
+	/**
+	 * 
+	 * @return the ditributed resource
+	 * @throws NullPointerException if the behaviour of this device isn't
+	 *                              a buyer
+	 */
+	public Ressource getRessourceDistribuée() throws NullPointerException {
+		if (comportement instanceof Comportement_Acheteur)
+			return ((Comportement_Acheteur) comportement)
+					.getRessourceDistribuée().getRessource();
+		return null;
 	}
-	//Set la ressource distribuée dans la base de donnée et dans la variable locale
-	public void setRessourceDistribuée(Ressource res) throws SQLException{
-		
-		this.resDistribuée = res;
-		
-		((Appareil_Acheteur) comportement).setRessourceDistribuée(resDistribuée);
-		Connect_SQLite.getAppareilDao().update(this);
+
+	/**
+	 * 
+	 * @param res the new value of the property
+	 */
+	public void setRessourceDistribuée(Ressource res) {
+		if (comportement instanceof Comportement_Acheteur) {
+			((Comportement_Acheteur) comportement)
+					.setRessourceDistribuée(new Paquet(res, 1));
+		}
 	}
 }
