@@ -24,7 +24,8 @@ public class Comportement_Convoyeur implements Comportement {
 	public void action(Stock resATraiter) throws NegativeArgentException {
 		for (int niveau = 0; niveau < this.niveau.getNiveau() || resATraiter
 				.size() < niveau; niveau++) {
-			if (controller.getArgent() < 5 + Appareil.getÉlectricité())
+			if (controller.getPartieEnCours().getArgent() < 5
+					+ Appareil.getÉlectricité())
 				throw new NegativeArgentException(
 						"Le comportement d'un appareil "
 								+ "n'a pas pu être réalisé car le solde "

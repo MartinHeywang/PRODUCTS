@@ -2,24 +2,19 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.appareils.comportement.Comportement_Presse;
 import com.martin.model.appareils.orientation.Entrées_Center;
 import com.martin.model.appareils.orientation.Sorties_Center;
 import com.martin.view.JeuContrôle;
 
-import javafx.beans.property.SimpleIntegerProperty;
-
 public class Appareil_Presse extends Appareil {
-
-	private static SimpleIntegerProperty prix;
 
 	public Appareil_Presse(Coordonnées xy, Direction direction,
 			NiveauAppareil niveau,
-			JeuContrôle controller, Partie partie)
+			JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.PRESSE, direction, niveau, controller, partie);
+		super(xy, TypeAppareil.PRESSE, direction, niveau, controller);
 
 		entrées = new Entrées_Center();
 		pointersEnters = entrées.getPointers(direction);

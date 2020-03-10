@@ -2,92 +2,137 @@ package com.martin.view;
 
 import java.sql.SQLException;
 
-import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.Partie;
-import com.martin.Stats;
 import com.martin.model.Coordonnées;
-import com.martin.model.Ressource;
+import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 public class JeuContrôle {
-	
-	//L'instance de main, pour charger les différentes pages
-	public static Main main;
-	
-	@FXML GridPane grille;
-	@FXML private Label argentLabel;
-	@FXML private Label report;
-	@FXML private Button upgradeGrid, recherche;
-	
-	//Le stage de recherche
-	Stage research = new Stage();
-	
-	//Variables ci-dessous à revoir, modifiers et déclaration.
-	private StringProperty reportProperty = new SimpleStringProperty();
+
+	// L'instance de main, pour charger les différentes pages
+	private Main main;
+
+	@FXML
+	private GridPane grille;
+	@FXML
+	private Label argentLabel;
+	@FXML
+	private Label report;
+	@FXML
+	private Button upgradeGrid, recherche;
+
+	// Variables ci-dessous à revoir, modifiers et déclaration.
+	private static StringProperty reportProperty = new SimpleStringProperty();
+	private static StringProperty argentLabelProperty = new SimpleStringProperty();
+	private static LongProperty argentProperty = new SimpleLongProperty();
+
 	private Thread t;
-	
-	private static Partie partieEnCours;
-	
-	
-	public void initialize() {}
-	public void setMainApp(Main main, Partie partieToLoad) throws Exception {
-		// Todo : setMainApp method
-		
-		JeuContrôle.main = main;
-		JeuContrôle.partieEnCours = partieToLoad;
-		
-		for(int x = 0; x < partieToLoad.getTailleGrille(); x++) {
-			for(int y = 0; y < partieToLoad.getTailleGrille(); y++) {
-				final Appareil appareil = Connect_SQLite.getAppareil(Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
-						.eq("x", x).and()
-						.eq("y", y).queryForFirst(), partieToLoad);
-				
-				grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
-			}
-		}
-		
-		grille.setFocusTraversable(true);
-		argentLabel.setText(String.valueOf(partieToLoad.getArgent())+" €");
-		
-		t = new Thread(new Play());
-		t.start();
-		
+
+	private Appareil[][] appareils;
+
+	private Partie partieEnCours;
+
+	public void initialize() {
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
 		report.setTooltip(new Tooltip("Cliquez pour cacher..."));
-		
-		partieToLoad.save();
-		
+		report.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				report.setVisible(false);
+			}
+		});
+
+		argentLabel.textProperty().bind(argentLabelProperty);
+		argentLabelProperty
+				.bind(new SimpleStringProperty(argentProperty.get() + " €"));
+
+		grille.setFocusTraversable(true);
 	}
-	/*La définition du Thread à refaire : 
-	 * J'ai pensé faire un système de liste de chose à faire via une liste publique et statique
-	 * qui va demander l'action. Comme ça, il n'y a que les actions nécessaires qui sont réalisées.
-	 * Résultat: les sols ne font pas lagger pour rien le jeu.*/
-	class Play implements Runnable{
+
+	/**
+	 * This method sets which instance of main should be used.
+	 * 
+	 * @param main the instance of main
+	 */
+	public void setMainApp(Main main) {
+		this.main = main;
+	}
+
+	/**
+	 * Loads a game with all its informations and lauch the thread.
+	 * 
+	 * @param partieToLoad the game to load
+	 */
+	public void load(Partie partieToLoad) throws SQLException {
+		this.partieEnCours = partieToLoad;
+		// Set the size of the table with the grid-size of the game
+		appareils = new Appareil[partieToLoad.getTailleGrille()][partieToLoad
+				.getTailleGrille()];
+		// For the list of devices in the partieToLoad
+		for (Appareil appareil : partieToLoad.getAppareils()) {
+			this.appareils[appareil.getXy().getX()][appareil.getXy()
+					.getY()] = appareil.toInstance(this);
+			grille.add(this.appareils[appareil.getXy().getX()][appareil.getXy()
+					.getY()], appareil.getXy().getX(), appareil.getXy().getY());
+		}
+
+		t = new Thread(new Play());
+		t.start();
+
+		reportProperty
+				.set("Bienvenue !\nCliquez sur cette bulle pour la fermer.");
+		argentProperty.set(partieToLoad.getArgent());
+		report.setVisible(true);
+
+		try {
+			setArgent(45820, true);
+		} catch (NegativeArgentException e) {
+			// Catch bloc automatiquement généré
+			System.out.println(e.getLocalizedMessage());
+
+		}
+		setReport("Just a simple test", Color.DARKORANGE);
+	}
+
+	/**
+	 * This method closes the game and set up the stage on the home scene,
+	 * where we can chose which game we want to load.
+	 * 
+	 * @see Main#initAccueil2()
+	 */
+	public void returnToHome() {
+		main.initAccueil2();
+	}
+
+	class Play implements Runnable {
 
 		@Override
 		public void run() {
 			try {
-				while(true){
+				while (true) {
 					Thread.sleep(750);
-					for(int i = 0; i < Appareil_Acheteur.liste.size(); i++){
+					for (int i = 0; i < Appareil_Acheteur.liste.size(); i++) {
 						try {
-							Ressource[] res = {Ressource.NONE};
-							getGrilleAppareils(Appareil_Acheteur.liste.get(i)).action(res);
+							getGrilleAppareils(Appareil_Acheteur.liste.get(i))
+									.action(new Stock());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (NegativeArgentException e) {
 							Platform.runLater(new Runnable() {
@@ -96,7 +141,7 @@ public class JeuContrôle {
 									argentLabel.setTextFill(Color.DARKRED);
 								}
 							});
-							
+
 						}
 					}
 				}
@@ -104,140 +149,39 @@ public class JeuContrôle {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	//On a demandé la fenêtre de recherche
-	@FXML private void research() {
-		
-	}
-	//Visuel du bouton AMÉLIORER LA GRILLE
-	@FXML private void upgradeGrid() {
-		/*Si on a pas assez d'argent, plutôt que d'ajouter un message dans le report,
-		on ouvre une boîte de dialogue.*/
-	}
-	@FXML private void upgradeGridEntered() {
-		upgradeGrid.setText("-"+Stats.prixAgrandissement+" €");
-	}
-	@FXML private void upgradeGridExited() {
-		upgradeGrid.setText("AGRANDIR LA GRILLE");
-	}
-	/**
-	 * <h1>setReport</h1>
-	 * <p>Add a dialog in the bottom right corner of the grid</p>
-	 * 
-	 * @param text the text to display
-	 * @param border the color of the border of the dialog
-	 */
-	public  void setReport(String text, Color border) {
-		reportProperty.set(text);
-		final String hex = String.format("#%02X%02X%02X", ((int)(border.getRed()*255)), 
-				(int)(border.getGreen()), (int) (border.getBlue()));
-		report.setStyle("-fx-border-color: "+hex+";");
-		report.getStyleClass().add("report");
-		
-		
-		report.setVisible(true);
-	}
-	
-	/**
-	 * @return the widget grid
-	 * 
-	*/
-	public GridPane getGridPane() {
-		return grille;
-	}
-	/**
-	 * @param xy les coordonnées
-	 * @return un Appareil au coordonnées données
-	 */
-	public Appareil getGrilleAppareils(Coordonnées xy) throws NullPointerException{
-		try {
-			return Connect_SQLite.getAppareilDao().queryBuilder().where()
-					.eq("partie_idPartie", partieEnCours.getID()).and()
-					.eq("xy_idCoordonnées", xy.getID())
-					.queryForFirst();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	/**
-	 * @return the argent property
-	 */
-	public long getArgent() {
-		return partieEnCours.getArgent();
-	}
-	/**
-	 * @return la taille de la grille
-	 */
-	public int getTailleGrille() {
-		return partieEnCours.getTailleGrille();
-	}
-	/**
-	 * @return partieEnCours the current game
-	 */
-	public Partie getPartieEnCours() {
-		return partieEnCours;
-	}
-	public static JeuContrôle get() {
-		try {
-			JeuContrôle controller = new JeuContrôle();
-			controller.initialize();
-			controller.setMainApp(main, partieEnCours);
-			return controller;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	/**
-	 * 
-	 * <h2>setAppareil</h2>
-	 * <br/>Modifie une case d'appareil.
-	 * 
-	 * @param appareil l'appareil qui remplace
-	 * @param idOldAppareil id of the old device
-	 * @param ignoreCost if the cost will be ignrored
-	 * 
-	*/
-	public void setAppareil(Appareil appareil, int idOldAppareil, boolean ignoreCost) {
-		try {
-			if(!ignoreCost)
-				setArgent(((int) appareil.getType().getClasse().getMethod("getPrix").invoke(null))
-						, false);
-			partieEnCours.setAppareil(appareil, idOldAppareil, ignoreCost);
-			grille.add(appareil, appareil.getXy().getY(), appareil.getXy().getX());
-		} catch(Exception e){
-			e.printStackTrace();
+
+	public void setArgent(long somme, boolean increase)
+			throws NegativeArgentException {
+		// Todo : setArgent doesn't work properly
+		if (increase) {
+			argentProperty.set(argentProperty.get() + somme);
+		} else {
+			if (argentProperty.get() < somme)
+				throw new NegativeArgentException();
+			else {
+				argentProperty.set(argentProperty.get() - somme);
+			}
 		}
 	}
 
-	/**
-	 * @author Martin
-	 * 
-	 *         <b>setArgent</b>
-	 *         <p>
-	 *         Modifie le solde d'argent en jeu
-	 *         </p>
-	 * 
-	 * @param somme la somme d'argent à enlever ou supprimer
-	 * @param increase vaut true pour ajouter, vaut false pour enlever de l'argent
-	 * 
-	 * @throws NegativeArgentException Si la somme d'argent devient négative
-	 * 
-	 */
-	public void setArgent(long somme, boolean increase){
-		//Modifie le solde d'argent de la partie en cours
-		final boolean edit = partieEnCours.setArgent(somme, increase);
-		
-		Platform.runLater(new Runnable(){
-			@Override
-			public void run(){
-				if(edit){
-					//Modifie le libéllé d'argent
-					argentLabel.setText(String.valueOf(partieEnCours.getArgent()+" €"));
-				}
-			}
-		});
+	public void setReport(String text, Color colorBorder) {
+		reportProperty.set(text);
+		report.getStyleClass().add("report");
+		report.setStyle("-fx-border-color: " + String.format("#%02X%02X%02X",
+				(int) (colorBorder.getRed() * 255),
+				(int) (colorBorder.getGreen() * 255),
+				(int) (colorBorder.getBlue() * 255)) + ";");
+		report.setVisible(true);
+	}
+
+	public Appareil getGrilleAppareils(Coordonnées xy)
+			throws NullPointerException {
+		return null;
+	}
+
+	public Partie getPartieEnCours() {
+		return partieEnCours;
 	}
 }

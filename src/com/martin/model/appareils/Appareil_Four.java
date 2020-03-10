@@ -2,7 +2,6 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.appareils.comportement.Comportement_Four;
 import com.martin.model.appareils.orientation.Entrées_Center;
@@ -12,10 +11,9 @@ import com.martin.view.JeuContrôle;
 public class Appareil_Four extends Appareil {
 
 	public Appareil_Four(Coordonnées xy, Direction direction,
-			NiveauAppareil niveau,
-			JeuContrôle controller, Partie partie)
+			NiveauAppareil niveau, JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.FOUR, direction, niveau, controller, partie);
+		super(xy, TypeAppareil.FOUR, direction, niveau, controller);
 
 		entrées = new Entrées_Center();
 		pointersEnters = entrées.getPointers(direction);

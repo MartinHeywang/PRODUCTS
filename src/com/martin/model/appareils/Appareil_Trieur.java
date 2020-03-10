@@ -24,7 +24,7 @@ public class Appareil_Trieur extends Appareil {
 	public Appareil_Trieur(Coordonnées xy, NiveauAppareil niveau,
 			Direction direction, JeuContrôle controller, Partie partie)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller, partie);
+		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);
 
 		// FixMe : charger les critères
 

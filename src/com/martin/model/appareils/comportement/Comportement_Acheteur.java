@@ -36,7 +36,8 @@ public class Comportement_Acheteur implements Comportement {
 		for (int niveau = 0; this.niveau.getNiveau() < niveau; niveau++) {
 
 			if (!resDistribuée.getRessource().equals(Ressource.NONE)) {
-				if (controller.getArgent() < 5 + Appareil.getÉlectricité())
+				if (controller.getPartieEnCours().getArgent() < 5
+						+ Appareil.getÉlectricité())
 					throw new NegativeArgentException("Le comportement d'un "
 							+ "acheteur n'a pas pu être réalisé car le solde "
 							+ "d'argent n'était pas assez important.");

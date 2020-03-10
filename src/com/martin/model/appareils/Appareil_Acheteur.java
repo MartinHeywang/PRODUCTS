@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import com.martin.Connect_SQLite;
-import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
@@ -13,18 +12,15 @@ import com.martin.model.appareils.orientation.Entrées_Aucune;
 import com.martin.model.appareils.orientation.Sorties_Center;
 import com.martin.view.JeuContrôle;
 
-import javafx.scene.paint.Color;
-
 public class Appareil_Acheteur extends Appareil {
 
 	public static ArrayList<Coordonnées> liste = new ArrayList<Coordonnées>();
 
 	public Appareil_Acheteur(Coordonnées xy, Direction direction,
-			NiveauAppareil niveau,
-			JeuContrôle controller, Partie partie)
+			NiveauAppareil niveau, JeuContrôle controller)
 			throws FileNotFoundException {
 
-		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller, partie);
+		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
 		liste.add(xy);
 
 		entrées = new Entrées_Aucune();
@@ -41,8 +37,7 @@ public class Appareil_Acheteur extends Appareil {
 		try {
 			Connect_SQLite.getAppareilDao().delete(this);
 		} catch (Exception e) {
-			controller.setReport("L'appareil n'a pas été détruit correctement.",
-					Color.DARKRED);
+
 		}
 	}
 

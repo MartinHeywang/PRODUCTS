@@ -2,7 +2,6 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.appareils.comportement.Comportement_Presse_Fil;
 import com.martin.model.appareils.orientation.Entrées_Center;
@@ -13,10 +12,9 @@ public class Appareil_Presse_Fil extends Appareil {
 
 	public Appareil_Presse_Fil(Coordonnées xy, Direction direction,
 			NiveauAppareil niveau,
-			JeuContrôle controller, Partie partie)
+			JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.PRESSE_FIL, direction, niveau, controller,
-				partie);
+		super(xy, TypeAppareil.PRESSE_FIL, direction, niveau, controller);
 
 		entrées = new Entrées_Center();
 		pointersEnters = entrées.getPointers(direction);

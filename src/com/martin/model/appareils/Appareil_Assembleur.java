@@ -3,7 +3,6 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Assembleur;
@@ -16,10 +15,9 @@ public class Appareil_Assembleur extends Appareil {
 	ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
 	public Appareil_Assembleur(Coordonnées xy, NiveauAppareil niveau,
-			Direction direction, JeuContrôle controller, Partie partie)
+			Direction direction, JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.ASSEMBLEUR, direction, niveau, controller,
-				partie);
+		super(xy, TypeAppareil.ASSEMBLEUR, direction, niveau, controller);
 
 		entrées = new Entrées_LeftAndCenter();
 		pointersEnters = entrées.getPointers(direction);

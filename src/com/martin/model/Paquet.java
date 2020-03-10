@@ -15,6 +15,9 @@ public class Paquet {
 	@DatabaseField
 	private int quantité;
 
+	public Paquet() {
+	}
+
 	public Paquet(Ressource ressource, int quantité) {
 		this.ressource = ressource;
 		this.quantité = quantité;

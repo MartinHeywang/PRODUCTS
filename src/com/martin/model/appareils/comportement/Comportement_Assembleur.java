@@ -36,7 +36,7 @@ public class Comportement_Assembleur implements Comportement {
 
 		for (int level = 0; level < niveau.getNiveau()
 				|| level < resATraiter.size(); level++) {
-			if (controller.getArgent() < 5
+			if (controller.getPartieEnCours().getArgent() < 5
 					+ Appareil.getÉlectricité())
 				throw new NegativeArgentException(
 						"Le comportement d'un acheteur "
@@ -83,7 +83,8 @@ public class Comportement_Assembleur implements Comportement {
 				ressources.remove(recette.get(j));
 			} else {
 				ressources.addAll(stock);
-				if (pointer.isInGrid(controller.getTailleGrille())) {
+				if (pointer.isInGrid(
+						controller.getPartieEnCours().getTailleGrille())) {
 					return false;
 				}
 			}
