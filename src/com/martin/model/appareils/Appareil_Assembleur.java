@@ -25,7 +25,7 @@ public class Appareil_Assembleur extends Appareil {
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Assembleur(xy, niveau,
 				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller);
+				pointerExit.getyPlus(), controller, this);
 	}
 
 	public void setProduit(Ressource res) throws NullPointerException {

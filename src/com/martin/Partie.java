@@ -47,10 +47,13 @@ public class Partie {
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
+					final Appareil appareil = new Appareil_Sol(
+							new Coordonnées(x, y), Direction.UP,
+							NiveauAppareil.NIVEAU_1, null);
+
+					appareil.setPartie(this);
 					Connect_SQLite.getAppareilDao()
-							.createIfNotExists(new Appareil_Sol(
-									new Coordonnées(x, y), Direction.UP,
-									NiveauAppareil.NIVEAU_1, null));
+							.createIfNotExists(appareil);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 
@@ -73,10 +76,13 @@ public class Partie {
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
+					final Appareil appareil = new Appareil_Sol(
+							new Coordonnées(x, y), Direction.UP,
+							NiveauAppareil.NIVEAU_1, null);
+
+					appareil.setPartie(this);
 					Connect_SQLite.getAppareilDao()
-							.createIfNotExists(new Appareil_Sol(
-									new Coordonnées(x, y), Direction.UP,
-									NiveauAppareil.NIVEAU_1, null));
+							.createIfNotExists(appareil);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 

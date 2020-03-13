@@ -1,7 +1,9 @@
 package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 
+import com.martin.Connect_SQLite;
 import com.martin.Partie;
 import com.martin.model.Coordonnées;
 import com.martin.model.Paquet;
@@ -26,7 +28,26 @@ public class Appareil_Trieur extends Appareil {
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);
 
-		// FixMe : charger les critères
+		try {
+			if (Connect_SQLite.getPaquetDao().queryBuilder().where()
+					.eq("idAppareil", idAppareil).query()
+					.size() == 2) {
+				crit1 = Connect_SQLite.getPaquetDao().queryBuilder()
+						.where()
+						.eq("idAppareil", idAppareil)
+						.queryForFirst();
+				crit2 = Connect_SQLite.getPaquetDao().queryBuilder()
+						.where()
+						.eq("idAppareil", idAppareil)
+						.query().get(1);
+			} else {
+				crit1 = new Paquet(Ressource.NONE, 1, this);
+				crit2 = new Paquet(Ressource.NONE, 1, this);
+				Connect_SQLite.getPaquetDao().create(crit1);
+				Connect_SQLite.getPaquetDao().create(crit2);
+			}
+		} catch (SQLException e) {
+		}
 
 		entrées = new Entrées_Center();
 		pointersEnters = entrées.getPointers(direction);

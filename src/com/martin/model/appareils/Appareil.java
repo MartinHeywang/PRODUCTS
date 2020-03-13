@@ -91,7 +91,8 @@ public class Appareil extends ImageView {
 		this.direction = direction;
 		this.niveau = niveau;
 		this.controller = controller;
-		this.partie = controller.getPartieEnCours();
+		if (controller != null)
+			this.partie = controller.getPartieEnCours();
 
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -185,11 +186,8 @@ public class Appareil extends ImageView {
 	}
 
 	/**
-	 * <h1>destruction</h1>
-	 * <p>
-	 * This methode resets the database at the coordinates, and do the
-	 * necessary to destruct properly this device
-	 * </p>
+	 * This method resets the database at the coordinates, and do the
+	 * necessary to destruct properly this device.
 	 * 
 	 */
 	public void destruction() {
@@ -363,6 +361,14 @@ public class Appareil extends ImageView {
 	 */
 	public void setController(JeuContrôle controller) {
 		this.controller = controller;
+	}
+
+	/**
+	 * 
+	 * @param partie the game to set
+	 */
+	public void setPartie(Partie partie) {
+		this.partie = partie;
 	}
 
 	/**

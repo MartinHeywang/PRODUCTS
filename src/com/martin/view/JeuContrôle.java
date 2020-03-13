@@ -45,8 +45,8 @@ public class JeuContrôle {
 	private ProgressBar progression;
 
 	// Variables ci-dessous à revoir, modifiers et déclaration.
-	private static StringProperty reportProperty = new SimpleStringProperty();
-	private static LongProperty argentProperty = new SimpleLongProperty();
+	private static final StringProperty reportProperty = new SimpleStringProperty();
+	private static final LongProperty argentProperty = new SimpleLongProperty();
 
 	private Thread t;
 	private Appareil[][] appareils;
@@ -85,14 +85,9 @@ public class JeuContrôle {
 	public void load(Partie partieToLoad) throws SQLException {
 		// Xxx : progressBar doesn't update before the end of the loading
 
-		Progression progress = new Progression();
-		progression.progressProperty().bind(progress.progressProperty());
-
 		// Sets the report dialog to a little text who says that the game is
 		// still loading and sets the money label
-		setReport("Bienvenue ! \nLe jeu est encore entrain de charger... "
-				+ "Merci de patienter !\nCliquez sur cette bulle pour la "
-				+ "fermer.", Color.LIGHTGRAY);
+		setReport("Bienvenue !", Color.LIGHTBLUE);
 		argentProperty.set(partieToLoad.getArgent());
 
 		partieEnCours = partieToLoad;
@@ -100,22 +95,15 @@ public class JeuContrôle {
 		appareils = new Appareil[partieToLoad.getTailleGrille()][partieToLoad
 				.getTailleGrille()];
 
-		int i = 0;
 		for (Appareil appareil : partieToLoad.getAppareils()) {
+			appareil = appareil.toInstance(this);
+
 			// Adds to the table the instance of the loaded Appareil
 			appareils[appareil.getXy().getX()][appareil.getXy()
-					.getY()] = appareil.toInstance(this);
+					.getY()] = appareil;
 			// Adds this device to the grid
 			grille.add(appareils[appareil.getXy().getX()][appareil.getXy()
 					.getY()], appareil.getXy().getX(), appareil.getXy().getY());
-
-			progress.setProgress(i / partieToLoad.getAppareils().size());
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				System.err.println(e.getLocalizedMessage());
-
-			}
 		}
 
 		t = new Thread(new Play());

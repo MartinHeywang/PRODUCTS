@@ -21,12 +21,25 @@ public class Comportement_Acheteur implements Comportement {
 	private Paquet resDistribuée;
 
 	public Comportement_Acheteur(Coordonnées xy, NiveauAppareil niveau,
-			int xToAdd, int yToAdd, JeuContrôle controller) {
+			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
 		this.niveau = niveau;
 		this.controller = controller;
 		this.pointer = new Coordonnées(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
-		// FixMe : charger la ressource
+		try {
+			if (Connect_SQLite.getPaquetDao().queryBuilder().where()
+					.eq("idAppareil", appareil.getID()).query()
+					.size() != 0)
+				resDistribuée = Connect_SQLite.getPaquetDao().queryBuilder()
+						.where()
+						.eq("idAppareil", appareil.getID())
+						.queryForFirst();
+			else {
+				resDistribuée = new Paquet(Ressource.NONE, 1, appareil);
+				Connect_SQLite.getPaquetDao().create(resDistribuée);
+			}
+		} catch (SQLException e) {
+		}
 	}
 
 	@Override

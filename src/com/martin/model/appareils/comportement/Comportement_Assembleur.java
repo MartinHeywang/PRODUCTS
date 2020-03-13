@@ -1,7 +1,9 @@
 package com.martin.model.appareils.comportement;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnées;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
@@ -17,17 +19,30 @@ public class Comportement_Assembleur implements Comportement {
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 
-	private Paquet produit = new Paquet(Ressource.NONE, 1);
+	private Paquet produit;
 	private ArrayList<Ressource> ressources = new ArrayList<Ressource>();
 	private ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
 	public Comportement_Assembleur(Coordonnées xy, NiveauAppareil niveau,
-			int xToAdd, int yToAdd, JeuContrôle controller) {
+			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
 		this.niveau = niveau;
 		this.controller = controller;
 		this.pointer = new Coordonnées(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
-		// FixMe : charger le produit
+		try {
+			if (Connect_SQLite.getPaquetDao().queryBuilder().where()
+					.eq("idAppareil", appareil.getID()).query()
+					.size() != 0)
+				produit = Connect_SQLite.getPaquetDao().queryBuilder()
+						.where()
+						.eq("idAppareil", appareil.getID())
+						.queryForFirst();
+			else {
+				produit = new Paquet(Ressource.NONE, 1, appareil);
+				Connect_SQLite.getPaquetDao().create(produit);
+			}
+		} catch (SQLException e) {
+		}
 	}
 
 	@Override
@@ -56,16 +71,20 @@ public class Comportement_Assembleur implements Comportement {
 	 * 
 	 * <h1>checkIngrédients</h1>
 	 * <p>
-	 * Vérifie si les ressources de l'appareil sont suffisantes pour créer
-	 * l'objet de la recette
+	 * Checks if thre are enough resources to built the product
 	 * </p>
 	 * 
 	 * @return boolean if the requires resources are available
 	 * 
 	 */
 	private boolean checkIngrédients() {
+		// Le stock temporaire pour mettre les de côté les ressources
+		// réservées au produit
 		ArrayList<Ressource> stock = new ArrayList<Ressource>();
+		// On vide les éléments de la recette
 		recette = new ArrayList<Ressource>();
+		// Puis on la re-remplie en fonction des ressources de la quantité
+		// Cette appareil prend en charge tous les schéma à 2 paquets
 		for (int i = 0; i < produit.getRessource().getRecette().get(0)
 				.getQuantité(); i++) {
 			recette.add(
@@ -77,18 +96,25 @@ public class Comportement_Assembleur implements Comportement {
 					produit.getRessource().getRecette().get(1).getRessource());
 		}
 
+		// Pour la taille de la recette crée
 		for (int j = 0; j < produit.getRessource().getRecette().size(); j++) {
+			// Si la ressourc est présente dans le stock
 			if (ressources.contains(recette.get(j))) {
+				// On l'ajoute au stock temporaire et on l'enlève du stockage
 				stock.add(recette.get(j));
 				ressources.remove(recette.get(j));
-			} else {
+			}
+			// Sinon...
+			else {
+				// On remet les ressource du stock dans le stockage principal
 				ressources.addAll(stock);
-				if (pointer.isInGrid(
-						controller.getPartieEnCours().getTailleGrille())) {
-					return false;
-				}
+				// On retourne faux pour dire que l'action ne peut pas continuer
+				// (les ressources ne sont pas suffisantes)
+				return false;
 			}
 		}
+		// On retourne vrai car toutes les ressources nécessaires sont
+		// disponibles
 		return true;
 	}
 
@@ -102,6 +128,8 @@ public class Comportement_Assembleur implements Comportement {
 	 * @param produit the resource to set
 	 */
 	public void setProduit(Ressource produit) {
+		// On vérifie que la ressource donné est prise en charge par
+		// l'appareil
 		switch (produit) {
 		case FER:
 		case OR:
@@ -111,6 +139,7 @@ public class Comportement_Assembleur implements Comportement {
 		case ALUMINIUM:
 			break;
 		default:
+			// Si oui, on modifie le produit
 			this.produit = new Paquet(produit, 1);
 			break;
 		}

@@ -29,7 +29,7 @@ public class Appareil_Acheteur extends Appareil {
 		pointerExit = sorties.getPointer(direction);
 		comportement = new Comportement_Acheteur(xy, niveau,
 				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller);
+				pointerExit.getyPlus(), controller, this);
 	}
 
 	@Override
