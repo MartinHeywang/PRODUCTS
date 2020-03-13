@@ -21,3 +21,14 @@
 .report {
     -fx-border-width: 3px;
 }
+
+.progress-bar{
+	-fx-border-color: white;
+	-fx-border-radius: 0px;
+	
+	-fx-accent: white;
+}
+.progress-bar .bar{
+	-fx-background-color: white;
+	-fx-background-radius: 0.0px;
+}

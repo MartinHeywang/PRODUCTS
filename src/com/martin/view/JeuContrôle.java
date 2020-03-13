@@ -11,7 +11,10 @@ import com.martin.model.appareils.Appareil_Acheteur;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -37,16 +41,15 @@ public class JeuContrôle {
 	private Label report;
 	@FXML
 	private Button upgradeGrid, recherche;
+	@FXML
+	private ProgressBar progression;
 
 	// Variables ci-dessous à revoir, modifiers et déclaration.
 	private static StringProperty reportProperty = new SimpleStringProperty();
-	private static StringProperty argentLabelProperty = new SimpleStringProperty();
 	private static LongProperty argentProperty = new SimpleLongProperty();
 
 	private Thread t;
-
 	private Appareil[][] appareils;
-
 	private Partie partieEnCours;
 
 	public void initialize() {
@@ -60,10 +63,8 @@ public class JeuContrôle {
 			}
 		});
 
-		argentLabel.textProperty().bind(argentLabelProperty);
-		argentLabelProperty
-				.bind(new SimpleStringProperty(argentProperty.get() + " €"));
-
+		argentLabel.textProperty()
+				.bind(Bindings.concat(argentProperty.asString(), " €"));
 		grille.setFocusTraversable(true);
 	}
 
@@ -82,34 +83,47 @@ public class JeuContrôle {
 	 * @param partieToLoad the game to load
 	 */
 	public void load(Partie partieToLoad) throws SQLException {
-		this.partieEnCours = partieToLoad;
-		// Set the size of the table with the grid-size of the game
+		// Xxx : progressBar doesn't update before the end of the loading
+
+		Progression progress = new Progression();
+		progression.progressProperty().bind(progress.progressProperty());
+
+		// Sets the report dialog to a little text who says that the game is
+		// still loading and sets the money label
+		setReport("Bienvenue ! \nLe jeu est encore entrain de charger... "
+				+ "Merci de patienter !\nCliquez sur cette bulle pour la "
+				+ "fermer.", Color.LIGHTGRAY);
+		argentProperty.set(partieToLoad.getArgent());
+
+		partieEnCours = partieToLoad;
+		// Sets the size of the table with the grid-size of the game
 		appareils = new Appareil[partieToLoad.getTailleGrille()][partieToLoad
 				.getTailleGrille()];
-		// For the list of devices in the partieToLoad
+
+		int i = 0;
 		for (Appareil appareil : partieToLoad.getAppareils()) {
-			this.appareils[appareil.getXy().getX()][appareil.getXy()
+			// Adds to the table the instance of the loaded Appareil
+			appareils[appareil.getXy().getX()][appareil.getXy()
 					.getY()] = appareil.toInstance(this);
-			grille.add(this.appareils[appareil.getXy().getX()][appareil.getXy()
+			// Adds this device to the grid
+			grille.add(appareils[appareil.getXy().getX()][appareil.getXy()
 					.getY()], appareil.getXy().getX(), appareil.getXy().getY());
+
+			progress.setProgress(i / partieToLoad.getAppareils().size());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				System.err.println(e.getLocalizedMessage());
+
+			}
 		}
 
 		t = new Thread(new Play());
 		t.start();
 
-		reportProperty
-				.set("Bienvenue !\nCliquez sur cette bulle pour la fermer.");
-		argentProperty.set(partieToLoad.getArgent());
-		report.setVisible(true);
+		argentLabel.setVisible(true);
+		progression.setVisible(false);
 
-		try {
-			setArgent(45820, true);
-		} catch (NegativeArgentException e) {
-			// Catch bloc automatiquement généré
-			System.out.println(e.getLocalizedMessage());
-
-		}
-		setReport("Just a simple test", Color.DARKORANGE);
 	}
 
 	/**
@@ -119,6 +133,10 @@ public class JeuContrôle {
 	 * @see Main#initAccueil2()
 	 */
 	public void returnToHome() {
+		appareils = null;
+		t.interrupt();
+
+		partieEnCours.save();
 		main.initAccueil2();
 	}
 
@@ -152,9 +170,24 @@ public class JeuContrôle {
 
 	}
 
+	class Progression {
+		private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
+
+		public DoubleProperty progressProperty() {
+			return progress;
+		}
+
+		public void setProgress(double progress) {
+			this.progress.set(progress);
+		}
+
+		public double getProgress() {
+			return progress.get();
+		}
+	}
+
 	public void setArgent(long somme, boolean increase)
 			throws NegativeArgentException {
-		// Todo : setArgent doesn't work properly
 		if (increase) {
 			argentProperty.set(argentProperty.get() + somme);
 		} else {

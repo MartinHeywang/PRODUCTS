@@ -50,7 +50,7 @@ public class Partie {
 					Connect_SQLite.getAppareilDao()
 							.createIfNotExists(new Appareil_Sol(
 									new Coordonnées(x, y), Direction.UP,
-									NiveauAppareil.NIVEAU_1, null, this));
+									NiveauAppareil.NIVEAU_1, null));
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 
@@ -76,8 +76,7 @@ public class Partie {
 					Connect_SQLite.getAppareilDao()
 							.createIfNotExists(new Appareil_Sol(
 									new Coordonnées(x, y), Direction.UP,
-									NiveauAppareil.NIVEAU_1, null,
-									this));
+									NiveauAppareil.NIVEAU_1, null));
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 
@@ -108,6 +107,8 @@ public class Partie {
 	 */
 	public void save() {
 		try {
+			this.lastView = LocalDateTime.now().toString();
+
 			Connect_SQLite.getPartieDao().createOrUpdate(this);
 			for (int i = 0; i < this.getAppareils().size(); i++) {
 				this.getAppareils().get(i).save();
