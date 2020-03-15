@@ -3,6 +3,7 @@ package com.martin;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -31,7 +32,7 @@ public class Partie {
 	@DatabaseField(canBeNull = false, defaultValue = "3")
 	private int tailleGrille;
 
-	private List<? extends Appareil> listAppareils;
+	private List<? extends Appareil> listAppareils = Arrays.asList();
 
 	public Partie() {
 	}
@@ -42,7 +43,7 @@ public class Partie {
 		this.tailleGrille = 3;
 		this.argent = 1250;
 
-		Connect_SQLite.getPartieDao().createIfNotExists(this);
+		Connect_SQLite.getPartieDao().create(this);
 
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
@@ -52,16 +53,16 @@ public class Partie {
 							NiveauAppareil.NIVEAU_1, null);
 
 					appareil.setPartie(this);
-					Connect_SQLite.getAppareilDao()
-							.createIfNotExists(appareil);
+
+					Connect_SQLite.getAppareilDao().create(appareil);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 
 				}
 			}
 		}
-		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where()
-				.eq("partie_idPartie", idPartie)
+		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
+				.where().eq("partie_idPartie", idPartie)
 				.query();
 
 		this.save();
@@ -72,7 +73,7 @@ public class Partie {
 		this.lastView = lastView;
 		this.tailleGrille = 3;
 
-		Connect_SQLite.getPartieDao().createIfNotExists(this);
+		Connect_SQLite.getPartieDao().create(this);
 		for (int x = 0; x < tailleGrille; x++) {
 			for (int y = 0; y < tailleGrille; y++) {
 				try {
@@ -81,16 +82,16 @@ public class Partie {
 							NiveauAppareil.NIVEAU_1, null);
 
 					appareil.setPartie(this);
-					Connect_SQLite.getAppareilDao()
-							.createIfNotExists(appareil);
+
+					Connect_SQLite.getAppareilDao().create(appareil);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 
 				}
 			}
 		}
-		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder().where()
-				.eq("partie_idPartie", idPartie)
+		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
+				.where().eq("partie_idPartie", idPartie)
 				.query();
 
 		this.save();

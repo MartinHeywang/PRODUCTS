@@ -46,7 +46,7 @@ public class Comportement_Acheteur implements Comportement {
 	public void action(Stock resATraiter) throws NegativeArgentException {
 		final Stock tempoStock = new Stock();
 
-		for (int niveau = 0; this.niveau.getNiveau() < niveau; niveau++) {
+		for (int niveau = 0; niveau < this.niveau.getNiveau(); niveau++) {
 
 			if (!resDistribuée.getRessource().equals(Ressource.NONE)) {
 				if (controller.getPartieEnCours().getArgent() < 5
@@ -58,6 +58,8 @@ public class Comportement_Acheteur implements Comportement {
 					tempoStock.add(resDistribuée);
 					controller.setArgent(5 + Appareil.getÉlectricité(), false);
 				}
+			} else {
+				tempoStock.add(Ressource.NONE);
 			}
 		}
 

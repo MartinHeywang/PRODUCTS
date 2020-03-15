@@ -2,6 +2,7 @@ package com.martin.view;
 
 import java.sql.SQLException;
 
+import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.Partie;
 import com.martin.model.Coordonnées;
@@ -96,7 +97,10 @@ public class JeuContrôle {
 				.getTailleGrille()];
 
 		for (Appareil appareil : partieToLoad.getAppareils()) {
+			// Transforms the abstract Appareil to a solid Appareil
 			appareil = appareil.toInstance(this);
+			// Saves it in the database
+			Connect_SQLite.getAppareilDao().update(appareil);
 
 			// Adds to the table the instance of the loaded Appareil
 			appareils[appareil.getXy().getX()][appareil.getXy()
@@ -176,15 +180,22 @@ public class JeuContrôle {
 
 	public void setArgent(long somme, boolean increase)
 			throws NegativeArgentException {
-		if (increase) {
-			argentProperty.set(argentProperty.get() + somme);
-		} else {
-			if (argentProperty.get() < somme)
-				throw new NegativeArgentException();
-			else {
-				argentProperty.set(argentProperty.get() - somme);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				if (increase) {
+					argentProperty.set(argentProperty.get() + somme);
+				} else {
+					if (argentProperty.get() < somme)
+						setReport(
+								"Impossibilité de modifier la somme d'argent, solde trop faible.",
+								Color.DARKRED);
+					else {
+						argentProperty.set(argentProperty.get() - somme);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	public void setReport(String text, Color colorBorder) {
@@ -199,7 +210,7 @@ public class JeuContrôle {
 
 	public Appareil getGrilleAppareils(Coordonnées xy)
 			throws NullPointerException {
-		return null;
+		return appareils[xy.getX()][xy.getY()];
 	}
 
 	public Partie getPartieEnCours() {

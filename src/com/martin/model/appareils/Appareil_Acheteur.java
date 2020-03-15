@@ -23,6 +23,7 @@ public class Appareil_Acheteur extends Appareil {
 		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
 		liste.add(xy);
 
+		this.save();
 		entrées = new Entrées_Aucune();
 		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Center();
@@ -30,6 +31,7 @@ public class Appareil_Acheteur extends Appareil {
 		comportement = new Comportement_Acheteur(xy, niveau,
 				pointerExit.getxPlus(),
 				pointerExit.getyPlus(), controller, this);
+		System.out.println(this.toString() + "\nID : " + idAppareil);
 	}
 
 	@Override

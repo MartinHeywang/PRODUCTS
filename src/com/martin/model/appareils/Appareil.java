@@ -86,7 +86,6 @@ public class Appareil extends ImageView {
 			JeuContrôle controller) throws FileNotFoundException {
 		super(new LocatedImage(niveau.getURL() + type.getURL()));
 
-		this.xy = xy;
 		this.type = type;
 		this.direction = direction;
 		this.niveau = niveau;
@@ -133,9 +132,15 @@ public class Appareil extends ImageView {
 		});
 
 		try {
-			if (Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
-					.eq("x", xy.getX()).and()
-					.eq("y", xy.getY()).query().size() == 0)
+			if (Connect_SQLite
+					.getCoordonnéesDao()
+					.queryBuilder()
+					.where()
+					.eq("x", xy.getX())
+					.and()
+					.eq("y", xy.getY())
+					.query()
+					.size() == 0)
 				Connect_SQLite.getCoordonnéesDao().create(xy);
 
 			this.xy = Connect_SQLite.getCoordonnéesDao().queryBuilder().where()

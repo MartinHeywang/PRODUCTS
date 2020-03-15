@@ -37,7 +37,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextArea prefHeight="200.0" prefWidth="200.0" promptText="Nom (pas trop long, pourrait être dérangeant)">
+                  <TextArea prefHeight="200.0" prefWidth="200.0" promptText="Nom de la partie (Conseil : ni trop long, ni déjà existant)" fx:id="field" focusTraversable="false">
                      <font>
                         <Font size="15.0" />
                      </font>

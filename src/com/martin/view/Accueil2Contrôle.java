@@ -8,23 +8,25 @@ import com.martin.Partie;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 public class Accueil2Contrôle {
-	
-	@FXML VBox listePartie;
-	@FXML TextField field;
+
+	@FXML
+	VBox listePartie;
+	@FXML
+	TextArea field;
 	Main main;
 
 	@FXML
 	private void nouvelle() {
-		if(!field.getText().isEmpty()) {
+		if (!field.getText().isEmpty()) {
 			try {
 				Partie partie = new Partie(field.getText());
 				main.initGame(partie);
-			}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -32,30 +34,34 @@ public class Accueil2Contrôle {
 
 	/**
 	 * <h1>setMainApp</h1>
-	 * <p>Sets the object main</p>
+	 * <p>
+	 * Sets the object main
+	 * </p>
+	 * 
 	 * @param main the object to set
 	 */
 	public void setMainApp(Main main) {
 		this.main = main;
 		try {
-			for(Partie partie : Connect_SQLite.getPartieDao().queryForAll()) {
+			for (Partie partie : Connect_SQLite.getPartieDao().queryForAll()) {
 				Displayer displayer = new Displayer(partie);
 				listePartie.getChildren().add(displayer);
 				displayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent event) {
 						try {
-							main.initGame(((Displayer) event.getSource()).getPartie());
+							main.initGame(((Displayer) event.getSource())
+									.getPartie());
 						} catch (Exception e) {
 							e.printStackTrace();
-							
+
 						}
 					}
 				});
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
+
 		}
 	}
 }
