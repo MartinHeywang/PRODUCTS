@@ -124,11 +124,13 @@ public class JeuContrôle {
 	 * 
 	 * @see Main#initAccueil2()
 	 */
-	public void returnToHome() {
+	@FXML
+	public void returnToHome() throws SQLException {
 		appareils = null;
 		t.interrupt();
 
-		partieEnCours.save();
+		partieEnCours.save(null);
+		// Todo : save the game
 		main.initAccueil2();
 	}
 
@@ -196,6 +198,7 @@ public class JeuContrôle {
 				}
 			}
 		});
+		partieEnCours.setArgent(somme, increase);
 	}
 
 	public void setReport(String text, Color colorBorder) {
@@ -206,6 +209,18 @@ public class JeuContrôle {
 				(int) (colorBorder.getGreen() * 255),
 				(int) (colorBorder.getBlue() * 255)) + ";");
 		report.setVisible(true);
+	}
+
+	public void setAppareil(Appareil appareil, boolean ignoreCost)
+			throws NegativeArgentException {
+		this.appareils[appareil.getXy().getX()][appareil.getXy()
+				.getY()] = appareil;
+		this.appareils[appareil.getXy().getX()][appareil.getXy()
+				.getY()].save();
+		grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
+		if (!ignoreCost) {
+			setArgent(appareil.getType().getPrix(), false);
+		}
 	}
 
 	public Appareil getGrilleAppareils(Coordonnées xy)

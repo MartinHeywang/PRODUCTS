@@ -168,6 +168,19 @@ public class Main extends Application {
 			JeuContrôle controller = loader.getController();
 			controller.setMainApp(this);
 			controller.load(partie);
+
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent e) {
+					try {
+						controller.returnToHome();
+					} catch (SQLException e1) {
+						System.out.println(e1.getLocalizedMessage());
+
+					}
+					System.exit(0);
+				}
+			});
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}

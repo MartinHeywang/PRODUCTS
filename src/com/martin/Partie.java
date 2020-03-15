@@ -65,7 +65,7 @@ public class Partie {
 				.where().eq("partie_idPartie", idPartie)
 				.query();
 
-		this.save();
+		this.save(listAppareils);
 	}
 
 	public Partie(String nom, String lastView) throws SQLException {
@@ -94,7 +94,7 @@ public class Partie {
 				.where().eq("partie_idPartie", idPartie)
 				.query();
 
-		this.save();
+		this.save(listAppareils);
 	}
 
 	/**
@@ -112,14 +112,12 @@ public class Partie {
 	 * @see Connect_SQLite#getAppareilDao()
 	 * @see Connect_SQLite#getPartieDao()
 	 */
-	public void save() {
+	public void save(List<? extends Appareil> listAppareils) {
 		try {
 			this.lastView = LocalDateTime.now().toString();
 
-			Connect_SQLite.getPartieDao().createOrUpdate(this);
-			for (int i = 0; i < this.getAppareils().size(); i++) {
-				this.getAppareils().get(i).save();
-			}
+			Connect_SQLite.getPartieDao().update(this);
+			// Todo : save devices
 		} catch (SQLException e) {
 			System.err.println("La partie n'a pas pu être sauvegardée.");
 
@@ -177,17 +175,6 @@ public class Partie {
 			} else {
 				return false;
 			}
-		}
-	}
-
-	public boolean setAppareil(Appareil appareil, int idOldAppareil,
-			boolean ignoreCost) {
-		try {
-			Connect_SQLite.getAppareilDao().updateId(appareil, idOldAppareil);
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
 		}
 	}
 }

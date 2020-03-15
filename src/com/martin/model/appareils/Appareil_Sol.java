@@ -47,17 +47,19 @@ public class Appareil_Sol extends Appareil {
 							new Coordonnées(xy.getX(), xy.getY()), dialog);
 
 					dialog.showAndWait();
-					// Todo : end of the dialog SolContrôle.fxml
-					/*
-					 * if (!dialog.getResult().getClass()
-					 * .equals(ButtonType.class)) { controller.setAppareil(
-					 * ((TypeAppareil) dialog.getResult()).getClasse()
-					 * .getConstructor( Coordonnées.class, Direction.class,
-					 * NiveauAppareil.class, JeuContrôle.class) .newInstance(
-					 * new Coordonnées(xy.getX(), xy.getY()), Direction.UP,
-					 * NiveauAppareil.NIVEAU_1, controller), idAppareil, false);
-					 * }
-					 */
+
+					if (dialog.getResult() instanceof TypeAppareil) {
+						controller.setAppareil(
+								((TypeAppareil) dialog.getResult()).getClasse()
+										.getConstructor(Coordonnées.class,
+												Direction.class,
+												NiveauAppareil.class,
+												JeuContrôle.class)
+										.newInstance(xy, Direction.UP,
+												NiveauAppareil.NIVEAU_1,
+												controller),
+								false);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
