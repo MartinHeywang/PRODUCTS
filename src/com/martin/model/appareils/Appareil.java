@@ -164,14 +164,14 @@ public class Appareil extends ImageView {
 	 */
 	public void action(Stock resATraiter) throws NegativeArgentException {
 		if (this.controller
-				.getGrilleAppareils(
+				.getPartieEnCours().getAppareil(
 						new Coordonnées(xy.getX() + pointerExit.getxPlus(),
 								xy.getY() + pointerExit.getyPlus()))
 				.getXy().isNearFrom(xy)) {
 
 			for (int i = 0; i < pointersEnters.size(); i++) {
 				if (pointerExit.equals(controller
-						.getGrilleAppareils(new Coordonnées(
+						.getPartieEnCours().getAppareil(new Coordonnées(
 								xy.getX() + pointerExit.getxPlus(),
 								xy.getY() + pointerExit.getyPlus()))
 						.getPointerEnter().get(i)))

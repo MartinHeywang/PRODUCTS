@@ -13,6 +13,7 @@ import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Sol;
 import com.martin.model.appareils.Direction;
 import com.martin.model.appareils.NiveauAppareil;
+import com.martin.model.exceptions.NegativeArgentException;
 
 @DatabaseTable(tableName = "parties")
 public class Partie {
@@ -32,7 +33,7 @@ public class Partie {
 	@DatabaseField(canBeNull = false, defaultValue = "3")
 	private int tailleGrille;
 
-	private List<? extends Appareil> listAppareils = Arrays.asList();
+	private List<Appareil> listAppareils = Arrays.asList();
 
 	public Partie() {
 	}
@@ -40,7 +41,7 @@ public class Partie {
 	public Partie(String nom) throws SQLException {
 		this.nom = nom;
 		this.lastView = LocalDateTime.now().toString();
-		this.tailleGrille = 3;
+		this.tailleGrille = 20;
 		this.argent = 1250;
 
 		Connect_SQLite.getPartieDao().create(this);
@@ -112,7 +113,7 @@ public class Partie {
 	 * @see Connect_SQLite#getAppareilDao()
 	 * @see Connect_SQLite#getPartieDao()
 	 */
-	public void save(List<? extends Appareil> listAppareils) {
+	public void save(List<Appareil> listAppareils) {
 		try {
 			this.lastView = LocalDateTime.now().toString();
 
@@ -148,7 +149,7 @@ public class Partie {
 		return tailleGrille;
 	}
 
-	public List<? extends Appareil> getAppareils() {
+	public List<Appareil> getAppareils() {
 		try {
 			listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
 					.where().eq("partie_idPartie", idPartie)
@@ -164,17 +165,58 @@ public class Partie {
 		return LocalDateTime.parse(lastView);
 	}
 
-	public boolean setArgent(long argent, boolean increase) {
+	/**
+	 * Adds or substract money to the total.
+	 * 
+	 * @param argent   How many money should me added or substracted.
+	 * @param increase If the money should be added.
+	 * @throws NegativeArgentException if not enough money is available.
+	 */
+	public void setArgent(long argent, boolean increase)
+			throws NegativeArgentException {
 		if (increase) {
 			this.argent += argent;
-			return true;
 		} else {
 			if (this.argent > argent) {
 				this.argent -= argent;
-				return true;
 			} else {
-				return false;
+				throw new NegativeArgentException();
 			}
 		}
+	}
+
+	/**
+	 * Sets in the list of all the device referenced for this <i>game</i>,
+	 * the new device at the corresponding index. In fact, where the
+	 * coordinates matches, because we can't find two devices with the
+	 * same coordinates and the same <i>game</i>.
+	 * 
+	 * @param appareil the new device
+	 */
+	public void setAppareil(Appareil appareil) {
+		for (Appareil app : listAppareils) {
+			if (app.getXy().getX() == appareil.getXy().getX()
+					&& app.getXy().getY() == appareil.getXy().getY()) {
+				listAppareils.set(listAppareils.indexOf(app), appareil);
+			}
+		}
+	}
+
+	/**
+	 * Iterrates over the list of devices and checks if a device with the
+	 * corresponding coordinates can be found.
+	 * 
+	 * @param xy the coordinates to compare
+	 * @return a device from the list with the corresponding coordinate.
+	 * @throws NullPointerException if no devices can be found
+	 */
+	public Appareil getAppareil(Coordonnées xy) throws NullPointerException {
+		for (Appareil appareil : listAppareils) {
+			if (appareil.getXy().getX() == xy.getX()
+					&& appareil.getXy().getY() == xy.getY()) {
+				return appareil;
+			}
+		}
+		return null;
 	}
 }

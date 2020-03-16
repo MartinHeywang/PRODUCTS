@@ -1,11 +1,10 @@
 package com.martin.view;
 
 import java.sql.SQLException;
+import java.util.List;
 
-import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.Partie;
-import com.martin.model.Coordonnées;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
@@ -19,6 +18,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -50,7 +50,6 @@ public class JeuContrôle {
 	private static final LongProperty argentProperty = new SimpleLongProperty();
 
 	private Thread t;
-	private Appareil[][] appareils;
 	private Partie partieEnCours;
 
 	public void initialize() {
@@ -86,35 +85,64 @@ public class JeuContrôle {
 	public void load(Partie partieToLoad) throws SQLException {
 		// Xxx : progressBar doesn't update before the end of the loading
 
-		// Sets the report dialog to a little text who says that the game is
-		// still loading and sets the money label
-		setReport("Bienvenue !", Color.LIGHTBLUE);
-		argentProperty.set(partieToLoad.getArgent());
+		final JeuContrôle controller = this;
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						setReport(
+								"Chargement de la partie en cours...\n"
+										+ "L'opération peut durer quelques instants.",
+								Color.MEDIUMPURPLE);
+					}
+				});
 
-		partieEnCours = partieToLoad;
-		// Sets the size of the table with the grid-size of the game
-		appareils = new Appareil[partieToLoad.getTailleGrille()][partieToLoad
-				.getTailleGrille()];
+				partieEnCours = partieToLoad;
+				List<Appareil> devicesToLoad = partieToLoad.getAppareils();
 
-		for (Appareil appareil : partieToLoad.getAppareils()) {
-			// Transforms the abstract Appareil to a solid Appareil
-			appareil = appareil.toInstance(this);
-			// Saves it in the database
-			Connect_SQLite.getAppareilDao().update(appareil);
+				int i = 1;
+				for (Appareil appareil : devicesToLoad) {
+					// Transforms the abstract Appareil to a solid Appareil
+					final Appareil app = appareil.toInstance(controller);
 
-			// Adds to the table the instance of the loaded Appareil
-			appareils[appareil.getXy().getX()][appareil.getXy()
-					.getY()] = appareil;
-			// Adds this device to the grid
-			grille.add(appareils[appareil.getXy().getX()][appareil.getXy()
-					.getY()], appareil.getXy().getX(), appareil.getXy().getY());
-		}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							// Adds this device to the grid
+							grille.add(app, appareil.getXy().getX(),
+									appareil.getXy().getY());
+						}
+					});
 
-		t = new Thread(new Play());
-		t.start();
+					i++;
+					progression.progressProperty()
+							.set((double) i
+									/ devicesToLoad.size());
+				}
 
-		argentLabel.setVisible(true);
-		progression.setVisible(false);
+				t = new Thread(new Play());
+				t.start();
+
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						argentLabel.setVisible(true);
+						progression.setVisible(false);
+						// Sets the report dialog to a little text who says that
+						// the game is
+						// still loading and sets the money label
+						setReport("Bienvenue !", Color.LIGHTBLUE);
+						argentProperty.set(partieToLoad.getArgent());
+					}
+				});
+				return null;
+			}
+		};
+
+		Thread loading = new Thread(task);
+		loading.start();
 
 	}
 
@@ -126,7 +154,6 @@ public class JeuContrôle {
 	 */
 	@FXML
 	public void returnToHome() throws SQLException {
-		appareils = null;
 		t.interrupt();
 
 		partieEnCours.save(null);
@@ -143,7 +170,8 @@ public class JeuContrôle {
 					Thread.sleep(750);
 					for (int i = 0; i < Appareil_Acheteur.liste.size(); i++) {
 						try {
-							getGrilleAppareils(Appareil_Acheteur.liste.get(i))
+							partieEnCours
+									.getAppareil(Appareil_Acheteur.liste.get(i))
 									.action(new Stock());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (NegativeArgentException e) {
@@ -158,7 +186,6 @@ public class JeuContrôle {
 					}
 				}
 			} catch (IllegalArgumentException | InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 
@@ -201,6 +228,18 @@ public class JeuContrôle {
 		partieEnCours.setArgent(somme, increase);
 	}
 
+	public void setAppareil(Appareil appareil, boolean ignoreCost) {
+		partieEnCours.setAppareil(appareil);
+		if (ignoreCost) {
+			try {
+				setArgent(appareil.getType().getPrix(), false);
+			} catch (NegativeArgentException e) {
+				System.err.println(e.getLocalizedMessage());
+
+			}
+		}
+	}
+
 	public void setReport(String text, Color colorBorder) {
 		reportProperty.set(text);
 		report.getStyleClass().add("report");
@@ -209,23 +248,6 @@ public class JeuContrôle {
 				(int) (colorBorder.getGreen() * 255),
 				(int) (colorBorder.getBlue() * 255)) + ";");
 		report.setVisible(true);
-	}
-
-	public void setAppareil(Appareil appareil, boolean ignoreCost)
-			throws NegativeArgentException {
-		this.appareils[appareil.getXy().getX()][appareil.getXy()
-				.getY()] = appareil;
-		this.appareils[appareil.getXy().getX()][appareil.getXy()
-				.getY()].save();
-		grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
-		if (!ignoreCost) {
-			setArgent(appareil.getType().getPrix(), false);
-		}
-	}
-
-	public Appareil getGrilleAppareils(Coordonnées xy)
-			throws NullPointerException {
-		return appareils[xy.getX()][xy.getY()];
 	}
 
 	public Partie getPartieEnCours() {
