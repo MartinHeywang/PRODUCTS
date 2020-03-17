@@ -38,10 +38,16 @@ public class Partie {
 	public Partie() {
 	}
 
+	/**
+	 * Creates a new <i>game</i>.
+	 * 
+	 * @param nom the name of the new game
+	 * @throws SQLException if this object can't be registered
+	 */
 	public Partie(String nom) throws SQLException {
 		this.nom = nom;
 		this.lastView = LocalDateTime.now().toString();
-		this.tailleGrille = 20;
+		this.tailleGrille = 5;
 		this.argent = 1250;
 
 		Connect_SQLite.getPartieDao().create(this);
@@ -69,6 +75,13 @@ public class Partie {
 		this.save(listAppareils);
 	}
 
+	/**
+	 * Creates a new <i>game</i>.
+	 * 
+	 * @param nom      the name of the new game
+	 * @param lastView the last view of this game
+	 * @throws SQLException if this object can't be registered
+	 */
 	public Partie(String nom, String lastView) throws SQLException {
 		this.nom = nom;
 		this.lastView = lastView;
@@ -115,10 +128,19 @@ public class Partie {
 	 */
 	public void save(List<Appareil> listAppareils) {
 		try {
+			// Update the time & date to the current time & date
 			this.lastView = LocalDateTime.now().toString();
 
+			// Update this object in the database
 			Connect_SQLite.getPartieDao().update(this);
-			// Todo : save devices
+
+			// Sets the new list as the devices list
+			this.listAppareils = listAppareils;
+
+			// Saves all the devices in the database
+			for (Appareil appareil : this.listAppareils) {
+				Connect_SQLite.getAppareilDao().update(appareil);
+			}
 		} catch (SQLException e) {
 			System.err.println("La partie n'a pas pu être sauvegardée.");
 
@@ -126,29 +148,58 @@ public class Partie {
 	}
 
 	/**
-	 * This methods is meant to destroy this game in the database. Method
-	 * is still to do. Actually it does nothing.
+	 * This method deletes this game and all its devices in the database.
+	 * After invoking this method, all changes won't be saved. This object
+	 * wont' be useful.
+	 * 
+	 * @throws SQLException if ther is a problem when deleting this
+	 *                      object.
 	 */
-	public void delete() {
-		// Todo : delete method
+	public void delete() throws SQLException {
+		// Delete this game
+		Connect_SQLite.getPartieDao().delete(this);
+		// Delete the devices
+		for (Appareil appareil : this.listAppareils) {
+			Connect_SQLite.getAppareilDao().delete(appareil);
+		}
 	}
 
+	/**
+	 * 
+	 * @return the id of this game
+	 */
 	public int getID() {
 		return idPartie;
 	}
 
+	/**
+	 * 
+	 * @return the name of the game
+	 */
 	public String getNom() {
 		return nom;
 	}
 
+	/**
+	 * 
+	 * @return how many money the game counts
+	 */
 	public long getArgent() {
 		return argent;
 	}
 
+	/**
+	 * 
+	 * @return the grid-size
+	 */
 	public int getTailleGrille() {
 		return tailleGrille;
 	}
 
+	/**
+	 * 
+	 * @return a list of all devices of this game
+	 */
 	public List<Appareil> getAppareils() {
 		try {
 			listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
@@ -161,6 +212,10 @@ public class Partie {
 		return listAppareils;
 	}
 
+	/**
+	 * 
+	 * @return the date of the latest save
+	 */
 	public LocalDateTime getLastView() {
 		return LocalDateTime.parse(lastView);
 	}
@@ -189,7 +244,7 @@ public class Partie {
 	 * Sets in the list of all the device referenced for this <i>game</i>,
 	 * the new device at the corresponding index. In fact, where the
 	 * coordinates matches, because we can't find two devices with the
-	 * same coordinates and the same <i>game</i>.
+	 * same <i>coordinates</i> and the same <i>game</i>.
 	 * 
 	 * @param appareil the new device
 	 */

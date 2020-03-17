@@ -52,6 +52,8 @@ public class JeuContrôle {
 	private Thread t;
 	private Partie partieEnCours;
 
+	private List<Appareil> devices;
+
 	public void initialize() {
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
@@ -83,8 +85,6 @@ public class JeuContrôle {
 	 * @param partieToLoad the game to load
 	 */
 	public void load(Partie partieToLoad) throws SQLException {
-		// Xxx : progressBar doesn't update before the end of the loading
-
 		final JeuContrôle controller = this;
 		Task<Void> task = new Task<Void>() {
 			@Override
@@ -100,10 +100,10 @@ public class JeuContrôle {
 				});
 
 				partieEnCours = partieToLoad;
-				List<Appareil> devicesToLoad = partieToLoad.getAppareils();
+				devices = partieToLoad.getAppareils();
 
 				int i = 1;
-				for (Appareil appareil : devicesToLoad) {
+				for (Appareil appareil : devices) {
 					// Transforms the abstract Appareil to a solid Appareil
 					final Appareil app = appareil.toInstance(controller);
 
@@ -119,7 +119,7 @@ public class JeuContrôle {
 					i++;
 					progression.progressProperty()
 							.set((double) i
-									/ devicesToLoad.size());
+									/ devices.size());
 				}
 
 				t = new Thread(new Play());

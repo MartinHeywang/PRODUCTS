@@ -92,6 +92,7 @@ public class Appareil extends ImageView {
 		this.controller = controller;
 		if (controller != null)
 			this.partie = controller.getPartieEnCours();
+		setRotate(direction.getRotate());
 
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override

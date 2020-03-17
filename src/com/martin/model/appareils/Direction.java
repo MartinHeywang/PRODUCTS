@@ -1,17 +1,17 @@
 package com.martin.model.appareils;
 
 public enum Direction {
-	UP("000", "Haut", 0, -1),
-	LEFT("270", "Gauche", -1, 0),
-	DOWN("180", "Bas", 0, 1),
-	RIGHT("090", "Droite", 1, 0),
-	NONE("-1", "None", 0, 0);
-	
-	private String rotate;
+	UP(0.0d, "Haut", 0, -1),
+	LEFT(0.75d, "Gauche", -1, 0),
+	DOWN(0.5d, "Bas", 0, 1),
+	RIGHT(0.25d, "Droite", 1, 0),
+	NONE(-1.0d, "None", 0, 0);
+
+	private double rotate;
 	private String nom;
 	private int xPlus, yPlus;
-	
-	Direction(String rotate, String nom, int xPlus, int yPlus){
+
+	Direction(double rotate, String nom, int xPlus, int yPlus) {
 		this.rotate = rotate;
 		this.nom = nom;
 		this.xPlus = xPlus;
@@ -21,7 +21,7 @@ public enum Direction {
 	/**
 	 * @return the rotate
 	 */
-	public String getRotate() {
+	public double getRotate() {
 		return rotate;
 	}
 
