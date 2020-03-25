@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<!-- Configuration file for the database using Hibernate -->
+<hibernate-configuration>
+	<!-- Session Factory -->
+	<session-factory>
+	
+		<!-- Which Dialect ? -->
+		<property name="hibernate-dialect">org.hibernate.dialect.SQLiteDialect</property>
+		
+		<!-- Which Driver ? -->
+		<property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
+		
+		<!-- Where ? -->
+		<property name="hibernate.connection.url">jdbc:sqlite:PRODUCTS.db</property>
+		
+		<!-- Create automatically the database -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		
+		<!-- Mappings -->
+		<mapping resource="Paquet.hbm.xml"/>
+		<mapping resource="Appareil.hbm.xml"/>
+		<mapping resource="Partie.hbm.xml"/>
+		<mapping resource="Coordonnees.hbm.xml"/>
+		
+	</session-factory>
+</hibernate-configuration>

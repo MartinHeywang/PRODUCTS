@@ -1,36 +1,27 @@
 package com.martin;
 
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.martin.model.Coordonnées;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+
+import com.martin.model.Coordonnees;
 import com.martin.model.appareils.Appareil;
-import com.martin.model.appareils.Appareil_Sol;
-import com.martin.model.appareils.Direction;
-import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 
-@DatabaseTable(tableName = "parties")
 public class Partie {
 
-	@DatabaseField(generatedId = true, unique = true, columnName = "idPartie")
-	private int idPartie;
+	private Long idPartie;
 
-	@DatabaseField(canBeNull = false)
 	private String nom;
 
-	@DatabaseField(canBeNull = false)
-	private String lastView;
+	private LocalDateTime lastView;
 
-	@DatabaseField(canBeNull = false, defaultValue = "1250")
 	private long argent;
 
-	@DatabaseField(canBeNull = false, defaultValue = "3")
 	private int tailleGrille;
 
 	private List<Appareil> listAppareils = Arrays.asList();
@@ -42,82 +33,26 @@ public class Partie {
 	 * Creates a new <i>game</i>.
 	 * 
 	 * @param nom the name of the new game
-	 * @throws SQLException if this object can't be registered
+	 * @throws SQLException if this object can't be registered in the
+	 *                      database
 	 */
 	public Partie(String nom) throws SQLException {
 		this.nom = nom;
-		this.lastView = LocalDateTime.now().toString();
-		this.tailleGrille = 5;
+		this.lastView = LocalDateTime.now();
+		this.tailleGrille = 3;
 		this.argent = 1250;
 
-		Connect_SQLite.getPartieDao().create(this);
-
-		for (int x = 0; x < tailleGrille; x++) {
-			for (int y = 0; y < tailleGrille; y++) {
-				try {
-					final Appareil appareil = new Appareil_Sol(
-							new Coordonnées(x, y), Direction.UP,
-							NiveauAppareil.NIVEAU_1, null);
-
-					appareil.setPartie(this);
-
-					Connect_SQLite.getAppareilDao().create(appareil);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-
-				}
-			}
+		Session session = Connect_SQLite.getSession();
+		try {
+			session.beginTransaction();
+			session.save(this);
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			if (session.getTransaction() != null)
+				session.getTransaction().rollback();
+		} finally {
+			session.close();
 		}
-		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
-				.where().eq("partie_idPartie", idPartie)
-				.query();
-
-		this.save(listAppareils);
-	}
-
-	/**
-	 * Creates a new <i>game</i>.
-	 * 
-	 * @param nom      the name of the new game
-	 * @param lastView the last view of this game
-	 * @throws SQLException if this object can't be registered
-	 */
-	public Partie(String nom, String lastView) throws SQLException {
-		this.nom = nom;
-		this.lastView = lastView;
-		this.tailleGrille = 3;
-
-		Connect_SQLite.getPartieDao().create(this);
-		for (int x = 0; x < tailleGrille; x++) {
-			for (int y = 0; y < tailleGrille; y++) {
-				try {
-					final Appareil appareil = new Appareil_Sol(
-							new Coordonnées(x, y), Direction.UP,
-							NiveauAppareil.NIVEAU_1, null);
-
-					appareil.setPartie(this);
-
-					Connect_SQLite.getAppareilDao().create(appareil);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-
-				}
-			}
-		}
-		listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
-				.where().eq("partie_idPartie", idPartie)
-				.query();
-
-		this.save(listAppareils);
-	}
-
-	/**
-	 * Renames this object
-	 * 
-	 * @param newName the new name
-	 */
-	public void rename(String newName) {
-		this.nom = newName;
 	}
 
 	/**
@@ -127,24 +62,8 @@ public class Partie {
 	 * @see Connect_SQLite#getPartieDao()
 	 */
 	public void save(List<Appareil> listAppareils) {
-		try {
-			// Update the time & date to the current time & date
-			this.lastView = LocalDateTime.now().toString();
-
-			// Update this object in the database
-			Connect_SQLite.getPartieDao().update(this);
-
-			// Sets the new list as the devices list
-			this.listAppareils = listAppareils;
-
-			// Saves all the devices in the database
-			for (Appareil appareil : this.listAppareils) {
-				Connect_SQLite.getAppareilDao().update(appareil);
-			}
-		} catch (SQLException e) {
-			System.err.println("La partie n'a pas pu être sauvegardée.");
-
-		}
+		// Todo : save
+		// Does actually nothing because of hibernates replacements
 	}
 
 	/**
@@ -156,19 +75,15 @@ public class Partie {
 	 *                      object.
 	 */
 	public void delete() throws SQLException {
-		// Delete this game
-		Connect_SQLite.getPartieDao().delete(this);
-		// Delete the devices
-		for (Appareil appareil : this.listAppareils) {
-			Connect_SQLite.getAppareilDao().delete(appareil);
-		}
+		// Todo : delete
+		// Does actually nothing because of hibernates replacements
 	}
 
 	/**
 	 * 
 	 * @return the id of this game
 	 */
-	public int getID() {
+	public Long getIdPartie() {
 		return idPartie;
 	}
 
@@ -178,6 +93,14 @@ public class Partie {
 	 */
 	public String getNom() {
 		return nom;
+	}
+
+	/**
+	 * 
+	 * @return the date of the latest save
+	 */
+	public LocalDateTime getLastView() {
+		return lastView;
 	}
 
 	/**
@@ -198,26 +121,55 @@ public class Partie {
 
 	/**
 	 * 
-	 * @return a list of all devices of this game
+	 * @param id the new id
 	 */
-	public List<Appareil> getAppareils() {
-		try {
-			listAppareils = Connect_SQLite.getAppareilDao().queryBuilder()
-					.where().eq("partie_idPartie", idPartie)
-					.query();
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-		return listAppareils;
+	public void setIdPartie(Long id) {
+		this.idPartie = id;
 	}
 
 	/**
 	 * 
-	 * @return the date of the latest save
+	 * @param newName the new name
 	 */
-	public LocalDateTime getLastView() {
-		return LocalDateTime.parse(lastView);
+	public void setNom(String newName) {
+		this.nom = newName;
+	}
+
+	/**
+	 * 
+	 * @param lastView a parsable string to LocalDateTime object
+	 */
+	public void setLastView(LocalDateTime lastView) {
+		this.lastView = lastView;
+	}
+
+	/**
+	 * 
+	 * @param argent the new money
+	 */
+	public void setArgent(long argent) {
+		if (argent < 0) {
+		} else {
+			this.argent = argent;
+		}
+	}
+
+	/**
+	 * 
+	 * @param tailleGrille the new grid-size
+	 */
+	public void setTailleGrille(int tailleGrille) {
+		this.tailleGrille = tailleGrille;
+	}
+
+	/**
+	 * 
+	 * @return a list of all devices of this game
+	 */
+	public List<Appareil> getAppareils() {
+		// Todo : refresh the list before returning it
+		// Hibernate replacements
+		return listAppareils;
 	}
 
 	/**
@@ -265,7 +217,7 @@ public class Partie {
 	 * @return a device from the list with the corresponding coordinate.
 	 * @throws NullPointerException if no devices can be found
 	 */
-	public Appareil getAppareil(Coordonnées xy) throws NullPointerException {
+	public Appareil getAppareil(Coordonnees xy) throws NullPointerException {
 		for (Appareil appareil : listAppareils) {
 			if (appareil.getXy().getX() == xy.getX()
 					&& appareil.getXy().getY() == xy.getY()) {

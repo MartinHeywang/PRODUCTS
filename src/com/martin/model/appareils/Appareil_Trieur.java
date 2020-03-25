@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.martin.Connect_SQLite;
 import com.martin.Partie;
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
@@ -23,7 +23,10 @@ public class Appareil_Trieur extends Appareil {
 
 	private Paquet crit1, crit2;
 
-	public Appareil_Trieur(Coordonnées xy, NiveauAppareil niveau,
+	public Appareil_Trieur() {
+	}
+
+	public Appareil_Trieur(Coordonnees xy, NiveauAppareil niveau,
 			Direction direction, JeuContrôle controller, Partie partie)
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);

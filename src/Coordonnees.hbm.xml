@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 5.4//EN" 
+	"http://www.hibernate.org/dtd/hibernate-mapping">
+        
+<hibernate-mapping>
+	<class name="com.martin.model.Coordonnees" table="coordonnées">
+		<!-- Our class id who uses an auto-increment generator -->
+		<id name="idCoordonnees" type="long">
+			<generator class="increment"/>
+		</id>
+		
+		<!-- X and Y values of the coordinates -->
+		<property name="x" unique="true"/>
+		<property name="y" unique="true"/>
+	
+	</class>
+</hibernate-mapping>

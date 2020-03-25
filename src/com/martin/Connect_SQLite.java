@@ -1,116 +1,53 @@
 package com.martin;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
-import com.martin.model.Coordonnées;
-import com.martin.model.Paquet;
-import com.martin.model.appareils.Appareil;
-
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 
 public class Connect_SQLite {
-	private static final String DATABASE_URL = "jdbc:sqlite:PRODUCTS.db";
-	private static final String DATABASE_DRIVER = "org.sqlite.JDBC";
-	private static ConnectionSource connect;
+	private static SessionFactory sessionFactory;
 
-	private static void createConnection() {
+	/**
+	 * Sets up the connection to the databaseand intialize the
+	 * <i>SessionFactory</i>
+	 */
+	private static void setUp() {
 		try {
-			Class.forName(DATABASE_DRIVER);
-			DriverManager.getConnection(DATABASE_URL);
-			connect = new JdbcConnectionSource(DATABASE_URL);
-
-			// TableUtils.dropTable(connect, Appareil.class, true);
-			// TableUtils.dropTable(connect, Coordonnées.class, true);
-			// TableUtils.dropTable(connect, Partie.class, true);
-
-			TableUtils.createTableIfNotExists(connect, Appareil.class);
-			TableUtils.createTableIfNotExists(connect, Coordonnées.class);
-			TableUtils.createTableIfNotExists(connect, Partie.class);
-			TableUtils.createTableIfNotExists(connect, Paquet.class);
-
-		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-			Alert alerte = new Alert(AlertType.ERROR);
-			alerte.setHeaderText("La connexion à la base de données a échoué");
-			alerte.setContentText("Raison : " + e.getMessage());
-			System.exit(1);
+			// Initialize the session factory
+			sessionFactory = new Configuration().configure()
+					.buildSessionFactory();
+		} catch (Throwable t) {
+			System.err.println("Impossible de créer la SessionFactory");
+			throw new ExceptionInInitializerError(t);
 		}
-
 	}
 
-	public static ConnectionSource getConnection() {
-		if (connect == null) {
-			createConnection();
-		}
-		return connect;
+	/**
+	 * @return a session opened with the <i>SessionFactory</i>
+	 */
+	public static Session getSession() {
+		// If the SessionFactory isn't initialized, initialize it
+		if (sessionFactory == null)
+			setUp();
+		// Then return a new session
+		return sessionFactory.openSession();
 	}
 
-	public static Dao<Appareil, Integer> getAppareilDao()
-			throws NullPointerException {
-		if (connect == null) {
-			createConnection();
-		}
-		Dao<Appareil, Integer> dao;
-		try {
-			dao = DaoManager.createDao(connect, Appareil.class);
-			return dao;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+	/**
+	 * This method saves (or persists) the object in parameter.
+	 * 
+	 * @param obj    the object to persist.
+	 * @param commit should be true if you want to commit at once
+	 */
+	public static Transaction saveAndCommit(Object obj, boolean commit) {
+		// Create a session and a transaction
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 
-	}
-
-	public static Dao<Coordonnées, Integer> getCoordonnéesDao()
-			throws NullPointerException {
-		if (connect == null) {
-			createConnection();
-		}
-		Dao<Coordonnées, Integer> dao;
-		try {
-			dao = DaoManager.createDao(connect, Coordonnées.class);
-			return dao;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-	}
-
-	public static Dao<Partie, Integer> getPartieDao()
-			throws NullPointerException {
-		if (connect == null) {
-			createConnection();
-		}
-		Dao<Partie, Integer> dao;
-		try {
-			dao = DaoManager.createDao(connect, Partie.class);
-			return dao;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-	}
-
-	public static Dao<Paquet, Integer> getPaquetDao() {
-		if (connect == null) {
-			createConnection();
-		}
-		Dao<Paquet, Integer> dao;
-		try {
-			dao = DaoManager.createDao(connect, Paquet.class);
-			return dao;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		session.save(obj);
+		if (commit)
+			tx.commit();
+		return tx;
 	}
 }

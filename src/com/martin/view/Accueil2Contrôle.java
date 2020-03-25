@@ -1,6 +1,10 @@
 package com.martin.view;
 
-import java.sql.SQLException;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
@@ -42,8 +46,15 @@ public class Accueil2Contrôle {
 	 */
 	public void setMainApp(Main main) {
 		this.main = main;
+
+		Session session = Connect_SQLite.getSession();
+
 		try {
-			for (Partie partie : Connect_SQLite.getPartieDao().queryForAll()) {
+			Query<Partie> query = session.createQuery("from Partie",
+					Partie.class);
+			List<Partie> list = query.list();
+
+			for (Partie partie : list) {
 				Displayer displayer = new Displayer(partie);
 				listePartie.getChildren().add(displayer);
 				displayer.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -59,9 +70,10 @@ public class Accueil2Contrôle {
 					}
 				});
 			}
-		} catch (SQLException e) {
+		} catch (HibernateException e) {
 			e.printStackTrace();
-
+		} finally {
+			session.close();
 		}
 	}
 }

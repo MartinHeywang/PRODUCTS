@@ -1,22 +1,15 @@
 package com.martin.model;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 import com.martin.model.appareils.Appareil;
 
-@DatabaseTable(tableName = "paquets")
 public class Paquet {
 
-	@DatabaseField(generatedId = true)
-	private int idPaquet;
+	private Long idPaquet;
 
-	@DatabaseField
 	private Ressource ressource;
 
-	@DatabaseField
 	private int quantité;
 
-	@DatabaseField(columnName = "idAppareil", foreign = true, foreignColumnName = "idAppareil")
 	private Appareil appareil;
 
 	public Paquet() {
@@ -33,15 +26,73 @@ public class Paquet {
 		this.appareil = appareil;
 	}
 
+	/**
+	 * 
+	 * @return the id
+	 */
+	public Long getIdPaquet() {
+		return idPaquet;
+	}
+
+	/**
+	 * 
+	 * @param id the id to set
+	 */
+	public void setIdPaquet(Long id) {
+		this.idPaquet = id;
+	}
+
+	/**
+	 * 
+	 * @return the resource
+	 */
 	public Ressource getRessource() {
 		return ressource;
 	}
 
+	/**
+	 * 
+	 * @param res the resource to set
+	 */
+	public void setRessource(Ressource res) {
+		this.ressource = res;
+	}
+
+	/**
+	 * 
+	 * @return the quantity
+	 */
 	public int getQuantité() {
 		return quantité;
 	}
 
+	/**
+	 * 
+	 * @param quantité the quantity to set
+	 */
+	public void setQuantité(int quantité) {
+		this.quantité = quantité;
+	}
+
+	/**
+	 * 
+	 * @return the associated-device
+	 */
 	public Appareil getAppareil() {
 		return appareil;
+	}
+
+	/**
+	 * 
+	 * @param appareil the device to set
+	 */
+	public void setAppareil(Appareil appareil) {
+		this.appareil = appareil;
+	}
+
+	@Override
+	public String toString() {
+		return "Object type Paquet. Id : " + idPaquet + ". Ressource : "
+				+ ressource + ". Quantité : " + quantité + ".";
 	}
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 5.4//EN" 
+	"http://www.hibernate.org/dtd/hibernate-mapping">
+        
+<!-- Hibernate Mapping File -->
+<hibernate-mapping>
+	<!-- To class : com.martin.Partie -->
+	<class name="com.martin.Partie" table="parties">
+		<!-- Our class id who uses an auto-increment generator -->
+		<id name="idPartie" type="long">
+			<generator class="increment"/>
+		</id>
+		
+		<!-- The name of the game -->
+		<property name="nom"/>
+		
+		<!-- I simply use a java.util.Date to avoid complication -->
+		<property name="lastView" column="lastSave" type="org.hibernate.type.LocalDateTimeType"/>
+		
+		<!-- How many money there is -->
+		<property name="argent" type="long"/>
+		
+		<!-- The grid-size -->
+		<property name="tailleGrille"/>
+		
+	</class>
+</hibernate-mapping>

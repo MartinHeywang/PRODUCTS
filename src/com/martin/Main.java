@@ -5,7 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import com.martin.model.Paquet;
+import com.martin.model.Ressource;
 import com.martin.view.Accueil2Contrôle;
 import com.martin.view.AccueilContrôle;
 import com.martin.view.JeuContrôle;
@@ -26,37 +34,83 @@ public class Main extends Application {
 	public static Stage stage;
 
 	public static void main(String[] args) {
+		/*
+		 * Écriture en base de données avec Hibernate
+		 */
+
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			Paquet paquet = new Paquet(Ressource.FER, 10);
+			session.save(paquet);
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			session.close();
+		}
+
+		/*
+		 * Lecture en base données avec Hibernate
+		 */
+		Session session2 = Connect_SQLite.getSession();
+		try {
+			Query<Paquet> query = session2.createQuery(
+					"from Paquet",
+					Paquet.class);
+			List<Paquet> list = query.list();
+			list.stream().forEach(System.out::println);
+
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			session2.close();
+		}
+
 		launch(args);
 
 	}
 
 	@Override
 	public void start(Stage primaryStage) {
+		// The session for later
+		Session session = Connect_SQLite.getSession();
+
 		try {
-			// Définition principale du stage
+			// Little stage paramatering
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
 			stage.setResizable(false);
 			stage.getIcons().add(new Image(
 					new FileInputStream(new File("images/Icone.png"))));
 
-			// Tests pour savoir si des parties sont disponibles
-			if (Connect_SQLite.getPartieDao().queryForAll().size() == 0) {
-				// Si il n'y en a pas, alors on dirige l'utilisateur vers la
-				// création de partie
+			// Little query to select which menu will be displayed at first
+			Query<Partie> query = session.createQuery(
+					"from Partie",
+					Partie.class);
+			List<Partie> list = query.list();
+
+			// Then one or the other
+			if (list.size() == 0)
 				initAccueil();
-			} else {
-				// Sinon, on le dirige vers la sélection de partie
+			else {
 				initAccueil2();
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println(
-					"Petit problème... L'icône n'a pas pu être chargé correctement.");
-		} catch (SQLException e) {
+					"Oh ! There is a mistake ! The logo can't be loaded...");
+		} catch (HibernateException e) {
 			System.err.println(
-					"Petit problème... La connexion à la base de données a échoué.");
-			e.printStackTrace();
-
+					"Oh ! There is a mistake ! The games can't be loaded...");
+		} finally {
+			if (session != null)
+				session.close();
 		}
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -64,6 +118,7 @@ public class Main extends Application {
 				System.exit(0);
 			}
 		});
+		// Show the main stage
 		stage.show();
 	}
 

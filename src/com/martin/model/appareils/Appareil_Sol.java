@@ -3,7 +3,7 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 
 import com.martin.Main;
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.Stock;
 import com.martin.model.appareils.comportement.Comportement_Aucun;
 import com.martin.model.appareils.orientation.Entrées_Aucune;
@@ -20,7 +20,10 @@ import javafx.stage.Modality;
 
 public class Appareil_Sol extends Appareil {
 
-	public Appareil_Sol(Coordonnées xy, Direction direction,
+	public Appareil_Sol() {
+	}
+
+	public Appareil_Sol(Coordonnees xy, Direction direction,
 			NiveauAppareil niveau, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.SOL, direction, niveau, controller);
@@ -44,14 +47,14 @@ public class Appareil_Sol extends Appareil {
 
 					SolContrôle SController = loader.getController();
 					SController.setMainApp(
-							new Coordonnées(xy.getX(), xy.getY()), dialog);
+							new Coordonnees(xy.getX(), xy.getY()), dialog);
 
 					dialog.showAndWait();
 
 					if (dialog.getResult() instanceof TypeAppareil) {
 						controller.setAppareil(
 								((TypeAppareil) dialog.getResult()).getClasse()
-										.getConstructor(Coordonnées.class,
+										.getConstructor(Coordonnees.class,
 												Direction.class,
 												NiveauAppareil.class,
 												JeuContrôle.class)

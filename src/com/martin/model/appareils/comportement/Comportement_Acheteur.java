@@ -3,7 +3,7 @@ package com.martin.model.appareils.comportement;
 import java.sql.SQLException;
 
 import com.martin.Connect_SQLite;
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
@@ -14,17 +14,17 @@ import com.martin.view.JeuContrôle;
 
 public class Comportement_Acheteur implements Comportement {
 
-	private Coordonnées pointer;
+	private Coordonnees pointer;
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 
 	private Paquet resDistribuée;
 
-	public Comportement_Acheteur(Coordonnées xy, NiveauAppareil niveau,
+	public Comportement_Acheteur(Coordonnees xy, NiveauAppareil niveau,
 			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
 		this.niveau = niveau;
 		this.controller = controller;
-		this.pointer = new Coordonnées(xy.getX() + xToAdd, xy.getY() + yToAdd);
+		this.pointer = new Coordonnees(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
 		try {
 			if (Connect_SQLite.getPaquetDao().queryBuilder().where()

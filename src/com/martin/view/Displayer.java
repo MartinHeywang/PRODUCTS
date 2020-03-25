@@ -146,10 +146,31 @@ public class Displayer extends BorderPane {
 			nom.setWrapText(true);
 			this.setTop(nom);
 
+			// Changing the LocalDateTime of the game in a String representation
+			// Instead of using toString(), i ues this method to have my perso
+			// String
+			String instant = (partie.getLastView().getDayOfMonth() < 10)
+					? "0" + partie.getLastView().getDayOfMonth() + "/"
+					: partie.getLastView().getDayOfMonth() + "/";
+			instant += (partie.getLastView().getMonthValue() < 10)
+					? "0" + partie.getLastView().getMonthValue() + "/"
+					: partie.getLastView().getMonthValue() + "/";
+			instant += (partie.getLastView().getYear() < 10)
+					? "0" + partie.getLastView().getYear() + " "
+					: partie.getLastView().getYear() + " ";
+
+			instant += (partie.getLastView().getHour() < 10)
+					? "0" + partie.getLastView().getHour() + ":"
+					: partie.getLastView().getHour() + ":";
+			instant += (partie.getLastView().getMinute() < 10)
+					? "0" + partie.getLastView().getMinute() + ":"
+					: partie.getLastView().getMinute() + ":";
+			instant += (partie.getLastView().getSecond() < 10)
+					? "0" + partie.getLastView().getSecond()
+					: partie.getLastView().getSecond();
+
 			infos = new Label();
-			infos.setText("Dernière sauvegarde : "
-					+ partie.getLastView().toLocalDate().toString()
-					+ "  " + partie.getLastView().toLocalTime().toString()
+			infos.setText("Dernière sauvegarde : " + instant
 					+ "\nArgent en compte : "
 					+ partie.getArgent() + " €");
 			this.setLeft(infos);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 5.4//EN" 
+	"http://www.hibernate.org/dtd/hibernate-mapping">
+	
+<!-- Hibernate Mapping File -->
+<hibernate-mapping>
+	<!-- To class : com.martin.model.Paquet -->
+	<class name="com.martin.model.Paquet" table="paquets">
+		<!-- Our class id who uses an auto-increment generator -->
+		<id name="idPaquet" column="idPaquet" type="long">
+			<generator class="native"/>
+		</id>
+		
+		<!-- The resource (enum type) -->
+		<property name="ressource">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.martin.model.Ressource</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+		<!-- An integer who defines the quantity -->
+		<property name="quantité" type="integer"/>
+		
+		<!-- Foreign key to class com.martin.model.appareils.Appareil -->
+		<many-to-one name="appareil" class="com.martin.model.appareils.Appareil" 
+			column="idAppareil"/>
+		
+	</class>
+</hibernate-mapping>

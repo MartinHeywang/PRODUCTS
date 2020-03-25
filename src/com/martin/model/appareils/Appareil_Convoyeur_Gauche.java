@@ -2,7 +2,7 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.appareils.comportement.Comportement_Convoyeur;
 import com.martin.model.appareils.orientation.Entrées_Center;
 import com.martin.model.appareils.orientation.Sorties_Left;
@@ -14,7 +14,10 @@ public class Appareil_Convoyeur_Gauche extends Appareil {
 
 	private static SimpleIntegerProperty prix;
 
-	public Appareil_Convoyeur_Gauche(Coordonnées xy, Direction direction,
+	public Appareil_Convoyeur_Gauche() {
+	}
+
+	public Appareil_Convoyeur_Gauche(Coordonnees xy, Direction direction,
 			NiveauAppareil niveau, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.CONVOYEUR_GAUCHE, direction, niveau, controller);

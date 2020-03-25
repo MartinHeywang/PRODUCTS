@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 import com.martin.Connect_SQLite;
 import com.martin.Main;
 import com.martin.Partie;
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.LocatedImage;
 import com.martin.model.Stock;
 import com.martin.model.appareils.comportement.Comportement;
@@ -32,23 +30,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 
-@DatabaseTable(tableName = "appareils")
-public class Appareil extends ImageView {
+public abstract class Appareil extends ImageView {
 
-	@DatabaseField(generatedId = true, canBeNull = false, unique = true)
-	protected int idAppareil;
+	protected Long idAppareil;
 
-	@DatabaseField(foreign = true, foreignColumnName = "idPartie", uniqueCombo = true)
 	protected Partie partie;
 
-	@DatabaseField
 	protected TypeAppareil type;
-	@DatabaseField
 	protected Direction direction;
-	@DatabaseField
 	protected NiveauAppareil niveau;
-	@DatabaseField(foreign = true, foreignColumnName = "idCoordonnées", uniqueCombo = true)
-	protected Coordonnées xy;
+	protected Coordonnees xy;
 
 	protected Comportement comportement = new Comportement_Aucun();
 	protected Sorties sorties = new Sorties_Aucune();
@@ -66,14 +57,8 @@ public class Appareil extends ImageView {
 	}
 
 	/**
-	 * @author Martin 26 janv. 2020 | 11:30:04
+	 * Creates a new device.
 	 * 
-	 *         <b> constructor Appareil</b>
-	 *         <p>
-	 *         Creates a device.
-	 *         </p>
-	 * 
-	 *         Args :
 	 * @param xy         the coordinate or this device
 	 * @param type       the kind of the device
 	 * @param direction  the rotate of this device
@@ -81,7 +66,7 @@ public class Appareil extends ImageView {
 	 * @param controller the game controller
 	 * 
 	 */
-	protected Appareil(Coordonnées xy, TypeAppareil type, Direction direction,
+	protected Appareil(Coordonnees xy, TypeAppareil type, Direction direction,
 			NiveauAppareil niveau,
 			JeuContrôle controller) throws FileNotFoundException {
 		super(new LocatedImage(niveau.getURL() + type.getURL()));
@@ -131,27 +116,6 @@ public class Appareil extends ImageView {
 				}
 			}
 		});
-
-		try {
-			if (Connect_SQLite
-					.getCoordonnéesDao()
-					.queryBuilder()
-					.where()
-					.eq("x", xy.getX())
-					.and()
-					.eq("y", xy.getY())
-					.query()
-					.size() == 0)
-				Connect_SQLite.getCoordonnéesDao().create(xy);
-
-			this.xy = Connect_SQLite.getCoordonnéesDao().queryBuilder().where()
-					.eq("x", xy.getX()).and()
-					.eq("y", xy.getY()).query().get(0);
-			this.save();
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
 	}
 
 	/**
@@ -166,13 +130,13 @@ public class Appareil extends ImageView {
 	public void action(Stock resATraiter) throws NegativeArgentException {
 		if (this.controller
 				.getPartieEnCours().getAppareil(
-						new Coordonnées(xy.getX() + pointerExit.getxPlus(),
+						new Coordonnees(xy.getX() + pointerExit.getxPlus(),
 								xy.getY() + pointerExit.getyPlus()))
 				.getXy().isNearFrom(xy)) {
 
 			for (int i = 0; i < pointersEnters.size(); i++) {
 				if (pointerExit.equals(controller
-						.getPartieEnCours().getAppareil(new Coordonnées(
+						.getPartieEnCours().getAppareil(new Coordonnees(
 								xy.getX() + pointerExit.getxPlus(),
 								xy.getY() + pointerExit.getyPlus()))
 						.getPointerEnter().get(i)))
@@ -211,7 +175,7 @@ public class Appareil extends ImageView {
 			throws NullPointerException {
 		try {
 			return this.getType().getClasse()
-					.getConstructor(Coordonnées.class, Direction.class,
+					.getConstructor(Coordonnees.class, Direction.class,
 							NiveauAppareil.class, JeuContrôle.class)
 					.newInstance(this.xy, this.direction, this.niveau,
 							controller);
@@ -222,7 +186,11 @@ public class Appareil extends ImageView {
 	}
 
 	// GETTERS, THEN SETTERS
-	public int getID() {
+	/**
+	 * 
+	 * @return the id
+	 */
+	public Long getIdAppareil() {
 		return idAppareil;
 	}
 
@@ -266,7 +234,7 @@ public class Appareil extends ImageView {
 	/**
 	 * @return the xy
 	 */
-	public Coordonnées getXy() {
+	public Coordonnees getXy() {
 		return xy;
 	}
 
@@ -314,6 +282,14 @@ public class Appareil extends ImageView {
 	}
 
 	/**
+	 * 
+	 * @param id the new id
+	 */
+	public void setIdAppareil(Long id) {
+		this.idAppareil = id;
+	}
+
+	/**
 	 * @param type the type to set
 	 */
 	public void setType(TypeAppareil type) {
@@ -337,7 +313,7 @@ public class Appareil extends ImageView {
 	/**
 	 * @param xy the xy to set
 	 */
-	public void setXy(Coordonnées xy) {
+	public void setXy(Coordonnees xy) {
 		this.xy = xy;
 	}
 

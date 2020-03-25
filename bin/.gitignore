@@ -1,1 +1,5 @@
 /com/
+/hibernate.cfg.xml
+/Partie.hbm.xml
+/Coordonees.hbm.xml
+/Coordonnees.hbm.xml

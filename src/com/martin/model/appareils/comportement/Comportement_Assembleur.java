@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.martin.Connect_SQLite;
-import com.martin.model.Coordonnées;
+import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
@@ -15,7 +15,7 @@ import com.martin.view.JeuContrôle;
 
 public class Comportement_Assembleur implements Comportement {
 
-	private Coordonnées pointer;
+	private Coordonnees pointer;
 	private NiveauAppareil niveau;
 	private JeuContrôle controller;
 
@@ -23,11 +23,11 @@ public class Comportement_Assembleur implements Comportement {
 	private ArrayList<Ressource> ressources = new ArrayList<Ressource>();
 	private ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
-	public Comportement_Assembleur(Coordonnées xy, NiveauAppareil niveau,
+	public Comportement_Assembleur(Coordonnees xy, NiveauAppareil niveau,
 			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
 		this.niveau = niveau;
 		this.controller = controller;
-		this.pointer = new Coordonnées(xy.getX() + xToAdd, xy.getY() + yToAdd);
+		this.pointer = new Coordonnees(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
 		try {
 			if (Connect_SQLite.getPaquetDao().queryBuilder().where()
