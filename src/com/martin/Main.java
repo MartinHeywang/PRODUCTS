@@ -63,7 +63,6 @@ public class Main extends Application {
 					"from Paquet",
 					Paquet.class);
 			List<Paquet> list = query.list();
-			list.stream().forEach(System.out::println);
 
 		} catch (HibernateException e) {
 			e.printStackTrace();

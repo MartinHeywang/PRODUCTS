@@ -8,7 +8,7 @@
 	<class name="com.martin.model.Paquet" table="paquets">
 		<!-- Our class id who uses an auto-increment generator -->
 		<id name="idPaquet" column="idPaquet" type="long">
-			<generator class="native"/>
+			<generator class="increment"/>
 		</id>
 		
 		<!-- The resource (enum type) -->

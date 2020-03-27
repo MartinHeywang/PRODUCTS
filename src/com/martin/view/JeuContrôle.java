@@ -104,14 +104,16 @@ public class JeuContrôle {
 
 				int i = 1;
 				for (Appareil appareil : devices) {
-					// Transforms the abstract Appareil to a solid Appareil
-					final Appareil app = appareil.toInstance(controller);
-
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
+							// Setting the controller of this device to this
+							// instance
+							appareil.setController(controller);
+
 							// Adds this device to the grid
-							grille.add(app, appareil.getXy().getX(),
+							grille.add(appareil,
+									appareil.getXy().getX(),
 									appareil.getXy().getY());
 						}
 					});

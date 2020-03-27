@@ -59,7 +59,7 @@ public abstract class Appareil extends ImageView {
 	/**
 	 * Creates a new device.
 	 * 
-	 * @param xy         the coordinate or this device
+	 * @param xy         the coordinates of this device
 	 * @param type       the kind of the device
 	 * @param direction  the rotate of this device
 	 * @param niveau     the level of this device
@@ -71,6 +71,7 @@ public abstract class Appareil extends ImageView {
 			JeuContrôle controller) throws FileNotFoundException {
 		super(new LocatedImage(niveau.getURL() + type.getURL()));
 
+		this.xy = xy;
 		this.type = type;
 		this.direction = direction;
 		this.niveau = niveau;

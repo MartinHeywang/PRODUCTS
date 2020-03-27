@@ -10,9 +10,12 @@
 			<generator class="increment"/>
 		</id>
 		
-		<!-- X and Y values of the coordinates -->
-		<property name="x" unique="true"/>
-		<property name="y" unique="true"/>
+		<properties name="uniqueCombo" unique="true">
+			<property name="x" unique="true"/>
+			<property name="y" unique="true"/>
+		</properties>
+		
+		<constraint name="uniqueCombo" unique="true"/>
 	
 	</class>
 </hibernate-mapping>

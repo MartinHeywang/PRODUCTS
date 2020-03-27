@@ -21,6 +21,9 @@
 		<!-- Create automatically the database -->
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		
+		<!-- Show SQL Statements -->
+		<property name="hibernate.show_sql">true</property>
+		
 		<!-- Mappings -->
 		<mapping resource="Paquet.hbm.xml"/>
 		<mapping resource="Appareil.hbm.xml"/>

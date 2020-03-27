@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import com.martin.model.Coordonnees;
 import com.martin.model.appareils.Appareil;
@@ -167,8 +168,35 @@ public class Partie {
 	 * @return a list of all devices of this game
 	 */
 	public List<Appareil> getAppareils() {
-		// Todo : refresh the list before returning it
-		// Hibernate replacements
+
+		// Refreshing the list before returning it
+		// Creating a new Session
+		Session session = Connect_SQLite.getSession();
+		try {
+			// Creating a query (native SQL : SELECT * FROM appareils WHERE
+			// idPartie = :idPartie)
+			Query<Appareil> query = session.createQuery(
+					"FROM Appareil AS A WHERE A.partie = " + idPartie,
+					Appareil.class);
+
+			// Executing the query and save the result in the list
+			List<Appareil> list = query.list();
+
+			// This is a little bit special
+			// It calls the getPartie() and getXy() from each Appareil
+			// This forces Hibernate to fetch the many-to-one references
+			// Else, those values will be null and it will throw an error when
+			// we will try to use it (LazyInitializationException)
+			for (Appareil appareil : list) {
+				appareil.getPartie();
+				appareil.getXy();
+			}
+			listAppareils = list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 		return listAppareils;
 	}
 
@@ -225,5 +253,11 @@ public class Partie {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "Object type Partie. ID : " + idPartie + ". Argent : " + argent
+				+ ".";
 	}
 }

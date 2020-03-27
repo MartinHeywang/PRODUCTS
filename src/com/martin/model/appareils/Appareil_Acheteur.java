@@ -17,6 +17,7 @@ public class Appareil_Acheteur extends Appareil {
 	public static ArrayList<Coordonnees> liste = new ArrayList<Coordonnees>();
 
 	public Appareil_Acheteur() {
+		System.out.println("Re : " + super.toString());
 	}
 
 	public Appareil_Acheteur(Coordonnees xy, Direction direction,

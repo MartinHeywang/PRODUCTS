@@ -94,8 +94,8 @@ public class Coordonnees {
 
 	/**
 	 * This methods checks if the given coordinates is near from this
-	 * object. Two coordinates are 'near' when at least one side in
-	 * common.
+	 * object. Two coordinates are 'near' when they have at least one side
+	 * in common.
 	 * 
 	 * @return
 	 *         <ul>
@@ -114,5 +114,11 @@ public class Coordonnees {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "Object type Coordonnees. ID : " + idCoordonnees + ". X : " + x
+				+ ". Y : " + y + ".";
 	}
 }
