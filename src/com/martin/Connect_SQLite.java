@@ -18,7 +18,7 @@ public class Connect_SQLite {
 			sessionFactory = new Configuration().configure()
 					.buildSessionFactory();
 		} catch (Throwable t) {
-			System.err.println("Impossible de créer la SessionFactory");
+			System.err.println("Unable to initialize the database connection.");
 			throw new ExceptionInInitializerError(t);
 		}
 	}

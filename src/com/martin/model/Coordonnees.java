@@ -1,5 +1,14 @@
 package com.martin.model;
 
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import com.martin.Connect_SQLite;
+
 /**
  * <h1>class Coordonnées</h1>
  * <p>
@@ -120,5 +129,76 @@ public class Coordonnees {
 	public String toString() {
 		return "Object type Coordonnees. ID : " + idCoordonnees + ". X : " + x
 				+ ". Y : " + y + ".";
+	}
+
+	/**
+	 * This method returns a List of Coordonnees, from table coordonnées.
+	 * May be expensive to invoke; if you have to use it, stock the result
+	 * in a list.
+	 * 
+	 * @return a list of coordinates
+	 */
+	public static List<Coordonnees> query() {
+		// Creating a Session and a List
+		Session session = Connect_SQLite.getSession();
+		List<Coordonnees> list;
+		try {
+			// Query for all objects and stock it in the List created before
+			Query<Coordonnees> query = session.createQuery(
+					"from Coordonnees",
+					Coordonnees.class);
+			list = query.list();
+		} catch (HibernateException e) {
+			System.err.println("Unable to query in table coordonnées");
+			return null;
+		} finally {
+			// Closing the session
+			session.close();
+		}
+		// Returning the result
+		return list;
+	}
+
+	/**
+	 * Insert in table coordonnées the object in parameters. May be
+	 * expensive to invoke. Checks before inserting if all constraints are
+	 * respected. Because Hibernate doesn't not fully support SQLite (like
+	 * UniqueCombo constraints), I had to do this before inserting.
+	 * 
+	 * @param objToSave the object to save.
+	 */
+	public static void insert(Coordonnees objToSave) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			// Query for the table coordonnées
+			Query<Coordonnees> query = session.createQuery(
+					"from Coordonnees",
+					Coordonnees.class);
+			List<Coordonnees> list = query.list();
+			// Using a Stream, checking if the constraints are fully respected.
+			if (list.stream().filter(x -> x.getX() == objToSave.getX())
+					.filter(y -> y.getY() == objToSave.getY()).count() == 0) {
+				session.save(objToSave);
+				transaction.commit();
+			} else {
+				// Little log in case a constraint would not be respected
+				System.err.println(
+						"Couldn't run insert : UNIQUE constraint failed (x, y)");
+			}
+
+		} catch (HibernateException e) {
+			System.err
+					.println("Unable to run insert stmt in table coordonnées");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
 	}
 }

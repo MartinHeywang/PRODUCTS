@@ -2,8 +2,13 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
 import com.martin.Main;
@@ -54,6 +59,14 @@ public abstract class Appareil extends ImageView {
 	protected Dashboard dashboard = new Dashboard();
 
 	public Appareil() {
+		super();
+		try {
+			this.setImage(
+					new LocatedImage("images/machines niveau 2/Acheteur.png"));
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getLocalizedMessage());
+
+		}
 	}
 
 	/**
@@ -144,31 +157,6 @@ public abstract class Appareil extends ImageView {
 
 					comportement.action(resATraiter);
 			}
-		}
-	}
-
-	public void save() {
-		try {
-			Connect_SQLite.getAppareilDao().update(this);
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-	}
-
-	/**
-	 * This method resets the database at the coordinates, and do the
-	 * necessary to destruct properly this device.
-	 * 
-	 */
-	public void destruction() {
-		try {
-			Connect_SQLite.getAppareilDao().updateId(
-					new Appareil_Sol(xy, Direction.UP, NiveauAppareil.NIVEAU_1,
-							controller),
-					idAppareil);
-		} catch (Exception e) {
-
 		}
 	}
 
@@ -359,6 +347,79 @@ public abstract class Appareil extends ImageView {
 	 */
 	public static void setÉlectricité(int électricité) {
 		Appareil.électricité = électricité;
+	}
+
+	/**
+	 * This method returns a List of Appareil, from table appareils. May
+	 * be expensive to invoke; if you have to use it, stock the result in
+	 * a list.
+	 * 
+	 * @return a list of devices
+	 */
+	public static List<Appareil> query() {
+		// Creating a Session and a List
+		Session session = Connect_SQLite.getSession();
+		List<Appareil> list;
+		try {
+			// Query for all objects and stock it in the List created before
+			Query<Appareil> query = session.createQuery(
+					"from Coordonnees",
+					Appareil.class);
+			list = query.list();
+		} catch (HibernateException e) {
+			System.err.println("Unable to query in table coordonnées");
+			return null;
+		} finally {
+			// Closing the session
+			session.close();
+		}
+		// Returning the result
+		return list;
+	}
+
+	/**
+	 * Insert in table coordonnées the object in parameters. May be
+	 * expensive to invoke. Checks before inserting if all constraints are
+	 * respected. Because Hibernate doesn't fully support SQLite (such as
+	 * UniqueCombo constraints), I had to do this before inserting.
+	 * 
+	 * @param objToSave the object to save.
+	 */
+	public static void insert(Appareil objToSave) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			// Query for the table coordonnées
+			Query<Appareil> query = session.createQuery(
+					"from Appareil",
+					Appareil.class);
+			List<Appareil> list = query.list();
+			// Using a Stream, checking if the constraints are fully respected.
+			if (list.stream()
+					.filter(x -> x.getPartie().equals(objToSave.getPartie()))
+					.filter(y -> y.getXy().equals(objToSave.getXy()))
+					.count() == 0) {
+				session.save(objToSave);
+				transaction.commit();
+			} else {
+				// Little log in case a constraint would not be respected
+				System.err.println(
+						"Couldn't run insert : UNIQUE constraint failed (x, y)");
+			}
+
+		} catch (HibernateException e) {
+			System.err
+					.println("Unable to run insert stmt in table coordonnées");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
 	}
 
 }

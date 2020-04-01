@@ -4,56 +4,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@Accueils.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martin.view.Accueil2Contrôle">
-   <center>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
-               <content>
-                  <VBox fx:id="listePartie" maxWidth="1.7976931348623157E308" spacing="2.0">
-                     <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Sélectionnez une partie ci-dessous" VBox.vgrow="NEVER">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
-               </content>
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </ScrollPane>
-            <VBox spacing="2.0" style="-fx-border-color: gray;" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Ou créez-en une nouvelle !" VBox.vgrow="ALWAYS">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextArea prefHeight="200.0" prefWidth="200.0" promptText="Nom de la partie (Conseil : ni trop long, ni déjà existant)" fx:id="field" focusTraversable="false">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                  </TextArea>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#nouvelle" text="Créer" VBox.vgrow="ALWAYS" />
-               </children>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding>
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </VBox>
-         </children>
-      </HBox>
-   </center>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" stylesheets="@Accueils.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martin.view.Accueil2Contrôle">
    <top>
       <VBox maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
@@ -70,4 +27,38 @@
          </children>
       </VBox>
    </top>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <TitledPane animated="false" collapsible="false" text="Sélectionnez une partie ci-dessous..." VBox.vgrow="ALWAYS">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;" stylesheets="@ScrollPane.css" vbarPolicy="ALWAYS">
+                     <content>
+                        <VBox fx:id="listePartie" maxWidth="1.7976931348623157E308" spacing="2.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </VBox.margin>
+            </TitledPane>
+            <TitledPane animated="false" collapsible="false" style="-fx-border-color: #242729;" text="Ou créez-en une nouvelle !">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                     <children>
+                        <TextField fx:id="field" promptText="Nom de la nouvelle partie (pour votre confort, ni trop long, ni déja existant...)" />
+                        <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" mouseTransparent="true" text="Créer et lancer la nouvelle partie maintenant" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TitledPane>
+         </children>
+      </VBox>
+   </center>
 </BorderPane>

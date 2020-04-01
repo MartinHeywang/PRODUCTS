@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.view.Accueil2Contrôle;
@@ -34,43 +34,17 @@ public class Main extends Application {
 	public static Stage stage;
 
 	public static void main(String[] args) {
-		/*
-		 * Écriture en base de données avec Hibernate
-		 */
+		Coordonnees.insert(new Coordonnees(0, 0));
+		Coordonnees.insert(new Coordonnees(1, 0));
 
-		Session session = Connect_SQLite.getSession();
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
-			Paquet paquet = new Paquet(Ressource.FER, 10);
-			session.save(paquet);
-			transaction.commit();
+		Paquet.insert(new Paquet(Ressource.ALUMINIUM, 2));
 
-		} catch (HibernateException e) {
-			e.printStackTrace();
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			session.close();
-		}
+		Partie.insert(new Partie(
+				"Ce nom de partie est un peu long, non. Je suis pas sûr, je devrai réfléchir un peu plus la prochaine fois, peut-être éventuellement."));
 
-		/*
-		 * Lecture en base données avec Hibernate
-		 */
-		Session session2 = Connect_SQLite.getSession();
-		try {
-			Query<Paquet> query = session2.createQuery(
-					"from Paquet",
-					Paquet.class);
-			List<Paquet> list = query.list();
-
-		} catch (HibernateException e) {
-			e.printStackTrace();
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			session2.close();
-		}
+		Coordonnees.query();
+		Paquet.query();
+		Partie.query();
 
 		launch(args);
 

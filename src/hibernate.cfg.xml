@@ -10,7 +10,7 @@
 	<session-factory>
 	
 		<!-- Which Dialect ? -->
-		<property name="hibernate-dialect">org.hibernate.dialect.SQLiteDialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.SQLiteDialect</property>
 		
 		<!-- Which Driver ? -->
 		<property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
@@ -18,11 +18,11 @@
 		<!-- Where ? -->
 		<property name="hibernate.connection.url">jdbc:sqlite:PRODUCTS.db</property>
 		
-		<!-- Create automatically the database -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<!-- In which context we should use sessions -->
+		<property name="hibernate.current_session_context_class">thread</property>
 		
-		<!-- Show SQL Statements -->
-		<property name="hibernate.show_sql">true</property>
+		<!-- Update the database schema automatically -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
 		
 		<!-- Mappings -->
 		<mapping resource="Paquet.hbm.xml"/>

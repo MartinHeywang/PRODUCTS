@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.martin.model.Coordonnees;
@@ -37,23 +39,11 @@ public class Partie {
 	 * @throws SQLException if this object can't be registered in the
 	 *                      database
 	 */
-	public Partie(String nom) throws SQLException {
+	public Partie(String nom) {
 		this.nom = nom;
 		this.lastView = LocalDateTime.now();
 		this.tailleGrille = 3;
 		this.argent = 1250;
-
-		Session session = Connect_SQLite.getSession();
-		try {
-			session.beginTransaction();
-			session.save(this);
-			session.getTransaction().commit();
-		} catch (HibernateException e) {
-			if (session.getTransaction() != null)
-				session.getTransaction().rollback();
-		} finally {
-			session.close();
-		}
 	}
 
 	/**
@@ -188,8 +178,8 @@ public class Partie {
 			// Else, those values will be null and it will throw an error when
 			// we will try to use it (LazyInitializationException)
 			for (Appareil appareil : list) {
-				appareil.getPartie();
-				appareil.getXy();
+				Hibernate.initialize(appareil.getXy());
+				Hibernate.initialize(appareil.getPartie());
 			}
 			listAppareils = list;
 		} catch (Exception e) {
@@ -259,5 +249,60 @@ public class Partie {
 	public String toString() {
 		return "Object type Partie. ID : " + idPartie + ". Argent : " + argent
 				+ ".";
+	}
+
+	/**
+	 * This method returns a List of Partie, from table parties. May be
+	 * expensive to invoke; if you have to use it, stock the result in a
+	 * list.
+	 * 
+	 * @return a list of games
+	 */
+	public static List<Partie> query() {
+		// Creating a Session and a List
+		Session session = Connect_SQLite.getSession();
+		List<Partie> list;
+		try {
+			// Query for all objects and stock it in the List created before
+			Query<Partie> query = session.createQuery(
+					"from Partie",
+					Partie.class);
+			list = query.list();
+		} catch (HibernateException e) {
+			System.err.println("Unable to query in table parties");
+			return null;
+		} finally {
+			// Closing the session
+			session.close();
+		}
+		// Returning the result
+		return list;
+	}
+
+	/**
+	 * Insert in table parties the object in parameters.
+	 * 
+	 * @param objToSave the object to save.
+	 */
+	public static void insert(Partie objToSave) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			session.save(objToSave);
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			System.err
+					.println("Unable to run insert stmt in table coordonnées");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
 	}
 }

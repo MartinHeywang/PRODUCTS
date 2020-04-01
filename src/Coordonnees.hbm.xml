@@ -10,12 +10,12 @@
 			<generator class="increment"/>
 		</id>
 		
-		<properties name="uniqueCombo" unique="true">
-			<property name="x" unique="true"/>
-			<property name="y" unique="true"/>
-		</properties>
-		
-		<constraint name="uniqueCombo" unique="true"/>
+		<property name="x">
+			<column name="x" unique-key="uk1"/>
+		</property>
+		<property name="y">
+			<column name="y" unique-key="uk1"/>
+		</property>
 	
 	</class>
 </hibernate-mapping>
