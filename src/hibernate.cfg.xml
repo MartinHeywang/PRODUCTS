@@ -18,9 +18,6 @@
 		<!-- Where ? -->
 		<property name="hibernate.connection.url">jdbc:sqlite:PRODUCTS.db</property>
 		
-		<!-- In which context we should use sessions -->
-		<property name="hibernate.current_session_context_class">thread</property>
-		
 		<!-- Update the database schema automatically -->
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		

@@ -11,9 +11,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import com.martin.model.Coordonnees;
-import com.martin.model.Paquet;
-import com.martin.model.Ressource;
 import com.martin.view.Accueil2Contrôle;
 import com.martin.view.AccueilContrôle;
 import com.martin.view.JeuContrôle;
@@ -34,20 +31,7 @@ public class Main extends Application {
 	public static Stage stage;
 
 	public static void main(String[] args) {
-		Coordonnees.insert(new Coordonnees(0, 0));
-		Coordonnees.insert(new Coordonnees(1, 0));
-
-		Paquet.insert(new Paquet(Ressource.ALUMINIUM, 2));
-
-		Partie.insert(new Partie(
-				"Ce nom de partie est un peu long, non. Je suis pas sûr, je devrai réfléchir un peu plus la prochaine fois, peut-être éventuellement."));
-
-		Coordonnees.query();
-		Paquet.query();
-		Partie.query();
-
 		launch(args);
-
 	}
 
 	@Override

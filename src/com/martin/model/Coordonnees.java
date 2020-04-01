@@ -162,7 +162,7 @@ public class Coordonnees {
 	/**
 	 * Insert in table coordonnées the object in parameters. May be
 	 * expensive to invoke. Checks before inserting if all constraints are
-	 * respected. Because Hibernate doesn't not fully support SQLite (like
+	 * respected. Because Hibernate doesn't fully support SQLite (like
 	 * UniqueCombo constraints), I had to do this before inserting.
 	 * 
 	 * @param objToSave the object to save.

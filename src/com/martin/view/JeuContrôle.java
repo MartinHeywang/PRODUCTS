@@ -1,13 +1,18 @@
 package com.martin.view;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 
 import com.martin.Main;
 import com.martin.Partie;
+import com.martin.model.Coordonnees;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
+import com.martin.model.appareils.Appareil_Sol;
+import com.martin.model.appareils.Direction;
+import com.martin.model.appareils.NiveauAppareil;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
@@ -101,6 +106,27 @@ public class JeuContrôle {
 
 				partieEnCours = partieToLoad;
 				devices = partieToLoad.getAppareils();
+
+				if (devices.size() < Math
+						.sqrt(partieToLoad.getTailleGrille())) {
+					for (int x = 0; x < partieToLoad.getTailleGrille(); x++) {
+						for (int y = 0; y < partieToLoad
+								.getTailleGrille(); y++) {
+							try {
+								Appareil appareil = new Appareil_Sol(
+										new Coordonnees(x, y),
+										Direction.UP,
+										NiveauAppareil.NIVEAU_1,
+										controller);
+								devices.add(appareil);
+								Appareil.insert(appareil);
+							} catch (FileNotFoundException e) {
+								System.out.println(e.getLocalizedMessage());
+
+							}
+						}
+					}
+				}
 
 				int i = 1;
 				for (Appareil appareil : devices) {

@@ -13,7 +13,7 @@
 		</id>
 		
 		<!-- The 'discriminator' column to recognize the subclasses -->
-		<discriminator column="type">
+		<discriminator column="discriminator">
 		</discriminator>
 		
 		<!-- Foreign key to class com.martin.Partie -->
@@ -31,6 +31,13 @@
 		<property name="niveau">
 			<type name="org.hibernate.type.EnumType">
 				<param name="enumClass">com.martin.model.appareils.NiveauAppareil</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+		<!-- The type (also an enum type) -->
+		<property name="type">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.martin.model.appareils.TypeAppareil</param>
 				<param name="useNamed">true</param>
 			</type>
 		</property>

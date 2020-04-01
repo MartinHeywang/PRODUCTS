@@ -44,6 +44,9 @@ public class Partie {
 		this.lastView = LocalDateTime.now();
 		this.tailleGrille = 3;
 		this.argent = 1250;
+
+		Partie.insert(this);
+
 	}
 
 	/**
@@ -172,11 +175,13 @@ public class Partie {
 			// Executing the query and save the result in the list
 			List<Appareil> list = query.list();
 
-			// This is a little bit special
-			// It calls the getPartie() and getXy() from each Appareil
-			// This forces Hibernate to fetch the many-to-one references
-			// Else, those values will be null and it will throw an error when
-			// we will try to use it (LazyInitializationException)
+			/*
+			 * This is a little bit special. It calls the getPartie() and
+			 * getXy() from each Appareil. This forces Hibernate to fetch the
+			 * many-to-one references. Else, those values will be null and it
+			 * will throw an error when, we will try to use it.
+			 * (LazyInitializationException)
+			 */
 			for (Appareil appareil : list) {
 				Hibernate.initialize(appareil.getXy());
 				Hibernate.initialize(appareil.getPartie());

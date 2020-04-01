@@ -62,7 +62,7 @@ public abstract class Appareil extends ImageView {
 		super();
 		try {
 			this.setImage(
-					new LocatedImage("images/machines niveau 2/Acheteur.png"));
+					new LocatedImage("images/machines niveau 1/Acheteur.png"));
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getLocalizedMessage());
 
@@ -92,6 +92,8 @@ public abstract class Appareil extends ImageView {
 		if (controller != null)
 			this.partie = controller.getPartieEnCours();
 		setRotate(direction.getRotate());
+
+		Coordonnees.insert(xy);
 
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -408,7 +410,7 @@ public abstract class Appareil extends ImageView {
 			} else {
 				// Little log in case a constraint would not be respected
 				System.err.println(
-						"Couldn't run insert : UNIQUE constraint failed (x, y)");
+						"Couldn't run insert : UNIQUE constraint failed (partie, xy)");
 			}
 
 		} catch (HibernateException e) {
