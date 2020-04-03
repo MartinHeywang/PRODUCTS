@@ -60,13 +60,6 @@ public abstract class Appareil extends ImageView {
 
 	public Appareil() {
 		super();
-		try {
-			this.setImage(
-					new LocatedImage("images/machines niveau 1/Acheteur.png"));
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getLocalizedMessage());
-
-		}
 	}
 
 	/**

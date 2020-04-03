@@ -18,7 +18,7 @@
 		
 		<!-- Foreign key to class com.martin.Partie -->
 		<many-to-one name="partie" class="com.martin.Partie" column="idPartie" 
-			not-null="true" cascade="all" unique-key="combo"/>
+			not-null="true" unique-key="combo"/>
 		
 		<!-- The Direction (also enum type) -->
 		<property name="direction">
@@ -43,7 +43,7 @@
 		</property>
 		<!-- Foreign key to class com.martin.model.Coordonnées -->
 		<many-to-one name="xy" class="com.martin.model.Coordonnees" column="idCoordonnees" 
-			not-null="true" cascade="all" unique-key="combo"/>
+			not-null="true"/>
 		
 		<!-- All subclasses of this class -->
 		<subclass name="com.martin.model.appareils.Appareil_Acheteur" 

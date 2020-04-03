@@ -119,7 +119,6 @@ public class JeuContrôle {
 										NiveauAppareil.NIVEAU_1,
 										controller);
 								devices.add(appareil);
-								Appareil.insert(appareil);
 							} catch (FileNotFoundException e) {
 								System.out.println(e.getLocalizedMessage());
 

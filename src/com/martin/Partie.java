@@ -1,5 +1,6 @@
 package com.martin;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.martin.model.Coordonnees;
+import com.martin.model.LocatedImage;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.exceptions.NegativeArgentException;
 
@@ -176,15 +178,21 @@ public class Partie {
 			List<Appareil> list = query.list();
 
 			/*
-			 * This is a little bit special. It calls the getPartie() and
-			 * getXy() from each Appareil. This forces Hibernate to fetch the
-			 * many-to-one references. Else, those values will be null and it
-			 * will throw an error when, we will try to use it.
-			 * (LazyInitializationException)
+			 * Calling the initializtion method from Hibernate to forces
+			 * initialization of some property, for each device
 			 */
 			for (Appareil appareil : list) {
 				Hibernate.initialize(appareil.getXy());
 				Hibernate.initialize(appareil.getPartie());
+
+				try {
+					appareil.setImage(
+							new LocatedImage(appareil.getNiveau().getURL()
+									+ appareil.getType().getURL()));
+				} catch (FileNotFoundException | NullPointerException e) {
+					System.out.println(e.getLocalizedMessage());
+
+				}
 			}
 			listAppareils = list;
 		} catch (Exception e) {

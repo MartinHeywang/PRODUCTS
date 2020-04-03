@@ -3,7 +3,6 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
@@ -17,7 +16,6 @@ public class Appareil_Acheteur extends Appareil {
 	public static ArrayList<Coordonnees> liste = new ArrayList<Coordonnees>();
 
 	public Appareil_Acheteur() {
-		System.out.println("Re : " + super.toString());
 	}
 
 	public Appareil_Acheteur(Coordonnees xy, Direction direction,
@@ -26,8 +24,6 @@ public class Appareil_Acheteur extends Appareil {
 
 		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
 		liste.add(xy);
-
-		this.save();
 		entrées = new Entrées_Aucune();
 		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Center();
@@ -36,15 +32,6 @@ public class Appareil_Acheteur extends Appareil {
 				pointerExit.getxPlus(),
 				pointerExit.getyPlus(), controller, this);
 		System.out.println(this.toString() + "\nID : " + idAppareil);
-	}
-
-	@Override
-	public void destruction() {
-		try {
-			Connect_SQLite.getAppareilDao().delete(this);
-		} catch (Exception e) {
-
-		}
 	}
 
 	/**

@@ -50,7 +50,7 @@
                   <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
                      <children>
                         <TextField fx:id="field" promptText="Nom de la nouvelle partie (pour votre confort, ni trop long, ni déja existant...)" />
-                        <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" mouseTransparent="true" text="Créer et lancer la nouvelle partie maintenant" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                        <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Créer et lancer la nouvelle partie maintenant" textAlignment="CENTER" VBox.vgrow="ALWAYS" onAction="#nouvelle"/>
                      </children>
                   </VBox>
                </content>

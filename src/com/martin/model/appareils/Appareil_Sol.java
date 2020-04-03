@@ -28,6 +28,9 @@ public class Appareil_Sol extends Appareil {
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.SOL, direction, niveau, controller);
 
+		this.xy = Coordonnees.createOrQuery(xy);
+		Appareil.insert(this);
+
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {

@@ -1,5 +1,6 @@
 package com.martin.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -200,5 +201,37 @@ public class Coordonnees {
 			// Closing the session
 			session.close();
 		}
+	}
+
+	public static Coordonnees createOrQuery(Coordonnees xy) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		List<Coordonnees> list = Arrays.asList();
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			// Query for the table coordonnées
+			Query<Coordonnees> query = session.createQuery(
+					"from Coordonnees",
+					Coordonnees.class);
+			list = query.list();
+			// Using a Stream, checking if the constraints are fully respected.
+			if (list.stream().filter(x -> x.getX() == xy.getX())
+					.filter(y -> y.getY() == xy.getY()).count() == 0)
+				session.save(xy);
+
+		} catch (HibernateException e) {
+			System.err
+					.println("Unable to run insert stmt in table coordonnées");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
+		return list.stream().filter(x -> x.getX() == xy.getX())
+				.filter(y -> y.getY() == xy.getY()).findFirst().get();
 	}
 }
