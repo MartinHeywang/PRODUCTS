@@ -44,7 +44,7 @@ public class Partie {
 	public Partie(String nom) {
 		this.nom = nom;
 		this.lastView = LocalDateTime.now();
-		this.tailleGrille = 3;
+		this.tailleGrille = 5;
 		this.argent = 1250;
 
 		Partie.insert(this);
@@ -231,13 +231,14 @@ public class Partie {
 	 * 
 	 * @param appareil the new device
 	 */
-	public void setAppareil(Appareil appareil) {
+	public List<Appareil> setAppareil(Appareil appareil) {
 		for (Appareil app : listAppareils) {
 			if (app.getXy().getX() == appareil.getXy().getX()
 					&& app.getXy().getY() == appareil.getXy().getY()) {
 				listAppareils.set(listAppareils.indexOf(app), appareil);
 			}
 		}
+		return listAppareils;
 	}
 
 	/**

@@ -224,7 +224,8 @@ public class Coordonnees {
 
 		} catch (HibernateException e) {
 			System.err
-					.println("Unable to run insert stmt in table coordonnées");
+					.println(
+							"Unable to run insert statement in table coordonnées");
 			if (transaction != null)
 				transaction.rollback();
 		} finally {
@@ -233,5 +234,15 @@ public class Coordonnees {
 		}
 		return list.stream().filter(x -> x.getX() == xy.getX())
 				.filter(y -> y.getY() == xy.getY()).findFirst().get();
+	}
+
+	public boolean equals(Coordonnees xy) {
+		if (this.x == xy.getX() && this.y == xy.getY()) {
+			System.out
+					.println("Coordonnees.equals(Coordonnees) returned true.");
+			return true;
+		}
+		System.out.println("Coordonnees.equals(Coordonnees) returned false.");
+		return false;
 	}
 }

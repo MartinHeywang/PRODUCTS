@@ -256,17 +256,26 @@ public class JeuContrôle {
 	}
 
 	public void setAppareil(Appareil appareil, boolean ignoreCost) {
-		partieEnCours.setAppareil(appareil);
-		if (ignoreCost) {
-			try {
-				setArgent(appareil.getType().getPrix(), false);
-			} catch (NegativeArgentException e) {
-				System.err.println(e.getLocalizedMessage());
 
-			}
+		devices = partieEnCours.setAppareil(appareil);
+		try {
+			if (ignoreCost)
+				setArgent(appareil.getType().getPrix(), false);
+		} catch (NegativeArgentException e) {
+			e.printStackTrace();
 		}
+		grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
+
 	}
 
+	/**
+	 * Shows the report if hided and sets the text to String in parameter.
+	 * The must also indicates a JavaFX Color which will be the color of
+	 * the border.
+	 * 
+	 * @param text        the text to show
+	 * @param colorBorder the new color of the border
+	 */
 	public void setReport(String text, Color colorBorder) {
 		reportProperty.set(text);
 		report.getStyleClass().add("report");

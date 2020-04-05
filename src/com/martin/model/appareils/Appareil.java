@@ -58,8 +58,45 @@ public abstract class Appareil extends ImageView {
 
 	protected Dashboard dashboard = new Dashboard();
 
+	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			try {
+				// Charger et ouvrir la boîte de dialogue demandant l'action
+				// à effectuer
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(
+						Main.class.getResource("view/Appareil.fxml"));
+
+				Dialog<TypeAppareil> dialog;
+				DialogPane dialogPane;
+
+				dialogPane = (DialogPane) loader.load();
+				dialog = new Dialog<TypeAppareil>();
+				dialog.setTitle("Sélection d'appareil - PRODUCTS.");
+				dialog.setDialogPane(dialogPane);
+				dialog.initOwner(Main.stage);
+				dialog.initModality(Modality.NONE);
+
+				AppareilsContrôle controller = loader.getController();
+				controller.setMainApp(xy.getX(), xy.getY(), dashboard);
+
+				dialog.showAndWait();
+
+			} catch (IOException e) {
+				/*
+				 * Si une erreur est survenue lors du chargement de la fenêtre,
+				 * afficher le message plus la raison donnée par Java.
+				 */
+				System.err.println(
+						"ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
+								+ "Raison :\n" + e.getMessage());
+			}
+		}
+	};
+
 	public Appareil() {
-		super();
+		this.setOnMouseClicked(onClicked);
 	}
 
 	/**
@@ -82,49 +119,13 @@ public abstract class Appareil extends ImageView {
 		this.direction = direction;
 		this.niveau = niveau;
 		this.controller = controller;
-		if (controller != null)
-			this.partie = controller.getPartieEnCours();
+		this.partie = controller.getPartieEnCours();
 		setRotate(direction.getRotate());
 
-		Coordonnees.insert(xy);
+		this.xy = Coordonnees.createOrQuery(xy);
+		Appareil.insertOrUpdate(this);
 
-		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				try {
-					// Charger et ouvrir la boîte de dialogue demandant l'action
-					// à effectuer
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(
-							Main.class.getResource("view/Appareil.fxml"));
-
-					Dialog<TypeAppareil> dialog;
-					DialogPane dialogPane;
-
-					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<TypeAppareil>();
-					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
-					dialog.setDialogPane(dialogPane);
-					dialog.initOwner(Main.stage);
-					dialog.initModality(Modality.NONE);
-
-					AppareilsContrôle controller = loader.getController();
-					controller.setMainApp(xy.getX(), xy.getY(), dashboard);
-
-					dialog.showAndWait();
-
-				} catch (IOException e) {
-					/*
-					 * Si une erreur est survenue lors du chargement de la
-					 * fenêtre, afficher le message plus la raison donnée par
-					 * Java.
-					 */
-					System.err.println(
-							"ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
-									+ "Raison :\n" + e.getMessage());
-				}
-			}
-		});
+		this.setOnMouseClicked(onClicked);
 	}
 
 	/**
@@ -409,6 +410,47 @@ public abstract class Appareil extends ImageView {
 		} catch (HibernateException e) {
 			System.err
 					.println("Unable to run insert stmt in table coordonnées");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
+	}
+
+	/**
+	 * This method insert in database the Appareil object. But before,
+	 * this will check if the combination Coordinnees-Partie alredy
+	 * exists. If it is the case, the old Appareil will be deleted, even
+	 * if the id is different.
+	 * 
+	 * @param objToSave the object to insert or update
+	 */
+	public static void insertOrUpdate(Appareil objToSave) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			// Query for the table coordonnées
+			Query<Appareil> query = session.createQuery(
+					"from Appareil as A where A.partie = "
+							+ objToSave.getPartie().getIdPartie()
+							+ " and A.xy = "
+							+ objToSave.getXy().getIdCoordonnees(),
+					Appareil.class);
+
+			List<Appareil> list = query.list();
+			session.save(objToSave);
+			session.delete(list.get(0));
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			System.err
+					.println(
+							"Unable to run insert statement in table coordonnées");
 			if (transaction != null)
 				transaction.rollback();
 		} finally {

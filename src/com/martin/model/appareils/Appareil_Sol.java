@@ -20,7 +20,49 @@ import javafx.stage.Modality;
 
 public class Appareil_Sol extends Appareil {
 
+	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			try {
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(Main.class.getResource("view/Sol.fxml"));
+
+				Dialog<Object> dialog;
+				DialogPane dialogPane;
+
+				dialogPane = (DialogPane) loader.load();
+				dialog = new Dialog<Object>();
+				dialog.setTitle("Sélectionnez un appareil à construire");
+				dialog.setDialogPane(dialogPane);
+				dialog.initOwner(Main.stage);
+				dialog.initModality(Modality.NONE);
+
+				SolContrôle SController = loader.getController();
+				SController.setMainApp(
+						new Coordonnees(xy.getX(), xy.getY()), dialog);
+
+				dialog.showAndWait();
+
+				if (dialog.getResult() instanceof TypeAppareil) {
+					controller.setAppareil(
+							((TypeAppareil) dialog.getResult()).getClasse()
+									.getConstructor(Coordonnees.class,
+											Direction.class,
+											NiveauAppareil.class,
+											JeuContrôle.class)
+									.newInstance(xy, Direction.UP,
+											NiveauAppareil.NIVEAU_1,
+											controller),
+							false);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
 	public Appareil_Sol() {
+		this.setOnMouseClicked(onClicked);
 	}
 
 	public Appareil_Sol(Coordonnees xy, Direction direction,
@@ -28,49 +70,7 @@ public class Appareil_Sol extends Appareil {
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.SOL, direction, niveau, controller);
 
-		this.xy = Coordonnees.createOrQuery(xy);
-		Appareil.insert(this);
-
-		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				try {
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(Main.class.getResource("view/Sol.fxml"));
-
-					Dialog<Object> dialog;
-					DialogPane dialogPane;
-
-					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<Object>();
-					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
-					dialog.setDialogPane(dialogPane);
-					dialog.initOwner(Main.stage);
-					dialog.initModality(Modality.NONE);
-
-					SolContrôle SController = loader.getController();
-					SController.setMainApp(
-							new Coordonnees(xy.getX(), xy.getY()), dialog);
-
-					dialog.showAndWait();
-
-					if (dialog.getResult() instanceof TypeAppareil) {
-						controller.setAppareil(
-								((TypeAppareil) dialog.getResult()).getClasse()
-										.getConstructor(Coordonnees.class,
-												Direction.class,
-												NiveauAppareil.class,
-												JeuContrôle.class)
-										.newInstance(xy, Direction.UP,
-												NiveauAppareil.NIVEAU_1,
-												controller),
-								false);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		this.setOnMouseClicked(onClicked);
 
 		entrées = new Entrées_Aucune();
 		pointersEnters = entrées.getPointers(direction);
