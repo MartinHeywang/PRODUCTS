@@ -43,7 +43,7 @@ public class Comportement_Presse_Fil implements Comportement {
 				break;
 			}
 		}
-		controller.getGrilleAppareils(pointer).action(tempoStock);
+		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
 
 	}
 

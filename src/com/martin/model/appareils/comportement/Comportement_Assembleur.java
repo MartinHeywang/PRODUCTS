@@ -1,7 +1,12 @@
 package com.martin.model.appareils.comportement;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnees;
@@ -29,19 +34,29 @@ public class Comportement_Assembleur implements Comportement {
 		this.controller = controller;
 		this.pointer = new Coordonnees(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
+		Session session = Connect_SQLite.getSession();
+		Transaction tx = session.getTransaction();
 		try {
-			if (Connect_SQLite.getPaquetDao().queryBuilder().where()
-					.eq("idAppareil", appareil.getID()).query()
-					.size() != 0)
-				produit = Connect_SQLite.getPaquetDao().queryBuilder()
-						.where()
-						.eq("idAppareil", appareil.getID())
-						.queryForFirst();
-			else {
+			session.beginTransaction();
+
+			Query<Paquet> query = session.createQuery(
+					"from Paquet where appareil = " + appareil.getId(),
+					Paquet.class);
+			List<Paquet> list = query.list();
+
+			if (list.size() == 0) {
 				produit = new Paquet(Ressource.NONE, 1, appareil);
-				Connect_SQLite.getPaquetDao().create(produit);
+				session.save(produit);
+				tx.commit();
+			} else if (list.size() == 1) {
+				produit = list.get(0);
 			}
-		} catch (SQLException e) {
+		} catch (HibernateException e) {
+			System.err
+					.println("Error when loading resource. Error message :\n");
+			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 	}
 
@@ -64,7 +79,7 @@ public class Comportement_Assembleur implements Comportement {
 			}
 		}
 
-		controller.getGrilleAppareils(pointer).action(tempoStock);
+		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
 	}
 
 	/**

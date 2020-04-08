@@ -33,7 +33,7 @@ public class Comportement_Convoyeur implements Comportement {
 
 			controller.setArgent(Appareil.getÉlectricité(), false);
 		}
-		controller.getGrilleAppareils(pointer).action(resATraiter);
+		controller.getPartieEnCours().getAppareil(pointer).action(resATraiter);
 	}
 
 }

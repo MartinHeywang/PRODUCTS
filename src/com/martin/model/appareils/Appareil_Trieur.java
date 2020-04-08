@@ -29,6 +29,8 @@ public class Appareil_Trieur extends Appareil {
 			throws FileNotFoundException {
 		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);
 
+		// Todo : load the criterias
+
 		entrées = new Entrées_Center();
 		pointersEnters = entrées.getPointers(direction);
 		sorties = new Sorties_Aucune();
