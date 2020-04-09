@@ -1,4 +1,4 @@
-package com.martin;
+package com.martin.model;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
@@ -12,8 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import com.martin.model.Coordonnees;
-import com.martin.model.LocatedImage;
+import com.martin.Connect_SQLite;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.exceptions.NegativeArgentException;
 

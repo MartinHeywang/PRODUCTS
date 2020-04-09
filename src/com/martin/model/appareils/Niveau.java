@@ -1,6 +1,6 @@
 package com.martin.model.appareils;
 
-public enum NiveauAppareil {
+public enum Niveau {
 	NIVEAU_1("images/machines niveau 1/", 1),
 	NIVEAU_2("images/machines niveau 2/", 2),
 	NIVEAU_3("images/machines niveau 3/", 3);
@@ -8,7 +8,7 @@ public enum NiveauAppareil {
 	String url;
 	int niveau;
 	
-	NiveauAppareil(String url, int niveau) {
+	Niveau(String url, int niveau) {
 		this.url = url;
 		this.niveau = niveau;
 	}
@@ -19,7 +19,7 @@ public enum NiveauAppareil {
 	public int getNiveau(){
 		return niveau;
 	}
-	public NiveauAppareil getLevelSup(NiveauAppareil level) {
+	public Niveau getLevelSup(Niveau level) {
 		if(level == NIVEAU_1)
 			return NIVEAU_2;
 		if(level == NIVEAU_2)

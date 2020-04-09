@@ -1,6 +1,6 @@
 package com.martin.model.appareils;
 
-public enum TypeAppareil {
+public enum Type {
 
 	/*
 	 * La liste des appareils actuellement en jeu. Chacun contient plein
@@ -52,7 +52,7 @@ public enum TypeAppareil {
 	Class<? extends Appareil> classe;
 
 	// Un seul et unique constructeur
-	TypeAppareil(String nom, String url, String desc, int prix,
+	Type(String nom, String url, String desc, int prix,
 			Class<? extends Appareil> classe) {
 		this.nom = nom;
 		this.url = url;
