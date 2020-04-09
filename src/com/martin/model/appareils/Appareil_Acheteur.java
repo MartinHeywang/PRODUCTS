@@ -7,31 +7,24 @@ import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Acheteur;
-import com.martin.model.appareils.orientation.Entrées_Aucune;
-import com.martin.model.appareils.orientation.Sorties_Center;
+import com.martin.model.appareils.orientation.Entrées;
+import com.martin.model.appareils.orientation.Sorties;
 import com.martin.view.JeuContrôle;
 
 public class Appareil_Acheteur extends Appareil {
 
 	public static ArrayList<Coordonnees> liste = new ArrayList<Coordonnees>();
 
-	public Appareil_Acheteur() {
-	}
-
-	public Appareil_Acheteur(Coordonnees xy, Direction direction,
-			NiveauAppareil niveau, JeuContrôle controller)
+	public Appareil_Acheteur(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
 
-		super(xy, TypeAppareil.ACHETEUR, direction, niveau, controller);
-		liste.add(xy);
-		entrées = new Entrées_Aucune();
-		pointersEnters = entrées.getPointers(direction);
-		sorties = new Sorties_Center();
-		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Acheteur(xy, niveau,
-				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller, this);
-		System.out.println(this.toString() + "\nID : " + idAppareil);
+		super(model, controller);
+		liste.add(model.getCoordonnees());
+
+		entrances = Entrées.listForNone();
+		entrances = Sorties.listForCenter(model.getDirection());
+
+		// Todo: add behaviour
 	}
 
 	/**

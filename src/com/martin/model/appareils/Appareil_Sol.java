@@ -5,9 +5,8 @@ import java.io.FileNotFoundException;
 import com.martin.Main;
 import com.martin.model.Coordonnees;
 import com.martin.model.Stock;
-import com.martin.model.appareils.comportement.Comportement_Aucun;
-import com.martin.model.appareils.orientation.Entrées_Aucune;
-import com.martin.model.appareils.orientation.Sorties_Aucune;
+import com.martin.model.appareils.orientation.Entrées;
+import com.martin.model.appareils.orientation.Sorties;
 import com.martin.view.JeuContrôle;
 import com.martin.view.SolContrôle;
 
@@ -39,19 +38,22 @@ public class Appareil_Sol extends Appareil {
 
 				SolContrôle SController = loader.getController();
 				SController.setMainApp(
-						new Coordonnees(xy.getX(), xy.getY()), dialog);
+						new Coordonnees(model.getCoordonnees().getX(),
+								model.getCoordonnees().getY()),
+						dialog);
 
 				dialog.showAndWait();
 
-				if (dialog.getResult() instanceof TypeAppareil) {
+				if (dialog.getResult() instanceof Type) {
 					controller.setAppareil(
-							((TypeAppareil) dialog.getResult()).getClasse()
+							((Type) dialog.getResult()).getClasse()
 									.getConstructor(Coordonnees.class,
 											Direction.class,
-											NiveauAppareil.class,
+											Niveau.class,
 											JeuContrôle.class)
-									.newInstance(xy, Direction.UP,
-											NiveauAppareil.NIVEAU_1,
+									.newInstance(model.getCoordonnees(),
+											Direction.UP,
+											Niveau.NIVEAU_1,
 											controller),
 							false);
 				}
@@ -61,22 +63,16 @@ public class Appareil_Sol extends Appareil {
 		}
 	};
 
-	public Appareil_Sol() {
-		this.setOnMouseClicked(onClicked);
-	}
-
-	public Appareil_Sol(Coordonnees xy, Direction direction,
-			NiveauAppareil niveau, JeuContrôle controller)
+	public Appareil_Sol(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.SOL, direction, niveau, controller);
+		super(model, controller);
 
 		this.setOnMouseClicked(onClicked);
 
-		entrées = new Entrées_Aucune();
-		pointersEnters = entrées.getPointers(direction);
-		sorties = new Sorties_Aucune();
-		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Aucun();
+		entrances = Entrées.listForNone();
+		exits = Sorties.listForNone();
+
+		// Todo : add behaviour
 	}
 
 	@Override

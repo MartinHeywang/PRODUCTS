@@ -1,7 +1,7 @@
 package com.martin.view;
 
 import com.martin.model.Coordonnees;
-import com.martin.model.appareils.TypeAppareil;
+import com.martin.model.appareils.Type;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,9 +23,9 @@ public class SolContrôle {
 	 * Called automatically as a constructor.</p>
 	 */
 	public void initialize() {
-		for(int i = 0; i < TypeAppareil.values().length-1; i++) {
+		for(int i = 0; i < Type.values().length-1; i++) {
 			//On ajoute les displayers des appareils dans la liste prévue à cet effet
-			listeAppareils.getChildren().add(new Displayer(TypeAppareil.values()[i]));
+			listeAppareils.getChildren().add(new Displayer(Type.values()[i]));
 			
 			//On ajoute un listener du clic sur un displayer
 			listeAppareils.getChildren().get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {

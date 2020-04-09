@@ -2,42 +2,20 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.model.Coordonnees;
-import com.martin.model.appareils.comportement.Comportement_Convoyeur;
-import com.martin.model.appareils.orientation.Entrées_Center;
-import com.martin.model.appareils.orientation.Sorties_Left;
+import com.martin.model.appareils.orientation.Entrées;
+import com.martin.model.appareils.orientation.Sorties;
 import com.martin.view.JeuContrôle;
-
-import javafx.beans.property.SimpleIntegerProperty;
 
 public class Appareil_Convoyeur_Gauche extends Appareil {
 
-	private static SimpleIntegerProperty prix;
-
-	public Appareil_Convoyeur_Gauche() {
-	}
-
-	public Appareil_Convoyeur_Gauche(Coordonnees xy, Direction direction,
-			NiveauAppareil niveau, JeuContrôle controller)
+	public Appareil_Convoyeur_Gauche(AppareilModel model,
+			JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.CONVOYEUR_GAUCHE, direction, niveau, controller);
+		super(model, controller);
 
-		entrées = new Entrées_Center();
-		pointersEnters = entrées.getPointers(direction);
-		sorties = new Sorties_Left();
-		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Convoyeur(xy, niveau,
-				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller);
+		entrances = Entrées.listForUp(model.getDirection());
+		exits = Sorties.listForLeft(model.getDirection());
+
+		// Todo : add behaviour
 	}
-
-	public static void initializeData() {
-		prix = new SimpleIntegerProperty();
-		prix.bind(Appareil_Convoyeur.prix);
-	}
-
-	public static int getPrix() {
-		return prix.get();
-	}
-
 }

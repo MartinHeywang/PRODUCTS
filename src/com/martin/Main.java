@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import com.martin.model.Partie;
 import com.martin.view.Accueil2Contrôle;
 import com.martin.view.AccueilContrôle;
 import com.martin.view.JeuContrôle;

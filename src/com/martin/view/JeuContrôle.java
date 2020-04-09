@@ -5,14 +5,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.martin.Main;
-import com.martin.Partie;
 import com.martin.model.Coordonnees;
+import com.martin.model.Partie;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
 import com.martin.model.appareils.Appareil_Acheteur;
 import com.martin.model.appareils.Appareil_Sol;
 import com.martin.model.appareils.Direction;
-import com.martin.model.appareils.NiveauAppareil;
+import com.martin.model.appareils.Niveau;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
@@ -116,7 +116,7 @@ public class JeuContrôle {
 								Appareil appareil = new Appareil_Sol(
 										new Coordonnees(x, y),
 										Direction.UP,
-										NiveauAppareil.NIVEAU_1,
+										Niveau.NIVEAU_1,
 										controller);
 								devices.add(appareil);
 							} catch (FileNotFoundException e) {

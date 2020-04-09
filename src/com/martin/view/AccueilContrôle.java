@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.martin.Main;
-import com.martin.Partie;
+import com.martin.model.Partie;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;

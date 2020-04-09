@@ -1,12 +1,10 @@
 package com.martin.model;
 
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -163,42 +161,7 @@ public class Partie {
 	 */
 	public List<Appareil> getAppareils() {
 
-		// Refreshing the list before returning it
-		// Creating a new Session
-		Session session = Connect_SQLite.getSession();
-		try {
-			// Creating a query (native SQL : SELECT * FROM appareils WHERE
-			// idPartie = :idPartie)
-			Query<Appareil> query = session.createQuery(
-					"FROM Appareil AS A WHERE A.partie = " + idPartie,
-					Appareil.class);
-
-			// Executing the query and save the result in the list
-			List<Appareil> list = query.list();
-
-			/*
-			 * Calling the initializtion method from Hibernate to forces
-			 * initialization of some property, for each device
-			 */
-			for (Appareil appareil : list) {
-				Hibernate.initialize(appareil.getXy());
-				Hibernate.initialize(appareil.getPartie());
-
-				try {
-					appareil.setImage(
-							new LocatedImage(appareil.getNiveau().getURL()
-									+ appareil.getType().getURL()));
-				} catch (FileNotFoundException | NullPointerException e) {
-					System.out.println(e.getLocalizedMessage());
-
-				}
-			}
-			listAppareils = list;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		// Todo : method getAppareils
 		return listAppareils;
 	}
 
@@ -232,8 +195,10 @@ public class Partie {
 	 */
 	public List<Appareil> setAppareil(Appareil appareil) {
 		for (Appareil app : listAppareils) {
-			if (app.getXy().getX() == appareil.getXy().getX()
-					&& app.getXy().getY() == appareil.getXy().getY()) {
+			if (app.getModel().getCoordonnees().getX() == appareil.getModel()
+					.getCoordonnees().getX()
+					&& app.getModel().getCoordonnees().getY() == appareil
+							.getModel().getCoordonnees().getY()) {
 				listAppareils.set(listAppareils.indexOf(app), appareil);
 			}
 		}
@@ -250,8 +215,9 @@ public class Partie {
 	 */
 	public Appareil getAppareil(Coordonnees xy) throws NullPointerException {
 		for (Appareil appareil : listAppareils) {
-			if (appareil.getXy().getX() == xy.getX()
-					&& appareil.getXy().getY() == xy.getY()) {
+			if (appareil.getModel().getCoordonnees().getX() == xy.getX()
+					&& appareil.getModel().getCoordonnees().getY() == xy
+							.getY()) {
 				return appareil;
 			}
 		}

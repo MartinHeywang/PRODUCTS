@@ -2,18 +2,11 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
-import com.martin.Partie;
-import com.martin.model.Coordonnees;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
-import com.martin.model.appareils.comportement.Comportement_Convoyeur;
-import com.martin.model.appareils.orientation.Entrées_Center;
-import com.martin.model.appareils.orientation.Sorties_Aucune;
-import com.martin.model.appareils.orientation.Sorties_Center;
-import com.martin.model.appareils.orientation.Sorties_Left;
-import com.martin.model.appareils.orientation.Sorties_Right;
-import com.martin.model.appareils.orientation.Sorties_Up;
+import com.martin.model.appareils.orientation.Entrées;
+import com.martin.model.appareils.orientation.Sorties;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
@@ -21,28 +14,22 @@ public class Appareil_Trieur extends Appareil {
 
 	private Paquet crit1, crit2;
 
-	public Appareil_Trieur() {
-	}
-
-	public Appareil_Trieur(Coordonnees xy, NiveauAppareil niveau,
-			Direction direction, JeuContrôle controller, Partie partie)
+	public Appareil_Trieur(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.TRIEUR, direction, niveau, controller);
+		super(model, controller);
 
 		// Todo : load the criterias
 
-		entrées = new Entrées_Center();
-		pointersEnters = entrées.getPointers(direction);
-		sorties = new Sorties_Aucune();
-		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Convoyeur(xy, niveau,
-				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller);
+		entrances = Entrées.listForUp(model.getDirection());
+		exits = Sorties.listForNone();
+
+		// Todo : add behaviour
 	}
 
 	@Override
 	public void action(Stock resATraiter) throws NegativeArgentException {
 
+		// FixMe : switch for criterias
 		if (resATraiter.get(0).getRessource().equals(crit1.getRessource())) {
 			switch (direction) {
 			case UP:
@@ -109,9 +96,7 @@ public class Appareil_Trieur extends Appareil {
 			}
 		}
 
-		comportement = new Comportement_Convoyeur(xy, niveau,
-				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller);
+		// Todo : add behaviour in action
 		comportement.action(resATraiter);
 	}
 

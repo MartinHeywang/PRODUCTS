@@ -1,7 +1,7 @@
 package com.martin.view;
 
 import com.martin.Main;
-import com.martin.Partie;
+import com.martin.model.Partie;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

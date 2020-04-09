@@ -3,32 +3,25 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import com.martin.model.Coordonnees;
 import com.martin.model.Ressource;
 import com.martin.model.appareils.comportement.Comportement_Assembleur;
-import com.martin.model.appareils.orientation.Entrées_LeftAndCenter;
-import com.martin.model.appareils.orientation.Sorties_Right;
+import com.martin.model.appareils.orientation.Entrées;
+import com.martin.model.appareils.orientation.Sorties;
 import com.martin.view.JeuContrôle;
 
 public class Appareil_Assembleur extends Appareil {
 
 	ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
-	public Appareil_Assembleur() {
-	}
-
-	public Appareil_Assembleur(Coordonnees xy, NiveauAppareil niveau,
-			Direction direction, JeuContrôle controller)
+	public Appareil_Assembleur(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
-		super(xy, TypeAppareil.ASSEMBLEUR, direction, niveau, controller);
+		super(model, controller);
 
-		entrées = new Entrées_LeftAndCenter();
-		pointersEnters = entrées.getPointers(direction);
-		sorties = new Sorties_Right();
-		pointerExit = sorties.getPointer(direction);
-		comportement = new Comportement_Assembleur(xy, niveau,
-				pointerExit.getxPlus(),
-				pointerExit.getyPlus(), controller, this);
+		entrances = Entrées.listForLeft(model.getDirection());
+		entrances.addAll(Entrées.listForUp(model.getDirection()));
+		exits = Sorties.listForRight(model.getDirection());
+
+		// Todo : add behaviour
 	}
 
 	public void setProduit(Ressource res) throws NullPointerException {

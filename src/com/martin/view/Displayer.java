@@ -3,9 +3,9 @@ package com.martin.view;
 import java.io.File;
 import java.io.FileInputStream;
 
-import com.martin.Partie;
+import com.martin.model.Partie;
 import com.martin.model.Ressource;
-import com.martin.model.appareils.TypeAppareil;
+import com.martin.model.appareils.Type;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -23,7 +23,7 @@ public class Displayer extends BorderPane {
 	private Label infos;
 
 	private Ressource ressource;
-	private TypeAppareil typeAppareil;
+	private Type type;
 	private Partie partie;
 
 	/**
@@ -70,9 +70,9 @@ public class Displayer extends BorderPane {
 	 * 
 	 * @param appareil the object to display
 	 */
-	public Displayer(TypeAppareil appareil) {
+	public Displayer(Type appareil) {
 		try {
-			this.typeAppareil = appareil;
+			this.type = appareil;
 
 			nom = new Label();
 			nom.setUnderline(true);
@@ -223,8 +223,8 @@ public class Displayer extends BorderPane {
 	 *                              (this object wasn't created from a
 	 *                              TypeAppareil)
 	 */
-	public TypeAppareil getTypeAppareil() throws NullPointerException {
-		return typeAppareil;
+	public Type getTypeAppareil() throws NullPointerException {
+		return type;
 	}
 
 	/**

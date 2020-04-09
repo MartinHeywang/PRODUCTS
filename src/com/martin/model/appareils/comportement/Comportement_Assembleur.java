@@ -14,21 +14,21 @@ import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
-import com.martin.model.appareils.NiveauAppareil;
+import com.martin.model.appareils.Niveau;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
 
 public class Comportement_Assembleur implements Comportement {
 
 	private Coordonnees pointer;
-	private NiveauAppareil niveau;
+	private Niveau niveau;
 	private JeuContrôle controller;
 
 	private Paquet produit;
 	private ArrayList<Ressource> ressources = new ArrayList<Ressource>();
 	private ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
-	public Comportement_Assembleur(Coordonnees xy, NiveauAppareil niveau,
+	public Comportement_Assembleur(Coordonnees xy, Niveau niveau,
 			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
 		this.niveau = niveau;
 		this.controller = controller;

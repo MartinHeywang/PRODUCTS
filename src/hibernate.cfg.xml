@@ -23,7 +23,7 @@
 		
 		<!-- Mappings -->
 		<mapping resource="Paquet.hbm.xml"/>
-		<mapping resource="Appareil.hbm.xml"/>
+		<mapping resource="AppareilModel.hbm.xml"/>
 		<mapping resource="Partie.hbm.xml"/>
 		<mapping resource="Coordonnees.hbm.xml"/>
 		

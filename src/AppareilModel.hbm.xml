@@ -6,19 +6,35 @@
 <!-- Hibernate Mapping File -->
 <hibernate-mapping>
 	<!-- To class : com.martin.model.appareils.Appareil -->
-	<class name="com.martin.model.appareils.Appareil" abstract="true" table="appareils">
+	<class name="com.martin.model.appareils.AppareilModel" table="appareils">
 		<!-- Our class id who uses an auto-increment generator -->
-		<id name="idAppareil" column="idAppareil" type="long">
+		<id name="idAppareilModel" column="idAppareilModel" type="long">
 			<generator class="increment"/>
 		</id>
 		
-		<!-- The 'discriminator' column to recognize the subclasses -->
-		<discriminator column="discriminator">
-		</discriminator>
-		
+		<!-- Foreign key to class com.martin.model.Coordonnees -->
+		<many-to-one name="xy" class="com.martin.model.Coordonnees" column="idCoordonnees" 
+			not-null="true"/>
 		<!-- Foreign key to class com.martin.Partie -->
 		<many-to-one name="partie" class="com.martin.Partie" column="idPartie" 
-			not-null="true" unique-key="combo"/>
+			not-null="true"/>
+		
+		
+		<!-- The type (also an enum type) -->
+		<property name="type">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.martin.model.appareils.Type</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+		
+		<!-- The level (again an enum type) -->
+		<property name="niveau">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.martin.model.appareils.Niveau</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
 		
 		<!-- The Direction (also enum type) -->
 		<property name="direction">
@@ -27,57 +43,7 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
-		<!-- The level (again an enum type) -->
-		<property name="niveau">
-			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">com.martin.model.appareils.NiveauAppareil</param>
-				<param name="useNamed">true</param>
-			</type>
-		</property>
-		<!-- The type (also an enum type) -->
-		<property name="type">
-			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">com.martin.model.appareils.TypeAppareil</param>
-				<param name="useNamed">true</param>
-			</type>
-		</property>
-		<!-- Foreign key to class com.martin.model.Coordonnées -->
-		<many-to-one name="xy" class="com.martin.model.Coordonnees" column="idCoordonnees" 
-			not-null="true"/>
 		
-		<!-- All subclasses of this class -->
-		<subclass name="com.martin.model.appareils.Appareil_Acheteur" 
-				discriminator-value="ACHETEUR"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Assembleur"
-				discriminator-value="ASSEMBLEUR"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Convoyeur_Droite"
-				discriminator-value="CONVOYEUR_DROITE"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Convoyeur_Gauche"
-				discriminator-value="CONVOYEUR_GAUCHE"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Convoyeur"
-				discriminator-value="CONVOYEUR"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Four"
-				discriminator-value="FOUR"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Presse_Fil"
-				discriminator-value="PRESSE_FIL"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Presse"
-				discriminator-value="PRESSE"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Sol"
-				discriminator-value="SOL"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Trieur"
-				discriminator-value="TRIEUR"/>
-				
-		<subclass name="com.martin.model.appareils.Appareil_Vendeur"
-				discriminator-value="VENDEUR"/>
 		
 	</class>
 </hibernate-mapping>
