@@ -19,55 +19,48 @@ import javafx.stage.Modality;
 
 public class Appareil_Sol extends Appareil {
 
-	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent event) {
-			try {
-				FXMLLoader loader = new FXMLLoader();
-				loader.setLocation(Main.class.getResource("view/Sol.fxml"));
-
-				Dialog<Object> dialog;
-				DialogPane dialogPane;
-
-				dialogPane = (DialogPane) loader.load();
-				dialog = new Dialog<Object>();
-				dialog.setTitle("Sélectionnez un appareil à construire");
-				dialog.setDialogPane(dialogPane);
-				dialog.initOwner(Main.stage);
-				dialog.initModality(Modality.NONE);
-
-				SolContrôle SController = loader.getController();
-				SController.setMainApp(
-						new Coordonnees(model.getCoordonnees().getX(),
-								model.getCoordonnees().getY()),
-						dialog);
-
-				dialog.showAndWait();
-
-				if (dialog.getResult() instanceof Type) {
-					controller.setAppareil(
-							((Type) dialog.getResult()).getClasse()
-									.getConstructor(Coordonnees.class,
-											Direction.class,
-											Niveau.class,
-											JeuContrôle.class)
-									.newInstance(model.getCoordonnees(),
-											Direction.UP,
-											Niveau.NIVEAU_1,
-											controller),
-							false);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	};
-
 	public Appareil_Sol(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(model, controller);
 
-		this.setOnMouseClicked(onClicked);
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				try {
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(Main.class.getResource("view/Sol.fxml"));
+
+					Dialog<Object> dialog;
+					DialogPane dialogPane;
+
+					dialogPane = (DialogPane) loader.load();
+					dialog = new Dialog<Object>();
+					dialog.setTitle("Sélectionnez un appareil à construire");
+					dialog.setDialogPane(dialogPane);
+					dialog.initOwner(Main.stage);
+					dialog.initModality(Modality.NONE);
+
+					SolContrôle SController = loader.getController();
+					SController.setMainApp(
+							new Coordonnees(model.getCoordonnees().getX(),
+									model.getCoordonnees().getY()),
+							dialog);
+
+					dialog.showAndWait();
+
+					if (dialog.getResult() instanceof Type) {
+						controller.setAppareil(
+								((Type) dialog.getResult()).getClasse()
+										.getConstructor(AppareilModel.class,
+												JeuContrôle.class)
+										.newInstance(model, controller),
+								false);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		entrances = Entrées.listForNone();
 		exits = Sorties.listForNone();

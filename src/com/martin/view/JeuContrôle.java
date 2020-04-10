@@ -1,6 +1,5 @@
 package com.martin.view;
 
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -9,10 +8,8 @@ import com.martin.model.Coordonnees;
 import com.martin.model.Partie;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.AppareilModel;
 import com.martin.model.appareils.Appareil_Acheteur;
-import com.martin.model.appareils.Appareil_Sol;
-import com.martin.model.appareils.Direction;
-import com.martin.model.appareils.Niveau;
 import com.martin.model.exceptions.NegativeArgentException;
 
 import javafx.application.Platform;
@@ -57,8 +54,6 @@ public class JeuContrôle {
 	private Thread t;
 	private Partie partieEnCours;
 
-	private List<Appareil> devices;
-
 	public void initialize() {
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
@@ -90,68 +85,80 @@ public class JeuContrôle {
 	 * @param partieToLoad the game to load
 	 */
 	public void load(Partie partieToLoad) throws SQLException {
+		// Save this instance (used a little bit later)
 		final JeuContrôle controller = this;
+		// The task defines how to load the game
 		Task<Void> task = new Task<Void>() {
 			@Override
 			protected Void call() {
+				// Little message ("The game is still loading...")
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
 						setReport(
 								"Chargement de la partie en cours...\n"
 										+ "L'opération peut durer quelques instants.",
-								Color.MEDIUMPURPLE);
+								Color.INDIANRED);
 					}
 				});
 
+				// Updating the field partieEnCours
 				partieEnCours = partieToLoad;
-				devices = partieToLoad.getAppareils();
+				// Fetching the model of all devices in a list
+				List<AppareilModel> devicesModel = partieToLoad
+						.getAppareilsModel();
 
-				if (devices.size() < Math
-						.sqrt(partieToLoad.getTailleGrille())) {
-					for (int x = 0; x < partieToLoad.getTailleGrille(); x++) {
-						for (int y = 0; y < partieToLoad
-								.getTailleGrille(); y++) {
-							try {
-								Appareil appareil = new Appareil_Sol(
-										new Coordonnees(x, y),
-										Direction.UP,
-										Niveau.NIVEAU_1,
-										controller);
-								devices.add(appareil);
-							} catch (FileNotFoundException e) {
-								System.out.println(e.getLocalizedMessage());
-
-							}
+				final int taille = partieToLoad.getTailleGrille();
+				// Creating the device if they aren't enough
+				if (devicesModel.size() < Math.sqrt(taille)) {
+					for (int x = 0; x < taille; x++) {
+						for (int y = 0; y < taille; y++) {
+							devicesModel.add(
+									new AppareilModel(new Coordonnees(x, y),
+											partieToLoad));
 						}
 					}
 				}
 
+				// Variable i for progress
 				int i = 1;
-				for (Appareil appareil : devices) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							// Setting the controller of this device to this
-							// instance
-							appareil.setController(controller);
+				// For all models
+				for (AppareilModel model : devicesModel) {
+					try {
+						// Creating a new device using the model
+						Appareil appareil = model.getType().getClasse()
+								.getConstructor(AppareilModel.class,
+										JeuContrôle.class)
+								.newInstance(model, controller);
 
-							// Adds this device to the grid
-							grille.add(appareil,
-									appareil.getXy().getX(),
-									appareil.getXy().getY());
-						}
-					});
+						// Adding it to the grid (view)
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								grille.add(appareil,
+										appareil.getModel().getCoordonnees()
+												.getX(),
+										appareil.getModel().getCoordonnees()
+												.getY());
+							}
+						});
 
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					// Setting up the progress
 					i++;
 					progression.progressProperty()
 							.set((double) i
-									/ devices.size());
+									/ devicesModel.size());
 				}
 
+				// Starting the thread of game
 				t = new Thread(new Play());
 				t.start();
 
+				// Last view modifications
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
@@ -160,14 +167,17 @@ public class JeuContrôle {
 						// Sets the report dialog to a little text who says that
 						// the game is
 						// still loading and sets the money label
-						setReport("Bienvenue !", Color.LIGHTBLUE);
+						setReport("Bienvenue !", Color.CORNFLOWERBLUE);
 						argentProperty.set(partieToLoad.getArgent());
 					}
 				});
+				// Here we must return something of type Void (this type can't
+				// be instantiated), so we return null
 				return null;
 			}
 		};
 
+		// Launching obviously the task defined in a new thread
 		Thread loading = new Thread(task);
 		loading.start();
 
@@ -257,14 +267,7 @@ public class JeuContrôle {
 
 	public void setAppareil(Appareil appareil, boolean ignoreCost) {
 
-		devices = partieEnCours.setAppareil(appareil);
-		try {
-			if (ignoreCost)
-				setArgent(appareil.getType().getPrix(), false);
-		} catch (NegativeArgentException e) {
-			e.printStackTrace();
-		}
-		grille.add(appareil, appareil.getXy().getX(), appareil.getXy().getY());
+		// Todo : method JeuContrôle.setAppareil(Appareil, boolean)
 
 	}
 

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,6 +13,7 @@ import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
 import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.AppareilModel;
 import com.martin.model.exceptions.NegativeArgentException;
 
 public class Partie {
@@ -26,7 +28,7 @@ public class Partie {
 
 	private int tailleGrille;
 
-	private List<Appareil> listAppareils = Arrays.asList();
+	private List<AppareilModel> listAppareilsModel = Arrays.asList();
 
 	public Partie() {
 	}
@@ -70,6 +72,55 @@ public class Partie {
 	public void delete() throws SQLException {
 		// Todo : delete
 		// Does actually nothing because of hibernates replacements
+	}
+
+	/**
+	 * 
+	 * @return a list of all devices of this game
+	 */
+	public List<AppareilModel> getAppareilsModel() {
+
+		final Session session = Connect_SQLite.getSession();
+
+		try {
+			// Queryiiinng for all devices models who reference this game
+			Query<AppareilModel> query = session.createQuery(
+					"from AppareilModel AM where AM.partie = " + idPartie,
+					AppareilModel.class);
+			// Execute it in a list
+			List<AppareilModel> list = query.list();
+
+			// Initialize (before closing the session) the many-to-one
+			// references
+			for (AppareilModel model : list) {
+				Hibernate.initialize(model.getCoordonnees());
+				Hibernate.initialize(model.getPartie());
+			}
+
+			// Updating the list field
+			listAppareilsModel = list;
+		} catch (HibernateException e) {
+			// Print in case of exception
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		// Returning the list
+		return listAppareilsModel;
+	}
+
+	/**
+	 * Iterrates over the list of devices and checks if a device with the
+	 * corresponding coordinates can be found.
+	 * 
+	 * @param xy the coordinates to compare
+	 * @return a device from the list with the corresponding coordinate.
+	 * @throws NullPointerException if no devices can be found
+	 */
+	public Appareil getAppareil(Coordonnees xy) throws NullPointerException {
+		// Todo : method Partie.getAppareil(Coordonnees)
+		// Does nothing because of hibernate replacements
+		return null;
 	}
 
 	/**
@@ -156,16 +207,6 @@ public class Partie {
 	}
 
 	/**
-	 * 
-	 * @return a list of all devices of this game
-	 */
-	public List<Appareil> getAppareils() {
-
-		// Todo : method getAppareils
-		return listAppareils;
-	}
-
-	/**
 	 * Adds or substract money to the total.
 	 * 
 	 * @param argent   How many money should me added or substracted.
@@ -194,40 +235,9 @@ public class Partie {
 	 * @param appareil the new device
 	 */
 	public List<Appareil> setAppareil(Appareil appareil) {
-		for (Appareil app : listAppareils) {
-			if (app.getModel().getCoordonnees().getX() == appareil.getModel()
-					.getCoordonnees().getX()
-					&& app.getModel().getCoordonnees().getY() == appareil
-							.getModel().getCoordonnees().getY()) {
-				listAppareils.set(listAppareils.indexOf(app), appareil);
-			}
-		}
-		return listAppareils;
-	}
-
-	/**
-	 * Iterrates over the list of devices and checks if a device with the
-	 * corresponding coordinates can be found.
-	 * 
-	 * @param xy the coordinates to compare
-	 * @return a device from the list with the corresponding coordinate.
-	 * @throws NullPointerException if no devices can be found
-	 */
-	public Appareil getAppareil(Coordonnees xy) throws NullPointerException {
-		for (Appareil appareil : listAppareils) {
-			if (appareil.getModel().getCoordonnees().getX() == xy.getX()
-					&& appareil.getModel().getCoordonnees().getY() == xy
-							.getY()) {
-				return appareil;
-			}
-		}
+		// Todo : Partie.setAppareil(Appareil) method
+		// Does nothing because of hibernate replacements
 		return null;
-	}
-
-	@Override
-	public String toString() {
-		return "Object type Partie. ID : " + idPartie + ". Argent : " + argent
-				+ ".";
 	}
 
 	/**
@@ -283,5 +293,11 @@ public class Partie {
 			// Closing the session
 			session.close();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Object type Partie. ID : " + idPartie + ". Argent : " + argent
+				+ ".";
 	}
 }

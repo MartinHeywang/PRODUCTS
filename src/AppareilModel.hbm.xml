@@ -13,10 +13,10 @@
 		</id>
 		
 		<!-- Foreign key to class com.martin.model.Coordonnees -->
-		<many-to-one name="xy" class="com.martin.model.Coordonnees" column="idCoordonnees" 
+		<many-to-one name="coordonnees" class="com.martin.model.Coordonnees" column="idCoordonnees" 
 			not-null="true"/>
-		<!-- Foreign key to class com.martin.Partie -->
-		<many-to-one name="partie" class="com.martin.Partie" column="idPartie" 
+		<!-- Foreign key to class com.martin.model.Partie -->
+		<many-to-one name="partie" class="com.martin.model.Partie" column="idPartie" 
 			not-null="true"/>
 		
 		

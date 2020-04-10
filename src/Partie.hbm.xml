@@ -5,8 +5,8 @@
         
 <!-- Hibernate Mapping File -->
 <hibernate-mapping>
-	<!-- To class : com.martin.Partie -->
-	<class name="com.martin.Partie" table="parties">
+	<!-- To class : com.martin.model.Partie -->
+	<class name="com.martin.model.Partie" table="parties">
 		<!-- Our class id who uses an auto-increment generator -->
 		<id name="idPartie" type="long">
 			<generator class="increment"/>
