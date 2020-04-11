@@ -43,11 +43,10 @@ public class Partie {
 	public Partie(String nom) {
 		this.nom = nom;
 		this.lastView = LocalDateTime.now();
-		this.tailleGrille = 5;
+		this.tailleGrille = 10;
 		this.argent = 1250;
 
 		Partie.insert(this);
-
 	}
 
 	/**

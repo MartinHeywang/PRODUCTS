@@ -1,8 +1,11 @@
 package com.martin.model.appareils;
 
+import java.util.List;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
 import com.martin.model.Coordonnees;
@@ -82,19 +85,7 @@ public class AppareilModel {
 		this.niveau = Niveau.NIVEAU_1;
 		this.direction = Direction.UP;
 
-		coordonnees = Coordonnees.createOrQuery(coordonnees);
-
-		Session session = Connect_SQLite.getSession();
-		Transaction tx = session.getTransaction();
-		try {
-			tx.begin();
-			session.save(this);
-			tx.commit();
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		AppareilModel.insert(this);
 	}
 
 	/**
@@ -116,18 +107,7 @@ public class AppareilModel {
 		this.direction = direction;
 
 		coordonnees = Coordonnees.createOrQuery(coordonnees);
-
-		Session session = Connect_SQLite.getSession();
-		Transaction tx = session.getTransaction();
-		try {
-			tx.begin();
-			session.save(this);
-			tx.commit();
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		AppareilModel.insert(this);
 	}
 
 	/**
@@ -212,6 +192,52 @@ public class AppareilModel {
 	 */
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	/**
+	 * Insert in table coordonnées the object in parameters. May be
+	 * expensive to invoke. Checks before inserting if all constraints are
+	 * respected. Because Hibernate doesn't fully support SQLite (like
+	 * UniqueCombo constraints), I had to do this before inserting.
+	 * 
+	 * @param objToSave the object to save.
+	 */
+	public static void insert(AppareilModel objToSave) {
+		// Creating a Session and a Transaction
+		Session session = Connect_SQLite.getSession();
+		Transaction transaction = null;
+		try {
+			// Begining Transaction
+			transaction = session.beginTransaction();
+
+			// Query for the table appareils
+			Query<AppareilModel> query = session.createQuery(
+					"from AppareilModel",
+					AppareilModel.class);
+			List<AppareilModel> list = query.list();
+			// Using a Stream, checking if the constraints are fully respected.
+			if (list.stream().filter(
+					x -> x.getCoordonnees().equals(objToSave.getCoordonnees()))
+					.filter(y -> y.getPartie().equals(objToSave.getPartie()))
+					.count() == 0) {
+				session.save(objToSave);
+				transaction.commit();
+			} else {
+				// Little log in case a constraint would not be respected
+				System.err.println(
+						"Couldn't run insert : UNIQUE constraint failed (coordonnees, partie)");
+			}
+
+		} catch (HibernateException e) {
+			System.err
+					.println(
+							"Unable to run insert statement in table appareils");
+			if (transaction != null)
+				transaction.rollback();
+		} finally {
+			// Closing the session
+			session.close();
+		}
 	}
 
 }

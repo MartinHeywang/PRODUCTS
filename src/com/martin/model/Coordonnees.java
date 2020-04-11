@@ -219,8 +219,11 @@ public class Coordonnees {
 			list = query.list();
 			// Using a Stream, checking if the constraints are fully respected.
 			if (list.stream().filter(x -> x.getX() == xy.getX())
-					.filter(y -> y.getY() == xy.getY()).count() == 0)
+					.filter(y -> y.getY() == xy.getY()).count() == 0) {
+				list.add(xy);
 				session.save(xy);
+				transaction.commit();
+			}
 
 		} catch (HibernateException e) {
 			System.err

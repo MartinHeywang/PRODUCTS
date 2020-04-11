@@ -113,8 +113,11 @@ public class JeuContrôle {
 				if (devicesModel.size() < Math.sqrt(taille)) {
 					for (int x = 0; x < taille; x++) {
 						for (int y = 0; y < taille; y++) {
+							final Coordonnees coordonnees = Coordonnees
+									.createOrQuery(new Coordonnees(x, y));
+
 							devicesModel.add(
-									new AppareilModel(new Coordonnees(x, y),
+									new AppareilModel(coordonnees,
 											partieToLoad));
 						}
 					}
