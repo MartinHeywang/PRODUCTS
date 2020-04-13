@@ -25,14 +25,14 @@ public class Appareil_Assembleur extends Appareil {
 	}
 
 	public void setProduit(Ressource res) throws NullPointerException {
-		if (comportement instanceof Comportement_Assembleur) {
-			((Comportement_Assembleur) comportement).setProduit(res);
+		if (behaviour instanceof Comportement_Assembleur) {
+			((Comportement_Assembleur) behaviour).setProduit(res);
 		}
 	}
 
 	public Ressource getProduit() throws NullPointerException {
-		if (comportement instanceof Comportement_Assembleur)
-			return ((Comportement_Assembleur) comportement).getProduit()
+		if (behaviour instanceof Comportement_Assembleur)
+			return ((Comportement_Assembleur) behaviour).getProduit()
 					.getRessource();
 		return null;
 	}

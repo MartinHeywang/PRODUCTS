@@ -37,7 +37,7 @@ public class Comportement_Presse implements Comportement {
 						"PLAQUE_DE_" + resATraiter.get(i).getRessource()),
 						resATraiter.get(i).getQuantité()));
 
-				controller.setArgent(Appareil.getÉlectricité(), false);
+				controller.setArgent(Appareil.getElectricity(), false);
 				break;
 			default:
 				break;

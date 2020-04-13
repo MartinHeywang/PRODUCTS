@@ -26,7 +26,7 @@ public class Comportement_Vendeur implements Comportement {
 			if (!resATraiter.get(i).getRessource().equals(Ressource.NONE))
 				controller.setArgent(
 						resATraiter.get(i).getRessource().getValue() - Appareil
-								.getÉlectricité(),
+								.getElectricity(),
 						true);
 		}
 	}

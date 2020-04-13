@@ -14,6 +14,7 @@ import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.AppareilModel;
 import com.martin.model.appareils.Niveau;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
@@ -29,7 +30,8 @@ public class Comportement_Assembleur implements Comportement {
 	private ArrayList<Ressource> recette = new ArrayList<Ressource>();
 
 	public Comportement_Assembleur(Coordonnees xy, Niveau niveau,
-			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
+			int xToAdd, int yToAdd, JeuContrôle controller,
+			AppareilModel model) {
 		this.niveau = niveau;
 		this.controller = controller;
 		this.pointer = new Coordonnees(xy.getX() + xToAdd, xy.getY() + yToAdd);
@@ -40,12 +42,13 @@ public class Comportement_Assembleur implements Comportement {
 			session.beginTransaction();
 
 			Query<Paquet> query = session.createQuery(
-					"from Paquet where appareil = " + appareil.getId(),
+					"from Paquet where appareil = "
+							+ model.getIdAppareilModel(),
 					Paquet.class);
 			List<Paquet> list = query.list();
 
 			if (list.size() == 0) {
-				produit = new Paquet(Ressource.NONE, 1, appareil);
+				produit = new Paquet(Ressource.NONE, 1, model);
 				session.save(produit);
 				tx.commit();
 			} else if (list.size() == 1) {
@@ -67,7 +70,7 @@ public class Comportement_Assembleur implements Comportement {
 		for (int level = 0; level < niveau.getNiveau()
 				|| level < resATraiter.size(); level++) {
 			if (controller.getPartieEnCours().getArgent() < 5
-					+ Appareil.getÉlectricité())
+					+ Appareil.getElectricity())
 				throw new NegativeArgentException(
 						"Le comportement d'un acheteur "
 								+ "n'a pas pu être réalisé car le solde "
@@ -75,7 +78,7 @@ public class Comportement_Assembleur implements Comportement {
 
 			if (checkIngrédients()) {
 				tempoStock.add(produit);
-				controller.setArgent(Appareil.getÉlectricité(), false);
+				controller.setArgent(Appareil.getElectricity(), false);
 			}
 		}
 

@@ -13,6 +13,7 @@ import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.AppareilModel;
 import com.martin.model.appareils.Niveau;
 import com.martin.model.exceptions.NegativeArgentException;
 import com.martin.view.JeuContrôle;
@@ -25,11 +26,11 @@ public class Comportement_Acheteur implements Comportement {
 
 	private Paquet resDistribuée;
 
-	public Comportement_Acheteur(Coordonnees xy, Niveau niveau,
-			int xToAdd, int yToAdd, JeuContrôle controller, Appareil appareil) {
-		this.niveau = niveau;
+	public Comportement_Acheteur(Coordonnees pointer, AppareilModel model,
+			JeuContrôle controller) {
+		this.pointer = pointer;
+		this.niveau = model.getNiveau();
 		this.controller = controller;
-		this.pointer = new Coordonnees(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
 		Session session = Connect_SQLite.getSession();
 		Transaction tx = session.getTransaction();
@@ -37,12 +38,13 @@ public class Comportement_Acheteur implements Comportement {
 			session.beginTransaction();
 
 			Query<Paquet> query = session.createQuery(
-					"from Paquet where appareil = " + appareil.getId(),
+					"from Paquet where appareil = "
+							+ model.getIdAppareilModel(),
 					Paquet.class);
 			List<Paquet> list = query.list();
 
 			if (list.size() == 0) {
-				resDistribuée = new Paquet(Ressource.NONE, 1, appareil);
+				resDistribuée = new Paquet(Ressource.NONE, 1, model);
 				session.save(resDistribuée);
 				tx.commit();
 			} else if (list.size() == 1) {
@@ -59,19 +61,21 @@ public class Comportement_Acheteur implements Comportement {
 
 	@Override
 	public void action(Stock resATraiter) throws NegativeArgentException {
+		System.out.println("The behaviour of a buyer has begun !");
+
 		final Stock tempoStock = new Stock();
 
 		for (int niveau = 0; niveau < this.niveau.getNiveau(); niveau++) {
 
 			if (!resDistribuée.getRessource().equals(Ressource.NONE)) {
 				if (controller.getPartieEnCours().getArgent() < 5
-						+ Appareil.getÉlectricité())
+						+ Appareil.getElectricity())
 					throw new NegativeArgentException("Le comportement d'un "
 							+ "acheteur n'a pas pu être réalisé car le solde "
 							+ "d'argent n'était pas assez important.");
 				else {
 					tempoStock.add(resDistribuée);
-					controller.setArgent(5 + Appareil.getÉlectricité(), false);
+					controller.setArgent(5 + Appareil.getElectricity(), false);
 				}
 			} else {
 				tempoStock.add(Ressource.NONE);

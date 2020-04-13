@@ -25,13 +25,13 @@ public class Comportement_Convoyeur implements Comportement {
 		for (int niveau = 0; niveau < this.niveau.getNiveau() || resATraiter
 				.size() < niveau; niveau++) {
 			if (controller.getPartieEnCours().getArgent() < 5
-					+ Appareil.getÉlectricité())
+					+ Appareil.getElectricity())
 				throw new NegativeArgentException(
 						"Le comportement d'un appareil "
 								+ "n'a pas pu être réalisé car le solde "
 								+ "d'argent n'était pas assez important.");
 
-			controller.setArgent(Appareil.getÉlectricité(), false);
+			controller.setArgent(Appareil.getElectricity(), false);
 		}
 		controller.getPartieEnCours().getAppareil(pointer).action(resATraiter);
 	}

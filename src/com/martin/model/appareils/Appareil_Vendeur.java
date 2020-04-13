@@ -22,7 +22,7 @@ public class Appareil_Vendeur extends Appareil {
 
 	@Override
 	public void action(Stock resATraiter) throws NegativeArgentException {
-		comportement.action(resATraiter);
+		behaviour.action(resATraiter);
 	}
 
 }

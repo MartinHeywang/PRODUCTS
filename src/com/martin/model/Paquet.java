@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.martin.Connect_SQLite;
-import com.martin.model.appareils.Appareil;
+import com.martin.model.appareils.AppareilModel;
 
 public class Paquet {
 
@@ -18,7 +18,7 @@ public class Paquet {
 
 	private int quantité;
 
-	private Appareil appareil;
+	private AppareilModel appareil;
 
 	public Paquet() {
 	}
@@ -28,10 +28,10 @@ public class Paquet {
 		this.quantité = quantité;
 	}
 
-	public Paquet(Ressource ressource, int quantité, Appareil appareil) {
+	public Paquet(Ressource ressource, int quantité, AppareilModel model) {
 		this.ressource = ressource;
 		this.quantité = quantité;
-		this.appareil = appareil;
+		this.appareil = model;
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class Paquet {
 	 * 
 	 * @return the associated-device
 	 */
-	public Appareil getAppareil() {
+	public AppareilModel getAppareil() {
 		return appareil;
 	}
 
@@ -94,7 +94,7 @@ public class Paquet {
 	 * 
 	 * @param appareil the device to set
 	 */
-	public void setAppareil(Appareil appareil) {
+	public void setAppareil(AppareilModel appareil) {
 		this.appareil = appareil;
 	}
 

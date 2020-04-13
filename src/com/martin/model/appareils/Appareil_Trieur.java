@@ -1,7 +1,14 @@
 package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import com.martin.Connect_SQLite;
 import com.martin.model.Paquet;
 import com.martin.model.Ressource;
 import com.martin.model.Stock;
@@ -17,79 +24,91 @@ public class Appareil_Trieur extends Appareil {
 	public Appareil_Trieur(AppareilModel model, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(model, controller);
+		Session session = Connect_SQLite.getSession();
+		Transaction tx = session.getTransaction();
+		try {
+			session.beginTransaction();
 
-		// Todo : load the criterias
+			Query<Paquet> query = session.createQuery(
+					"from Paquet where appareil = "
+							+ model.getIdAppareilModel(),
+					Paquet.class);
+			List<Paquet> list = query.list();
+
+			if (list.size() == 0) {
+				crit1 = new Paquet(Ressource.NONE, 1, model);
+				session.save(crit1);
+				crit2 = new Paquet(Ressource.NONE, 1, model);
+				session.save(crit2);
+				tx.commit();
+			} else if (list.size() == 1) {
+				crit1 = list.get(0);
+				crit2 = list.get(1);
+			}
+		} catch (HibernateException e) {
+			System.err
+					.println("Error when loading resource. Error message :\n");
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 
 		entrances = Entrées.listForUp(model.getDirection());
 		exits = Sorties.listForNone();
-
-		// Todo : add behaviour
 	}
 
 	@Override
 	public void action(Stock resATraiter) throws NegativeArgentException {
 
-		// FixMe : switch for criterias
+		final Direction direction = model.getDirection();
 		if (resATraiter.get(0).getRessource().equals(crit1.getRessource())) {
-			switch (direction) {
+			switch (model.getDirection()) {
 			case UP:
-				sorties = new Sorties_Right();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForRight(direction);
 				break;
 			case RIGHT:
-				sorties = new Sorties_Center();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForCenter(direction);
 				break;
 			case DOWN:
-				sorties = new Sorties_Left();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForLeft(direction);
 				break;
 			case LEFT:
-				sorties = new Sorties_Up();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForUp(direction);
 				break;
 			default:
 				break;
 			}
 		} else if (resATraiter.get(0).getRessource()
 				.equals(crit2.getRessource())) {
-			switch (direction) {
+			switch (model.getDirection()) {
 			case UP:
-				sorties = new Sorties_Left();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForLeft(direction);
 				break;
 			case RIGHT:
-				sorties = new Sorties_Up();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForUp(direction);
 				break;
 			case DOWN:
-				sorties = new Sorties_Right();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForRight(direction);
 				break;
 			case LEFT:
-				sorties = new Sorties_Left();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForCenter(direction);
 				break;
 			default:
 				break;
 			}
 		} else {
-			switch (direction) {
+			switch (model.getDirection()) {
 			case UP:
-				sorties = new Sorties_Left();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForCenter(direction);
 				break;
 			case RIGHT:
-				sorties = new Sorties_Left();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForLeft(direction);
 				break;
 			case DOWN:
-				sorties = new Sorties_Up();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForUp(direction);
 				break;
 			case LEFT:
-				sorties = new Sorties_Right();
-				pointerExit = sorties.getPointer(direction);
+				exits = Sorties.listForRight(direction);
 				break;
 			default:
 				break;
@@ -97,7 +116,7 @@ public class Appareil_Trieur extends Appareil {
 		}
 
 		// Todo : add behaviour in action
-		comportement.action(resATraiter);
+		behaviour.action(resATraiter);
 	}
 
 	public void setCritère1(Ressource res) {
