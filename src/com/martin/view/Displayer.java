@@ -3,8 +3,8 @@ package com.martin.view;
 import java.io.File;
 import java.io.FileInputStream;
 
-import com.martin.model.Partie;
-import com.martin.model.Ressource;
+import com.martin.model.Game;
+import com.martin.model.Resource;
 import com.martin.model.appareils.Type;
 
 import javafx.event.EventHandler;
@@ -22,9 +22,9 @@ public class Displayer extends BorderPane {
 	private ImageView image;
 	private Label infos;
 
-	private Ressource ressource;
+	private Resource resource;
 	private Type type;
-	private Partie partie;
+	private Game game;
 
 	/**
 	 * <h1>Displayer</h1>
@@ -32,27 +32,27 @@ public class Displayer extends BorderPane {
 	 * Create an object who displays the object in parameter.
 	 * </p>
 	 * 
-	 * @param ressource the object to display
+	 * @param resource the object to display
 	 */
-	public Displayer(Ressource ressource) {
+	public Displayer(Resource resource) {
 
 		try {
-			this.ressource = ressource;
+			this.resource = resource;
 
 			nom = new Label();
 			nom.setAlignment(Pos.TOP_CENTER);
-			nom.setText(ressource.getNom());
+			nom.setText(resource.getNom());
 			this.setTop(nom);
 
 			image = new ImageView();
 			image.setImage(new Image(
-					new FileInputStream(new File(ressource.getURL()))));
+					new FileInputStream(new File(resource.getURL()))));
 			this.setCenter(image);
 
 			infos = new Label();
 			infos.setAlignment(Pos.TOP_CENTER);
 			infos.setText("Prix de vente : "
-					+ String.valueOf(ressource.getValue()) + " €");
+					+ String.valueOf(resource.getValue()) + " €");
 			this.setBottom(infos);
 
 		} catch (Exception e) {
@@ -134,45 +134,45 @@ public class Displayer extends BorderPane {
 	 * 
 	 * @param appareil the object to display
 	 */
-	public Displayer(Partie partie) {
+	public Displayer(Game game) {
 		try {
-			this.partie = partie;
+			this.game = game;
 			this.setMinHeight(70.0);
 
 			nom = new Label();
 			nom.setUnderline(true);
 			nom.setAlignment(Pos.TOP_CENTER);
-			nom.setText(partie.getNom());
+			nom.setText(game.getNom());
 			nom.setWrapText(true);
 			this.setTop(nom);
 
 			// Changing the LocalDateTime of the game in a String representation
 			// Instead of using toString(), i ues this method to have my perso
 			// String
-			String instant = (partie.getLastView().getDayOfMonth() < 10)
-					? "0" + partie.getLastView().getDayOfMonth() + "/"
-					: partie.getLastView().getDayOfMonth() + "/";
-			instant += (partie.getLastView().getMonthValue() < 10)
-					? "0" + partie.getLastView().getMonthValue() + "/"
-					: partie.getLastView().getMonthValue() + "/";
-			instant += (partie.getLastView().getYear() < 10)
-					? "0" + partie.getLastView().getYear() + " "
-					: partie.getLastView().getYear() + " ";
+			String instant = (game.getLastView().getDayOfMonth() < 10)
+					? "0" + game.getLastView().getDayOfMonth() + "/"
+					: game.getLastView().getDayOfMonth() + "/";
+			instant += (game.getLastView().getMonthValue() < 10)
+					? "0" + game.getLastView().getMonthValue() + "/"
+					: game.getLastView().getMonthValue() + "/";
+			instant += (game.getLastView().getYear() < 10)
+					? "0" + game.getLastView().getYear() + " "
+					: game.getLastView().getYear() + " ";
 
-			instant += (partie.getLastView().getHour() < 10)
-					? "0" + partie.getLastView().getHour() + ":"
-					: partie.getLastView().getHour() + ":";
-			instant += (partie.getLastView().getMinute() < 10)
-					? "0" + partie.getLastView().getMinute() + ":"
-					: partie.getLastView().getMinute() + ":";
-			instant += (partie.getLastView().getSecond() < 10)
-					? "0" + partie.getLastView().getSecond()
-					: partie.getLastView().getSecond();
+			instant += (game.getLastView().getHour() < 10)
+					? "0" + game.getLastView().getHour() + ":"
+					: game.getLastView().getHour() + ":";
+			instant += (game.getLastView().getMinute() < 10)
+					? "0" + game.getLastView().getMinute() + ":"
+					: game.getLastView().getMinute() + ":";
+			instant += (game.getLastView().getSecond() < 10)
+					? "0" + game.getLastView().getSecond()
+					: game.getLastView().getSecond();
 
 			infos = new Label();
 			infos.setText("Dernière sauvegarde : " + instant
 					+ "\nArgent en compte : "
-					+ partie.getArgent() + " €");
+					+ game.getArgent() + " €");
 			this.setLeft(infos);
 
 			this.setPadding(new Insets(3, 3, 3, 3));
@@ -213,8 +213,8 @@ public class Displayer extends BorderPane {
 	 *                              (this object wasn't created from a
 	 *                              Ressource)
 	 */
-	public Ressource getRessource() throws NullPointerException {
-		return ressource;
+	public Resource getRessource() throws NullPointerException {
+		return resource;
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class Displayer extends BorderPane {
 	 * @throws NullPointerException if the property Partie is null (this
 	 *                              object wasn't created from a Partie)
 	 */
-	public Partie getPartie() throws NullPointerException {
-		return partie;
+	public Game getPartie() throws NullPointerException {
+		return game;
 	}
 }

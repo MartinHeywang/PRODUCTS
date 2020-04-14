@@ -4,13 +4,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.martin.Main;
-import com.martin.model.Coordonnees;
-import com.martin.model.Partie;
+import com.martin.model.Coordinates;
+import com.martin.model.Game;
 import com.martin.model.Stock;
-import com.martin.model.appareils.Appareil;
-import com.martin.model.appareils.AppareilModel;
-import com.martin.model.appareils.Appareil_Acheteur;
-import com.martin.model.exceptions.NegativeArgentException;
+import com.martin.model.appareils.Device;
+import com.martin.model.appareils.DeviceModel;
+import com.martin.model.appareils.Buyer;
+import com.martin.model.exceptions.MoneyException;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -52,7 +52,7 @@ public class JeuContrôle {
 	private static final LongProperty argentProperty = new SimpleLongProperty();
 
 	private Thread t;
-	private Partie partieEnCours;
+	private Game partieEnCours;
 
 	public void initialize() {
 		report.textProperty().bind(reportProperty);
@@ -84,7 +84,7 @@ public class JeuContrôle {
 	 * 
 	 * @param partieToLoad the game to load
 	 */
-	public void load(Partie partieToLoad) throws SQLException {
+	public void load(Game partieToLoad) throws SQLException {
 		// Save this instance (used a little bit later)
 		final JeuContrôle controller = this;
 		// The task defines how to load the game
@@ -105,7 +105,7 @@ public class JeuContrôle {
 				// Updating the field partieEnCours
 				partieEnCours = partieToLoad;
 				// Fetching the model of all devices in a list
-				List<AppareilModel> devicesModel = partieToLoad
+				List<DeviceModel> devicesModel = partieToLoad
 						.getAppareilsModel();
 
 				final int taille = partieToLoad.getTailleGrille();
@@ -113,11 +113,11 @@ public class JeuContrôle {
 				if (devicesModel.size() < Math.sqrt(taille)) {
 					for (int x = 0; x < taille; x++) {
 						for (int y = 0; y < taille; y++) {
-							final Coordonnees coordonnees = Coordonnees
-									.createOrQuery(new Coordonnees(x, y));
+							final Coordinates coordinates = Coordinates
+									.createOrQuery(new Coordinates(x, y));
 
 							devicesModel.add(
-									new AppareilModel(coordonnees,
+									new DeviceModel(coordinates,
 											partieToLoad));
 						}
 					}
@@ -126,11 +126,11 @@ public class JeuContrôle {
 				// Variable i for progress
 				int i = 1;
 				// For all models
-				for (AppareilModel model : devicesModel) {
+				for (DeviceModel model : devicesModel) {
 					try {
 						// Creating a new device using the model
-						Appareil appareil = model.getType().getClasse()
-								.getConstructor(AppareilModel.class,
+						Device device = model.getType().getClasse()
+								.getConstructor(DeviceModel.class,
 										JeuContrôle.class)
 								.newInstance(model, controller);
 
@@ -138,10 +138,10 @@ public class JeuContrôle {
 						Platform.runLater(new Runnable() {
 							@Override
 							public void run() {
-								grille.add(appareil,
-										appareil.getModel().getCoordonnees()
+								grille.add(device,
+										device.getModel().getCoordonnees()
 												.getX(),
-										appareil.getModel().getCoordonnees()
+										device.getModel().getCoordonnees()
 												.getY());
 							}
 						});
@@ -208,13 +208,13 @@ public class JeuContrôle {
 			try {
 				while (true) {
 					Thread.sleep(750);
-					for (int i = 0; i < Appareil_Acheteur.liste.size(); i++) {
+					for (int i = 0; i < Buyer.liste.size(); i++) {
 						try {
 							partieEnCours
-									.getAppareil(Appareil_Acheteur.liste.get(i))
+									.getAppareil(Buyer.liste.get(i))
 									.action(new Stock());
 							argentLabel.setTextFill(Color.WHITE);
-						} catch (NegativeArgentException e) {
+						} catch (MoneyException e) {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
@@ -248,7 +248,7 @@ public class JeuContrôle {
 	}
 
 	public void setArgent(long somme, boolean increase)
-			throws NegativeArgentException {
+			throws MoneyException {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -268,7 +268,7 @@ public class JeuContrôle {
 		partieEnCours.setArgent(somme, increase);
 	}
 
-	public void setAppareil(Appareil appareil, boolean ignoreCost) {
+	public void setAppareil(Device device, boolean ignoreCost) {
 
 		// Todo : method JeuContrôle.setAppareil(Appareil, boolean)
 
@@ -292,7 +292,7 @@ public class JeuContrôle {
 		report.setVisible(true);
 	}
 
-	public Partie getPartieEnCours() {
+	public Game getPartieEnCours() {
 		return partieEnCours;
 	}
 }

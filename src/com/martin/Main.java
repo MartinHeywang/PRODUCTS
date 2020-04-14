@@ -11,9 +11,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import com.martin.model.Partie;
-import com.martin.view.Accueil2Contrôle;
-import com.martin.view.AccueilContrôle;
+import com.martin.model.Game;
+import com.martin.view.Home2;
+import com.martin.view.Home;
 import com.martin.view.JeuContrôle;
 
 import javafx.application.Application;
@@ -38,7 +38,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		// The session for later
-		Session session = Connect_SQLite.getSession();
+		Session session = Database.getSession();
 
 		try {
 			// Little stage paramatering
@@ -49,10 +49,10 @@ public class Main extends Application {
 					new FileInputStream(new File("images/Icone.png"))));
 
 			// Little query to select which menu will be displayed at first
-			Query<Partie> query = session.createQuery(
+			Query<Game> query = session.createQuery(
 					"from Partie",
-					Partie.class);
-			List<Partie> list = query.list();
+					Game.class);
+			List<Game> list = query.list();
 
 			// Then one or the other
 			if (list.size() == 0)
@@ -85,8 +85,8 @@ public class Main extends Application {
 	 * a the first start page (generally when no game can be found on the
 	 * database).
 	 * 
-	 * @see AccueilContrôle
-	 * @see AccueilContrôle#setMainApp(Main)
+	 * @see Home
+	 * @see Home#setMainApp(Main)
 	 */
 	public void initAccueil() {
 		// Permet de cherger des fichiers .fxml
@@ -103,7 +103,7 @@ public class Main extends Application {
 			stage.setScene(scene);
 
 			// Le contrôleur de la fenêtre
-			AccueilContrôle controler = loader.getController();
+			Home controler = loader.getController();
 			controler.setMainApp(this);
 
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -128,8 +128,8 @@ public class Main extends Application {
 	 * load the registered game or to begin a new game. (when at least one
 	 * game is registered)
 	 * 
-	 * @see Accueil2Contrôle
-	 * @see Accueil2Contrôle#setMainApp(Main)
+	 * @see Home2
+	 * @see Home2#setMainApp(Main)
 	 */
 	public void initAccueil2() {
 		// Permet de charger des fichiers .fxml
@@ -146,7 +146,7 @@ public class Main extends Application {
 			stage.setScene(scene);
 
 			// Le contrôleur de la fenêtre
-			Accueil2Contrôle controler = loader.getController();
+			Home2 controler = loader.getController();
 			controler.setMainApp(this);
 
 		} catch (IOException e) {
@@ -160,13 +160,13 @@ public class Main extends Application {
 	 * Initialize the stage with the view Jeu.fxml, who loads all the
 	 * images and resources to do this game functionnal.
 	 * 
-	 * @param partie the game to load
+	 * @param game the game to load
 	 * 
 	 * @see JeuContrôle
-	 * @see JeuContrôle#load(Partie)
+	 * @see JeuContrôle#load(Game)
 	 * @see JeuContrôle#setMainApp(Main)
 	 */
-	public void initGame(Partie partie) {
+	public void initGame(Game game) {
 		try {
 
 			FXMLLoader loader = new FXMLLoader();
@@ -180,7 +180,7 @@ public class Main extends Application {
 
 			JeuContrôle controller = loader.getController();
 			controller.setMainApp(this);
-			controller.load(partie);
+			controller.load(game);
 
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override

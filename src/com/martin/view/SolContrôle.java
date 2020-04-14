@@ -1,6 +1,6 @@
 package com.martin.view;
 
-import com.martin.model.Coordonnees;
+import com.martin.model.Coordinates;
 import com.martin.model.appareils.Type;
 
 import javafx.event.EventHandler;
@@ -50,7 +50,7 @@ public class SolContrôle {
 	 * @param xy the xy coordinates corresponding to a device.
 	 * @param dialog the dialog who is displayed 
 	 */
-	public void setMainApp(Coordonnees xy, Dialog<Object> dialog) {
+	public void setMainApp(Coordinates xy, Dialog<Object> dialog) {
 		coordonnées.setText("X: "+xy.getX()+" Y: "+xy.getY());
 		this.dialog = dialog;
 	}

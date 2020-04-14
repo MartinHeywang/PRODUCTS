@@ -1,0 +1,15 @@
+package com.martin.model.appareils.comportement;
+
+import com.martin.model.Stock;
+import com.martin.model.exceptions.MoneyException;
+
+public interface Behaviour {
+	/**
+	 * <h1>action</h1>
+	 * <p>This method introduces devices behaviour.</p>
+	 * 
+	 * @param resATraiter the resource to use by this device
+	 * @throws MoneyException if money reaches 0 or less
+	 */
+	public void action(Stock resATraiter) throws MoneyException;
+}

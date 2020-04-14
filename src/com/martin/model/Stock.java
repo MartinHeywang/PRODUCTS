@@ -2,20 +2,20 @@ package com.martin.model;
 
 import java.util.ArrayList;
 
-public class Stock extends ArrayList<Paquet> {
+public class Stock extends ArrayList<Packing> {
 
 	private static final long serialVersionUID = 1L;
 
-	public Stock(ArrayList<Paquet> paquets) throws Exception {
-		super(paquets);
+	public Stock(ArrayList<Packing> packings) throws Exception {
+		super(packings);
 	}
 
 	public Stock() {
 		super();
 	}
 
-	public void add(Ressource ressource) {
-		this.add(new Paquet(ressource, 1));
+	public void add(Resource resource) {
+		this.add(new Packing(resource, 1));
 	}
 
 }

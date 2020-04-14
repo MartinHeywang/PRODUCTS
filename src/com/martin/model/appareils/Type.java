@@ -12,48 +12,48 @@ public enum Type {
 	 */
 
 	ACHETEUR("Acheteur", "Acheteur.png", "Achète les ressources de base.", 500,
-			Appareil_Acheteur.class),
+			Buyer.class),
 	VENDEUR("Vendeur", "Vendeur.png",
 			"Vend les ressources et objets \nlui parvenant.", 500,
-			Appareil_Vendeur.class),
+			Seller.class),
 	CONVOYEUR("Convoyeur", "Convoyeur.png",
 			"Transporte les ressources sur \nla case du bas.", 100,
-			Appareil_Convoyeur.class),
+			Conveyor.class),
 	CONVOYEUR_DROITE("Convoyeur droite", "Convoyeur_Droite.png",
 			"Transporte les ressources sur \nla case de droite.", 100,
-			Appareil_Convoyeur_Droite.class),
+			RightConveyor.class),
 	CONVOYEUR_GAUCHE("Convoyeur gauche", "Convoyeur_Gauche.png",
 			"Transporte les ressources sur \nla case de gauche.", 100,
-			Appareil_Convoyeur_Gauche.class),
+			LeftConveyor.class),
 	FOUR("Four", "Four.png",
 			"Fond toutes les ressources en lingots, \nsauf le diamant.", 2000,
-			Appareil_Four.class),
+			Furnace.class),
 	PRESSE("Presse", "Presse.png",
 			"Transforme toutes les ressources en plaques, \nsauf le diamant.",
-			2000, Appareil_Presse.class),
+			2000, Press.class),
 	PRESSE_FIL("Presse à fil", "Appareil_Fil.png",
 			"Transforme les ressources en fil, \nsauf le diamant.", 2000,
-			Appareil_Presse_Fil.class),
+			WireDrawer.class),
 	ASSEMBLEUR("Assembleur", "Assembleur.png",
 			"Assemble les ressources pour les \ntransformer en produits.",
-			10_000, Appareil_Assembleur.class),
+			10_000, Constructor.class),
 	TRIEUR("Trieur", "Trieur.png",
 			"Trie les ressources selon un schéma précis \nde votre décision.",
-			17500, Appareil_Trieur.class),
+			17500, Sorter.class),
 
 	SOL("Sol", "Sol.png", "Le sol à nu sans appareil. Il ne fait rien.", 0,
-			Appareil_Sol.class);
+			Floor.class);
 
 	// Le nom, l'url, la description et la classe
 	String nom;
 	String url;
 	String desc;
 	int prix;
-	Class<? extends Appareil> classe;
+	Class<? extends Device> classe;
 
 	// Un seul et unique constructeur
 	Type(String nom, String url, String desc, int prix,
-			Class<? extends Appareil> classe) {
+			Class<? extends Device> classe) {
 		this.nom = nom;
 		this.url = url;
 		this.desc = desc;
@@ -78,7 +78,7 @@ public enum Type {
 		return prix;
 	}
 
-	public Class<? extends Appareil> getClasse() {
+	public Class<? extends Device> getClasse() {
 		return classe;
 	}
 }
