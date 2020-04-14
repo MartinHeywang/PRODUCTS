@@ -84,7 +84,7 @@ public class Game {
 		try {
 			// Queryiiinng for all devices models who reference this game
 			Query<DeviceModel> query = session.createQuery(
-					"from AppareilModel AM where AM.partie = " + idPartie,
+					"from DeviceModel DM where DM.game = " + idPartie,
 					DeviceModel.class);
 			// Execute it in a list
 			List<DeviceModel> list = query.list();
@@ -92,13 +92,13 @@ public class Game {
 			// Initialize (before closing the session) the many-to-one
 			// references
 			for (DeviceModel model : list) {
-				Hibernate.initialize(model.getCoordonnees());
-				Hibernate.initialize(model.getPartie());
+				Hibernate.initialize(model.getCoordinates());
+				Hibernate.initialize(model.getGame());
 			}
 
 			// Updating the list field
 			listAppareilsModel = list;
-		} catch (HibernateException e) {
+		} catch (Exception e) {
 			// Print in case of exception
 			e.printStackTrace();
 		} finally {
@@ -253,7 +253,7 @@ public class Game {
 		try {
 			// Query for all objects and stock it in the List created before
 			Query<Game> query = session.createQuery(
-					"from Partie",
+					"from Game",
 					Game.class);
 			list = query.list();
 		} catch (HibernateException e) {

@@ -4,3 +4,7 @@
 /Coordonees.hbm.xml
 /Coordonnees.hbm.xml
 /AppareilModel.hbm.xml
+/DeviceModel.hbm.xml
+/Coordinates.hbm.xml
+/Packing.hbm.xml
+/Game.hbm.xml

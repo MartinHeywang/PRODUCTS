@@ -4,18 +4,14 @@
 	"http://www.hibernate.org/dtd/hibernate-mapping">
         
 <hibernate-mapping>
-	<class name="com.martin.model.Coordonnees" table="coordonnées">
+	<class name="com.martin.model.Coordinates" table="coordonnées">
 		<!-- Our class id who uses an auto-increment generator -->
 		<id name="idCoordonnees" type="long">
 			<generator class="increment"/>
 		</id>
 		
-		<property name="x">
-			<column name="x" unique-key="uk1"/>
-		</property>
-		<property name="y">
-			<column name="y" unique-key="uk1"/>
-		</property>
+		<property name="x"/>
+		<property name="y"/>
 	
 	</class>
 </hibernate-mapping>

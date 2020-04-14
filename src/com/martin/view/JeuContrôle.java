@@ -139,9 +139,9 @@ public class JeuContrôle {
 							@Override
 							public void run() {
 								grille.add(device,
-										device.getModel().getCoordonnees()
+										device.getModel().getCoordinates()
 												.getX(),
-										device.getModel().getCoordonnees()
+										device.getModel().getCoordinates()
 												.getY());
 							}
 						});

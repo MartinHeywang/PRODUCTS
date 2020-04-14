@@ -12,8 +12,8 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import com.martin.model.Game;
-import com.martin.view.Home2;
 import com.martin.view.Home;
+import com.martin.view.Home2;
 import com.martin.view.JeuContrôle;
 
 import javafx.application.Application;
@@ -50,7 +50,7 @@ public class Main extends Application {
 
 			// Little query to select which menu will be displayed at first
 			Query<Game> query = session.createQuery(
-					"from Partie",
+					"from Game",
 					Game.class);
 			List<Game> list = query.list();
 
@@ -92,7 +92,7 @@ public class Main extends Application {
 		// Permet de cherger des fichiers .fxml
 		FXMLLoader loader = new FXMLLoader();
 		// Définit l'emplacement où chercher
-		loader.setLocation(Main.class.getResource("view/Accueil.fxml"));
+		loader.setLocation(Main.class.getResource("view/Home.fxml"));
 
 		try {
 			// Charge le fichier dans notre variable de contenu, comme prévu
@@ -135,7 +135,7 @@ public class Main extends Application {
 		// Permet de charger des fichiers .fxml
 		FXMLLoader loader = new FXMLLoader();
 		// Définit l'emplacement où chercher le fichier
-		loader.setLocation(Main.class.getResource("view/Accueil2.fxml"));
+		loader.setLocation(Main.class.getResource("view/Home2.fxml"));
 
 		try {
 			// Charge le fichier dans notre variable de contenu, comme prévu
@@ -170,7 +170,7 @@ public class Main extends Application {
 		try {
 
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("view/Jeu.fxml"));
+			loader.setLocation(Main.class.getResource("view/Game.fxml"));
 
 			BorderPane Bp = (BorderPane) loader.load();
 			Scene scene = new Scene(Bp);

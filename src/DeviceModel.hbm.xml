@@ -6,17 +6,17 @@
 <!-- Hibernate Mapping File -->
 <hibernate-mapping>
 	<!-- To class : com.martin.model.appareils.Appareil -->
-	<class name="com.martin.model.appareils.AppareilModel" table="appareils">
+	<class name="com.martin.model.appareils.DeviceModel" table="devices">
 		<!-- Our class id who uses an auto-increment generator -->
 		<id name="idAppareilModel" column="idAppareilModel" type="long">
 			<generator class="increment"/>
 		</id>
 		
 		<!-- Foreign key to class com.martin.model.Coordonnees -->
-		<many-to-one name="coordonnees" class="com.martin.model.Coordonnees" column="idCoordonnees" 
+		<many-to-one name="coordinates" class="com.martin.model.Coordinates" column="idCoordonnees" 
 			not-null="true"/>
-		<!-- Foreign key to class com.martin.model.Partie -->
-		<many-to-one name="partie" class="com.martin.model.Partie" column="idPartie" 
+		<!-- Foreign key to class com.martin.model.Game -->
+		<many-to-one name="game" class="com.martin.model.Game" column="idPartie" 
 			not-null="true"/>
 		
 		
@@ -31,7 +31,7 @@
 		<!-- The level (again an enum type) -->
 		<property name="niveau">
 			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">com.martin.model.appareils.Niveau</param>
+				<param name="enumClass">com.martin.model.appareils.Level</param>
 				<param name="useNamed">true</param>
 			</type>
 		</property>

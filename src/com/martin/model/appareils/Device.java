@@ -10,8 +10,8 @@ import com.martin.model.Stock;
 import com.martin.model.appareils.comportement.Behaviour;
 import com.martin.model.appareils.comportement.None_;
 import com.martin.model.exceptions.MoneyException;
-import com.martin.view.DeviceController;
 import com.martin.view.Dashboard;
+import com.martin.view.DeviceController;
 import com.martin.view.JeuContrôle;
 
 import javafx.event.EventHandler;
@@ -43,7 +43,7 @@ public abstract class Device extends ImageView {
 				// Creating a fxml file loader
 				FXMLLoader loader = new FXMLLoader();
 				loader.setLocation(
-						Main.class.getResource("view/Appareil.fxml"));
+						Main.class.getResource("view/Device.fxml"));
 
 				Dialog<Type> dialog;
 				DialogPane dialogPane;
@@ -56,8 +56,8 @@ public abstract class Device extends ImageView {
 				dialog.initModality(Modality.NONE);
 
 				DeviceController controller = loader.getController();
-				controller.setMainApp(model.getCoordonnees().getX(),
-						model.getCoordonnees().getY(), dashboard);
+				controller.setMainApp(model.getCoordinates().getX(),
+						model.getCoordinates().getY(), dashboard);
 
 				dialog.showAndWait();
 

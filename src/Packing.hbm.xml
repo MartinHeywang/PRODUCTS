@@ -4,8 +4,8 @@
 	
 <!-- Hibernate Mapping File -->
 <hibernate-mapping>
-	<!-- To class : com.martin.model.Paquet -->
-	<class name="com.martin.model.Paquet" table="paquets">
+	<!-- To class : com.martin.model.Packing -->
+	<class name="com.martin.model.Packing" table="packages">
 		<!-- Our class id who uses an auto-increment generator -->
 		<id name="idPaquet" column="idPaquet" type="long">
 			<generator class="increment"/>
@@ -14,15 +14,15 @@
 		<!-- The resource (enum type) -->
 		<property name="ressource">
 			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">com.martin.model.Ressource</param>
+				<param name="enumClass">com.martin.model.Resource</param>
 				<param name="useNamed">true</param>
 			</type>
 		</property>
 		<!-- An integer who defines the quantity -->
 		<property name="quantité" type="integer"/>
 		
-		<!-- Foreign key to class com.martin.model.appareils.Appareil -->
-		<many-to-one name="appareil" class="com.martin.model.appareils.AppareilModel" 
+		<!-- Foreign key to class com.martin.model.appareils.DeviceModel -->
+		<many-to-one name="appareil" class="com.martin.model.appareils.DeviceModel" 
 			column="idAppareil"/>
 		
 	</class>

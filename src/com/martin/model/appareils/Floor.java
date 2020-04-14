@@ -28,7 +28,8 @@ public class Floor extends Device {
 			public void handle(MouseEvent event) {
 				try {
 					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(Main.class.getResource("view/Sol.fxml"));
+					loader.setLocation(
+							Main.class.getResource("view/Floor.fxml"));
 
 					Dialog<Object> dialog;
 					DialogPane dialogPane;
@@ -42,8 +43,8 @@ public class Floor extends Device {
 
 					SolContrôle SController = loader.getController();
 					SController.setMainApp(
-							new Coordinates(model.getCoordonnees().getX(),
-									model.getCoordonnees().getY()),
+							new Coordinates(model.getCoordinates().getX(),
+									model.getCoordinates().getY()),
 							dialog);
 
 					dialog.showAndWait();

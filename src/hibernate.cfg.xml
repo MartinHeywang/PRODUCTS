@@ -22,10 +22,10 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		
 		<!-- Mappings -->
-		<mapping resource="Paquet.hbm.xml"/>
-		<mapping resource="AppareilModel.hbm.xml"/>
-		<mapping resource="Partie.hbm.xml"/>
-		<mapping resource="Coordonnees.hbm.xml"/>
+		<mapping resource="Packing.hbm.xml"/>
+		<mapping resource="DeviceModel.hbm.xml"/>
+		<mapping resource="Game.hbm.xml"/>
+		<mapping resource="Coordinates.hbm.xml"/>
 		
 	</session-factory>
 </hibernate-configuration>

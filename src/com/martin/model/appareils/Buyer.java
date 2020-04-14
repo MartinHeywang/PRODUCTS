@@ -19,7 +19,7 @@ public class Buyer extends Device {
 			throws FileNotFoundException {
 
 		super(model, controller);
-		liste.add(model.getCoordonnees());
+		liste.add(model.getCoordinates());
 
 		entrances = Entrances.listForNone();
 		entrances = Exits.listForCenter(model.getDirection());

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<DialogPane expanded="true" stylesheets="@Appareil.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martin.view.DeviceController">
+<DialogPane expanded="true" stylesheets="@Device.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martin.view.DeviceController">
    <buttonTypes>
       <ButtonType fx:constant="CLOSE" />
    </buttonTypes>

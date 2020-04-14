@@ -127,28 +127,28 @@ public class DeviceModel {
 	/**
 	 * @return the coordonnees
 	 */
-	public Coordinates getCoordonnees() {
+	public Coordinates getCoordinates() {
 		return coordinates;
 	}
 
 	/**
 	 * @param coordinates the coordonnees to set
 	 */
-	public void setCoordonnees(Coordinates coordinates) {
+	public void setCoordinates(Coordinates coordinates) {
 		this.coordinates = coordinates;
 	}
 
 	/**
 	 * @return the partie
 	 */
-	public Game getPartie() {
+	public Game getGame() {
 		return game;
 	}
 
 	/**
 	 * @param game the partie to set
 	 */
-	public void setPartie(Game game) {
+	public void setGame(Game game) {
 		this.game = game;
 	}
 
@@ -217,8 +217,8 @@ public class DeviceModel {
 			List<DeviceModel> list = query.list();
 			// Using a Stream, checking if the constraints are fully respected.
 			if (list.stream().filter(
-					x -> x.getCoordonnees().equals(objToSave.getCoordonnees()))
-					.filter(y -> y.getPartie().equals(objToSave.getPartie()))
+					x -> x.getCoordinates().equals(objToSave.getCoordinates()))
+					.filter(y -> y.getGame().equals(objToSave.getGame()))
 					.count() == 0) {
 				session.save(objToSave);
 				transaction.commit();
