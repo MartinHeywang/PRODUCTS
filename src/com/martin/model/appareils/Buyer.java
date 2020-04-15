@@ -22,9 +22,10 @@ public class Buyer extends Device {
 		liste.add(model.getCoordinates());
 
 		entrances = Entrances.listForNone();
-		entrances = Exits.listForCenter(model.getDirection());
+		exits = Exits.listForCenter(model.getDirection());
 
 		// Todo: add behaviour
+		behaviour = new Buyer_(null, model, controller);
 	}
 
 	/**

@@ -73,7 +73,7 @@ public abstract class Device extends ImageView {
 		}
 	};
 
-	public static int électricité = 5;
+	public static int electricity = 5;
 
 	/**
 	 * Creates a new device.
@@ -132,8 +132,8 @@ public abstract class Device extends ImageView {
 	/**
 	 * @return the électricité
 	 */
-	public static int getÉlectricité() {
-		return électricité;
+	public static int getElectricity() {
+		return electricity;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public abstract class Device extends ImageView {
 	/**
 	 * @param électricité the électricité to set
 	 */
-	public static void setÉlectricité(int électricité) {
-		Device.électricité = électricité;
+	public static void setElectricity(int electricity) {
+		Device.electricity = electricity;
 	}
 }

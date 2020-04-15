@@ -67,7 +67,7 @@ public class Constructor_ implements Behaviour {
 	public void action(Stock resATraiter) throws MoneyException {
 		Stock tempoStock = new Stock();
 
-		for (int level = 0; level < level.getNiveau()
+		for (int level = 0; level < this.level.getNiveau()
 				|| level < resATraiter.size(); level++) {
 			if (controller.getPartieEnCours().getArgent() < 5
 					+ Device.getElectricity())
