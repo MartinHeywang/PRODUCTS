@@ -60,7 +60,7 @@ public final class Database {
 			return dao;
 		} catch (SQLException e) {
 			System.err.println(
-					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+					"Couldn't not create a DAO for class Packing.\nHere is th full error message :\n\n\n");
 			e.printStackTrace();
 			return null;
 		}
@@ -76,7 +76,7 @@ public final class Database {
 			return dao;
 		} catch (SQLException e) {
 			System.err.println(
-					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+					"Couldn't not create a DAO for class Coordinates.\nHere is th full error message :\n\n\n");
 			e.printStackTrace();
 			return null;
 		}
@@ -92,7 +92,7 @@ public final class Database {
 			return dao;
 		} catch (SQLException e) {
 			System.err.println(
-					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+					"Couldn't not create a DAO for class Game.\nHere is th full error message :\n\n\n");
 			e.printStackTrace();
 			return null;
 		}

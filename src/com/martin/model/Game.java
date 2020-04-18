@@ -2,7 +2,6 @@ package com.martin.model;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -30,23 +29,25 @@ public class Game {
 	@DatabaseField
 	private int gridSize;
 
-	private List<DeviceModel> listAppareilsModel = Arrays.asList();
+	private List<DeviceModel> listAppareilsModel;
 
 	public Game() {
 	}
 
 	/**
-	 * Creates a new <i>game</i>.
+	 * Creates a new <i>game</i>. Saves it directly in the database.
 	 * 
 	 * @param nom the name of the new game
 	 * @throws SQLException if this object can't be registered in the
 	 *                      database
 	 */
-	public Game(String nom) {
+	public Game(String nom) throws SQLException {
 		this.name = nom;
 		this.lastView = LocalDateTime.now().toString();
-		this.gridSize = 10;
+		this.gridSize = 5;
 		this.argent = 1250;
+
+		Database.daoGame().createIfNotExists(this);
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class Game {
 	 */
 	public void save(List<Device> listAppareils) {
 		// Todo : save
-		// Does actually nothing because of hibernates replacements
+		// Does actually nothing because of ORMLite replacements
 	}
 
 	/**
@@ -78,7 +79,16 @@ public class Game {
 	 * @return a list of all devices of this game
 	 */
 	public List<DeviceModel> getAppareilsModel() {
-		// Todo : Partie.getAppareilsModels() method
+		try {
+			listAppareilsModel = Database.daoDeviceModel().queryBuilder()
+					.where()
+					.eq("game", idPartie)
+					.query();
+		} catch (SQLException e) {
+			System.err.println("Couldn't load the devices for the game : "
+					+ this.toString());
+			e.printStackTrace();
+		}
 		return listAppareilsModel;
 	}
 
@@ -191,11 +201,5 @@ public class Game {
 				throw new MoneyException();
 			}
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "Object type Partie. ID : " + idPartie + ". Argent : " + argent
-				+ ".";
 	}
 }

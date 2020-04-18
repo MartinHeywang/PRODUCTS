@@ -1,7 +1,11 @@
 package com.martin.model.appareils;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.martin.Database;
 import com.martin.model.Coordinates;
 import com.martin.model.Game;
 
@@ -19,7 +23,7 @@ public class DeviceModel {
 	 * 
 	 * @see com.martin.model.Coordinates
 	 */
-	@DatabaseField(columnName = "coordonnees", foreign = true, foreignAutoCreate = true, foreignColumnName = "id", uniqueCombo = true)
+	@DatabaseField(columnName = "coordonnees", foreign = true, foreignColumnName = "id", uniqueCombo = true)
 	private Coordinates coordinates;
 
 	/**
@@ -57,7 +61,7 @@ public class DeviceModel {
 	/**
 	 * Creates a new AppareilModel object WITHOUT INITIALIZING ANYTHING.
 	 * Use the others constructors to build this object properly. Used by
-	 * Hibernate to fetch the data from the database.
+	 * ORMLite to fetch the data from the database.
 	 */
 	public DeviceModel() {
 	}
@@ -65,23 +69,35 @@ public class DeviceModel {
 	/**
 	 * Creates a new AppareilModel with default values for type, niveau,
 	 * and direction properties, respectively initializated to SOL,
-	 * NIVEAU_1, and UP. Saves automatically the new object in the
-	 * database.
+	 * NIVEAU_1, and UP.
 	 * 
 	 * @param coordinates the coordinates
 	 * @param game        the game
 	 */
 	public DeviceModel(Coordinates coordinates, Game game) {
-		this.coordinates = coordinates;
 		this.game = game;
 		this.type = Type.SOL;
 		this.level = Level.NIVEAU_1;
 		this.direction = Direction.UP;
+
+		try {
+			final List<Coordinates> list = Database.daoCoordinates()
+					.queryBuilder().where()
+					.eq("x", coordinates.getX()).and()
+					.eq("y", coordinates.getY()).query();
+			if (list.size() == 0) {
+				Database.daoCoordinates().create(coordinates);
+				this.coordinates = coordinates;
+			} else {
+				this.coordinates = list.get(0);
+			}
+		} catch (SQLException e) {
+
+		}
 	}
 
 	/**
-	 * Creates a new AppareilModel. Saves automatically the new object in
-	 * the database.
+	 * Creates a new AppareilModel.
 	 * 
 	 * @param coordinates the coordinates
 	 * @param game        the game
@@ -96,6 +112,21 @@ public class DeviceModel {
 		this.type = type;
 		this.level = level;
 		this.direction = direction;
+
+		try {
+			final List<Coordinates> list = Database.daoCoordinates()
+					.queryBuilder().where()
+					.eq("x", coordinates.getX()).and()
+					.eq("y", coordinates.getY()).query();
+			if (list.size() == 0) {
+				Database.daoCoordinates().create(coordinates);
+				this.coordinates = coordinates;
+			} else {
+				this.coordinates = list.get(0);
+			}
+		} catch (SQLException e) {
+
+		}
 	}
 
 	/**

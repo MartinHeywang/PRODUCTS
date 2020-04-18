@@ -3,6 +3,7 @@ package com.martin.view;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.martin.Database;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Game;
@@ -85,48 +86,47 @@ public class JeuContrôle {
 	 */
 	public void load(Game partieToLoad) throws SQLException {
 		// Save this instance (used a little bit later)
-		final JeuContrôle controller = this;
+		JeuContrôle controller = this;
 		// The task defines how to load the game
 		Task<Void> task = new Task<Void>() {
 			@Override
 			protected Void call() {
-				// Little message ("The game is still loading...")
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						setReport(
-								"Chargement de la partie en cours...\n"
-										+ "L'opération peut durer quelques instants.",
-								Color.INDIANRED);
-					}
-				});
+				try {
+					// Little message ("The game is still loading...")
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							setReport(
+									"Chargement de la partie en cours...\n"
+											+ "L'opération peut durer quelques instants.",
+									Color.INDIANRED);
+						}
+					});
 
-				// Updating the field partieEnCours
-				partieEnCours = partieToLoad;
-				// Fetching the model of all devices in a list
-				List<DeviceModel> devicesModel = partieToLoad
-						.getAppareilsModel();
+					// Updating the field partieEnCours
+					partieEnCours = partieToLoad;
+					// Fetching the model of all devices in a list
+					List<DeviceModel> devicesModel = partieToLoad
+							.getAppareilsModel();
 
-				final int taille = partieToLoad.getTailleGrille();
-				// Creating the device if they aren't enough
-				if (devicesModel.size() < Math.sqrt(taille)) {
-					for (int x = 0; x < taille; x++) {
-						for (int y = 0; y < taille; y++) {
-							final Coordinates coordinates = Coordinates
-									.createOrQuery(new Coordinates(x, y));
-
-							devicesModel.add(
-									new DeviceModel(coordinates,
-											partieToLoad));
+					final int taille = partieToLoad.getTailleGrille();
+					// Creating the device if they aren't enough
+					if (devicesModel.size() < Math.sqrt(taille)) {
+						for (int x = 0; x < taille; x++) {
+							for (int y = 0; y < taille; y++) {
+								final DeviceModel model = new DeviceModel(
+										new Coordinates(x, y),
+										partieToLoad);
+								devicesModel.add(model);
+								Database.daoDeviceModel().create(model);
+							}
 						}
 					}
-				}
 
-				// Variable i for progress
-				int i = 1;
-				// For all models
-				for (DeviceModel model : devicesModel) {
-					try {
+					// Variable i for progress
+					int i = 1;
+					// For all models
+					for (DeviceModel model : devicesModel) {
 						// Creating a new device using the model
 						Device device = model.getType().getClasse()
 								.getConstructor(DeviceModel.class,
@@ -145,34 +145,36 @@ public class JeuContrôle {
 							}
 						});
 
-					} catch (Exception e) {
-						e.printStackTrace();
+						// Setting up the progress
+						i++;
+						progression.progressProperty()
+								.set((double) i
+										/ devicesModel.size());
 					}
 
-					// Setting up the progress
-					i++;
-					progression.progressProperty()
-							.set((double) i
-									/ devicesModel.size());
+					// Starting the thread of game
+					t = new Thread(new Play());
+					t.start();
+
+					// Last view modifications
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							argentLabel.setVisible(true);
+							progression.setVisible(false);
+							// Sets the report dialog to a little text who says
+							// that
+							// the game is
+							// still loading and sets the money label
+							setReport("Bienvenue !", Color.CORNFLOWERBLUE);
+							argentProperty.set(partieToLoad.getArgent());
+						}
+					});
+				} catch (Exception e) {
+					System.err.println(
+							"An error occured when loading the game. Here is the full error message :\n\n\n");
+					e.printStackTrace();
 				}
-
-				// Starting the thread of game
-				t = new Thread(new Play());
-				t.start();
-
-				// Last view modifications
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						argentLabel.setVisible(true);
-						progression.setVisible(false);
-						// Sets the report dialog to a little text who says that
-						// the game is
-						// still loading and sets the money label
-						setReport("Bienvenue !", Color.CORNFLOWERBLUE);
-						argentProperty.set(partieToLoad.getArgent());
-					}
-				});
 				// Here we must return something of type Void (this type can't
 				// be instantiated), so we return null
 				return null;
