@@ -19,16 +19,12 @@ import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
 
 public class Buyer_ implements Behaviour {
-
-	private Coordinates pointer;
 	private Level level;
 	private JeuContrôle controller;
 
 	private Packing resDistribuée;
 
-	public Buyer_(Coordinates pointer, DeviceModel model,
-			JeuContrôle controller) {
-		this.pointer = pointer;
+	public Buyer_(DeviceModel model, JeuContrôle controller) {
 		this.level = model.getNiveau();
 		this.controller = controller;
 
@@ -38,7 +34,7 @@ public class Buyer_ implements Behaviour {
 			session.beginTransaction();
 
 			Query<Packing> query = session.createQuery(
-					"from Paquet where appareil = "
+					"from Packing where appareil = "
 							+ model.getIdAppareilModel(),
 					Packing.class);
 			List<Packing> list = query.list();
@@ -60,7 +56,8 @@ public class Buyer_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Stock resATraiter, Coordinates pointer)
+			throws MoneyException {
 		System.out.println("The behaviour of a buyer has begun !");
 
 		final Stock tempoStock = new Stock();
@@ -82,7 +79,7 @@ public class Buyer_ implements Behaviour {
 			}
 		}
 
-		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempoStock);
 	}
 
 	/**

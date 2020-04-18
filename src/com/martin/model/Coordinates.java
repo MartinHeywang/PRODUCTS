@@ -1,14 +1,8 @@
 package com.martin.model;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-
-import com.martin.Database;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.martin.model.appareils.Direction;
 
 /**
  * <h1>class Coordonnées</h1>
@@ -18,10 +12,13 @@ import com.martin.Database;
  * </p>
  *
  */
+@DatabaseTable
 public class Coordinates {
 
+	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idCoordonnees;
 
+	@DatabaseField(uniqueCombo = true)
 	private int x, y;
 
 	/**
@@ -39,6 +36,11 @@ public class Coordinates {
 	}
 
 	public Coordinates() {
+	}
+
+	public Coordinates(Coordinates coordinates, Direction direction) {
+		this.x = coordinates.getX() + direction.getxPlus();
+		this.y = coordinates.getY() + direction.getyPlus();
 	}
 
 	public Long getIdCoordonnees() {
@@ -130,122 +132,5 @@ public class Coordinates {
 	public String toString() {
 		return "Object type Coordonnees. ID : " + idCoordonnees + ". X : " + x
 				+ ". Y : " + y + ".";
-	}
-
-	/**
-	 * This method returns a List of Coordonnees, from table coordonnées.
-	 * May be expensive to invoke; if you have to use it, stock the result
-	 * in a list.
-	 * 
-	 * @return a list of coordinates
-	 */
-	public static List<Coordinates> query() {
-		// Creating a Session and a List
-		Session session = Database.getSession();
-		List<Coordinates> list;
-		try {
-			// Query for all objects and stock it in the List created before
-			Query<Coordinates> query = session.createQuery(
-					"from Coordonnees",
-					Coordinates.class);
-			list = query.list();
-		} catch (HibernateException e) {
-			System.err.println("Unable to query in table coordonnées");
-			return null;
-		} finally {
-			// Closing the session
-			session.close();
-		}
-		// Returning the result
-		return list;
-	}
-
-	/**
-	 * Insert in table coordonnées the object in parameters. May be
-	 * expensive to invoke. Checks before inserting if all constraints are
-	 * respected. Because Hibernate doesn't fully support SQLite (like
-	 * UniqueCombo constraints), I had to do this before inserting.
-	 * 
-	 * @param objToSave the object to save.
-	 */
-	public static void insert(Coordinates objToSave) {
-		// Creating a Session and a Transaction
-		Session session = Database.getSession();
-		Transaction transaction = null;
-		try {
-			// Begining Transaction
-			transaction = session.beginTransaction();
-
-			// Query for the table coordonnées
-			Query<Coordinates> query = session.createQuery(
-					"from Coordonnees",
-					Coordinates.class);
-			List<Coordinates> list = query.list();
-			// Using a Stream, checking if the constraints are fully respected.
-			if (list.stream().filter(x -> x.getX() == objToSave.getX())
-					.filter(y -> y.getY() == objToSave.getY()).count() == 0) {
-				session.save(objToSave);
-				transaction.commit();
-			} else {
-				// Little log in case a constraint would not be respected
-				System.err.println(
-						"Couldn't run insert : UNIQUE constraint failed (x, y)");
-			}
-
-		} catch (HibernateException e) {
-			System.err
-					.println("Unable to run insert stmt in table coordonnées");
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			// Closing the session
-			session.close();
-		}
-	}
-
-	public static Coordinates createOrQuery(Coordinates xy) {
-		// Creating a Session and a Transaction
-		Session session = Database.getSession();
-		Transaction transaction = null;
-		List<Coordinates> list = Arrays.asList();
-		try {
-			// Begining Transaction
-			transaction = session.beginTransaction();
-
-			// Query for the table coordonnées
-			Query<Coordinates> query = session.createQuery(
-					"from Coordonnees",
-					Coordinates.class);
-			list = query.list();
-			// Using a Stream, checking if the constraints are fully respected.
-			if (list.stream().filter(x -> x.getX() == xy.getX())
-					.filter(y -> y.getY() == xy.getY()).count() == 0) {
-				list.add(xy);
-				session.save(xy);
-				transaction.commit();
-			}
-
-		} catch (HibernateException e) {
-			System.err
-					.println(
-							"Unable to run insert statement in table coordonnées");
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			// Closing the session
-			session.close();
-		}
-		return list.stream().filter(x -> x.getX() == xy.getX())
-				.filter(y -> y.getY() == xy.getY()).findFirst().get();
-	}
-
-	public boolean equals(Coordinates xy) {
-		if (this.x == xy.getX() && this.y == xy.getY()) {
-			System.out
-					.println("Coordonnees.equals(Coordonnees) returned true.");
-			return true;
-		}
-		System.out.println("Coordonnees.equals(Coordonnees) returned false.");
-		return false;
 	}
 }

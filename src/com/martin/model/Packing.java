@@ -1,37 +1,36 @@
 package com.martin.model;
 
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-
-import com.martin.Database;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.martin.model.appareils.DeviceModel;
 
+@DatabaseTable(tableName = "packages")
 public class Packing {
 
+	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idPaquet;
 
+	@DatabaseField
 	private Resource resource;
 
-	private int quantité;
+	@DatabaseField
+	private int quantity;
 
-	private DeviceModel appareil;
+	@DatabaseField(columnName = "device", foreign = true, foreignColumnName = "id")
+	private DeviceModel model;
 
 	public Packing() {
 	}
 
-	public Packing(Resource resource, int quantité) {
+	public Packing(Resource resource, int quantity) {
 		this.resource = resource;
-		this.quantité = quantité;
+		this.quantity = quantity;
 	}
 
-	public Packing(Resource resource, int quantité, DeviceModel model) {
+	public Packing(Resource resource, int quantity, DeviceModel model) {
 		this.resource = resource;
-		this.quantité = quantité;
-		this.appareil = model;
+		this.quantity = quantity;
+		this.model = model;
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class Packing {
 	 * @return the quantity
 	 */
 	public int getQuantité() {
-		return quantité;
+		return quantity;
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class Packing {
 	 * @param quantité the quantity to set
 	 */
 	public void setQuantité(int quantité) {
-		this.quantité = quantité;
+		this.quantity = quantité;
 	}
 
 	/**
@@ -87,7 +86,7 @@ public class Packing {
 	 * @return the associated-device
 	 */
 	public DeviceModel getAppareil() {
-		return appareil;
+		return model;
 	}
 
 	/**
@@ -95,67 +94,12 @@ public class Packing {
 	 * @param appareil the device to set
 	 */
 	public void setAppareil(DeviceModel appareil) {
-		this.appareil = appareil;
+		this.model = appareil;
 	}
 
 	@Override
 	public String toString() {
 		return "Object type Paquet. Id : " + idPaquet + ". Ressource : "
-				+ resource + ". Quantité : " + quantité + ".";
-	}
-
-	/**
-	 * This method returns a List of Coordonnees, from table coordonnées.
-	 * May be expensive to invoke; if you have to use it, stock the result
-	 * in a list.
-	 * 
-	 * @return a list of coordinates
-	 */
-	public static List<Packing> query() {
-		// Creating a Session and a List
-		Session session = Database.getSession();
-		List<Packing> list;
-		try {
-			// Query for all objects and stock it in the List created before
-			Query<Packing> query = session.createQuery(
-					"from Paquet",
-					Packing.class);
-			list = query.list();
-		} catch (HibernateException e) {
-			System.err.println("Unable to query in table paquets");
-			return null;
-		} finally {
-			// Closing the session
-			session.close();
-		}
-		// Returning the result
-		return list;
-	}
-
-	/**
-	 * Insert in table paquets the object in parameters.
-	 * 
-	 * @param packing the object to save.
-	 */
-	public static void insert(Packing packing) {
-		// Creating a Session and a Transaction
-		Session session = Database.getSession();
-		Transaction transaction = null;
-		try {
-			// Begining Transaction
-			transaction = session.beginTransaction();
-
-			session.save(packing);
-			transaction.commit();
-
-		} catch (HibernateException e) {
-			System.err
-					.println("Unable to run insert stmt in table paquets");
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			// Closing the session
-			session.close();
-		}
+				+ resource + ". Quantité : " + quantity + ".";
 	}
 }

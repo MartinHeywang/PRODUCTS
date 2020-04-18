@@ -5,11 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import com.martin.model.Game;
 import com.martin.view.Home;
@@ -37,9 +32,6 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		// The session for later
-		Session session = Database.getSession();
-
 		try {
 			// Little stage paramatering
 			stage = primaryStage;
@@ -48,14 +40,8 @@ public class Main extends Application {
 			stage.getIcons().add(new Image(
 					new FileInputStream(new File("images/Icone.png"))));
 
-			// Little query to select which menu will be displayed at first
-			Query<Game> query = session.createQuery(
-					"from Game",
-					Game.class);
-			List<Game> list = query.list();
-
 			// Then one or the other
-			if (list.size() == 0)
+			if (Database.daoGame().queryForAll().size() == 0)
 				initAccueil();
 			else {
 				initAccueil2();
@@ -63,12 +49,9 @@ public class Main extends Application {
 		} catch (FileNotFoundException e) {
 			System.err.println(
 					"Oh ! There is a mistake ! The logo can't be loaded...");
-		} catch (HibernateException e) {
+		} catch (SQLException e) {
 			System.err.println(
 					"Oh ! There is a mistake ! The games can't be loaded...");
-		} finally {
-			if (session != null)
-				session.close();
 		}
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override

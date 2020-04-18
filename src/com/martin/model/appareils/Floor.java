@@ -5,8 +5,7 @@ import java.io.FileNotFoundException;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Stock;
-import com.martin.model.appareils.orientation.Entrances;
-import com.martin.model.appareils.orientation.Exits;
+import com.martin.model.appareils.comportement.None_;
 import com.martin.view.JeuContrôle;
 import com.martin.view.SolContrôle;
 
@@ -63,10 +62,8 @@ public class Floor extends Device {
 			}
 		});
 
-		entrances = Entrances.listForNone();
-		exits = Exits.listForNone();
-
 		// Todo : add behaviour
+		behaviour = new None_();
 	}
 
 	@Override

@@ -1,53 +1,101 @@
 package com.martin;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
+import java.sql.SQLException;
 
-public class Database {
-	private static SessionFactory sessionFactory;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+import com.martin.model.Coordinates;
+import com.martin.model.Game;
+import com.martin.model.Packing;
+import com.martin.model.appareils.DeviceModel;
 
-	/**
-	 * Sets up the connection to the databaseand intialize the
-	 * <i>SessionFactory</i>
-	 */
+public final class Database {
+	private static ConnectionSource connection;
+
+	private Database() {
+	}
+
 	private static void setUp() {
 		try {
-			// Initialize the session factory
-			sessionFactory = new Configuration().configure()
-					.buildSessionFactory();
-		} catch (Throwable t) {
-			System.err.println("Unable to initialize the database connection.");
-			throw new ExceptionInInitializerError(t);
+			connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
+
+			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
+			TableUtils.createTableIfNotExists(connection, Packing.class);
+			TableUtils.createTableIfNotExists(connection, Coordinates.class);
+			TableUtils.createTableIfNotExists(connection, Game.class);
+		} catch (SQLException e) {
+			System.err.println(
+					"Ohh, something messed up in the initialization with the "
+							+ "database...\nHere is the full message :\n\n\n");
+			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * @return a session opened with the <i>SessionFactory</i>
-	 */
-	public static Session getSession() {
-		// If the SessionFactory isn't initialized, initialize it
-		if (sessionFactory == null)
-			setUp();
-		// Then return a new session
-		return sessionFactory.openSession();
+	public static Dao<DeviceModel, Long> daoDeviceModel() {
+		Dao<DeviceModel, Long> dao;
+		try {
+			if (connection == null)
+				setUp();
+
+			dao = DaoManager.createDao(connection, DeviceModel.class);
+			return dao;
+		} catch (SQLException e) {
+			System.err.println(
+					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	/**
-	 * This method saves (or persists) the object in parameter.
-	 * 
-	 * @param obj    the object to persist.
-	 * @param commit should be true if you want to commit at once
-	 */
-	public static Transaction saveAndCommit(Object obj, boolean commit) {
-		// Create a session and a transaction
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+	public static Dao<Packing, Long> daoPacking() {
+		Dao<Packing, Long> dao;
+		try {
+			if (connection == null)
+				setUp();
 
-		session.save(obj);
-		if (commit)
-			tx.commit();
-		return tx;
+			dao = DaoManager.createDao(connection, Packing.class);
+			return dao;
+		} catch (SQLException e) {
+			System.err.println(
+					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+			e.printStackTrace();
+			return null;
+		}
 	}
+
+	public static Dao<Coordinates, Long> daoCoordinates() {
+		Dao<Coordinates, Long> dao;
+		try {
+			if (connection == null)
+				setUp();
+
+			dao = DaoManager.createDao(connection, Coordinates.class);
+			return dao;
+		} catch (SQLException e) {
+			System.err.println(
+					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Dao<Game, Long> daoGame() {
+		Dao<Game, Long> dao;
+		try {
+			if (connection == null)
+				setUp();
+
+			dao = DaoManager.createDao(connection, Game.class);
+			return dao;
+		} catch (SQLException e) {
+			System.err.println(
+					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

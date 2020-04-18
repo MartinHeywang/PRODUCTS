@@ -7,22 +7,21 @@ import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Game;
 import com.martin.model.Stock;
+import com.martin.model.appareils.Buyer;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
-import com.martin.model.appareils.Buyer;
 import com.martin.model.exceptions.MoneyException;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -210,9 +209,7 @@ public class JeuContrôle {
 					Thread.sleep(750);
 					for (int i = 0; i < Buyer.liste.size(); i++) {
 						try {
-							partieEnCours
-									.getAppareil(Buyer.liste.get(i))
-									.action(new Stock());
+							findDevice(Buyer.liste.get(i)).action(new Stock());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {
 							Platform.runLater(new Runnable() {
@@ -231,20 +228,18 @@ public class JeuContrôle {
 
 	}
 
-	class Progression {
-		private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
-
-		public DoubleProperty progressProperty() {
-			return progress;
+	public Device findDevice(Coordinates xy) {
+		System.out.println("findDevice(Coordonnees) in type JeuContrôle");
+		for (Node node : grille.getChildren()) {
+			if (node instanceof Device) {
+				final Coordinates nodeXy = ((Device) node).getModel()
+						.getCoordinates();
+				if (nodeXy.getX() == xy.getX() && nodeXy.getY() == xy.getY()) {
+					return (Device) node;
+				}
+			}
 		}
-
-		public void setProgress(double progress) {
-			this.progress.set(progress);
-		}
-
-		public double getProgress() {
-			return progress.get();
-		}
+		return null;
 	}
 
 	public void setArgent(long somme, boolean increase)

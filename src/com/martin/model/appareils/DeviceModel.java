@@ -1,32 +1,17 @@
 package com.martin.model.appareils;
 
-import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-
-import com.martin.Database;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.martin.model.Coordinates;
 import com.martin.model.Game;
 
-/**
- * This is about <i>AppareilModel</i> class. This class represents all
- * the data of a <i>device</i>. An instance of this object is required
- * to create a <i>device</i>. He defines basic informations about the
- * created device, like the type or the coordinates and what else does
- * matter in a device that must be saved in the database. This class
- * is a persistent class (using <strong>Hibernate</strong>).
- * 
- * @see com.martin.model.appareils.Device
- *
- */
+@DatabaseTable(tableName = "devicesModels")
 public class DeviceModel {
 
 	/**
 	 * The id in the database
 	 */
+	@DatabaseField(generatedId = true, columnName = "id")
 	private Long idAppareilModel;
 
 	/**
@@ -34,12 +19,15 @@ public class DeviceModel {
 	 * 
 	 * @see com.martin.model.Coordinates
 	 */
+	@DatabaseField(columnName = "coordonnees", foreign = true, foreignAutoCreate = true, foreignColumnName = "id", uniqueCombo = true)
 	private Coordinates coordinates;
+
 	/**
 	 * The associated game
 	 * 
 	 * @see com.martin.model.Game
 	 */
+	@DatabaseField(columnName = "game", foreign = true, foreignColumnName = "id", uniqueCombo = true)
 	private Game game;
 
 	/**
@@ -47,18 +35,23 @@ public class DeviceModel {
 	 * 
 	 * @see com.martin.model.appareils.Type
 	 */
+	@DatabaseField
 	private Type type;
+
 	/**
 	 * The level
 	 * 
 	 * @see com.martin.model.appareils.Level
 	 */
+	@DatabaseField
 	private Level level;
+
 	/**
 	 * The direction (or orientation)
 	 * 
 	 * @see com.martin.model.appareils.Direction
 	 */
+	@DatabaseField
 	private Direction direction;
 
 	/**
@@ -76,7 +69,7 @@ public class DeviceModel {
 	 * database.
 	 * 
 	 * @param coordinates the coordinates
-	 * @param game      the game
+	 * @param game        the game
 	 */
 	public DeviceModel(Coordinates coordinates, Game game) {
 		this.coordinates = coordinates;
@@ -84,8 +77,6 @@ public class DeviceModel {
 		this.type = Type.SOL;
 		this.level = Level.NIVEAU_1;
 		this.direction = Direction.UP;
-
-		DeviceModel.insert(this);
 	}
 
 	/**
@@ -93,9 +84,9 @@ public class DeviceModel {
 	 * the database.
 	 * 
 	 * @param coordinates the coordinates
-	 * @param game      the game
+	 * @param game        the game
 	 * @param type        the type
-	 * @param level      the level
+	 * @param level       the level
 	 * @param direction   the direction
 	 */
 	public DeviceModel(Coordinates coordinates, Game game, Type type,
@@ -105,9 +96,6 @@ public class DeviceModel {
 		this.type = type;
 		this.level = level;
 		this.direction = direction;
-
-		coordinates = Coordinates.createOrQuery(coordinates);
-		DeviceModel.insert(this);
 	}
 
 	/**
@@ -192,52 +180,6 @@ public class DeviceModel {
 	 */
 	public void setDirection(Direction direction) {
 		this.direction = direction;
-	}
-
-	/**
-	 * Insert in table coordonnées the object in parameters. May be
-	 * expensive to invoke. Checks before inserting if all constraints are
-	 * respected. Because Hibernate doesn't fully support SQLite (like
-	 * UniqueCombo constraints), I had to do this before inserting.
-	 * 
-	 * @param objToSave the object to save.
-	 */
-	public static void insert(DeviceModel objToSave) {
-		// Creating a Session and a Transaction
-		Session session = Database.getSession();
-		Transaction transaction = null;
-		try {
-			// Begining Transaction
-			transaction = session.beginTransaction();
-
-			// Query for the table appareils
-			Query<DeviceModel> query = session.createQuery(
-					"from AppareilModel",
-					DeviceModel.class);
-			List<DeviceModel> list = query.list();
-			// Using a Stream, checking if the constraints are fully respected.
-			if (list.stream().filter(
-					x -> x.getCoordinates().equals(objToSave.getCoordinates()))
-					.filter(y -> y.getGame().equals(objToSave.getGame()))
-					.count() == 0) {
-				session.save(objToSave);
-				transaction.commit();
-			} else {
-				// Little log in case a constraint would not be respected
-				System.err.println(
-						"Couldn't run insert : UNIQUE constraint failed (coordonnees, partie)");
-			}
-
-		} catch (HibernateException e) {
-			System.err
-					.println(
-							"Unable to run insert statement in table appareils");
-			if (transaction != null)
-				transaction.rollback();
-		} finally {
-			// Closing the session
-			session.close();
-		}
 	}
 
 }
