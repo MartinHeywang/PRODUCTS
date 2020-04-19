@@ -7,6 +7,8 @@ import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
 import com.martin.model.Stock;
+import com.martin.model.appareils.Template.PointerTypes;
+import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Buyer_;
 import com.martin.model.appareils.orientation.Exits;
 import com.martin.model.exceptions.MoneyException;
@@ -15,6 +17,9 @@ import com.martin.view.JeuContrôle;
 public class Buyer extends Device {
 
 	public static ArrayList<Coordinates> liste = new ArrayList<Coordinates>();
+	private static TemplateModel templateModel = new TemplateModel(
+			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.EXIT,
+			PointerTypes.NONE);
 
 	public Buyer(DeviceModel model, JeuContrôle controller)
 			throws FileNotFoundException {

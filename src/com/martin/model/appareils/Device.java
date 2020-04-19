@@ -95,6 +95,8 @@ public abstract class Device extends ImageView {
 		this.model = model;
 		this.controller = controller;
 
+		this.setRotate(model.getDirection().getRotate());
+
 		this.setOnMouseClicked(onClicked);
 	}
 
