@@ -111,14 +111,19 @@ public class JeuContrôle {
 
 					final int taille = partieToLoad.getTailleGrille();
 					// Creating the device if they aren't enough
-					if (devicesModel.size() < Math.sqrt(taille)) {
+					if (devicesModel.size() < Math.pow(taille, 2)) {
 						for (int x = 0; x < taille; x++) {
 							for (int y = 0; y < taille; y++) {
-								final DeviceModel model = new DeviceModel(
-										new Coordinates(x, y),
-										partieToLoad);
-								devicesModel.add(model);
-								Database.daoDeviceModel().create(model);
+								try {
+									final DeviceModel model = new DeviceModel(
+											new Coordinates(x, y),
+											partieToLoad);
+									devicesModel.add(model);
+									Database.daoDeviceModel().create(model);
+								} catch (SQLException e) {
+									// Catch SQLException, because we are
+									// interacting with the database
+								}
 							}
 						}
 					}

@@ -2,11 +2,8 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.martin.Main;
-import com.martin.model.Coordinates;
 import com.martin.model.LocatedImage;
 import com.martin.model.Stock;
 import com.martin.model.appareils.comportement.Behaviour;
@@ -32,8 +29,7 @@ public abstract class Device extends ImageView {
 
 	protected JeuContrôle controller;
 
-	protected List<Coordinates> entersPointers = new ArrayList<Coordinates>();
-	protected List<Coordinates> exitsPointers = new ArrayList<Coordinates>();
+	protected Template template;
 
 	protected Dashboard dashboard = new Dashboard();
 
@@ -133,12 +129,8 @@ public abstract class Device extends ImageView {
 		return controller;
 	}
 
-	public List<Coordinates> getEntriesPointers() {
-		return entersPointers;
-	}
-
-	public List<Coordinates> getExitsPointers() {
-		return exitsPointers;
+	public Template getTemplate() {
+		return template;
 	}
 
 	/**

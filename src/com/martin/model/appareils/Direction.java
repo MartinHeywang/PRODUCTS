@@ -2,10 +2,10 @@ package com.martin.model.appareils;
 
 public enum Direction {
 	UP(0.0d, "Haut", 0, -1),
-	LEFT(0.75d, "Gauche", -1, 0),
-	DOWN(0.5d, "Bas", 0, 1),
-	RIGHT(0.25d, "Droite", 1, 0),
-	NONE(-1.0d, "None", 0, 0);
+	LEFT(90.0d, "Gauche", -1, 0),
+	DOWN(180.0d, "Bas", 0, 1),
+	RIGHT(270.0d, "Droite", 1, 0),
+	NONE(220.0d, "None", 0, 0);
 
 	private double rotate;
 	private String nom;

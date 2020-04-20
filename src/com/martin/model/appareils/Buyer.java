@@ -10,8 +10,6 @@ import com.martin.model.Stock;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Buyer_;
-import com.martin.model.appareils.orientation.Exits;
-import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
 
 public class Buyer extends Device {
@@ -27,33 +25,14 @@ public class Buyer extends Device {
 		super(model, controller);
 		liste.add(model.getCoordinates());
 
-		for (Direction exit : Exits.listForCenter(model.getDirection())) {
-			exitsPointers.add(new Coordinates(model.getCoordinates(), exit));
-		}
-
 		// Todo: test behaviour
-		behaviour = new Buyer_(model, controller);
+
+		template = templateModel.createTemplate(model.getCoordinates(),
+				model.getDirection());
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
-		System.out.println("action(Stock) in type Buyer");
-		// We save the pointed device (here this device's type has only one
-		// exit)
-		// The rest of the list doesn't matter (it should count one element
-		// only)
-		final Device pointedDevice = controller
-				.findDevice(exitsPointers.get(0));
-		// Then we check if the pointed device points also this device, in
-		// this case, there is a connection
-		// The action can be launched.
-		if (pointedDevice.getEntriesPointers()
-				.contains(model.getCoordinates())) {
-			// We launch the action with the current pointer
-			behaviour.action(resATraiter, exitsPointers.get(0));
-		}
-		// Here, if there isn't a connection, nothing gets launched (so the
-		// game is less laggy).
+	public void action(Stock resATraiter) {
 	}
 
 	/**

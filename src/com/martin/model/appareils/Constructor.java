@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import com.martin.model.Resource;
 import com.martin.model.appareils.comportement.Constructor_;
-import com.martin.model.appareils.orientation.Entrances;
-import com.martin.model.appareils.orientation.Exits;
 import com.martin.view.JeuContrôle;
 
 public class Constructor extends Device {
@@ -16,10 +14,6 @@ public class Constructor extends Device {
 	public Constructor(DeviceModel model, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(model, controller);
-
-		entrances = Entrances.listForLeft(model.getDirection());
-		entrances.addAll(Entrances.listForUp(model.getDirection()));
-		exits = Exits.listForRight(model.getDirection());
 
 		// Todo : add behaviour
 	}
