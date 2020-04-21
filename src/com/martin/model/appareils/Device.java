@@ -107,6 +107,9 @@ public abstract class Device extends ImageView {
 	 */
 	public void action(Stock resATraiter) throws MoneyException {
 		// Todo : action method
+		if (template != null) {
+
+		}
 	}
 
 	// GETTERS, THEN SETTERS

@@ -236,7 +236,6 @@ public class JeuContrôle {
 	}
 
 	public Device findDevice(Coordinates xy) {
-		System.out.println("findDevice(Coordonnees) in type JeuContrôle");
 		for (Node node : grille.getChildren()) {
 			if (node instanceof Device) {
 				final Coordinates nodeXy = ((Device) node).getModel()

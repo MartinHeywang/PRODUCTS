@@ -5,7 +5,8 @@ import java.io.FileNotFoundException;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Stock;
-import com.martin.model.appareils.comportement.None_;
+import com.martin.model.appareils.Template.PointerTypes;
+import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.view.JeuContrôle;
 import com.martin.view.SolContrôle;
 
@@ -17,6 +18,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 
 public class Floor extends Device {
+
+	private static TemplateModel templateModel = new TemplateModel(
+			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.NONE,
+			PointerTypes.NONE);
 
 	public Floor(DeviceModel model, JeuContrôle controller)
 			throws FileNotFoundException {
@@ -63,7 +68,9 @@ public class Floor extends Device {
 		});
 
 		// Todo : add behaviour
-		behaviour = new None_();
+
+		template = templateModel.createTemplate(model.getCoordinates(),
+				model.getDirection());
 	}
 
 	@Override

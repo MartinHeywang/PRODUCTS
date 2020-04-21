@@ -1,19 +1,16 @@
 package com.martin.model.appareils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.martin.model.Coordinates;
+import com.martin.model.LocatedHashMap;
 
 public class Template {
 
 	// This array represents the type of each the side
 	// The first is top, the second is left, the third is bottom (like for
 	// padding and margin in CSS)
-	PointerTypes[] pointerTypes = { PointerTypes.NONE, PointerTypes.NONE,
-			PointerTypes.NONE, PointerTypes.NONE };
-	Coordinates[] pointers = { null, null, null, null };
-
-	HashMap<PointerTypes, Coordinates> pointersHash = new HashMap<PointerTypes, Coordinates>();
+	LocatedHashMap<PointerTypes, Coordinates> pointers = new LocatedHashMap<>();
 
 	/**
 	 * Creates a new Template with an array of PointerTypes.
@@ -24,33 +21,36 @@ public class Template {
 	// This constructor is 'private', because, this type can only be
 	// instantiated by her nested class TemplateModel.
 	private Template(Coordinates location, PointerTypes... pointers) {
-		this.pointerTypes = pointers;
-
-		// The pointer array should not be longer than 4 (each device has 4
-		// sides only)
-		// Even if there is a rest, we don't consider it.
-		pointersHash.put(pointers[0], new Coordinates(location.getX(),
-				location.getY() - 1));
-		pointersHash.put(pointers[1], new Coordinates(location.getX() + 1,
-				location.getY()));
-		pointersHash.put(pointers[2], new Coordinates(location.getX(),
-				location.getY() + 1));
-		pointersHash.put(pointers[3], new Coordinates(location.getX() - 1,
-				location.getY()));
-
-		System.out.println(pointersHash.get(PointerTypes.EXIT));
-	}
-
-	public PointerTypes[] getPointerTypes() {
-		return pointerTypes;
+		// We put in the HashMap the coordinates, according to the location
+		// We only do this for the four first values, because they should be
+		// avoided (there are only four sides to each devices)
+		this.pointers.put(pointers[0],
+				new Coordinates(location.getX(), location.getY() - 1));
+		this.pointers.put(pointers[1],
+				new Coordinates(location.getX() + 1, location.getY()));
+		this.pointers.put(pointers[2],
+				new Coordinates(location.getX(), location.getY() + 1));
+		this.pointers.put(pointers[3],
+				new Coordinates(location.getX() - 1, location.getY()));
 	}
 
 	/**
 	 * 
 	 * @return the pointers
 	 */
-	public Coordinates[] getPointers() {
+	public LocatedHashMap<PointerTypes, Coordinates> getPointers() {
 		return pointers;
+	}
+
+	/**
+	 * Little shortcut for
+	 * <code>this.getPointers().get(PointerTypes)</code>.
+	 * 
+	 * @param type the key in the HashMap
+	 * @return a list of pointers
+	 */
+	public ArrayList<Coordinates> getPointersFor(PointerTypes type) {
+		return pointers.get(type);
 	}
 
 	// A little enum who distinct the different pointers type
@@ -60,12 +60,10 @@ public class Template {
 		// Only exit
 		EXIT,
 		// Only entry
-		ENTRY;
-
-		/*
-		 * I did not added a case BOTH, for both exit and entry, because it
-		 * wasn't useful when I created this enum.
-		 */
+		ENTRY,
+		// Both entry and exit
+		BOTH; // The const enum BOTH is not really useful, but I added it in
+				// case that someone will add a feature that uses it
 	}
 
 	final static class TemplateModel {
