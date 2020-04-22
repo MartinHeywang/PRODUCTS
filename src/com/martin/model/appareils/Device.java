@@ -4,8 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.martin.Main;
+import com.martin.model.Coordinates;
 import com.martin.model.LocatedImage;
 import com.martin.model.Stock;
+import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.comportement.Behaviour;
 import com.martin.model.appareils.comportement.None_;
 import com.martin.model.exceptions.MoneyException;
@@ -106,9 +108,23 @@ public abstract class Device extends ImageView {
 	 * @param resATraiter the resource who will be used by this device
 	 */
 	public void action(Stock resATraiter) throws MoneyException {
-		// Todo : action method
-		if (template != null) {
-
+		// For all the exits of this device, iterate over the pointer
+		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
+			// If the pointer is in the grid
+			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
+				// Define the pointed device
+				final Device pointedDevice = controller.findDevice(xy);
+				// Then, if the pointed device points also to this device (with
+				// type entry), we can say that the connection is established,
+				// so we can run the behaviour.
+				for (Coordinates enter : pointedDevice.getTemplate()
+						.getPointersFor(PointerTypes.ENTRY)) {
+					if (enter.getX() == model.getCoordinates().getX() &&
+							enter.getY() == model.getCoordinates().getY())
+						System.out.println("Connection available.");
+					// Todo : need to invoke the behaviour
+				}
+			}
 		}
 	}
 

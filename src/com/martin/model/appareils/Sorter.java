@@ -3,16 +3,18 @@ package com.martin.model.appareils;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import javax.management.Query;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import com.martin.Database;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
 import com.martin.model.Stock;
-import com.martin.model.appareils.orientation.Entrances;
+import com.martin.model.appareils.Template.PointerTypes;
+import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.orientation.Exits;
 import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
@@ -20,6 +22,10 @@ import com.martin.view.JeuContrôle;
 public class Sorter extends Device {
 
 	private Packing crit1, crit2;
+
+	private static TemplateModel templateModel = new TemplateModel(
+			PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.EXIT,
+			PointerTypes.EXIT);
 
 	public Sorter(DeviceModel model, JeuContrôle controller)
 			throws FileNotFoundException {
@@ -53,8 +59,9 @@ public class Sorter extends Device {
 			session.close();
 		}
 
-		entrances = Entrances.listForUp(model.getDirection());
-		exits = Exits.listForNone();
+		template = templateModel.createTemplate(model.getCoordinates(),
+				model.getDirection());
+
 	}
 
 	@Override
@@ -116,7 +123,6 @@ public class Sorter extends Device {
 		}
 
 		// Todo : add behaviour in action
-		behaviour.action(resATraiter);
 	}
 
 	public void setCritère1(Resource res) {

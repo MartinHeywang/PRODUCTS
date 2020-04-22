@@ -39,6 +39,19 @@ public class LocatedHashMap<K, V> {
 	}
 
 	/**
+	 * Replace in the map at the id with a new ArrayList with one element,
+	 * the value given as parameter.
+	 * 
+	 * @param k the key (where to replace)
+	 * @param v the value to add (what replaces the list)
+	 */
+	public void set(K k, V v) {
+		final ArrayList<V> array = new ArrayList<>();
+		array.add(v);
+		map.put(k, array);
+	}
+
+	/**
 	 * Returns an ArrayList of all the elements with the given key
 	 * 
 	 * @param k the key

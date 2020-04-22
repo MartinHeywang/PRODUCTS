@@ -1,21 +1,27 @@
 package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 import com.martin.model.Resource;
+import com.martin.model.appareils.Template.PointerTypes;
+import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Constructor_;
 import com.martin.view.JeuContrôle;
 
 public class Constructor extends Device {
 
-	ArrayList<Resource> recette = new ArrayList<Resource>();
+	private static TemplateModel templateModel = new TemplateModel(
+			PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.NONE,
+			PointerTypes.ENTRY);
 
 	public Constructor(DeviceModel model, JeuContrôle controller)
 			throws FileNotFoundException {
 		super(model, controller);
 
 		// Todo : add behaviour
+
+		template = templateModel.createTemplate(model.getCoordinates(),
+				model.getDirection());
 	}
 
 	public void setProduit(Resource res) throws NullPointerException {

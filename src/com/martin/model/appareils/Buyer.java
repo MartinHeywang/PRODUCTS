@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Buyer_;
-import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
 
 public class Buyer extends Device {
@@ -26,32 +24,10 @@ public class Buyer extends Device {
 		super(model, controller);
 		liste.add(model.getCoordinates());
 
-		// Todo: test behaviour
+		// Todo: add behaviour
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-	}
-
-	@Override
-	public void action(Stock resATraiter) throws MoneyException {
-		// For all the exits of this device, iterate over the pointer
-		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
-			// If the pointer is in the grid
-			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
-				// Define the pointed device
-				final Device pointedDevice = controller.findDevice(xy);
-				// Then, if the pointed device points also to this device (with
-				// type entry), we can say that the connection is established,
-				// so we
-				// can run the behaviour.
-				for (Coordinates enter : pointedDevice.getTemplate()
-						.getPointersFor(PointerTypes.ENTRY)) {
-					if (enter.getX() == model.getCoordinates().getX() &&
-							enter.getY() == model.getCoordinates().getY())
-						System.out.println("Connection available.");
-				}
-			}
-		}
 	}
 
 	/**

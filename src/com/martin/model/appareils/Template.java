@@ -55,15 +55,23 @@ public class Template {
 
 	// A little enum who distinct the different pointers type
 	enum PointerTypes {
-		// Neither entry or exit
+		/**
+		 * Neither entry or exit
+		 */
 		NONE,
-		// Only exit
+		/**
+		 * Only exit
+		 */
 		EXIT,
-		// Only entry
+		/**
+		 * Only entry
+		 */
 		ENTRY,
-		// Both entry and exit
+		/**
+		 * Both entry and exit
+		 */
 		BOTH; // The const enum BOTH is not really useful, but I added it in
-				// case that someone will add a feature that uses it
+				// case that someone will add a feature that uses it.
 	}
 
 	final static class TemplateModel {
