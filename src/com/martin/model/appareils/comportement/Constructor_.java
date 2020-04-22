@@ -1,12 +1,8 @@
 package com.martin.model.appareils.comportement;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import com.martin.Database;
 import com.martin.model.Coordinates;
@@ -20,51 +16,44 @@ import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
 
 public class Constructor_ implements Behaviour {
-
-	private Coordinates pointer;
 	private Level level;
 	private JeuContrôle controller;
 
 	private Packing produit;
 	private ArrayList<Resource> resources = new ArrayList<Resource>();
-	private ArrayList<Resource> recette = new ArrayList<Resource>();
+	private ArrayList<Resource> recipes = new ArrayList<Resource>();
 
-	public Constructor_(Coordinates xy, Level level,
-			int xToAdd, int yToAdd, JeuContrôle controller,
-			DeviceModel model) {
-		this.level = level;
+	public Constructor_(DeviceModel model, JeuContrôle controller) {
+		this.level = model.getNiveau();
 		this.controller = controller;
-		this.pointer = new Coordinates(xy.getX() + xToAdd, xy.getY() + yToAdd);
 
-		Session session = Database.getSession();
-		Transaction tx = session.getTransaction();
 		try {
-			session.beginTransaction();
-
-			Query<Packing> query = session.createQuery(
-					"from Paquet where appareil = "
-							+ model.getIdAppareilModel(),
-					Packing.class);
-			List<Packing> list = query.list();
-
+			// Query for all the packages that are associated to this device
+			final List<Packing> list = Database.daoPacking().queryBuilder()
+					.where().eq("device", model.getIdAppareilModel()).query();
+			// If its size equals 0, then create the resource and save it in the
+			// database
 			if (list.size() == 0) {
 				produit = new Packing(Resource.NONE, 1, model);
-				session.save(produit);
-				tx.commit();
-			} else if (list.size() == 1) {
+				Database.daoPacking().create(produit);
+			}
+			// Else we get at the first index the packing
+			else {
 				produit = list.get(0);
 			}
-		} catch (HibernateException e) {
-			System.err
-					.println("Error when loading resource. Error message :\n");
-			e.printStackTrace();
-		} finally {
-			session.close();
+
+			// If the list is bigger than 1, there is an error (the resource was
+			// added by the user (not in game)).
+			// So the rest just doesn't matter
+		} catch (SQLException e) {
+			System.err.println(e.getLocalizedMessage());
+
 		}
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Stock resATraiter, Coordinates pointer)
+			throws MoneyException {
 		Stock tempoStock = new Stock();
 
 		for (int level = 0; level < this.level.getNiveau()
@@ -82,7 +71,7 @@ public class Constructor_ implements Behaviour {
 			}
 		}
 
-		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempoStock);
 	}
 
 	/**
@@ -100,27 +89,27 @@ public class Constructor_ implements Behaviour {
 		// réservées au produit
 		ArrayList<Resource> stock = new ArrayList<Resource>();
 		// On vide les éléments de la recette
-		recette = new ArrayList<Resource>();
+		recipes = new ArrayList<Resource>();
 		// Puis on la re-remplie en fonction des ressources de la quantité
 		// Cette appareil prend en charge tous les schéma à 2 paquets
 		for (int i = 0; i < produit.getRessource().getRecette().get(0)
 				.getQuantité(); i++) {
-			recette.add(
+			recipes.add(
 					produit.getRessource().getRecette().get(0).getRessource());
 		}
 		for (int i = 0; i < produit.getRessource().getRecette().get(1)
 				.getQuantité(); i++) {
-			recette.add(
+			recipes.add(
 					produit.getRessource().getRecette().get(1).getRessource());
 		}
 
 		// Pour la taille de la recette crée
 		for (int j = 0; j < produit.getRessource().getRecette().size(); j++) {
 			// Si la ressourc est présente dans le stock
-			if (resources.contains(recette.get(j))) {
+			if (resources.contains(recipes.get(j))) {
 				// On l'ajoute au stock temporaire et on l'enlève du stockage
-				stock.add(recette.get(j));
-				resources.remove(recette.get(j));
+				stock.add(recipes.get(j));
+				resources.remove(recipes.get(j));
 			}
 			// Sinon...
 			else {
@@ -137,28 +126,26 @@ public class Constructor_ implements Behaviour {
 	}
 
 	/**
-	 * <h1>setProduit</h1>
-	 * <p>
 	 * Sets the products to the new value, after checking if it is a valid
 	 * resource.
-	 * </p>
 	 * 
 	 * @param produit the resource to set
 	 */
-	public void setProduit(Resource produit) {
-		// On vérifie que la ressource donné est prise en charge par
-		// l'appareil
-		switch (produit) {
+	public void setProduit(Packing produit) {
+		switch (produit.getRessource()) {
 		case FER:
 		case OR:
 		case CUIVRE:
 		case ARGENT:
 		case DIAMANT:
 		case ALUMINIUM:
-			break;
+			this.produit = produit;
+			try {
+				Database.daoPacking().update(produit);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		default:
-			// Si oui, on modifie le produit
-			this.produit = new Packing(produit, 1);
 			break;
 		}
 

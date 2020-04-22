@@ -2,6 +2,7 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
+import com.martin.model.Packing;
 import com.martin.model.Resource;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
@@ -22,11 +23,12 @@ public class Constructor extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
+		behaviour = new Constructor_(model, controller);
 	}
 
 	public void setProduit(Resource res) throws NullPointerException {
 		if (behaviour instanceof Constructor_) {
-			((Constructor_) behaviour).setProduit(res);
+			((Constructor_) behaviour).setProduit(new Packing(res, 1));
 		}
 	}
 

@@ -28,6 +28,7 @@ public class Buyer extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
+		behaviour = new Buyer_(model, controller);
 	}
 
 	/**

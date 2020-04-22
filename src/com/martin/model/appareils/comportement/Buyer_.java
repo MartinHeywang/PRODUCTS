@@ -1,11 +1,7 @@
 package com.martin.model.appareils.comportement;
 
+import java.sql.SQLException;
 import java.util.List;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import com.martin.Database;
 import com.martin.model.Coordinates;
@@ -28,30 +24,27 @@ public class Buyer_ implements Behaviour {
 		this.level = model.getNiveau();
 		this.controller = controller;
 
-		Session session = Database.getSession();
-		Transaction tx = session.getTransaction();
 		try {
-			session.beginTransaction();
-
-			Query<Packing> query = session.createQuery(
-					"from Packing where appareil = "
-							+ model.getIdAppareilModel(),
-					Packing.class);
-			List<Packing> list = query.list();
-
+			// Query for all the packages that are associated to this device
+			final List<Packing> list = Database.daoPacking().queryBuilder()
+					.where().eq("device", model.getIdAppareilModel()).query();
+			// If its size equals 0, then create the resource and save it in the
+			// database
 			if (list.size() == 0) {
 				resDistribuée = new Packing(Resource.NONE, 1, model);
-				session.save(resDistribuée);
-				tx.commit();
-			} else if (list.size() == 1) {
+				Database.daoPacking().create(resDistribuée);
+			}
+			// Else we get at the first index the packing
+			else {
 				resDistribuée = list.get(0);
 			}
-		} catch (HibernateException e) {
-			System.err
-					.println("Error when loading resource. Error message :\n");
-			e.printStackTrace();
-		} finally {
-			session.close();
+
+			// If the list is bigger than 1, there is an error (the resource was
+			// added by the user (not in game)).
+			// So the rest just doesn't matter
+		} catch (SQLException e) {
+			System.err.println(e.getLocalizedMessage());
+
 		}
 	}
 
@@ -83,11 +76,8 @@ public class Buyer_ implements Behaviour {
 	}
 
 	/**
-	 * <h1>setProduit</h1>
-	 * <p>
 	 * Sets the products to the new value, after checking if it is a valid
 	 * resource.
-	 * </p>
 	 * 
 	 * @param produit the resource to set
 	 */
@@ -100,19 +90,10 @@ public class Buyer_ implements Behaviour {
 		case DIAMANT:
 		case ALUMINIUM:
 			this.resDistribuée = resDistribuée;
-			Session session = Database.getSession();
-			Transaction tx = session.getTransaction();
 			try {
-				session.beginTransaction();
-				session.update(resDistribuée);
-				tx.commit();
-			} catch (HibernateException e) {
-				System.err
-						.println(
-								"Error when setting resource. Error message :\n");
+				Database.daoPacking().update(resDistribuée);
+			} catch (SQLException e) {
 				e.printStackTrace();
-			} finally {
-				session.close();
 			}
 		default:
 			break;
