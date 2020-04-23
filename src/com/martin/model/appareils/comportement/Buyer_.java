@@ -7,7 +7,6 @@ import com.martin.Database;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
@@ -18,11 +17,14 @@ public class Buyer_ implements Behaviour {
 	private Level level;
 	private JeuContrôle controller;
 
-	private Packing resDistribuée;
+	private Packing distributedResource;
 
 	public Buyer_(DeviceModel model, JeuContrôle controller) {
 		this.level = model.getNiveau();
 		this.controller = controller;
+
+		// Default definition to avoid null values
+		distributedResource = new Packing(Resource.NONE, 1, model);
 
 		try {
 			// Query for all the packages that are associated to this device
@@ -31,12 +33,12 @@ public class Buyer_ implements Behaviour {
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
-				resDistribuée = new Packing(Resource.NONE, 1, model);
-				Database.daoPacking().create(resDistribuée);
+				distributedResource = new Packing(Resource.NONE, 1, model);
+				Database.daoPacking().create(distributedResource);
 			}
 			// Else we get at the first index the packing
 			else {
-				resDistribuée = list.get(0);
+				distributedResource = list.get(0);
 			}
 
 			// If the list is bigger than 1, there is an error (the resource was
@@ -49,30 +51,41 @@ public class Buyer_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter, Coordinates pointer)
+	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		System.out.println("The behaviour of a buyer has begun !");
 
-		final Stock tempoStock = new Stock();
+		distributedResource.setQuantity(0);
 
 		for (int niveau = 0; niveau < this.level.getNiveau(); niveau++) {
 
-			if (!resDistribuée.getRessource().equals(Resource.NONE)) {
+			if (isValid(distributedResource.getRessource())) {
 				if (controller.getPartieEnCours().getArgent() < 5
 						+ Device.getElectricity())
 					throw new MoneyException("Le comportement d'un "
 							+ "acheteur n'a pas pu être réalisé car le solde "
 							+ "d'argent n'était pas assez important.");
 				else {
-					tempoStock.add(resDistribuée);
+					distributedResource.addQuantity(1);
 					controller.setArgent(5 + Device.getElectricity(), false);
+					controller.findDevice(pointer).action(distributedResource);
 				}
-			} else {
-				tempoStock.add(Resource.NONE);
 			}
 		}
 
-		controller.findDevice(pointer).action(tempoStock);
+	}
+
+	private boolean isValid(Resource res) {
+		switch (res) {
+		case FER:
+		case OR:
+		case CUIVRE:
+		case ARGENT:
+		case DIAMANT:
+		case ALUMINIUM:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	/**
@@ -81,17 +94,17 @@ public class Buyer_ implements Behaviour {
 	 * 
 	 * @param produit the resource to set
 	 */
-	public void setRessourceDistribuée(Packing resDistribuée) {
-		switch (resDistribuée.getRessource()) {
+	public void setDistributedResource(Packing distributedResource) {
+		switch (distributedResource.getRessource()) {
 		case FER:
 		case OR:
 		case CUIVRE:
 		case ARGENT:
 		case DIAMANT:
 		case ALUMINIUM:
-			this.resDistribuée = resDistribuée;
+			this.distributedResource = distributedResource;
 			try {
-				Database.daoPacking().update(resDistribuée);
+				Database.daoPacking().update(distributedResource);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -105,7 +118,7 @@ public class Buyer_ implements Behaviour {
 	 * 
 	 * @return resDistribuée the distributed resource
 	 */
-	public Packing getRessourceDistribuée() {
-		return resDistribuée;
+	public Packing getDistributedResource() {
+		return distributedResource;
 	}
 }

@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 
 import com.martin.Main;
 import com.martin.model.Coordinates;
-import com.martin.model.Stock;
+import com.martin.model.Packing;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.view.JeuContrôle;
@@ -74,7 +74,7 @@ public class Floor extends Device {
 	}
 
 	@Override
-	public void action(Stock resATraiter) {
+	public void action(Packing resATraiter) {
 	}
 
 }

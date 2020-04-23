@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
+import com.martin.model.appareils.comportement.WireDrawer_;
 import com.martin.view.JeuContrôle;
 
 public class WireDrawer extends Device {
@@ -16,10 +17,9 @@ public class WireDrawer extends Device {
 			throws FileNotFoundException {
 		super(model, controller);
 
-		// Todo: add behaviour
-
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
+		behaviour = new WireDrawer_(model, controller);
 	}
 
 }

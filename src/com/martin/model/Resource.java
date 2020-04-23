@@ -64,7 +64,8 @@ public enum Resource {
 				}
 			}),
 	PLAQUE_CHAUFFANTE("Plaque chauffante", 250,
-			"images/ressources/Plaque_Chauffante.png", new ArrayList<Packing>() {
+			"images/ressources/Plaque_Chauffante.png",
+			new ArrayList<Packing>() {
 				{
 					add(new Packing(Resource.OR, 1));
 					add(new Packing(Resource.FIL_DE_CUIVRE, 1));
@@ -99,12 +100,13 @@ public enum Resource {
 					add(new Packing(Resource.DIAMANT, 2));
 				}
 			}),
-	GRILL("Grill", 600, "images/ressources/Grill.png", new ArrayList<Packing>() {
-		{
-			add(new Packing(Resource.PLAQUE_CHAUFFANTE, 1));
-			add(new Packing(Resource.FER, 4));
-		}
-	}),
+	GRILL("Grill", 600, "images/ressources/Grill.png",
+			new ArrayList<Packing>() {
+				{
+					add(new Packing(Resource.PLAQUE_CHAUFFANTE, 1));
+					add(new Packing(Resource.FER, 4));
+				}
+			}),
 	MOTEUR("Moteur", 375, "images/ressources/Moteur.png",
 			new ArrayList<Packing>() {
 				{
@@ -166,92 +168,5 @@ public enum Resource {
 
 	public ArrayList<Packing> getRecette() {
 		return recette;
-	}
-
-	public static Resource getForURL(String url) {
-		switch (url) {
-		case "images/ressources/None.png":
-			return Resource.NONE;
-
-		case "images/ressources/Minerai_De_Fer.png":
-			return Resource.FER;
-		case "images/ressources/Minerai_De_Or.png":
-			return Resource.OR;
-		case "images/ressources/Minerai_De_Cuivre.png":
-			return Resource.CUIVRE;
-		case "images/ressources/Minerai_De_Argent.png":
-			return Resource.ARGENT;
-		case "images/ressources/Minerai_De_Diamant.png":
-			return Resource.DIAMANT;
-		case "images/ressources/Minerai_De_Aluminium.png":
-			return Resource.ALUMINIUM;
-
-		case "images/ressources/Plaque_De_Fer.png":
-			return Resource.PLAQUE_DE_FER;
-		case "images/ressources/Plaque_De_Or.png":
-			return Resource.PLAQUE_DE_OR;
-		case "images/ressources/Plaque_De_Cuivre.png":
-			return Resource.PLAQUE_DE_CUIVRE;
-		case "images/ressources/Plaque_De_Argent.png":
-			return Resource.PLAQUE_DE_ARGENT;
-		case "images/ressources/Plaque_De_Diamant.png":
-			return Resource.PLAQUE_DE_DIAMANT;
-		case "images/ressources/Plaque_De_Aluminium.png":
-			return Resource.PLAQUE_DE_ALUMINIUM;
-
-		case "images/ressources/Fil_De_Fer.png":
-			return Resource.FIL_DE_FER;
-		case "images/ressources/Fil_De_Or.png":
-			return Resource.FIL_DE_OR;
-		case "images/ressources/Fil_De_Cuivre.png":
-			return Resource.FIL_DE_CUIVRE;
-		case "images/ressources/Fil_De_Argent.png":
-			return Resource.FIL_DE_ARGENT;
-		case "images/ressources/Fil_De_Diamant.png":
-			return Resource.FIL_DE_DIAMANT;
-		case "images/ressources/Fil_De_Aluminium.png":
-			return Resource.FIL_DE_ALUMINIUM;
-
-		case "images/ressources/Lingot_De_Fer.png":
-			return Resource.LINGOT_DE_FER;
-		case "images/ressources/Lingot_De_Or.png":
-			return Resource.LINGOT_DE_FER;
-		case "images/ressources/Lingot_De_Cuivre.png":
-			return Resource.LINGOT_DE_FER;
-		case "images/ressources/Lingot_De_Argent.png":
-			return Resource.LINGOT_DE_FER;
-		case "images/ressources/Lingot_De_Diamant.png":
-			return Resource.LINGOT_DE_FER;
-		case "images/ressources/Lingot_De_Aluminium.png":
-			return Resource.LINGOT_DE_FER;
-
-		case "images/ressources/Circuit.png":
-			return Resource.CIRCUIT;
-		case "images/ressources/Moteur.png":
-			return Resource.MOTEUR;
-		case "images/ressources/Plaque_Chauffante.png":
-			return Resource.PLAQUE_CHAUFFANTE;
-		case "images/ressources/Plaque_Refroidissante.png":
-			return Resource.PLAQUE_REFROIDISSANTE;
-		case "images/ressources/Ampoule.png":
-			return Resource.AMPOULE;
-		case "images/ressources/Horloge.png":
-			return Resource.HORLOGE;
-		case "images/ressources/Antenne.png":
-			return Resource.ANTENNE;
-		case "images/ressources/Grill.png":
-			return Resource.GRILL;
-		case "images/ressources/Climatisation.png":
-			return Resource.CLIMATISATION;
-		case "images/ressources/Pile.png":
-			return Resource.PILE;
-		case "images/ressources/Panneau_Solaire.png":
-			return Resource.PANNEAU_SOLAIRE;
-		case "images/ressources/Processeur.png":
-			return Resource.PROCESSEUR;
-
-		default:
-			return Resource.NONE;
-		}
 	}
 }

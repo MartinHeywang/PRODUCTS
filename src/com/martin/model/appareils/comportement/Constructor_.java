@@ -8,7 +8,6 @@ import com.martin.Database;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
@@ -19,7 +18,7 @@ public class Constructor_ implements Behaviour {
 	private Level level;
 	private JeuContrôle controller;
 
-	private Packing produit;
+	private Packing product;
 	private ArrayList<Resource> resources = new ArrayList<Resource>();
 	private ArrayList<Resource> recipes = new ArrayList<Resource>();
 
@@ -34,12 +33,12 @@ public class Constructor_ implements Behaviour {
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
-				produit = new Packing(Resource.NONE, 1, model);
-				Database.daoPacking().create(produit);
+				product = new Packing(Resource.NONE, 1, model);
+				Database.daoPacking().create(product);
 			}
 			// Else we get at the first index the packing
 			else {
-				produit = list.get(0);
+				product = list.get(0);
 			}
 
 			// If the list is bigger than 1, there is an error (the resource was
@@ -52,26 +51,32 @@ public class Constructor_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter, Coordinates pointer)
+	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		Stock tempoStock = new Stock();
+		Packing tempo = new Packing(product.getRessource(), 0);
 
-		for (int level = 0; level < this.level.getNiveau()
-				|| level < resATraiter.size(); level++) {
-			if (controller.getPartieEnCours().getArgent() < 5
-					+ Device.getElectricity())
-				throw new MoneyException(
-						"Le comportement d'un acheteur "
-								+ "n'a pas pu être réalisé car le solde "
-								+ "d'argent n'était pas assez important.");
+		if (!product.getRessource().equals(Resource.NONE)) {
+			for (int level = 0; level < this.level.getNiveau()
+					|| level < resATraiter.getQuantity(); level++) {
 
-			if (checkIngrédients()) {
-				tempoStock.add(produit);
-				controller.setArgent(Device.getElectricity(), false);
+				for (int i = 0; i < resATraiter.getQuantity(); i++)
+					resources.add(resATraiter.getRessource());
+
+				if (controller.getPartieEnCours().getArgent() < 5
+						+ Device.getElectricity())
+					throw new MoneyException(
+							"Le comportement d'un acheteur "
+									+ "n'a pas pu être réalisé car le solde "
+									+ "d'argent n'était pas assez important.");
+
+				if (checkIngrédients()) {
+					tempo.addQuantity(1);
+					controller.setArgent(Device.getElectricity(), false);
+				}
 			}
 		}
 
-		controller.findDevice(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempo);
 	}
 
 	/**
@@ -92,20 +97,20 @@ public class Constructor_ implements Behaviour {
 		recipes = new ArrayList<Resource>();
 		// Puis on la re-remplie en fonction des ressources de la quantité
 		// Cette appareil prend en charge tous les schéma à 2 paquets
-		for (int i = 0; i < produit.getRessource().getRecette().get(0)
-				.getQuantité(); i++) {
+		for (int i = 0; i < product.getRessource().getRecette().get(0)
+				.getQuantity(); i++) {
 			recipes.add(
-					produit.getRessource().getRecette().get(0).getRessource());
+					product.getRessource().getRecette().get(0).getRessource());
 		}
-		for (int i = 0; i < produit.getRessource().getRecette().get(1)
-				.getQuantité(); i++) {
+		for (int i = 0; i < product.getRessource().getRecette().get(1)
+				.getQuantity(); i++) {
 			recipes.add(
-					produit.getRessource().getRecette().get(1).getRessource());
+					product.getRessource().getRecette().get(1).getRessource());
 		}
 
 		// Pour la taille de la recette crée
-		for (int j = 0; j < produit.getRessource().getRecette().size(); j++) {
-			// Si la ressourc est présente dans le stock
+		for (int j = 0; j < product.getRessource().getRecette().size(); j++) {
+			// Si la ressource est présente dans le stock
 			if (resources.contains(recipes.get(j))) {
 				// On l'ajoute au stock temporaire et on l'enlève du stockage
 				stock.add(recipes.get(j));
@@ -139,7 +144,7 @@ public class Constructor_ implements Behaviour {
 		case ARGENT:
 		case DIAMANT:
 		case ALUMINIUM:
-			this.produit = produit;
+			this.product = produit;
 			try {
 				Database.daoPacking().update(produit);
 			} catch (SQLException e) {
@@ -156,6 +161,6 @@ public class Constructor_ implements Behaviour {
 	 * @return produit the current product od this device
 	 */
 	public Packing getProduit() {
-		return produit;
+		return product;
 	}
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import com.martin.Database;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Conveyor_;
@@ -60,17 +59,17 @@ public class Sorter extends Device {
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Packing resATraiter) throws MoneyException {
 		// Check for criterias to give the good pointer
 		// First case (crit1), resource goes to the left
-		if (resATraiter.get(0).getRessource().equals(crit1.getRessource())) {
+		if (resATraiter.getRessource().equals(crit1.getRessource())) {
 			behaviour.action(resATraiter,
 					template.getPointersFor(PointerTypes.EXIT).get(2));
 			// Index 2 corresponds to the left because it should be the last
 			// element (we rotate clockwise)
 		}
 		// Second case (crit2), the resource goes to the right
-		else if (resATraiter.get(0).getRessource()
+		else if (resATraiter.getRessource()
 				.equals(crit2.getRessource())) {
 			behaviour.action(resATraiter,
 					template.getPointersFor(PointerTypes.EXIT).get(0));

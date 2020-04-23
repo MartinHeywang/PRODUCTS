@@ -40,7 +40,7 @@ public class Buyer extends Device {
 	public Resource getRessourceDistribuée() throws NullPointerException {
 		if (behaviour instanceof Buyer_)
 			return ((Buyer_) behaviour)
-					.getRessourceDistribuée().getRessource();
+					.getDistributedResource().getRessource();
 		return null;
 	}
 
@@ -51,7 +51,7 @@ public class Buyer extends Device {
 	public void setRessourceDistribuée(Resource res) {
 		if (behaviour instanceof Buyer_) {
 			((Buyer_) behaviour)
-					.setRessourceDistribuée(new Packing(res, 1));
+					.setDistributedResource(new Packing(res, 1));
 		}
 	}
 }

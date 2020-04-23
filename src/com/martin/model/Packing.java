@@ -69,7 +69,7 @@ public class Packing {
 	 * 
 	 * @return the quantity
 	 */
-	public int getQuantité() {
+	public int getQuantity() {
 		return quantity;
 	}
 
@@ -77,8 +77,16 @@ public class Packing {
 	 * 
 	 * @param quantité the quantity to set
 	 */
-	public void setQuantité(int quantité) {
+	public void setQuantity(int quantité) {
 		this.quantity = quantité;
+	}
+
+	/**
+	 * 
+	 * @param quantity the quantity to add
+	 */
+	public void addQuantity(int quantity) {
+		this.quantity += quantity;
 	}
 
 	/**

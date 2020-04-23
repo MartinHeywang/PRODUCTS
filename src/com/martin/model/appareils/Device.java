@@ -6,7 +6,7 @@ import java.io.IOException;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.LocatedImage;
-import com.martin.model.Stock;
+import com.martin.model.Packing;
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.comportement.Behaviour;
 import com.martin.model.appareils.comportement.None_;
@@ -181,7 +181,7 @@ public abstract class Device extends ImageView {
 	 * 
 	 * @param resATraiter the resource who will be used by this device
 	 */
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Packing resATraiter) throws MoneyException {
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
 			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
 				final Device pointedDevice = controller.findDevice(xy);
@@ -189,9 +189,9 @@ public abstract class Device extends ImageView {
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
 							enter.getY() == model.getCoordinates().getY())
-						System.out.println("Connection available.");
-					behaviour.action(resATraiter,
-							template.getPointersFor(PointerTypes.EXIT).get(0));
+						behaviour.action(resATraiter,
+								template.getPointersFor(PointerTypes.EXIT)
+										.get(0));
 				}
 			}
 		}

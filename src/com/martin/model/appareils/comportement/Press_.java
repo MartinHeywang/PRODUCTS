@@ -3,7 +3,6 @@ package com.martin.model.appareils.comportement;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
@@ -21,28 +20,29 @@ public class Press_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter, Coordinates pointer)
+	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		final Stock tempoStock = new Stock();
 
-		for (int i = 0; i < this.level.getNiveau(); i++) {
-			switch (resATraiter.get(i).getRessource()) {
+		for (int i = 0; i < this.level.getNiveau()
+				|| i < resATraiter.getQuantity(); i++) {
+			switch (resATraiter.getRessource()) {
 			case FER:
 			case OR:
 			case CUIVRE:
 			case ARGENT:
 			case ALUMINIUM:
-				tempoStock.add(new Packing(Resource.valueOf(
-						"PLAQUE_DE_" + resATraiter.get(i).getRessource()),
-						resATraiter.get(i).getQuantité()));
+				final Packing tempo = new Packing();
+				tempo.addQuantity(1);
+				tempo.setRessource(Resource
+						.valueOf("PLAQUE_DE_" + resATraiter.getRessource()));
 
 				controller.setArgent(Device.getElectricity(), false);
+				controller.findDevice(pointer).action(tempo);
 				break;
 			default:
 				break;
 			}
 		}
-		controller.findDevice(pointer).action(tempoStock);
 
 	}
 

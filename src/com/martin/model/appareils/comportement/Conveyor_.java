@@ -1,7 +1,7 @@
 package com.martin.model.appareils.comportement;
 
 import com.martin.model.Coordinates;
-import com.martin.model.Stock;
+import com.martin.model.Packing;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
@@ -19,10 +19,11 @@ public class Conveyor_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter, Coordinates pointer)
+	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
+		// Xxx : check '>' operator if not working properly
 		for (int niveau = 0; niveau < this.level.getNiveau() || resATraiter
-				.size() < niveau; niveau++) {
+				.getQuantity() > niveau; niveau++) {
 			if (controller.getPartieEnCours().getArgent() < 5
 					+ Device.getElectricity())
 				throw new MoneyException(

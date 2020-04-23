@@ -7,7 +7,7 @@ import com.martin.Database;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Game;
-import com.martin.model.Stock;
+import com.martin.model.Packing;
 import com.martin.model.appareils.Buyer;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
@@ -216,7 +216,8 @@ public class JeuContrôle {
 					Thread.sleep(750);
 					for (int i = 0; i < Buyer.liste.size(); i++) {
 						try {
-							findDevice(Buyer.liste.get(i)).action(new Stock());
+							findDevice(Buyer.liste.get(i))
+									.action(new Packing());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {
 							Platform.runLater(new Runnable() {

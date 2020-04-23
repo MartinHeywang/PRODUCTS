@@ -3,7 +3,6 @@ package com.martin.model.appareils.comportement;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
-import com.martin.model.Stock;
 import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
@@ -21,20 +20,23 @@ public class Furnace_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Stock resATraiter, Coordinates pointer)
+	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		final Stock tempoStock = new Stock();
 
-		for (int i = 0; i < this.level.getNiveau(); i++) {
-			switch (resATraiter.get(i).getRessource()) {
+		// Todo : copy behaviour from press
+
+		final Packing tempo = new Packing(Resource.valueOf(
+				"LINGOT_DE_" + resATraiter.getRessource()), 0);
+
+		for (int i = 0; i < this.level.getNiveau()
+				|| i < resATraiter.getQuantity(); i++) {
+			switch (resATraiter.getRessource()) {
 			case FER:
 			case OR:
 			case CUIVRE:
 			case ARGENT:
 			case ALUMINIUM:
-				tempoStock.add(new Packing(Resource.valueOf(
-						"LINGOT_DE_" + resATraiter.get(i).getRessource()),
-						resATraiter.get(i).getQuantité()));
+				tempo.addQuantity(1);
 
 				controller.setArgent(Device.getElectricity(), false);
 				break;
@@ -42,7 +44,7 @@ public class Furnace_ implements Behaviour {
 				break;
 			}
 		}
-		controller.findDevice(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempo);
 
 	}
 
