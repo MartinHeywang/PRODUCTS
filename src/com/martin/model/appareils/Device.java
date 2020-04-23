@@ -23,16 +23,88 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 
+/**
+ * The <em>Device</em> is an abstract class that all the devices
+ * extends. In the JavaFX scene, it is an ImageView. In the game, it
+ * corresponds to each square in the main GridPane.
+ * 
+ * @author Martin Heywang
+ */
 public abstract class Device extends ImageView {
 
+	/**
+	 * The DeviceModel that contains all the data specified about this
+	 * device. Persistent object.
+	 * 
+	 * @see DeviceModel
+	 */
 	protected DeviceModel model;
 
+	/**
+	 * The Behaviour is basically his behaviour that runs each iterations
+	 * of the Play class in JeuContrôle.
+	 * 
+	 * @see JeuContrôle
+	 * 
+	 * @see Behaviour
+	 */
 	protected Behaviour behaviour = new None_();
 
+	/**
+	 * The controller is useful when you want to change somme data about
+	 * the game.
+	 * 
+	 * @see JeuContrôle
+	 */
 	protected JeuContrôle controller;
 
+	/**
+	 * The template is a data object who gives all the pointers of this
+	 * device, and can indicates which type of connection it is.<br>
+	 * <br>
+	 * It is good practice to create first a private static TemplateModel
+	 * :<br>
+	 * <br>
+	 * <code>
+	 * private static TemplateModel templateModel = new TemplateModel(PointerTypes.NONE, ...);
+	 * </code> <br>
+	 * <br>
+	 * Four values of type PointerTypes must be given to the contructor :
+	 * four PointerTypes values that indicates which type of connection it
+	 * is, respectively for the top, then right, then bottom, and to
+	 * finish left. <br>
+	 * This way you can easily create the template, invoking the
+	 * <code>createTemplate</code> method in the constructor, like this
+	 * :<br>
+	 * <br>
+	 * <code>
+	 * template = templateModel.createTemplate(model.getCoordinates(), model.getDirection());
+	 * </code> <br>
+	 * where <em>model</em> is the current model of the device.
+	 * 
+	 * <em>Here is an example with the conveyor :</em> <blockquote><code>
+	 * 
+	 * // As a field<br>
+	 * private static TemplateModel templateModel = new TemplateModel(<br>
+			PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,<br>
+			PointerTypes.NONE);<br><br>
+				
+				
+		// Later in the constructor<br>
+		template = templateModel.createTemplate(model.getCoordinates(),
+			model.getDirection());
+			
+	 * </code></blockquote>
+	 * 
+	 * @see Template
+	 */
 	protected Template template;
 
+	/**
+	 * The dashboard is an optional function. It is a pane included in the
+	 * dialog of the device that can give a lot of informations about the
+	 * object.
+	 */
 	protected Dashboard dashboard = new Dashboard();
 
 	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
@@ -99,30 +171,27 @@ public abstract class Device extends ImageView {
 	}
 
 	/**
-	 * <h1>action</h1>
-	 * <p>
-	 * This method do the action of the device. It calls the defined
-	 * behaviour.
-	 * </p>
+	 * This method represents the behaviour of this device. When called,
+	 * it calls the defined behaviour.<br>
+	 * <strong>Note :</strong> since most of the device has no longer more
+	 * than 1 exit, this method is like a <em>shorcut</em> for <em>simple
+	 * devices</em>.It only works if the devices has 1 exit, neither less
+	 * or more. In those cases, this method <strong>must be</strong>
+	 * overriden to make the device work properly.
 	 * 
 	 * @param resATraiter the resource who will be used by this device
 	 */
 	public void action(Stock resATraiter) throws MoneyException {
-		// For all the exits of this device, iterate over the pointer
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
-			// If the pointer is in the grid
 			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
-				// Define the pointed device
 				final Device pointedDevice = controller.findDevice(xy);
-				// Then, if the pointed device points also to this device (with
-				// type entry), we can say that the connection is established,
-				// so we can run the behaviour.
 				for (Coordinates enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
 							enter.getY() == model.getCoordinates().getY())
 						System.out.println("Connection available.");
-					// Todo : need to invoke the behaviour
+					behaviour.action(resATraiter,
+							template.getPointersFor(PointerTypes.EXIT).get(0));
 				}
 			}
 		}
@@ -148,6 +217,10 @@ public abstract class Device extends ImageView {
 		return controller;
 	}
 
+	/**
+	 * 
+	 * @return the template
+	 */
 	public Template getTemplate() {
 		return template;
 	}
