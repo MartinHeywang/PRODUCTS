@@ -5,25 +5,24 @@ import com.martin.model.Packing;
 import com.martin.model.Resource;
 import com.martin.model.Stock;
 import com.martin.model.appareils.Device;
+import com.martin.model.appareils.DeviceModel;
 import com.martin.model.appareils.Level;
 import com.martin.model.exceptions.MoneyException;
 import com.martin.view.JeuContrôle;
 
 public class Furnace_ implements Behaviour {
 
-	private Coordinates pointer;
 	private Level level;
 	private JeuContrôle controller;
 
-	public Furnace_(Coordinates xy, Level level,
-			int xToAdd, int yToAdd, JeuContrôle controller) {
-		this.level = level;
+	public Furnace_(DeviceModel model, JeuContrôle controller) {
+		this.level = model.getNiveau();
 		this.controller = controller;
-		this.pointer = new Coordinates(xy.getX() + xToAdd, xy.getY() + yToAdd);
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Stock resATraiter, Coordinates pointer)
+			throws MoneyException {
 		final Stock tempoStock = new Stock();
 
 		for (int i = 0; i < this.level.getNiveau(); i++) {
@@ -43,7 +42,7 @@ public class Furnace_ implements Behaviour {
 				break;
 			}
 		}
-		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempoStock);
 
 	}
 

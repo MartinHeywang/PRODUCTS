@@ -11,7 +11,6 @@ import com.martin.view.JeuContrôle;
 
 public class WireDrawer_ implements Behaviour {
 
-	private Coordinates pointer;
 	private Level level;
 	private JeuContrôle controller;
 
@@ -19,11 +18,11 @@ public class WireDrawer_ implements Behaviour {
 			int xToAdd, int yToAdd, JeuContrôle controller) {
 		this.level = level;
 		this.controller = controller;
-		this.pointer = new Coordinates(xy.getX() + xToAdd, xy.getY() + yToAdd);
 	}
 
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Stock resATraiter, Coordinates pointer)
+			throws MoneyException {
 		final Stock tempoStock = new Stock();
 
 		for (int i = 0; i < this.level.getNiveau(); i++) {
@@ -43,7 +42,7 @@ public class WireDrawer_ implements Behaviour {
 				break;
 			}
 		}
-		controller.getPartieEnCours().getAppareil(pointer).action(tempoStock);
+		controller.findDevice(pointer).action(tempoStock);
 
 	}
 

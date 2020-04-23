@@ -1,5 +1,6 @@
 package com.martin.model.appareils.comportement;
 
+import com.martin.model.Coordinates;
 import com.martin.model.Stock;
 import com.martin.model.exceptions.MoneyException;
 
@@ -15,7 +16,8 @@ public class None_ implements Behaviour {
 	 * 
 	 */
 	@Override
-	public void action(Stock resATraiter) throws MoneyException {
+	public void action(Stock resATraiter, Coordinates pointer)
+			throws MoneyException {
 		/*
 		 * Cette méthode ne définit aucun comportement mais est nécessaire
 		 * pour les appareils comme les sols.
