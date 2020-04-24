@@ -21,9 +21,8 @@ public class Conveyor_ implements Behaviour {
 	@Override
 	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		// Xxx : check '>' operator if not working properly
-		for (int niveau = 0; niveau < this.level.getNiveau() || resATraiter
-				.getQuantity() > niveau; niveau++) {
+		for (int i = 0; i < this.level.getNiveau()
+				|| i < resATraiter.getQuantity(); i++) {
 			if (controller.getPartieEnCours().getArgent() < 5
 					+ Device.getElectricity())
 				throw new MoneyException(

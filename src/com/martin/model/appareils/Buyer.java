@@ -24,8 +24,6 @@ public class Buyer extends Device {
 		super(model, controller);
 		liste.add(model.getCoordinates());
 
-		// Todo: add behaviour
-
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Buyer_(model, controller);

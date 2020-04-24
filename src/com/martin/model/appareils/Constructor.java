@@ -19,8 +19,6 @@ public class Constructor extends Device {
 			throws FileNotFoundException {
 		super(model, controller);
 
-		// Todo : add behaviour
-
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Constructor_(model, controller);

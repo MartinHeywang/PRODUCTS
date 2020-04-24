@@ -22,10 +22,6 @@ public class WireDrawer_ implements Behaviour {
 	@Override
 	public void action(Packing resATraiter, Coordinates pointer)
 			throws MoneyException {
-		// Todo : copy behaviour from press
-
-		final Packing tempo = new Packing(Resource.valueOf(
-				"FIL_DE_" + resATraiter.getRessource()), 0);
 
 		for (int i = 0; i < this.level.getNiveau()
 				|| i < resATraiter.getQuantity(); i++) {
@@ -35,15 +31,18 @@ public class WireDrawer_ implements Behaviour {
 			case CUIVRE:
 			case ARGENT:
 			case ALUMINIUM:
+				final Packing tempo = new Packing();
 				tempo.addQuantity(1);
+				tempo.setRessource(Resource
+						.valueOf("FIL_DE_" + resATraiter.getRessource()));
 
 				controller.setArgent(Device.getElectricity(), false);
+				controller.findDevice(pointer).action(tempo);
 				break;
 			default:
 				break;
 			}
 		}
-		controller.findDevice(pointer).action(tempo);
 
 	}
 

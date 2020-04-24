@@ -15,6 +15,9 @@ import com.martin.view.Dashboard;
 import com.martin.view.DeviceController;
 import com.martin.view.JeuContrôle;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Dialog;
@@ -22,6 +25,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
+import javafx.util.Duration;
 
 /**
  * The <em>Device</em> is an abstract class that all the devices
@@ -101,6 +105,13 @@ public abstract class Device extends ImageView {
 	protected Template template;
 
 	/**
+	 * This Timeline field represents the animation is invoked when his
+	 * action is invoked. When overriding <code>Device.action</code>,
+	 * don't forget do play this animation.
+	 */
+	protected Timeline timeline;
+
+	/**
 	 * The dashboard is an optional function. It is a pane included in the
 	 * dialog of the device that can give a lot of informations about the
 	 * object.
@@ -162,11 +173,24 @@ public abstract class Device extends ImageView {
 		super(new LocatedImage(
 				model.getNiveau().getURL() + model.getType().getURL()));
 
+		// Defs
 		this.model = model;
 		this.controller = controller;
 
+		// Defs visual effect
 		this.setRotate(model.getDirection().getRotate());
+		this.setOpacity(0.85);
 
+		// Def Timeline
+		timeline = new Timeline();
+		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(0),
+				new KeyValue(this.opacityProperty(), 1)));
+		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(750),
+				new KeyValue(this.opacityProperty(), 1)));
+		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(2),
+				new KeyValue(this.opacityProperty(), 0.85)));
+
+		// Def onClick
 		this.setOnMouseClicked(onClicked);
 	}
 
@@ -188,10 +212,12 @@ public abstract class Device extends ImageView {
 				for (Coordinates enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
-							enter.getY() == model.getCoordinates().getY())
+							enter.getY() == model.getCoordinates().getY()) {
+						timeline.playFromStart();
 						behaviour.action(resATraiter,
 								template.getPointersFor(PointerTypes.EXIT)
 										.get(0));
+					}
 				}
 			}
 		}

@@ -67,8 +67,6 @@ public class Floor extends Device {
 			}
 		});
 
-		// Todo : add behaviour
-
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 	}

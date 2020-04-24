@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 
 import com.martin.model.appareils.Template.PointerTypes;
 import com.martin.model.appareils.Template.TemplateModel;
+import com.martin.model.appareils.comportement.Conveyor_;
 import com.martin.view.JeuContrôle;
 
 public class LeftConveyor extends Device {
@@ -17,9 +18,8 @@ public class LeftConveyor extends Device {
 			throws FileNotFoundException {
 		super(model, controller);
 
-		// Todo : add behaviour
-
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
+		behaviour = new Conveyor_(model, controller);
 	}
 }

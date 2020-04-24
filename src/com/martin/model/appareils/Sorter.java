@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.martin.Database;
+import com.martin.model.Coordinates;
 import com.martin.model.Packing;
 import com.martin.model.Resource;
 import com.martin.model.appareils.Template.PointerTypes;
@@ -60,26 +61,47 @@ public class Sorter extends Device {
 
 	@Override
 	public void action(Packing resATraiter) throws MoneyException {
-		// Check for criterias to give the good pointer
-		// First case (crit1), resource goes to the left
-		if (resATraiter.getRessource().equals(crit1.getRessource())) {
-			behaviour.action(resATraiter,
-					template.getPointersFor(PointerTypes.EXIT).get(2));
-			// Index 2 corresponds to the left because it should be the last
-			// element (we rotate clockwise)
-		}
-		// Second case (crit2), the resource goes to the right
-		else if (resATraiter.getRessource()
-				.equals(crit2.getRessource())) {
-			behaviour.action(resATraiter,
-					template.getPointersFor(PointerTypes.EXIT).get(0));
-			// Index 0 corresponds to the first element
-		}
-		// And dead in the center if there are no matching.
-		else {
-			behaviour.action(resATraiter,
-					template.getPointersFor(PointerTypes.EXIT).get(1));
-			// Index 1 is the center
+
+		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
+			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
+				final Device pointedDevice = controller.findDevice(xy);
+				for (Coordinates enter : pointedDevice.getTemplate()
+						.getPointersFor(PointerTypes.ENTRY)) {
+					if (enter.getX() == model.getCoordinates().getX() &&
+							enter.getY() == model.getCoordinates().getY()) {
+						timeline.playFromStart();
+						// Check for criterias to give the good pointer
+						// First case (crit1), resource goes to the left
+						if (resATraiter.getRessource()
+								.equals(crit1.getRessource())) {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(2));
+							// Index 2 corresponds to the left because it should
+							// be the last
+							// element (we rotate clockwise)
+							timeline.playFromStart();
+						}
+						// Second case (crit2), the resource goes to the right
+						else if (resATraiter.getRessource()
+								.equals(crit2.getRessource())) {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(0));
+							timeline.playFromStart();
+							// Index 0 corresponds to the first element
+						}
+						// And dead in the center if there are no matching.
+						else {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(1));
+							// Index 1 is the center
+							timeline.playFromStart();
+						}
+					}
+				}
+			}
 		}
 	}
 

@@ -90,6 +90,7 @@ public class Constructor_ implements Behaviour {
 	 * 
 	 */
 	private boolean checkIngrédients() {
+		// Xxx : always returns true
 		// Le stock temporaire pour mettre les de côté les ressources
 		// réservées au produit
 		ArrayList<Resource> stock = new ArrayList<Resource>();

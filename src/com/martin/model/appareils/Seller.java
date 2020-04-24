@@ -27,6 +27,7 @@ public class Seller extends Device {
 	@Override
 	public void action(Packing resATraiter) throws MoneyException {
 		behaviour.action(resATraiter, null);
+		timeline.playFromStart();
 	}
 
 }
