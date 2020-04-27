@@ -20,17 +20,18 @@ public class Template {
 	 */
 	// This constructor is 'private', because, this type can only be
 	// instantiated by her nested class TemplateModel.
-	private Template(Coordinates location, PointerTypes... pointers) {
+	private Template(Coordinates location, PointerTypes top, PointerTypes right,
+			PointerTypes bottom, PointerTypes left) {
 		// We put in the HashMap the coordinates, according to the location
 		// We only do this for the four first values, because they should be
 		// avoided (there are only four sides to each devices)
-		this.pointers.put(pointers[0],
+		this.pointers.put(top,
 				new Coordinates(location.getX(), location.getY() - 1));
-		this.pointers.put(pointers[1],
+		this.pointers.put(right,
 				new Coordinates(location.getX() + 1, location.getY()));
-		this.pointers.put(pointers[2],
+		this.pointers.put(bottom,
 				new Coordinates(location.getX(), location.getY() + 1));
-		this.pointers.put(pointers[3],
+		this.pointers.put(left,
 				new Coordinates(location.getX() - 1, location.getY()));
 	}
 
@@ -77,8 +78,7 @@ public class Template {
 	final static class TemplateModel {
 		// This array represents the type of the pointer of each side,
 		// considering that the device is oriented UP
-		PointerTypes[] pointers = { PointerTypes.NONE, PointerTypes.NONE,
-				PointerTypes.NONE, PointerTypes.NONE };
+		PointerTypes[] pointers = new PointerTypes[4];
 
 		/**
 		 * Creates a new TemplateModel, that can create a Template.
@@ -86,8 +86,12 @@ public class Template {
 		 * @param pointers the pointers type of each side of the device
 		 *                 (respectively: TOP, RIGHT, BOTTOM, then LEFT).
 		 */
-		public TemplateModel(PointerTypes... pointers) {
-			this.pointers = pointers;
+		public TemplateModel(PointerTypes top, PointerTypes right,
+				PointerTypes bottom, PointerTypes left) {
+			this.pointers[0] = top;
+			this.pointers[1] = right;
+			this.pointers[2] = bottom;
+			this.pointers[3] = left;
 		}
 
 		/**
@@ -103,7 +107,8 @@ public class Template {
 			case UP:
 				// The template model is based on the direction UP, so we create
 				// a new Template with the same values as this model.
-				return new Template(location, pointers);
+				return new Template(location, pointers[0], pointers[1],
+						pointers[2], pointers[3]);
 			case RIGHT:
 				// Here each values are exchanged by -1 (index 1 (UP) becomes
 				// index 0(RIGHT))

@@ -236,6 +236,14 @@ public class JeuContrôle {
 
 	}
 
+	/**
+	 * Iterates over the main GridPane children's list and returns the
+	 * first obejct in the list where the coordinates matches the the
+	 * given parameter.
+	 * 
+	 * @param xy a Coordinates' instance
+	 * @return a device in the main grid
+	 */
 	public Device findDevice(Coordinates xy) {
 		for (Node node : grille.getChildren()) {
 			if (node instanceof Device) {
@@ -249,19 +257,27 @@ public class JeuContrôle {
 		return null;
 	}
 
-	public void setArgent(long somme, boolean increase)
-			throws MoneyException {
+	/**
+	 * 
+	 * Sets the amount of money of the current game.
+	 * 
+	 * @param somme    how many money should be added or substracted
+	 * @param increase a boolean (true to increase, false to decrease)
+	 */
+	public void setArgent(long somme, boolean increase) throws MoneyException {
+		// This action has to be performed on the main JavaFX Thread
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+				// If the value is true, increases the money
 				if (increase) {
 					argentProperty.set(argentProperty.get() + somme);
-				} else {
-					if (argentProperty.get() < somme)
-						setReport(
-								"Impossibilité de modifier la somme d'argent, solde trop faible.",
-								Color.DARKRED);
-					else {
+				}
+				// Else, decrease
+				else {
+
+					if (argentProperty.get() < somme) {
+					} else {
 						argentProperty.set(argentProperty.get() - somme);
 					}
 				}
@@ -270,10 +286,43 @@ public class JeuContrôle {
 		partieEnCours.setArgent(somme, increase);
 	}
 
-	public void setAppareil(Device device, boolean ignoreCost) {
-
-		// Todo : method JeuContrôle.setAppareil(Appareil, boolean)
-
+	/**
+	 * Replaces a device at the given coordinates of the new device.
+	 * 
+	 * @param device     the new device that replaces the old
+	 * @param ignoreCost allow the user to avoid the cost of the operation
+	 * @throws MoneyException in case the money is set, if the money
+	 *                        amount is too low.
+	 */
+	public void setAppareil(Device device, boolean ignoreCost)
+			throws MoneyException {
+		// Setting the device in the database
+		partieEnCours.setAppareil(device.getModel());
+		// If we don't want to avoid the price
+		if (!ignoreCost) {
+			// Set the money to the game
+			setArgent(device.getModel().getType().getPrix(), false);
+		}
+		// For all nodes in the main gripane
+		for (Node node : grille.getChildren()) {
+			// If it is a Device
+			if (node instanceof Device) {
+				// Getting its coordinates
+				final Coordinates nodeXy = ((Device) node).getModel()
+						.getCoordinates();
+				// if the coordinates matches
+				if (nodeXy.getX() == device.getModel().getCoordinates().getX()
+						&& nodeXy.getY() == device.getModel().getCoordinates()
+								.getY()) {
+					// Remove the old device and adding the new
+					grille.getChildren().remove(node);
+					grille.add(device,
+							device.getModel().getCoordinates().getX(),
+							device.getModel().getCoordinates().getY());
+					break;
+				}
+			}
+		}
 	}
 
 	/**

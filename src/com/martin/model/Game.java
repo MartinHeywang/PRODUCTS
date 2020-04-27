@@ -29,7 +29,7 @@ public class Game {
 	@DatabaseField
 	private int gridSize;
 
-	private List<DeviceModel> listAppareilsModel;
+	private List<DeviceModel> devicesModel;
 
 	public Game() {
 	}
@@ -44,7 +44,7 @@ public class Game {
 	public Game(String nom) throws SQLException {
 		this.name = nom;
 		this.lastView = LocalDateTime.now().toString();
-		this.gridSize = 5;
+		this.gridSize = 3;
 		this.argent = 1250;
 
 		Database.daoGame().createIfNotExists(this);
@@ -71,7 +71,7 @@ public class Game {
 	 */
 	public void delete() throws SQLException {
 		// Todo : delete
-		// Does actually nothing because of hibernates replacements
+		// Does actually nothing because of ORMLite replacements
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Game {
 	 */
 	public List<DeviceModel> getAppareilsModel() {
 		try {
-			listAppareilsModel = Database.daoDeviceModel().queryBuilder()
+			devicesModel = Database.daoDeviceModel().queryBuilder()
 					.where()
 					.eq("game", idPartie)
 					.query();
@@ -89,7 +89,39 @@ public class Game {
 					+ this.toString());
 			e.printStackTrace();
 		}
-		return listAppareilsModel;
+		return devicesModel;
+	}
+
+	/**
+	 * Adds or substract money to the total.
+	 * 
+	 * @param argent   How many money should me added or substracted.
+	 * @param increase If the money should be added (true) or subtracted
+	 *                 (false).
+	 * @throws MoneyException if not enough money is available.
+	 */
+	public void setArgent(long argent, boolean increase)
+			throws MoneyException {
+		if (increase) {
+			this.argent += argent;
+		} else {
+			if (this.argent > argent) {
+				this.argent -= argent;
+			} else {
+				throw new MoneyException();
+			}
+		}
+	}
+
+	public void setAppareil(DeviceModel deviceModel)
+			throws MoneyException {
+		for (int i = 0; i < devicesModel.size(); i++) {
+			if (devicesModel.get(i).getCoordinates()
+					.propertiesEquals(deviceModel.getCoordinates())) {
+				devicesModel.set(i, deviceModel);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -166,40 +198,9 @@ public class Game {
 
 	/**
 	 * 
-	 * @param argent the new money
-	 */
-	public void setArgent(long argent) {
-		if (argent < 0) {
-		} else {
-			this.argent = argent;
-		}
-	}
-
-	/**
-	 * 
 	 * @param tailleGrille the new grid-size
 	 */
 	public void setTailleGrille(int tailleGrille) {
 		this.gridSize = tailleGrille;
-	}
-
-	/**
-	 * Adds or substract money to the total.
-	 * 
-	 * @param argent   How many money should me added or substracted.
-	 * @param increase If the money should be added.
-	 * @throws MoneyException if not enough money is available.
-	 */
-	public void setArgent(long argent, boolean increase)
-			throws MoneyException {
-		if (increase) {
-			this.argent += argent;
-		} else {
-			if (this.argent > argent) {
-				this.argent -= argent;
-			} else {
-				throw new MoneyException();
-			}
-		}
 	}
 }

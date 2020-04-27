@@ -179,7 +179,7 @@ public abstract class Device extends ImageView {
 
 		// Defs visual effect
 		this.setRotate(model.getDirection().getRotate());
-		this.setOpacity(0.85);
+		this.setOpacity(0.7);
 
 		// Def Timeline
 		timeline = new Timeline();
@@ -188,7 +188,7 @@ public abstract class Device extends ImageView {
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(750),
 				new KeyValue(this.opacityProperty(), 1)));
 		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(2),
-				new KeyValue(this.opacityProperty(), 0.85)));
+				new KeyValue(this.opacityProperty(), 0.7)));
 
 		// Def onClick
 		this.setOnMouseClicked(onClicked);
@@ -222,8 +222,6 @@ public abstract class Device extends ImageView {
 			}
 		}
 	}
-
-	// GETTERS, THEN SETTERS
 
 	public DeviceModel getModel() {
 		return model;

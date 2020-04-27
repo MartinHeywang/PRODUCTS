@@ -133,4 +133,10 @@ public class Coordinates {
 		return "Object type Coordonnees. ID : " + idCoordonnees + ". X : " + x
 				+ ". Y : " + y + ".";
 	}
+
+	public boolean propertiesEquals(Coordinates coordinates) {
+		return this.x == coordinates.getX() && this.y == coordinates.getY()
+				? true
+				: false;
+	}
 }

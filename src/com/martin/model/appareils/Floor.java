@@ -2,6 +2,7 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 
+import com.martin.Database;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.Packing;
@@ -54,12 +55,23 @@ public class Floor extends Device {
 					dialog.showAndWait();
 
 					if (dialog.getResult() instanceof Type) {
+						DeviceModel newModel = new DeviceModel(
+								model.getCoordinates(),
+								model.getGame(),
+								(Type) dialog
+										.getResult(),
+								Level.NIVEAU_1,
+								Direction.UP);
 						controller.setAppareil(
 								((Type) dialog.getResult()).getClasse()
 										.getConstructor(DeviceModel.class,
 												JeuContrôle.class)
-										.newInstance(model, controller),
+										.newInstance(
+												newModel,
+												controller),
 								false);
+						Database.daoDeviceModel().delete(model);
+						Database.daoDeviceModel().create(newModel);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
