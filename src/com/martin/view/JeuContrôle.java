@@ -192,6 +192,16 @@ public class JeuContrôle {
 
 	}
 
+	@FXML
+	private void refresh() {
+		try {
+			this.load(partieEnCours);
+		} catch (SQLException e) {
+			System.out.println(e.getLocalizedMessage());
+
+		}
+	}
+
 	/**
 	 * This method closes the game and set up the stage on the home scene,
 	 * where we can chose which game we want to load.
