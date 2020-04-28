@@ -7,7 +7,6 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martin.Database;
-import com.martin.model.appareils.Device;
 import com.martin.model.appareils.DeviceModel;
 import com.martin.model.exceptions.MoneyException;
 
@@ -51,27 +50,29 @@ public class Game {
 	}
 
 	/**
-	 * Saves this object int the database, with all its devices
+	 * Saves this object int the database, with all its devices.
 	 * 
-	 * @see Database#getAppareilDao()
-	 * @see Database#getPartieDao()
+	 * @see Database
+	 * @throws SQLException if the saving process fails.
 	 */
-	public void save(List<Device> listAppareils) {
-		// Todo : save
-		// Does actually nothing because of ORMLite replacements
+	public void save() throws SQLException {
+		// Todo : test save
+		Database.daoGame().update(this);
 	}
 
 	/**
 	 * This method deletes this game and all its devices in the database.
 	 * After invoking this method, all changes won't be saved. This object
-	 * wont' be useful.
+	 * won't be useful.
 	 * 
-	 * @throws SQLException if ther is a problem when deleting this
-	 *                      object.
+	 * @throws SQLException if the deletion process fails.
 	 */
 	public void delete() throws SQLException {
-		// Todo : delete
-		// Does actually nothing because of ORMLite replacements
+		// Xxx : delete
+		Database.daoGame().delete(this);
+		List<DeviceModel> list = Database.daoDeviceModel().queryBuilder()
+				.where().eq("partie", idPartie).query();
+		Database.daoDeviceModel().delete(list);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package com.martin.view;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.martin.Database;
@@ -123,10 +124,15 @@ public class JeuContrôle {
 								} catch (SQLException e) {
 									// Catch SQLException, because we are
 									// interacting with the database
+									e.printStackTrace();
 								}
 							}
 						}
 					}
+
+					// FixMe : bad reset of the devices pointers : error
+					// Reseting the list of buyer to fix a bug
+					Buyer.liste = new ArrayList<Coordinates>();
 
 					// Variable i for progress
 					int i = 1;
@@ -192,16 +198,6 @@ public class JeuContrôle {
 
 	}
 
-	@FXML
-	private void refresh() {
-		try {
-			this.load(partieEnCours);
-		} catch (SQLException e) {
-			System.out.println(e.getLocalizedMessage());
-
-		}
-	}
-
 	/**
 	 * This method closes the game and set up the stage on the home scene,
 	 * where we can chose which game we want to load.
@@ -211,9 +207,7 @@ public class JeuContrôle {
 	@FXML
 	public void returnToHome() throws SQLException {
 		t.interrupt();
-
-		partieEnCours.save(null);
-		// Todo : save the game
+		partieEnCours.save();
 		main.initAccueil2();
 	}
 

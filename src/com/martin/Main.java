@@ -169,7 +169,7 @@ public class Main extends Application {
 				@Override
 				public void handle(WindowEvent e) {
 					try {
-						controller.returnToHome();
+						controller.getPartieEnCours().save();
 					} catch (SQLException e1) {
 						System.out.println(e1.getLocalizedMessage());
 
