@@ -1,8 +1,10 @@
 package com.martin.view;
 
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.martin.Database;
 import com.martin.Main;
@@ -15,11 +17,12 @@ import com.martin.model.appareils.DeviceModel;
 import com.martin.model.exceptions.MoneyException;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -65,9 +68,15 @@ public class JeuContrôle {
 				report.setVisible(false);
 			}
 		});
+		argentProperty.addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+				NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+				argentLabel.setText(nf.format(newValue) + " €");
 
-		argentLabel.textProperty()
-				.bind(Bindings.concat(argentProperty.asString(), " €"));
+			};
+		});
 		grille.setFocusTraversable(true);
 	}
 
@@ -129,8 +138,6 @@ public class JeuContrôle {
 							}
 						}
 					}
-
-					// FixMe : bad reset of the devices pointers : error
 					// Reseting the list of buyer to fix a bug
 					Buyer.liste = new ArrayList<Coordinates>();
 

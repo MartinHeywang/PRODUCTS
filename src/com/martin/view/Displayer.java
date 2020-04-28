@@ -2,6 +2,8 @@ package com.martin.view;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.martin.model.Game;
 import com.martin.model.Resource;
@@ -27,10 +29,7 @@ public class Displayer extends BorderPane {
 	private Game game;
 
 	/**
-	 * <h1>Displayer</h1>
-	 * <p>
-	 * Create an object who displays the object in parameter.
-	 * </p>
+	 * Creates a Displayer.
 	 * 
 	 * @param resource the object to display
 	 */
@@ -172,7 +171,9 @@ public class Displayer extends BorderPane {
 			infos = new Label();
 			infos.setText("Dernière sauvegarde : " + instant
 					+ "\nArgent en compte : "
-					+ game.getArgent() + " €");
+					+ NumberFormat.getInstance(Locale.getDefault())
+							.format(game.getArgent())
+					+ " €");
 			this.setLeft(infos);
 
 			this.setPadding(new Insets(3, 3, 3, 3));
