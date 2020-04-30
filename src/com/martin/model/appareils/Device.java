@@ -2,12 +2,15 @@ package com.martin.model.appareils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 
+import com.martin.Database;
 import com.martin.Main;
 import com.martin.model.Coordinates;
 import com.martin.model.LocatedImage;
 import com.martin.model.Packing;
 import com.martin.model.appareils.Template.PointerTypes;
+import com.martin.model.appareils.Template.TemplateModel;
 import com.martin.model.appareils.comportement.Behaviour;
 import com.martin.model.appareils.comportement.None_;
 import com.martin.model.exceptions.MoneyException;
@@ -23,6 +26,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.util.Duration;
@@ -121,37 +125,42 @@ public abstract class Device extends ImageView {
 	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			try {
-				// Loading and opening the dialog
-				// Creating a fxml file loader
-				FXMLLoader loader = new FXMLLoader();
-				loader.setLocation(
-						Main.class.getResource("view/Device.fxml"));
+			if (event.getButton().equals(MouseButton.PRIMARY)) {
+				try {
+					// Loading and opening the dialog
+					// Creating a fxml file loader
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(
+							Main.class.getResource("view/Device.fxml"));
 
-				Dialog<Type> dialog;
-				DialogPane dialogPane;
+					Dialog<Type> dialog;
+					DialogPane dialogPane;
 
-				dialogPane = (DialogPane) loader.load();
-				dialog = new Dialog<Type>();
-				dialog.setTitle("Sélection d'appareil - PRODUCTS.");
-				dialog.setDialogPane(dialogPane);
-				dialog.initOwner(Main.stage);
-				dialog.initModality(Modality.NONE);
+					dialogPane = (DialogPane) loader.load();
+					dialog = new Dialog<Type>();
+					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
+					dialog.setDialogPane(dialogPane);
+					dialog.initOwner(Main.stage);
+					dialog.initModality(Modality.NONE);
 
-				DeviceController controller = loader.getController();
-				controller.setMainApp(model.getCoordinates().getX(),
-						model.getCoordinates().getY(), dashboard);
+					DeviceController controller = loader.getController();
+					controller.setMainApp(model.getCoordinates().getX(),
+							model.getCoordinates().getY(), dashboard);
 
-				dialog.showAndWait();
+					dialog.showAndWait();
 
-			} catch (IOException e) {
-				/*
-				 * Si une erreur est survenue lors du chargement de la fenêtre,
-				 * afficher le message plus la raison donnée par Java.
-				 */
-				System.err.println(
-						"ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
-								+ "Raison :\n" + e.getMessage());
+				} catch (IOException e) {
+					/*
+					 * Si une erreur est survenue lors du chargement de la
+					 * fenêtre, afficher le message plus la raison donnée par
+					 * Java.
+					 */
+					System.err.println(
+							"ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
+									+ "Raison :\n" + e.getMessage());
+				}
+			} else if (event.getButton().equals(MouseButton.SECONDARY)) {
+				rotate();
 			}
 		}
 	};
@@ -223,6 +232,28 @@ public abstract class Device extends ImageView {
 		}
 	}
 
+	private void rotate() {
+		// FixMe : template completely destructed after rotation
+
+		// Sets the new direction
+		model.setDirection(model.getDirection().getNext());
+		// Sets the visual effect
+		this.setRotate(model.getDirection().getRotate());
+		// Sets the template (such a module that describes the entry and the
+		// exit
+		this.setTemplate(
+				this.getTemplateModel().createTemplate(model.getCoordinates(),
+						model.getDirection()));
+		// Save it in the database
+		try {
+			Database.daoDeviceModel().update(model);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected abstract TemplateModel getTemplateModel();
+
 	public DeviceModel getModel() {
 		return model;
 	}
@@ -268,6 +299,10 @@ public abstract class Device extends ImageView {
 	 */
 	public void setController(JeuContrôle controller) {
 		this.controller = controller;
+	}
+
+	public void setTemplate(Template template) {
+		this.template = template;
 	}
 
 	/**

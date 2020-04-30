@@ -21,4 +21,9 @@ public class Press extends Device {
 				model.getDirection());
 		behaviour = new Press_(model, controller);
 	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
 }

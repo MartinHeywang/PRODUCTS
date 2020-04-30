@@ -24,6 +24,11 @@ public class Constructor extends Device {
 		behaviour = new Constructor_(model, controller);
 	}
 
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
 	public void setProduit(Resource res) throws NullPointerException {
 		if (behaviour instanceof Constructor_) {
 			((Constructor_) behaviour).setProduit(new Packing(res, 1));

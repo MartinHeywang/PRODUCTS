@@ -22,4 +22,9 @@ public class RightConveyor extends Device {
 				model.getDirection());
 		behaviour = new Conveyor_(model, controller);
 	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
 }

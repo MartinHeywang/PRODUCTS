@@ -98,7 +98,7 @@ public class Coordinates {
 	 *         </ul>
 	 */
 	public boolean isInGrid(int tailleMax) {
-		if (x < 0 || y < 0 || x > tailleMax || y > tailleMax) {
+		if (x < 0 || y < 0 || x > tailleMax - 1 || y > tailleMax - 1) {
 			return false;
 		}
 		return true;

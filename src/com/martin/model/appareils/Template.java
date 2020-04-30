@@ -8,9 +8,9 @@ import com.martin.model.LocatedHashMap;
 public class Template {
 
 	// This array represents the type of each the side
-	// The first is top, the second is left, the third is bottom (like for
+	// The first is top, the second is left, the third is bottom (like
 	// padding and margin in CSS)
-	LocatedHashMap<PointerTypes, Coordinates> pointers = new LocatedHashMap<>();
+	private LocatedHashMap<PointerTypes, Coordinates> pointers = new LocatedHashMap<>();
 
 	/**
 	 * Creates a new Template with an array of PointerTypes.
@@ -23,8 +23,6 @@ public class Template {
 	private Template(Coordinates location, PointerTypes top, PointerTypes right,
 			PointerTypes bottom, PointerTypes left) {
 		// We put in the HashMap the coordinates, according to the location
-		// We only do this for the four first values, because they should be
-		// avoided (there are only four sides to each devices)
 		this.pointers.put(top,
 				new Coordinates(location.getX(), location.getY() - 1));
 		this.pointers.put(right,

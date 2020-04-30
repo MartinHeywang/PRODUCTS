@@ -22,4 +22,9 @@ public class WireDrawer extends Device {
 		behaviour = new WireDrawer_(model, controller);
 	}
 
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
 }

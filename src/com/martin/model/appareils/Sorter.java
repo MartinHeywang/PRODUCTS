@@ -105,6 +105,11 @@ public class Sorter extends Device {
 		}
 	}
 
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
 	public void setCritère1(Resource res) {
 		this.crit1 = new Packing(res, 1);
 	}

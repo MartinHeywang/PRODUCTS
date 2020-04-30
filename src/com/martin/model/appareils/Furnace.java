@@ -21,4 +21,9 @@ public class Furnace extends Device {
 				model.getDirection());
 		behaviour = new Furnace_(model, controller);
 	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
 }

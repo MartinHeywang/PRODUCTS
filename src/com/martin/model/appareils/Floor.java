@@ -85,6 +85,14 @@ public class Floor extends Device {
 
 	@Override
 	public void action(Packing resATraiter) {
+		// Here just override the method in case this device is asked for
+		// action
+		// It souldn't be invoked but it does'nt make the thread overflowed.
+	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
 	}
 
 }

@@ -29,6 +29,11 @@ public class Buyer extends Device {
 		behaviour = new Buyer_(model, controller);
 	}
 
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
 	/**
 	 * 
 	 * @return the distributed resource

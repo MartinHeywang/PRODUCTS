@@ -56,7 +56,6 @@ public class Game {
 	 * @throws SQLException if the saving process fails.
 	 */
 	public void save() throws SQLException {
-		// Todo : test save
 		Database.daoGame().update(this);
 	}
 
@@ -68,7 +67,6 @@ public class Game {
 	 * @throws SQLException if the deletion process fails.
 	 */
 	public void delete() throws SQLException {
-		// Xxx : delete
 		Database.daoGame().delete(this);
 		List<DeviceModel> list = Database.daoDeviceModel().queryBuilder()
 				.where().eq("partie", idPartie).query();
