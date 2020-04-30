@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import com.martin.Database;
 import com.martin.Main;
@@ -47,7 +48,7 @@ public class JeuContrôle {
 	@FXML
 	private Label report;
 	@FXML
-	private Button upgradeGrid, recherche;
+	private Button upgradeGridButton;
 	@FXML
 	private ProgressBar progression;
 
@@ -216,6 +217,61 @@ public class JeuContrôle {
 		t.interrupt();
 		partieEnCours.save();
 		main.initAccueil2();
+	}
+
+	@FXML
+	public void research() {
+		// Todo : research frame
+	}
+
+	@FXML
+	public void upgradeGrid() {
+		try {
+			// Defining the new size
+			final int newTaille = partieEnCours.getTailleGrille() + 1;
+
+			// Get the price of this action
+			ResourceBundle bundle = ResourceBundle
+					.getBundle("com.martin.model.bundles.GrilleUpdate");
+			// This action might throw an exception : if we don't have enough
+			// money
+			// It the MoneyException is throwed, this method breaks and nothing
+			// is done.
+			setArgent(Long.valueOf(bundle.getString(String.valueOf(newTaille))),
+					false);
+
+			partieEnCours.setTailleGrille(newTaille);
+			// From 0 to the new size in each dimension
+			for (int x = 0; x < newTaille; x++) {
+				for (int y = 0; y < newTaille; y++) {
+					// If no devices exists in this zone
+					if (findDevice(new Coordinates(x, y)) == null) {
+						// Crete a new Model for Device
+						final DeviceModel model = new DeviceModel(
+								new Coordinates(x, y),
+								partieEnCours);
+						// Save the new model in the database
+						Database.daoDeviceModel().create(model);
+
+						// Create the new device
+						Device device = model.getType().getClasse()
+								.getConstructor(DeviceModel.class,
+										JeuContrôle.class)
+								.newInstance(model, this);
+						// Add it to the grid
+						grille.add(device,
+								device.getModel().getCoordinates().getX(),
+								device.getModel().getCoordinates().getY());
+					}
+				}
+			}
+
+			// Save the game
+			partieEnCours.save();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	class Play implements Runnable {

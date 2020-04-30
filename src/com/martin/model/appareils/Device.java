@@ -233,7 +233,6 @@ public abstract class Device extends ImageView {
 	}
 
 	private void rotate() {
-		// FixMe : template completely destructed after rotation
 
 		// Sets the new direction
 		model.setDirection(model.getDirection().getNext());
