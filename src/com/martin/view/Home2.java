@@ -1,6 +1,8 @@
 package com.martin.view;
 
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 
 import com.martin.Database;
 import com.martin.Main;
@@ -44,7 +46,10 @@ public class Home2 {
 		this.main = main;
 
 		try {
-			for (Game game : Database.daoGame().queryForAll()) {
+			List<Game> games = Database.daoGame().queryForAll();
+			games.sort(Comparator.comparing(Game::getLastView).reversed());
+
+			for (Game game : games) {
 				Displayer displayer = new Displayer(game);
 				listePartie.getChildren().add(displayer);
 

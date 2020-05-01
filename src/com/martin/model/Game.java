@@ -14,13 +14,13 @@ import com.martin.model.exceptions.MoneyException;
 public class Game {
 
 	@DatabaseField(columnName = "id", generatedId = true)
-	private Long idPartie;
+	private Long idGame;
 
 	@DatabaseField
 	private String name;
 
 	@DatabaseField
-	private String lastView;
+	private String lastSave;
 
 	@DatabaseField(columnName = "money")
 	private long argent;
@@ -42,7 +42,7 @@ public class Game {
 	 */
 	public Game(String nom) throws SQLException {
 		this.name = nom;
-		this.lastView = LocalDateTime.now().toString();
+		this.lastSave = LocalDateTime.now().toString();
 		this.gridSize = 3;
 		this.argent = 1250;
 
@@ -56,6 +56,7 @@ public class Game {
 	 * @throws SQLException if the saving process fails.
 	 */
 	public void save() throws SQLException {
+		this.lastSave = LocalDateTime.now().toString();
 		Database.daoGame().update(this);
 	}
 
@@ -69,7 +70,7 @@ public class Game {
 	public void delete() throws SQLException {
 		Database.daoGame().delete(this);
 		List<DeviceModel> list = Database.daoDeviceModel().queryBuilder()
-				.where().eq("partie", idPartie).query();
+				.where().eq("partie", idGame).query();
 		Database.daoDeviceModel().delete(list);
 	}
 
@@ -81,7 +82,7 @@ public class Game {
 		try {
 			devicesModel = Database.daoDeviceModel().queryBuilder()
 					.where()
-					.eq("game", idPartie)
+					.eq("game", idGame)
 					.query();
 		} catch (SQLException e) {
 			System.err.println("Couldn't load the devices for the game : "
@@ -128,7 +129,7 @@ public class Game {
 	 * @return the id of this game
 	 */
 	public Long getIdPartie() {
-		return idPartie;
+		return idGame;
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class Game {
 	 * @return the date of the latest save
 	 */
 	public LocalDateTime getLastView() {
-		return LocalDateTime.parse(lastView);
+		return LocalDateTime.parse(lastSave);
 	}
 
 	/**
@@ -168,7 +169,7 @@ public class Game {
 	 * @param id the new id
 	 */
 	public void setIdPartie(Long id) {
-		this.idPartie = id;
+		this.idGame = id;
 	}
 
 	/**
@@ -184,7 +185,7 @@ public class Game {
 	 * @param lastView a parsable string to LocalDateTime object
 	 */
 	public void setLastView(String lastView) {
-		this.lastView = lastView;
+		this.lastSave = lastView;
 	}
 
 	/**
@@ -192,7 +193,7 @@ public class Game {
 	 * @param lastView a parsable string to LocalDateTime object
 	 */
 	public void setLastView(LocalDateTime lastView) {
-		this.lastView = lastView.toString();
+		this.lastSave = lastView.toString();
 	}
 
 	/**

@@ -48,10 +48,14 @@ public class Main extends Application {
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println(
-					"Oh ! There is a mistake ! The logo can't be loaded...");
+					"Oh ! There is a mistake ! The logo can't be loaded... "
+							+ "Here is the full error message :\n");
+			e.printStackTrace();
 		} catch (SQLException e) {
 			System.err.println(
-					"Oh ! There is a mistake ! The games can't be loaded...");
+					"Oh ! There is a mistake ! The games can't be loaded... "
+							+ "Here is the full error message :\n");
+			e.printStackTrace();
 		}
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
