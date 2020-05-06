@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane expanded="true" stylesheets="@../css/Device.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.FloorController">
+   <content>
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="500.0" minHeight="300.0" minWidth="400.0" prefHeight="600.0" prefWidth="500.0">
+         <top>
+            <Label fx:id="coordinates" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: white;" text="Sample: X: 4, Y: 3" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </top>
+         <center>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: darkgray;" stylesheets="@ScrollPane.css" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+               <content>
+                  <VBox fx:id="listeAppareils" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+               </content>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
+            </ScrollPane>
+         </center>
+         <left>
+            <Label alignment="TOP_LEFT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefWidth="90.0" style="-fx-border-color: #1c8dff;" text="Aide : Sélectionnez un appareil dans la liste ci-contre pour le construire aux coordonnées sélectionnées (Les coordonnées X: 0, Y: 0 correspondent à la case en haut à droite)" wrapText="true" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets right="5.0" top="10.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </Label>
+         </left>
+      </BorderPane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="CLOSE" />
+   </buttonTypes>
+</DialogPane>
