@@ -51,13 +51,11 @@ public class Displayer extends BorderPane {
 			infos = new Label();
 			infos.setAlignment(Pos.TOP_CENTER);
 			infos.setText("Prix de vente : "
-					+ String.valueOf(resource.getValue()) + " �");
+					+ String.valueOf(resource.getValue()) + " €");
 			this.setBottom(infos);
 
 		} catch (Exception e) {
-			System.out.println(
-					"ERREUR lors de la cr�ation d'un Displayer � partir d'une Ressource. "
-							+ "Raison :\n" + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -82,13 +80,14 @@ public class Displayer extends BorderPane {
 
 			image = new ImageView();
 			image.setImage(new Image(new FileInputStream(new File(
-					"images/machines niveau 1/" + appareil.getURL()))));
+					"src/main/resources/images/devices_level_1/"
+							+ appareil.getURL()))));
 			this.setRight(image);
 
 			infos = new Label();
 			infos.setAlignment(Pos.TOP_CENTER);
 			infos.setText(
-					"Prix de construction : " + appareil.getPrix() + " �\n\n"
+					"Prix de construction : " + appareil.getPrix() + " €\n\n"
 							+ appareil.getDescription());
 			infos.setWrapText(true);
 			this.setLeft(infos);
@@ -169,11 +168,11 @@ public class Displayer extends BorderPane {
 					: game.getLastView().getSecond();
 
 			infos = new Label();
-			infos.setText("Derni�re sauvegarde : " + instant
+			infos.setText("Dernière sauvegarde : " + instant
 					+ "\nArgent en compte : "
 					+ NumberFormat.getInstance(Locale.getDefault())
 							.format(game.getArgent())
-					+ " �");
+					+ " €");
 			this.setLeft(infos);
 
 			this.setPadding(new Insets(3, 3, 3, 3));

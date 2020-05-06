@@ -3,45 +3,43 @@ package com.martinheywang.model.devices;
 public enum Type {
 
 	/*
-	 * La liste des appareils actuellement en jeu. Chacun contient plein
-	 * d'informations n�cessaires, comme le nom, la classe qui le g�re...
-	 * L'ouverture de la fen�tre de Appareil.fxml se sert de cette enum
-	 * pour afficher les nombres de appareils notamment. Si on en enl�ve
-	 * un, il dispara�t de la fen�tre... Note : le sol ne devant pas
-	 * s'afficher, il doit ABSOLUMENT rester en derni�re position.
+	 * The list of all type that devices can have in the base of the game.
+	 * Each contains a name, the class that take care of the device. Note
+	 * : the floor must stay in the last position, because this position
+	 * is ignored when displaying the Floor.fxml scene.
 	 */
 
-	ACHETEUR("Acheteur", "Acheteur.png", "Ach�te les ressources de base.", 500,
+	BUYER("Acheteur", "Acheteur.png", "Achète les ressources de base.", 500,
 			Buyer.class),
-	VENDEUR("Vendeur", "Vendeur.png",
+	SELLER("Vendeur", "Vendeur.png",
 			"Vend les ressources et objets \nlui parvenant.", 500,
 			Seller.class),
-	CONVOYEUR("Convoyeur", "Convoyeur.png",
+	CONVEYOR("Convoyeur", "Convoyeur.png",
 			"Transporte les ressources sur \nla case du bas.", 100,
 			Conveyor.class),
-	CONVOYEUR_DROITE("Convoyeur droite", "Convoyeur_Droite.png",
+	RIGHT_CONVEYOR("Convoyeur droite", "Convoyeur_Droite.png",
 			"Transporte les ressources sur \nla case de droite.", 100,
 			RightConveyor.class),
-	CONVOYEUR_GAUCHE("Convoyeur gauche", "Convoyeur_Gauche.png",
+	LEFT_CONVEYOR("Convoyeur gauche", "Convoyeur_Gauche.png",
 			"Transporte les ressources sur \nla case de gauche.", 100,
 			LeftConveyor.class),
-	FOUR("Four", "Four.png",
+	FURNACE("Four", "Four.png",
 			"Fond toutes les ressources en lingots, \nsauf le diamant.", 2000,
 			Furnace.class),
-	PRESSE("Presse", "Presse.png",
+	PRESS("Presse", "Presse.png",
 			"Transforme toutes les ressources en plaques, \nsauf le diamant.",
 			2000, Press.class),
-	PRESSE_FIL("Presse � fil", "Appareil_Fil.png",
+	WIRE_DRAWER("Presse à fil", "Appareil_Fil.png",
 			"Transforme les ressources en fil, \nsauf le diamant.", 2000,
 			WireDrawer.class),
-	ASSEMBLEUR("Assembleur", "Assembleur.png",
+	CONSTRUCTOR("Assembleur", "Assembleur.png",
 			"Assemble les ressources pour les \ntransformer en produits.",
 			10_000, Constructor.class),
-	TRIEUR("Trieur", "Trieur.png",
-			"Trie les ressources selon un sch�ma pr�cis \nde votre d�cision.",
+	SORTER("Trieur", "Trieur.png",
+			"Trie les ressources selon un schéma précis \nde votre décision.",
 			17500, Sorter.class),
 
-	SOL("Sol", "Sol.png", "Le sol � nu sans appareil. Il ne fait rien.", 0,
+	FLOOR("Sol", "Sol.png", "Le sol à nu sans appareil. Il ne fait rien.", 0,
 			Floor.class);
 
 	// Le nom, l'url, la description et la classe

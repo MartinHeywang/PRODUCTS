@@ -61,9 +61,7 @@ public class Buyer_ implements Behaviour {
 			if (isValid(distributedResource.getRessource())) {
 				if (controller.getPartieEnCours().getArgent() < 5
 						+ Device.getElectricity())
-					throw new MoneyException("Le comportement d'un "
-							+ "acheteur n'a pas pu �tre r�alis� car le solde "
-							+ "d'argent n'�tait pas assez important.");
+					throw new MoneyException();
 				else {
 					distributedResource.addQuantity(1);
 					controller.setArgent(5 + Device.getElectricity(), false);
@@ -116,7 +114,7 @@ public class Buyer_ implements Behaviour {
 
 	/**
 	 * 
-	 * @return resDistribu�e the distributed resource
+	 * @return distributedResource the distributed resource
 	 */
 	public Packing getDistributedResource() {
 		return distributedResource;

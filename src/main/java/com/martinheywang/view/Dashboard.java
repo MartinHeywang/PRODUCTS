@@ -27,18 +27,18 @@ public class Dashboard extends GridPane {
 		row0.getChildren().add(view);
 
 		VBox rotateBox = new VBox();
-		Label rotateLabel = new Label("Tourner cet appareil de 90�");
+		Label rotateLabel = new Label("Tourner cet appareil de 90°");
 		rotateBox.getChildren().add(rotateLabel);
 		rotateBox.setStyle("-fx-border-color: cornflowerblue");
 
 		HBox row2 = new HBox();
 		VBox deleteBox = new VBox();
-		Label deleteLabel = new Label("D�truire cet appareil : (!!!)");
+		Label deleteLabel = new Label("Détruire cet appareil : (!!!)");
 		deleteBox.getChildren().add(deleteLabel);
 		deleteBox.setStyle("-fx-border-color: darkred");
 
 		VBox upgradeBox = new VBox();
-		Label upgradeLabel = new Label("Am�liorer l'appareil :");
+		Label upgradeLabel = new Label("Améliorer l'appareil :");
 		upgradeBox.getChildren().add(upgradeLabel);
 		upgradeBox.setStyle("-fx-border-color: darkgreen");
 

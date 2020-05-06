@@ -34,14 +34,14 @@ public class Floor extends Device {
 				try {
 					FXMLLoader loader = new FXMLLoader();
 					loader.setLocation(
-							Main.class.getResource("view/Floor.fxml"));
+							getClass().getResource("/fxml/Floor.fxml"));
 
 					Dialog<Object> dialog;
 					DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
 					dialog = new Dialog<Object>();
-					dialog.setTitle("S�lectionnez un appareil � construire");
+					dialog.setTitle("Sélectionnez un appareil à construire");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.stage);
 					dialog.initModality(Modality.NONE);

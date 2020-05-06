@@ -50,9 +50,9 @@ public abstract class Device extends ImageView {
 
 	/**
 	 * The Behaviour is basically his behaviour that runs each iterations
-	 * of the Play class in JeuContr�le.
+	 * of the Play class in GameController.
 	 * 
-	 * @see JeuContr�le
+	 * @see GameController
 	 * 
 	 * @see Behaviour
 	 */
@@ -62,7 +62,7 @@ public abstract class Device extends ImageView {
 	 * The controller is useful when you want to change somme data about
 	 * the game.
 	 * 
-	 * @see JeuContr�le
+	 * @see GameController
 	 */
 	protected GameController controller;
 
@@ -131,14 +131,14 @@ public abstract class Device extends ImageView {
 					// Creating a fxml file loader
 					FXMLLoader loader = new FXMLLoader();
 					loader.setLocation(
-							Main.class.getResource("view/Device.fxml"));
+							getClass().getResource("/fxml/Device.fxml"));
 
 					Dialog<Type> dialog;
 					DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
 					dialog = new Dialog<Type>();
-					dialog.setTitle("S�lection d'appareil - PRODUCTS.");
+					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.stage);
 					dialog.initModality(Modality.NONE);
@@ -149,14 +149,7 @@ public abstract class Device extends ImageView {
 					dialog.showAndWait();
 
 				} catch (IOException e) {
-					/*
-					 * Si une erreur est survenue lors du chargement de la
-					 * fen�tre, afficher le message plus la raison donn�e par
-					 * Java.
-					 */
-					System.err.println(
-							"ERREUR dans Appareil.java entre les lignes 59 et 79 excluses."
-									+ "Raison :\n" + e.getMessage());
+					e.printStackTrace();
 				}
 			} else if (event.getButton().equals(MouseButton.SECONDARY)) {
 				rotate();
@@ -282,7 +275,7 @@ public abstract class Device extends ImageView {
 	}
 
 	/**
-	 * @return the �lectricit�
+	 * @return the electricity
 	 */
 	public static int getElectricity() {
 		return electricity;

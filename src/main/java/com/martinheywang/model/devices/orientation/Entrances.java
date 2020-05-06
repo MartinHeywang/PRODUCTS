@@ -8,7 +8,7 @@ import com.martinheywang.model.devices.Direction;
 public class Entrances {
 
 	/**
-	 * The type Entr�es cannot be instantiated.
+	 * The type Entances cannot be instantiated.
 	 */
 	private Entrances() {
 	}

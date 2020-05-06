@@ -75,7 +75,7 @@ public class Packing {
 
 	/**
 	 * 
-	 * @param quantit� the quantity to set
+	 * @param quantity the quantity to set
 	 */
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
@@ -108,6 +108,6 @@ public class Packing {
 	@Override
 	public String toString() {
 		return "Object type Paquet. Id : " + idPaquet + ". Ressource : "
-				+ resource + ". Quantit� : " + quantity + ".";
+				+ resource + ". Quantity : " + quantity + ".";
 	}
 }

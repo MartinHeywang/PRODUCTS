@@ -38,7 +38,6 @@ import javafx.scene.paint.Color;
 
 public class GameController {
 
-	// L'instance de main, pour charger les diff�rentes pages
 	private Main main;
 
 	@FXML
@@ -108,7 +107,7 @@ public class GameController {
 						public void run() {
 							setReport(
 									"Chargement de la partie en cours...\n"
-											+ "L'op�ration peut durer quelques instants.",
+											+ "L'opération peut durer quelques instants.",
 									Color.INDIANRED);
 						}
 					});

@@ -76,22 +76,22 @@ public class Main extends Application {
 	 * @see Home#setMainApp(Main)
 	 */
 	public void initAccueil() {
-		// Permet de cherger des fichiers .fxml
+		// Allow to load .fxml files
 		FXMLLoader loader = new FXMLLoader();
-		// D�finit l'emplacement o� chercher
 
 		try {
+			// Defining the file to search
 			loader.setLocation(
 					getClass().getResource("/fxml/Home.fxml"));
-			// Charge le fichier dans notre variable de contenu, comme pr�vu
+			// Loads the file
 			BorderPane conteneurPrincipal = (BorderPane) loader.load();
-			// Fen�tre edans laquelle s'affiche notre contenu
+			// Creating a new scene and add the loaded file
 			Scene scene = new Scene(conteneurPrincipal);
-			// Montre � la fen�tre quel sc�ne utiliser
+			// Setting the scene to the main stage
 			stage.setScene(scene);
 			stage.setResizable(false);
 
-			// Le contr�leur de la fen�tre
+			// Creating the controller of the scene
 			Home controller = loader.getController();
 			controller.setMainApp(this);
 
@@ -99,7 +99,7 @@ public class Main extends Application {
 
 				@Override
 				public void handle(KeyEvent e) {
-					if (e.getCode() == KeyCode.ENTER) { // Si on tape sur entr�e
+					if (e.getCode() == KeyCode.ENTER) {
 						controller.seConnecter();
 					}
 				}
@@ -121,22 +121,22 @@ public class Main extends Application {
 	 * @see Home2#setMainApp(Main)
 	 */
 	public void initAccueil2() {
-		// Permet de charger des fichiers .fxml
+		// Allow to load .fxml files
 		FXMLLoader loader = new FXMLLoader();
 
 		try {
-			// D�finit l'emplacement o� chercher le fichier
+			// Which file do we want to load
 			loader.setLocation(
 					getClass().getResource("/fxml/Home2.fxml"));
-			// Charge le fichier dans notre variable de contenu, comme pr�vu
+			// Load the file, obviously
 			BorderPane conteneurPrincipal = (BorderPane) loader.load();
-			// Fen�tre dans laquelle s'affiche notre contenu
+			// Creating a new scene, in which we put the loaded file
 			Scene scene = new Scene(conteneurPrincipal);
-			// Montre � la fen�tre quel stage utiliser, et donc son contenu
+			// Setting the scene of th stage
 			stage.setScene(scene);
 			stage.setResizable(false);
 
-			// Le contr�leur de la fen�tre
+			// Creating a controller for our scene
 			Home2 controler = loader.getController();
 			controler.setMainApp(this);
 
@@ -153,9 +153,9 @@ public class Main extends Application {
 	 * 
 	 * @param game the game to load
 	 * 
-	 * @see JeuContr�le
-	 * @see JeuContr�le#load(Game)
-	 * @see JeuContr�le#setMainApp(Main)
+	 * @see GameController
+	 * @see GameController#load(Game)
+	 * @see GameController#setMainApp(Main)
 	 */
 	public void initGame(Game game) {
 		try {

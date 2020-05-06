@@ -32,7 +32,7 @@
          <children>
             <TitledPane maxHeight="300.0" style="-fx-box-border: transparent" animated="false" collapsible="false" text="Sélectionnez une partie ci-dessous..." VBox.vgrow="ALWAYS">
                <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;" stylesheets="@ScrollPane.css" vbarPolicy="ALWAYS">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;" stylesheets="@../css/ScrollPane.css" vbarPolicy="ALWAYS">
                      <content>
                         <VBox fx:id="listePartie" maxWidth="1.7976931348623157E308" spacing="2.0" />
                      </content>

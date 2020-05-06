@@ -21,20 +21,16 @@ public class FloorController {
 	private Dialog<Object> dialog;
 
 	/**
-	 * <h1>initialize</h1>
-	 * <p>
 	 * Initialize the build dialog, where we can build devices on the
 	 * ground at the cooresponding coordinates. Called automatically as a
 	 * constructor.
-	 * </p>
 	 */
 	public void initialize() {
 		for (int i = 0; i < Type.values().length - 1; i++) {
-			// On ajoute les displayers des appareils dans la liste pr�vue � cet
-			// effet
+			// We add to the VBox all the available devices in Displayer
 			listeAppareils.getChildren().add(new Displayer(Type.values()[i]));
 
-			// On ajoute un listener du clic sur un displayer
+			// We add listener in case the user clicks on a displayer
 			listeAppareils.getChildren().get(i)
 					.setOnMouseClicked(new EventHandler<MouseEvent>() {
 

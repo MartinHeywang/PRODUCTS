@@ -76,7 +76,7 @@ public class DeviceModel {
 	 */
 	public DeviceModel(Coordinates coordinates, Game game) {
 		this.game = game;
-		this.type = Type.SOL;
+		this.type = Type.FLOOR;
 		this.level = Level.NIVEAU_1;
 		this.direction = Direction.UP;
 

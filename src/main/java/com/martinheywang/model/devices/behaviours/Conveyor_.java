@@ -25,10 +25,7 @@ public class Conveyor_ implements Behaviour {
 				|| i < resATraiter.getQuantity(); i++) {
 			if (controller.getPartieEnCours().getArgent() < 5
 					+ Device.getElectricity())
-				throw new MoneyException(
-						"Le comportement d'un appareil "
-								+ "n'a pas pu �tre r�alis� car le solde "
-								+ "d'argent n'�tait pas assez important.");
+				throw new MoneyException();
 
 			controller.setArgent(Device.getElectricity(), false);
 		}

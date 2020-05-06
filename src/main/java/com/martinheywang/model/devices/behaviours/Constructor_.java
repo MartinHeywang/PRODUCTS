@@ -64,10 +64,7 @@ public class Constructor_ implements Behaviour {
 
 				if (controller.getPartieEnCours().getArgent() < 5
 						+ Device.getElectricity())
-					throw new MoneyException(
-							"Le comportement d'un acheteur "
-									+ "n'a pas pu �tre r�alis� car le solde "
-									+ "d'argent n'�tait pas assez important.");
+					throw new MoneyException();
 
 				if (checkIngredients()) {
 					tempo.addQuantity(1);
@@ -80,22 +77,18 @@ public class Constructor_ implements Behaviour {
 
 	/**
 	 * 
-	 * <h1>checkIngr�dients</h1>
-	 * <p>
 	 * Checks if thre are enough resources to built the product
-	 * </p>
 	 * 
 	 * @return boolean if the requires resources are available
 	 * 
 	 */
 	private boolean checkIngredients() {
-		// Le stock temporaire pour mettre les de c�t� les ressources
-		// r�serv�es au produit
+		// A temo stock to save the resources (in case there aren't enough
+		// ingredients)
 		ArrayList<Resource> stock = new ArrayList<Resource>();
-		// On vide les �l�ments de la recette
+		// We make the recipes list empty
 		recipes = new ArrayList<Resource>();
-		// Puis on la re-remplie en fonction des ressources de la quantit�
-		// Cette appareil prend en charge tous les sch�ma � 2 paquets
+		// Then we refill it with the current recipe
 		for (int i = 0; i < product.getRessource().getRecette().get(0)
 				.getQuantity(); i++) {
 			recipes.add(
@@ -107,25 +100,26 @@ public class Constructor_ implements Behaviour {
 					product.getRessource().getRecette().get(1).getRessource());
 		}
 
-		// Pour la taille de la recette cr�e
+		// For the size of the recipe
 		for (int j = 0; j < product.getRessource().getRecette().size(); j++) {
-			// Si la ressource est pr�sente dans le stock
+			// If the resource is available in the stock
 			if (resources.contains(recipes.get(j))) {
-				// On l'ajoute au stock temporaire et on l'enl�ve du stockage
+				// We add it to teh tempo stock and we remove it form the
+				// storage
 				stock.add(recipes.get(j));
 				resources.remove(recipes.get(j));
 			}
-			// Sinon...
+			// Else (the resource isn't there)
 			else {
-				// On remet les ressource du stock dans le stockage principal
+				// We add all the resources from the stock
 				resources.addAll(stock);
-				// On retourne faux pour dire que l'action ne peut pas continuer
-				// (les ressources ne sont pas suffisantes)
+				// We break the method by returning false (we can find enough
+				// ingredients)
 				return false;
 			}
 		}
-		// On retourne vrai car toutes les ressources n�cessaires sont
-		// disponibles
+		// If everyting worked (so there are enough ingredients), we return
+		// true
 		return true;
 	}
 

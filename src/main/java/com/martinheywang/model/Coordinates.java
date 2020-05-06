@@ -4,14 +4,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.devices.Direction;
 
-/**
- * <h1>class Coordonn�es</h1>
- * <p>
- * Object who defines x and y coordinates.<br/>
- * Mainly used by devices.
- * </p>
- *
- */
 @DatabaseTable
 public class Coordinates {
 
@@ -22,10 +14,7 @@ public class Coordinates {
 	private int x, y;
 
 	/**
-	 * <h1>constructor Coordonn�es</h1>
-	 * <p>
-	 * Creates coordinates.
-	 * </p>
+	 * Creates a Coordinates object
 	 * 
 	 * @param x x coordinates of the object
 	 * @param y y coordinates of the object
@@ -114,7 +103,7 @@ public class Coordinates {
 	 *         <li>true if the coordinate is near from the other
 	 *         <li>false if the coordinate isn't near from the other
 	 *         </ul>
-	 * @param coordonn�es a coordinate object to compare
+	 * @param coordinates a coordinate object to compare
 	 */
 	public boolean isNearFrom(Coordinates coordinates) {
 		if (this.x == coordinates.getX() + 1

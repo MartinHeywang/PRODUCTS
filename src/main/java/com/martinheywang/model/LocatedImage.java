@@ -29,6 +29,7 @@ public class LocatedImage extends Image {
 	public LocatedImage(String str) throws FileNotFoundException {
 		super(new FileInputStream(new File(str)));
 		this.str = str;
+		System.out.println("URL : " + str);
 	}
 
 	/**

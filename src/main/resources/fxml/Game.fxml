@@ -16,7 +16,7 @@
    <center>
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@ScrollPane.css">
+            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@../css/ScrollPane.css">
                <content>
                   <GridPane fx:id="grille" gridLinesVisible="true">
             </GridPane>
