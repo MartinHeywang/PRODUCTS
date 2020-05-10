@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<DialogPane expanded="true" stylesheets="@../css/Device.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.DeviceController">
+<DialogPane expanded="true" stylesheets="@/Device.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.DeviceController">
    <buttonTypes>
       <ButtonType fx:constant="CLOSE" />
    </buttonTypes>
@@ -22,7 +22,7 @@
             </Label>
          </top>
          <center>
-            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: darkgray;" stylesheets="@../css/ScrollPane.css" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: darkgray;" stylesheets="@/ScrollPane.css" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets top="10.0" />
                </BorderPane.margin>

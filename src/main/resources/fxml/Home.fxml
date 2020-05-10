@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #242729;" stylesheets="@../css/Home.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.Home">
+<BorderPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #242729;" stylesheets="@/Home.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.Home">
    <top>
       <GridPane alignment="CENTER" prefHeight="250.0" BorderPane.alignment="CENTER">
         <columnConstraints>

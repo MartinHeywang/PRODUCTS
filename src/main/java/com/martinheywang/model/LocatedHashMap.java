@@ -74,4 +74,13 @@ public class LocatedHashMap<K, V> {
 
 		return map.get(k).size() - 1 < index ? null : map.get(k).get(index);
 	}
+
+	/**
+	 * Returns the size of the map (the number of lists in the map)
+	 *
+	 * @return the size of the map
+	 */
+	public int size() {
+		return map.size();
+	}
 }

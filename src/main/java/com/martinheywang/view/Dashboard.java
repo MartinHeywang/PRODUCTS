@@ -2,66 +2,115 @@ package com.martinheywang.view;
 
 import java.io.FileNotFoundException;
 
+import com.martinheywang.model.LocatedHashMap;
 import com.martinheywang.model.LocatedImage;
 import com.martinheywang.model.devices.Device;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
-public class Dashboard extends GridPane {
+public class Dashboard extends VBox {
 
 	public Dashboard(Device device) throws FileNotFoundException {
 
-		HBox row0 = new HBox();
+		// Default styling for nodes
+		final String border = "-fx-border-color: white";
 
-		ImageView view = new ImageView();
-		view.setImage(new LocatedImage(
-				device.getModel().getNiveau().getURL()
-						+ device.getModel().getType().getURL()));
-		row0.getChildren().add(view);
+		HBox title = new HBox();
+		ImageView view = new ImageView(
+				new LocatedImage(
+						((LocatedImage) device.getImage()).getURL()));
+		view.setScaleX(0.8);
+		view.setScaleY(0.8);
 
-		VBox rotateBox = new VBox();
-		Label rotateLabel = new Label("Tourner cet appareil de 90°");
-		rotateBox.getChildren().add(rotateLabel);
-		rotateBox.setStyle("-fx-border-color: cornflowerblue");
+		Label titleLabel = new Label("Tableau de bord :");
+		title.getChildren().add(view);
+		title.getChildren().add(titleLabel);
+		title.setStyle(border);
+		title.setMinHeight(200);
+		title.setAlignment(Pos.CENTER_LEFT);
 
-		HBox row2 = new HBox();
-		VBox deleteBox = new VBox();
-		Label deleteLabel = new Label("Détruire cet appareil : (!!!)");
-		deleteBox.getChildren().add(deleteLabel);
-		deleteBox.setStyle("-fx-border-color: darkred");
+		LocatedHashMap<Integer, String> rowsContent = new LocatedHashMap<>();
+		rowsContent.put(0, "src/main/resources/images/dashboard/Upgrade.png");
+		rowsContent.put(0, "Améliorer l'appareil");
+		rowsContent.put(0,
+				"L'appareil réalisera une action de plus toutes les secondes.");
+		rowsContent.put(0, "- 50 K€");
 
-		VBox upgradeBox = new VBox();
-		Label upgradeLabel = new Label("Améliorer l'appareil :");
-		upgradeBox.getChildren().add(upgradeLabel);
-		upgradeBox.setStyle("-fx-border-color: darkgreen");
+		rowsContent.put(1, "src/main/resources/images/dashboard/Rotate.png");
+		rowsContent.put(1, "Tourner l'appareil");
+		rowsContent.put(1,
+				"Tourner l'appareil de 90 degrès dans les sens des aiguilles d'une montre.");
+		rowsContent.put(1, "Gratuit");
 
-		row2.getChildren().add(deleteBox);
-		row2.getChildren().add(upgradeBox);
-		HBox.setHgrow(deleteBox, Priority.ALWAYS);
-		HBox.setHgrow(upgradeBox, Priority.ALWAYS);
+		rowsContent.put(2, "src/main/resources/images/dashboard/Sell.png");
+		rowsContent.put(2, "Vendre l'appareil");
+		rowsContent.put(2,
+				"Détruire l'appareil et le vendre.");
+		rowsContent.put(2, "+ 7500 €");
 
-		for (int i = 0; i < 3; i++) {
-			RowConstraints row = new RowConstraints();
-			row.setVgrow(Priority.ALWAYS);
-			this.getRowConstraints().add(row);
+		this.getChildren().add(title);
+
+		for (int i = 0; i < rowsContent.size(); i++) {
+
+			HBox rowBox = new HBox();
+			rowBox.setMinHeight(120d);
+			ImageView rowView = new ImageView(new LocatedImage(
+					rowsContent.get(i, 0)));
+			rowView.setScaleX(0.5);
+			rowView.setScaleY(0.5);
+			rowView.setFitWidth(100d);
+			rowView.setFitHeight(100d);
+
+			HBox rowTextBox = new HBox();
+			VBox rowLeftTextBox = new VBox();
+			Label rowLabel = new Label(rowsContent.get(i, 1));
+			rowLabel.setFont(new Font(21d));
+			Label rowDescLabel = new Label(
+					rowsContent.get(i, 2));
+			rowDescLabel.setWrapText(true);
+			rowDescLabel.setFont(new Font(16d));
+			Label rowPriceLabel = new Label(rowsContent.get(i, 3));
+			rowPriceLabel.setFont(new Font(18d));
+
+			rowTextBox.getChildren().add(rowLeftTextBox);
+			rowLeftTextBox.getChildren().add(rowLabel);
+			rowLeftTextBox.getChildren().add(rowDescLabel);
+			rowTextBox.getChildren().add(rowPriceLabel);
+			rowBox.getChildren().add(rowView);
+			rowBox.getChildren().add(rowTextBox);
+
+			rowTextBox.setAlignment(Pos.CENTER_RIGHT);
+			rowLeftTextBox.setAlignment(Pos.CENTER_LEFT);
+			rowBox.setAlignment(Pos.CENTER_LEFT);
+			rowLeftTextBox.setPrefWidth(275d);
+
+			this.getChildren().add(rowBox);
 		}
-		for (int i = 0; i < 1; i++) {
-			ColumnConstraints col = new ColumnConstraints();
-			col.setHgrow(Priority.ALWAYS);
-			this.getColumnConstraints().add(col);
-		}
 
-		this.addRow(0, row0);
-		this.addRow(1, rotateBox);
-		this.addRow(2, row2);
-		this.setGridLinesVisible(true);
+		// And a little bit of space !
+		this.setSpacing(7d);
+		this.setPadding(new Insets(3, 5, 3, 5));
+	}
+
+	/**
+	 * This methods adds the given Node in the dashboard between the
+	 * general decription and the options (upgarde, rotate, delete).
+	 * Defines your styles (font-size, color...), but the background is
+	 * already defined. However, you need to define the Event(s)
+	 * Listener(s) You can always add another Node where you want with the
+	 * method add(Integer index, Node node).
+	 * 
+	 * @param node the node to add
+	 */
+	public void addNode(Node node) {
+		this.getChildren().add(1, node);
 	}
 
 }

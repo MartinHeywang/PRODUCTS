@@ -82,7 +82,7 @@ public class Main extends Application {
 		try {
 			// Defining the file to search
 			loader.setLocation(
-					getClass().getResource("/fxml/Home.fxml"));
+					getClass().getResource("/Home.fxml"));
 			// Loads the file
 			BorderPane conteneurPrincipal = (BorderPane) loader.load();
 			// Creating a new scene and add the loaded file
@@ -127,7 +127,7 @@ public class Main extends Application {
 		try {
 			// Which file do we want to load
 			loader.setLocation(
-					getClass().getResource("/fxml/Home2.fxml"));
+					getClass().getResource("/Home2.fxml"));
 			// Load the file, obviously
 			BorderPane conteneurPrincipal = (BorderPane) loader.load();
 			// Creating a new scene, in which we put the loaded file
@@ -161,7 +161,7 @@ public class Main extends Application {
 		try {
 
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("/fxml/Game.fxml"));
+			loader.setLocation(getClass().getResource("/Game.fxml"));
 
 			BorderPane Bp = (BorderPane) loader.load();
 			Scene scene = new Scene(Bp);

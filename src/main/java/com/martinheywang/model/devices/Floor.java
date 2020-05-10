@@ -34,7 +34,7 @@ public class Floor extends Device {
 				try {
 					FXMLLoader loader = new FXMLLoader();
 					loader.setLocation(
-							getClass().getResource("/fxml/Floor.fxml"));
+							getClass().getResource("/Floor.fxml"));
 
 					Dialog<Object> dialog;
 					DialogPane dialogPane;

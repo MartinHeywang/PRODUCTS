@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" stylesheets="@../css/Game.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" stylesheets="@/Game.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
    <center>
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@../css/ScrollPane.css">
+            <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@/ScrollPane.css">
                <content>
                   <GridPane fx:id="grille" gridLinesVisible="true">
             </GridPane>

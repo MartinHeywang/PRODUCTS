@@ -131,7 +131,7 @@ public abstract class Device extends ImageView {
 					// Creating a fxml file loader
 					FXMLLoader loader = new FXMLLoader();
 					loader.setLocation(
-							getClass().getResource("/fxml/Device.fxml"));
+							getClass().getResource("/Device.fxml"));
 
 					Dialog<Type> dialog;
 					DialogPane dialogPane;
@@ -227,7 +227,7 @@ public abstract class Device extends ImageView {
 		}
 	}
 
-	private void rotate() {
+	public void rotate() {
 
 		// Sets the new direction
 		model.setDirection(model.getDirection().getNext());
