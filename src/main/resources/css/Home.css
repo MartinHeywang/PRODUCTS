@@ -7,6 +7,10 @@
 	-fx-border-color: green;
 }
 
+.titled-pane{
+	-fx-box-border: transparent;
+}
+
 /* The basic Button */
 .button{
 	-fx-border-color: #107801;

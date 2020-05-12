@@ -4,12 +4,12 @@
 
   <!-- Basic informations about the app -->
   <groupId>com.martinheywang</groupId>
-  <artifactId>MavenProducts</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>Products</artifactId>
+  <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- The project -->
-  <name>MavenProducts</name>
+  <name>Products</name>
   <description>
   	Products is a game, where you can build devices to become wealthy. Create assembly lines. Build, earn, build... !
   </description>
@@ -54,7 +54,7 @@
    <!-- The resources (only the fxml folder need to filtered) -->
    <resource>
    		<directory>src/main/resources/css</directory>
-   		<filtering>true</filtering>
+   		<filtering>false</filtering>
    	</resource>
    	<resource>
    		<directory>src/main/resources/fxml</directory>
@@ -77,14 +77,6 @@
 
   <!-- All dependencies of my project -->
   <dependencies>
-  <!-- JUnit default -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13</version>
-      <scope>test</scope>
-    </dependency>
-    
     <!-- SQLite JDBC -->
     <dependency>
     	<groupId>org.xerial</groupId>

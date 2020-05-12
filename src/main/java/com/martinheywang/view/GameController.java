@@ -72,6 +72,7 @@ public class GameController {
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
 				NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+				System.out.println(nf.format(newValue));
 				argentLabel.setText(nf.format(newValue) + " €");
 
 			};
@@ -94,6 +95,8 @@ public class GameController {
 	 * @param partieToLoad the game to load
 	 */
 	public void load(Game partieToLoad) throws SQLException {
+		// FixMe : money not loading when laoding twice the same game
+
 		// Save this instance (used a little bit later)
 		GameController controller = this;
 		// The task defines how to load the game
@@ -124,6 +127,8 @@ public class GameController {
 						for (int x = 0; x < taille; x++) {
 							for (int y = 0; y < taille; y++) {
 								try {
+									// Creating new devices models in case there
+									// aren't enough
 									final DeviceModel model = new DeviceModel(
 											new Coordinates(x, y),
 											partieToLoad);
@@ -185,6 +190,8 @@ public class GameController {
 							// still loading and sets the money label
 							setReport("Bienvenue !", Color.CORNFLOWERBLUE);
 							argentProperty.set(partieToLoad.getArgent());
+							argentLabel.setText(NumberFormat.getInstance()
+									.format(partieToLoad.getArgent()) + " €");
 						}
 					});
 				} catch (Exception e) {
@@ -230,7 +237,7 @@ public class GameController {
 
 			// Get the price of this action
 			ResourceBundle bundle = ResourceBundle
-					.getBundle("com.martin.model.bundles.GrilleUpdate");
+					.getBundle("com.martinheywang.model.bundles.GrilleUpdate");
 			// This action might throw an exception : if we don't have enough
 			// money
 			// It the MoneyException is throwed, this method breaks and nothing
@@ -326,29 +333,38 @@ public class GameController {
 	 * 
 	 * Sets the amount of money of the current game.
 	 * 
-	 * @param somme    how many money should be added or substracted
+	 * @param amont    how many money should be added or substracted
 	 * @param increase a boolean (true to increase, false to decrease)
 	 */
-	public void setArgent(long somme, boolean increase) throws MoneyException {
+	public void setArgent(long amont, boolean increase) throws MoneyException {
 		// This action has to be performed on the main JavaFX Thread
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				// If the value is true, increases the money
 				if (increase) {
-					argentProperty.set(argentProperty.get() + somme);
+					argentProperty.set(argentProperty.get() + amont);
 				}
 				// Else, decrease
 				else {
 
-					if (argentProperty.get() < somme) {
+					if (argentProperty.get() < amont) {
 					} else {
-						argentProperty.set(argentProperty.get() - somme);
+						argentProperty.set(argentProperty.get() - amont);
 					}
 				}
 			}
 		});
-		partieEnCours.setArgent(somme, increase);
+		partieEnCours.setArgent(amont, increase);
+	}
+
+	/**
+	 * Sets the money amount to the value given as parameter.
+	 * 
+	 * @param amount the value
+	 */
+	public void setArgent(long amount) {
+		Platform.runLater(() -> argentProperty.set(amount));
 	}
 
 	/**

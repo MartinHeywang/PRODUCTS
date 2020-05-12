@@ -7,7 +7,7 @@ import java.util.List;
 import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Game;
-	
+
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -63,7 +63,7 @@ public class Home2 {
 		} catch (SQLException e) {
 			System.err.println(
 					"Couldn't load the list from the table games. Here is the full error message:\n\n\n");
-
+			e.printStackTrace();
 		}
 	}
 }

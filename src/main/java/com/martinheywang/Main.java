@@ -1,8 +1,5 @@
 package com.martinheywang;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -36,9 +33,8 @@ public class Main extends Application {
 			// Little stage paramatering
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
-			stage.getIcons().add(new Image(
-					new FileInputStream(
-							new File("src/main/resources/images/Icone.png"))));
+			stage.getIcons().add(
+					new Image(getClass().getResourceAsStream("/Icone.png")));
 
 			// Then one or the other
 			if (Database.daoGame().queryForAll().size() == 0)
@@ -46,11 +42,6 @@ public class Main extends Application {
 			else {
 				initAccueil2();
 			}
-		} catch (FileNotFoundException e) {
-			System.err.println(
-					"Oh ! There is a mistake ! The logo can't be loaded... "
-							+ "Here is the full error message :\n");
-			e.printStackTrace();
 		} catch (SQLException e) {
 			System.err.println(
 					"Oh ! There is a mistake ! The games can't be loaded... "
@@ -166,7 +157,6 @@ public class Main extends Application {
 			BorderPane Bp = (BorderPane) loader.load();
 			Scene scene = new Scene(Bp);
 			stage.setScene(scene);
-
 			stage.setResizable(true);
 
 			GameController controller = loader.getController();
@@ -175,11 +165,11 @@ public class Main extends Application {
 
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
-				public void handle(WindowEvent e) {
+				public void handle(WindowEvent event) {
 					try {
 						controller.getPartieEnCours().save();
-					} catch (SQLException e1) {
-						System.out.println(e1.getLocalizedMessage());
+					} catch (SQLException e) {
+						System.out.println(e.getLocalizedMessage());
 
 					}
 					System.exit(0);
