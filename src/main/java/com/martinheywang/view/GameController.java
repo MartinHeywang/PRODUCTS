@@ -95,8 +95,6 @@ public class GameController {
 	 * @param partieToLoad the game to load
 	 */
 	public void load(Game partieToLoad) throws SQLException {
-		// FixMe : money not loading when laoding twice the same game
-
 		// Save this instance (used a little bit later)
 		GameController controller = this;
 		// The task defines how to load the game

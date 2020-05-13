@@ -50,7 +50,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </padding>
             </Label>
-            <ProgressBar visible="false" fx:id="progression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" progress="0.0">
+            <ProgressBar fx:id="progression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" progress="0.0">
                <StackPane.margin>
                   <Insets />
                </StackPane.margin>

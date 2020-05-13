@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -37,19 +38,19 @@ public class Dashboard extends VBox {
 		title.setAlignment(Pos.CENTER_LEFT);
 
 		LocatedHashMap<Integer, String> rowsContent = new LocatedHashMap<>();
-		rowsContent.put(0, "src/main/resources/images/dashboard/Upgrade.png");
+		rowsContent.put(0, "/Upgrade.png");
 		rowsContent.put(0, "Améliorer l'appareil");
 		rowsContent.put(0,
 				"L'appareil réalisera une action de plus toutes les secondes.");
 		rowsContent.put(0, "- 50 K€");
 
-		rowsContent.put(1, "src/main/resources/images/dashboard/Rotate.png");
+		rowsContent.put(1, "/Rotate.png");
 		rowsContent.put(1, "Tourner l'appareil");
 		rowsContent.put(1,
 				"Tourner l'appareil de 90 degrès dans les sens des aiguilles d'une montre.");
 		rowsContent.put(1, "Gratuit");
 
-		rowsContent.put(2, "src/main/resources/images/dashboard/Sell.png");
+		rowsContent.put(2, "/Sell.png");
 		rowsContent.put(2, "Vendre l'appareil");
 		rowsContent.put(2,
 				"Détruire l'appareil et le vendre.");
@@ -61,8 +62,8 @@ public class Dashboard extends VBox {
 
 			HBox rowBox = new HBox();
 			rowBox.setMinHeight(120d);
-			ImageView rowView = new ImageView(new LocatedImage(
-					rowsContent.get(i, 0)));
+			ImageView rowView = new ImageView(new Image(
+					getClass().getResourceAsStream(rowsContent.get(i, 0))));
 			rowView.setScaleX(0.5);
 			rowView.setScaleY(0.5);
 			rowView.setFitWidth(100d);

@@ -1,9 +1,5 @@
 package com.martinheywang.view;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import com.martinheywang.Main;
 import com.martinheywang.model.Game;
 
@@ -49,13 +45,7 @@ public class Home {
 	 */
 	public void setMainApp(Main main) {
 		this.main = main;
-		try {
-			image.setImage(new Image(
-					new FileInputStream(
-							new File("src/main/resources/images/Logo.png"))));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		image.setImage(new Image(getClass().getResourceAsStream("/Logo.png")));
 	}
 
 }
