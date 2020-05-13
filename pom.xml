@@ -32,6 +32,20 @@
     		<artifactId>maven-jar-plugin</artifactId>
     		<version>3.0.2</version>
     	</plugin>
+    	<!-- A plugin taht makes a "fat" jar with all dependencies included -->
+    	<plugin>
+      		<artifactId>maven-assembly-plugin</artifactId>
+      		<configuration>
+        		<archive>
+          			<manifest>
+            			<mainClass>com.martinheywang.Main</mainClass>
+          			</manifest>
+        		</archive>
+        		<descriptorRefs>
+          			<descriptorRef>jar-with-dependencies</descriptorRef>
+        		</descriptorRefs>
+      		</configuration>
+    	</plugin>
     </plugins>
   </pluginManagement>
   <plugins>
