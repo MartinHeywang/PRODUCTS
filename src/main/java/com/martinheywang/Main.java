@@ -24,6 +24,8 @@ public class Main extends Application {
 	public static Stage stage;
 
 	public static void main(String[] args) {
+		System.setProperty("ormlite.logs.debug", "false");
+
 		launch(args);
 	}
 

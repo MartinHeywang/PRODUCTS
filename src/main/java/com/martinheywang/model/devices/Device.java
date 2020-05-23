@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.LocatedImage;
 import com.martinheywang.model.Packing;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
@@ -25,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -171,8 +171,10 @@ public abstract class Device extends ImageView {
 	 */
 	protected Device(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
-		super(new LocatedImage(
-				model.getNiveau().getURL() + model.getType().getURL()));
+		super();
+		this.setImage(new Image(
+				getClass().getResourceAsStream(model.getNiveau().getURL()
+						+ model.getType().getURL())));
 
 		// Defs
 		this.model = model;
@@ -227,6 +229,10 @@ public abstract class Device extends ImageView {
 		}
 	}
 
+	public void upgrade() {
+		// Define how the devices should upgarde themself + javadoc
+	}
+
 	public void rotate() {
 
 		// Sets the new direction
@@ -244,6 +250,10 @@ public abstract class Device extends ImageView {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void delete() {
+		// Define how the devices should destroy themself + javadoc
 	}
 
 	protected abstract TemplateModel getTemplateModel();

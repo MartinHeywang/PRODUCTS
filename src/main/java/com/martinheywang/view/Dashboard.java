@@ -3,11 +3,11 @@ package com.martinheywang.view;
 import java.io.FileNotFoundException;
 
 import com.martinheywang.model.LocatedHashMap;
-import com.martinheywang.model.LocatedImage;
 import com.martinheywang.model.devices.Device;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -24,9 +24,7 @@ public class Dashboard extends VBox {
 		final String border = "-fx-border-color: white";
 
 		HBox title = new HBox();
-		ImageView view = new ImageView(
-				new LocatedImage(
-						((LocatedImage) device.getImage()).getURL()));
+		ImageView view = new ImageView(device.getImage());
 		view.setScaleX(0.8);
 		view.setScaleY(0.8);
 
@@ -92,8 +90,15 @@ public class Dashboard extends VBox {
 			rowBox.setAlignment(Pos.CENTER_LEFT);
 			rowLeftTextBox.setPrefWidth(275d);
 
+			rowBox.setOnMouseEntered(
+					(e) -> rowBox.setCursor(Cursor.HAND));
+
 			this.getChildren().add(rowBox);
 		}
+
+		this.getChildren().get(1).setOnMouseClicked((e) -> device.upgrade());
+		this.getChildren().get(2).setOnMouseClicked((e) -> device.rotate());
+		this.getChildren().get(3).setOnMouseClicked((e) -> device.delete());
 
 		// And a little bit of space !
 		this.setSpacing(7d);

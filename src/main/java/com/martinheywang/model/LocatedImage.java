@@ -1,8 +1,7 @@
 package com.martinheywang.model;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import javafx.scene.image.Image;
 
@@ -26,9 +25,8 @@ public class LocatedImage extends Image {
 	 * @param str the url of the image
 	 * @throws FileNotFoundException
 	 */
-	public LocatedImage(String str) throws FileNotFoundException {
-		super(new FileInputStream(new File(str)));
-		this.str = str;
+	public LocatedImage(InputStream reader) {
+		super(reader);
 	}
 
 	/**

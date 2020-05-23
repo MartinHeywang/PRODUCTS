@@ -11,6 +11,14 @@ import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
 import com.martinheywang.view.GameController;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+
 public class Buyer extends Device {
 
 	public static ArrayList<Coordinates> liste = new ArrayList<Coordinates>();
@@ -27,6 +35,20 @@ public class Buyer extends Device {
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Buyer_(model, controller);
+
+		HBox changeResourceNode = new HBox();
+		changeResourceNode.setMinHeight(130);
+		changeResourceNode.setPadding(new Insets(5, 5, 5, 5));
+		Button right = new Button("Resource suivante");
+		Button left = new Button("Resource précédente");
+		ImageView resourceView = new ImageView(
+				new Image(getClass().getResourceAsStream(
+						"/resources" + getDistributedResource().getURL())));
+		changeResourceNode.getChildren().addAll(left, resourceView, right);
+		changeResourceNode.setSpacing(10d);
+		changeResourceNode.setAlignment(Pos.CENTER);
+		HBox.setHgrow(resourceView, Priority.ALWAYS);
+		dashboard.addNode(changeResourceNode);
 	}
 
 	@Override
@@ -40,7 +62,7 @@ public class Buyer extends Device {
 	 * @throws NullPointerException if the behaviour of this device isn't
 	 *                              a buyer
 	 */
-	public Resource getDistributredResource() throws NullPointerException {
+	public Resource getDistributedResource() throws NullPointerException {
 		if (behaviour instanceof Buyer_)
 			return ((Buyer_) behaviour)
 					.getDistributedResource().getRessource();

@@ -54,6 +54,7 @@ public class Floor extends Device {
 
 					dialog.showAndWait();
 
+					System.out.println(dialog.getResult());
 					if (dialog.getResult() instanceof Type) {
 						DeviceModel newModel = new DeviceModel(
 								model.getCoordinates(),

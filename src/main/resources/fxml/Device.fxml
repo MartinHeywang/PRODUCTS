@@ -9,9 +9,6 @@
 <?import javafx.scene.text.Font?>
 
 <DialogPane expanded="true" stylesheets="@/Device.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.DeviceController">
-   <buttonTypes>
-      <ButtonType fx:constant="CLOSE" />
-   </buttonTypes>
    <header>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="500.0" minHeight="300.0" minWidth="450.0" prefHeight="600.0" prefWidth="600.0">
          <top>
@@ -43,4 +40,7 @@
          </padding>
       </BorderPane>
    </header>
+   <buttonTypes>
+      <ButtonType fx:constant="CLOSE" />
+   </buttonTypes>
 </DialogPane>

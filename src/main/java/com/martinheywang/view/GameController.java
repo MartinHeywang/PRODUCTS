@@ -72,7 +72,6 @@ public class GameController {
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
 				NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-				System.out.println(nf.format(newValue));
 				argentLabel.setText(nf.format(newValue) + " €");
 
 			};

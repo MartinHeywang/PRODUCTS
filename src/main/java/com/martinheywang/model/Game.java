@@ -1,17 +1,26 @@
 package com.martinheywang.model;
 
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.Database;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.view.Displayable;
+import com.martinheywang.view.Displayer;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 
 @DatabaseTable(tableName = "games")
-public class Game {
+public class Game implements Displayable {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idGame;
@@ -122,6 +131,52 @@ public class Game {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public Displayer<Game> getDisplayer() {
+		BorderPane root = new BorderPane();
+
+		Label nom = new Label();
+		nom.setUnderline(true);
+		nom.setAlignment(Pos.TOP_CENTER);
+		nom.setText(this.getNom());
+		nom.setWrapText(true);
+		root.setTop(nom);
+
+		// Changing the LocalDateTime of the game in a String representation
+		// Instead of using toString(), i ues this method to have my perso
+		// String
+		String instant = (this.getLastView().getDayOfMonth() < 10)
+				? "0" + this.getLastView().getDayOfMonth() + "/"
+				: this.getLastView().getDayOfMonth() + "/";
+		instant += (this.getLastView().getMonthValue() < 10)
+				? "0" + this.getLastView().getMonthValue() + "/"
+				: this.getLastView().getMonthValue() + "/";
+		instant += (this.getLastView().getYear() < 10)
+				? "0" + this.getLastView().getYear() + " "
+				: this.getLastView().getYear() + " ";
+
+		instant += (this.getLastView().getHour() < 10)
+				? "0" + this.getLastView().getHour() + ":"
+				: this.getLastView().getHour() + ":";
+		instant += (this.getLastView().getMinute() < 10)
+				? "0" + this.getLastView().getMinute() + ":"
+				: this.getLastView().getMinute() + ":";
+		instant += (this.getLastView().getSecond() < 10)
+				? "0" + this.getLastView().getSecond()
+				: this.getLastView().getSecond();
+
+		Label infos = new Label();
+		infos.setText("Dernière sauvegarde : " + instant
+				+ "\nArgent en compte : "
+				+ NumberFormat.getInstance(Locale.getDefault())
+						.format(this.getArgent())
+				+ " €");
+		root.setLeft(infos);
+
+		root.setPadding(new Insets(3, 3, 3, 3));
+		return new Displayer<Game>(root, this);
 	}
 
 	/**

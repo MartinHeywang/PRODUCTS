@@ -10,6 +10,7 @@ import com.martinheywang.model.Game;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -50,7 +51,7 @@ public class Home2 {
 			games.sort(Comparator.comparing(Game::getLastView).reversed());
 
 			for (Game game : games) {
-				Displayer displayer = new Displayer(game);
+				Node displayer = game.getDisplayer();
 				listePartie.getChildren().add(displayer);
 
 				displayer.setOnMouseClicked(new EventHandler<MouseEvent>() {

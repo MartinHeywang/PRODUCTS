@@ -1,6 +1,16 @@
 package com.martinheywang.model.devices;
 
-public enum Type {
+import com.martinheywang.view.Displayable;
+import com.martinheywang.view.Displayer;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+
+public enum Type implements Displayable {
 
 	/*
 	 * The list of all type that devices can have in the base of the game.
@@ -57,6 +67,34 @@ public enum Type {
 		this.desc = desc;
 		this.prix = prix;
 		this.classe = classe;
+	}
+
+	@Override
+	public Displayer<Type> getDisplayer() {
+		BorderPane root = new BorderPane();
+
+		Label nom = new Label();
+		nom.setUnderline(true);
+		nom.setAlignment(Pos.TOP_CENTER);
+		nom.setText(this.getNom());
+		nom.setWrapText(true);
+		root.setTop(nom);
+
+		ImageView image = new ImageView();
+		image.setImage(new Image(getClass()
+				.getResourceAsStream(Level.NIVEAU_1.getURL() + this.getURL())));
+		root.setRight(image);
+
+		Label infos = new Label();
+		infos.setAlignment(Pos.TOP_CENTER);
+		infos.setText(
+				"Prix de construction : " + this.getPrix() + " €\n\n"
+						+ this.getDescription());
+		infos.setWrapText(true);
+		root.setLeft(infos);
+
+		root.setPadding(new Insets(3, 3, 3, 3));
+		return new Displayer<Type>(root, this);
 	}
 
 	// Les getters

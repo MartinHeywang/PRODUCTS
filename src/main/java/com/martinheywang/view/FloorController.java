@@ -27,27 +27,15 @@ public class FloorController {
 	 */
 	public void initialize() {
 		for (int i = 0; i < Type.values().length - 1; i++) {
-			// We add to the VBox all the available devices in Displayer
-			listeAppareils.getChildren().add(new Displayer(Type.values()[i]));
-
-			// We add listener in case the user clicks on a displayer
-			listeAppareils.getChildren().get(i)
-					.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-						@Override
-						public void handle(MouseEvent event) {
-							try {
-								dialog.setResult(((Displayer) event.getSource())
-										.getTypeAppareil());
-								dialog.close();
-							} catch (Exception e) {
-								System.out.println(
-										"ERREUR lors de la construction d'un appareil. Raison : "
-												+ e.getMessage());
-							}
-						}
-
-					});
+			Displayer<Type> display = Type.values()[i].getDisplayer();
+			listeAppareils.getChildren().add(display);
+			display.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					dialog.setResult(display.getSubject());
+					dialog.close();
+				}
+			});
 		}
 
 	}
