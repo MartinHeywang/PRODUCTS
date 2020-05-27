@@ -160,11 +160,11 @@ public enum Resource implements Displayable {
 		this.nom = nom;
 		this.value = value;
 		this.urlImg = urlImg;
-		this.recette = list;
 	}
 
 	@Override
 	public Displayer<Resource> getDisplayer() {
+
 		BorderPane root = new BorderPane();
 
 		Label nom = new Label();

@@ -11,3 +11,6 @@
 	-fx-underline: true;
 	-fx-cursor: hand;
 }
+.carousel-btn{
+	-fx-border-color: transparent;
+}

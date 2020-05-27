@@ -1,6 +1,7 @@
 package com.martinheywang.model.devices.behaviours;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.martinheywang.Database;
@@ -14,6 +15,20 @@ import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
 
 public class Buyer_ implements Behaviour {
+
+	@SuppressWarnings("serial")
+	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
+		{
+			add(Resource.NONE);
+			add(Resource.FER);
+			add(Resource.OR);
+			add(Resource.CUIVRE);
+			add(Resource.ARGENT);
+			add(Resource.DIAMANT);
+			add(Resource.ALUMINIUM);
+		}
+	};
+
 	private Level level;
 	private GameController controller;
 
@@ -92,22 +107,14 @@ public class Buyer_ implements Behaviour {
 	 * 
 	 * @param produit the resource to set
 	 */
-	public void setDistributedResource(Packing distributedResource) {
-		switch (distributedResource.getRessource()) {
-		case FER:
-		case OR:
-		case CUIVRE:
-		case ARGENT:
-		case DIAMANT:
-		case ALUMINIUM:
-			this.distributedResource = distributedResource;
+	public void setDistributedResource(Packing pack) {
+		if (acceptedResources.contains(pack.getRessource())) {
+			this.distributedResource = pack;
 			try {
-				Database.daoPacking().update(distributedResource);
+				Database.daoPacking().update(pack);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		default:
-			break;
 		}
 
 	}
@@ -118,5 +125,13 @@ public class Buyer_ implements Behaviour {
 	 */
 	public Packing getDistributedResource() {
 		return distributedResource;
+	}
+
+	public static void addAcceptedResource(Resource res) {
+		acceptedResources.add(res);
+	}
+
+	public static void removeAcceptedResource(Resource res) {
+		acceptedResources.remove(res);
 	}
 }

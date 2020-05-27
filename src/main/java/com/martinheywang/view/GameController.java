@@ -140,7 +140,7 @@ public class GameController {
 						}
 					}
 					// Reseting the list of buyer to fix a bug
-					Buyer.liste = new ArrayList<Coordinates>();
+					Buyer.locations = new ArrayList<Coordinates>();
 
 					// Variable i for progress
 					int i = 1;
@@ -283,9 +283,9 @@ public class GameController {
 			try {
 				while (true) {
 					Thread.sleep(750);
-					for (int i = 0; i < Buyer.liste.size(); i++) {
+					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {
-							findDevice(Buyer.liste.get(i))
+							findDevice(Buyer.locations.get(i))
 									.action(new Packing());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {

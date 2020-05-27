@@ -9,19 +9,18 @@ import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
+import com.martinheywang.view.Carousel;
+import com.martinheywang.view.Carousel.CarouselEvent;
+import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class Buyer extends Device {
 
-	public static ArrayList<Coordinates> liste = new ArrayList<Coordinates>();
+	public static ArrayList<Coordinates> locations = new ArrayList<Coordinates>();
 	private static TemplateModel templateModel = new TemplateModel(
 			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.EXIT,
 			PointerTypes.NONE);
@@ -30,25 +29,31 @@ public class Buyer extends Device {
 			throws FileNotFoundException {
 
 		super(model, controller);
-		liste.add(model.getCoordinates());
+		locations.add(model.getCoordinates());
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Buyer_(model, controller);
 
-		HBox changeResourceNode = new HBox();
-		changeResourceNode.setMinHeight(130);
-		changeResourceNode.setPadding(new Insets(5, 5, 5, 5));
-		Button right = new Button("Resource suivante");
-		Button left = new Button("Resource précédente");
-		ImageView resourceView = new ImageView(
-				new Image(getClass().getResourceAsStream(
-						"/resources" + getDistributedResource().getURL())));
-		changeResourceNode.getChildren().addAll(left, resourceView, right);
-		changeResourceNode.setSpacing(10d);
-		changeResourceNode.setAlignment(Pos.CENTER);
-		HBox.setHgrow(resourceView, Priority.ALWAYS);
-		dashboard.addNode(changeResourceNode);
+		Carousel carousel = new Carousel();
+		for (Resource res : Resource.values()) {
+			if (Buyer_.acceptedResources.contains(res))
+				carousel.addNodes(
+						new Displayer<Resource>(res.getDisplayer(), res));
+		}
+		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
+			@Override
+			public void handle(CarouselEvent event) {
+				Resource res = (Resource) ((Displayer<?>) event
+						.getNewSelection()).getSubject();
+				setDistributedResource(res);
+			}
+		});
+		VBox box = new VBox();
+		Label extensionTitle = new Label("Changer la ressource distribuée :");
+		box.getChildren().addAll(extensionTitle, carousel);
+		dashboard.addNode(box);
+
 	}
 
 	@Override

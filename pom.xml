@@ -77,6 +77,10 @@
 				<filtering>false</filtering>
 			</resource>
 			<resource>
+				<directory>src/main/resources/images/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
 				<directory>src/main/resources/music</directory>
 				<filtering>false</filtering>
 			</resource>
@@ -122,6 +126,13 @@
 			<artifactId>javafx-media</artifactId>
 			<version>15-ea+4</version>
 		</dependency>
+		<!-- Enable to awesome icons -->
+		<dependency>
+			<groupId>de.jensd</groupId>
+			<artifactId>fontawesomefx</artifactId>
+			<version>8.9</version>
+		</dependency>
+
 
 	</dependencies>
 </project>
