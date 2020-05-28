@@ -1,11 +1,22 @@
 package com.martinheywang.model;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.view.Displayable;
+import com.martinheywang.view.Displayer;
+
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 @DatabaseTable(tableName = "packages")
-public class Packing {
+public class Packing implements Displayable<Packing> {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idPaquet;
@@ -31,6 +42,27 @@ public class Packing {
 		this.resource = resource;
 		this.quantity = quantity;
 		this.model = model;
+	}
+
+	@Override
+	public Displayer<Packing> getDisplayer() {
+		// Root for the displayer (the element that is nested in the displayer
+		VBox root = new VBox();
+		// Name of the resource
+		Label name = new Label(this.getRessource().getNom());
+		// If the text is too long, reduce its size
+		if (name.getText().length() > 15)
+			name.setFont(new Font(10d));
+		// View of the resource
+		ImageView view = new ImageView(new Image(
+				getClass().getResourceAsStream(this.getRessource().getURL())));
+		// And how many there is this pack
+		Label quantity = new Label(String.valueOf(NumberFormat
+				.getInstance(Locale.getDefault()).format(getQuantity())));
+		// Add all elements in the root
+		root.getChildren().addAll(name, view, quantity);
+		// And nest the root in the displayer
+		return new Displayer<Packing>(root, this);
 	}
 
 	/**

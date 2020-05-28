@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
-public enum Type implements Displayable {
+public enum Type implements Displayable<Type> {
 
 	/*
 	 * The list of all type that devices can have in the base of the game.

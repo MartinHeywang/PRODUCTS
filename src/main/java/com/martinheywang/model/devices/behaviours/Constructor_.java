@@ -15,6 +15,27 @@ import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
 
 public class Constructor_ implements Behaviour {
+
+	@SuppressWarnings("serial")
+	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
+		{
+			add(Resource.NONE);
+
+			add(Resource.CIRCUIT);
+			add(Resource.PLAQUE_REFROIDISSANTE);
+			add(Resource.PLAQUE_CHAUFFANTE);
+			add(Resource.AMPOULE);
+			add(Resource.HORLOGE);
+			add(Resource.ANTENNE);
+			add(Resource.GRILL);
+			add(Resource.MOTEUR);
+			add(Resource.CLIMATISATION);
+			add(Resource.PILE);
+			add(Resource.PANNEAU_SOLAIRE);
+			add(Resource.PROCESSEUR);
+		}
+	};
+
 	private Level level;
 	private GameController controller;
 

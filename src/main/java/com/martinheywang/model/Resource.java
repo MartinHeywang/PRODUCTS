@@ -1,6 +1,8 @@
 package com.martinheywang.model;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
@@ -10,9 +12,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
 
 @SuppressWarnings("serial")
-public enum Resource implements Displayable {
+public enum Resource implements Displayable<Resource> {
 	NONE("None", 0, "/None.png", new ArrayList<Packing>() {
 		{
 			add(new Packing(Resource.NONE, 0));
@@ -21,49 +24,42 @@ public enum Resource implements Displayable {
 		}
 	}),
 
-	FER("Fer", 30, "/Minerai_De_Fer.png", null),
-	PLAQUE_DE_FER("Plaque de fer", 60, "/Plaque_De_Fer.png",
-			null),
-	FIL_DE_FER("Fil de fer", 60, "/Fil_De_Fer.png", null),
-	LINGOT_DE_FER("Lingot de fer", 60, "/Lingot_De_Fer.png",
-			null),
+	FER("Fer", 30, "/Minerai_De_Fer.png"),
+	PLAQUE_DE_FER("Plaque de fer", 60, "/Plaque_De_Fer.png"),
+	FIL_DE_FER("Fil de fer", 60, "/Fil_De_Fer.png"),
+	LINGOT_DE_FER("Lingot de fer", 60, "/Lingot_De_Fer.png"),
 
-	OR("Or", 30, "/Minerai_De_Or.png", null),
-	PLAQUE_DE_OR("Plaque d'or", 60, "/Plaque_De_Or.png", null),
-	FIL_DE_OR("Fil d'or", 60, "/Fil_De_Or.png", null),
-	LINGOT_DE_OR("Lingot d'or", 60, "/Lingot_De_Or.png", null),
+	OR("Or", 30, "/Minerai_De_Or.png"),
+	PLAQUE_DE_OR("Plaque d'or", 60, "/Plaque_De_Or.png"),
+	FIL_DE_OR("Fil d'or", 60, "/Fil_De_Or.png"),
+	LINGOT_DE_OR("Lingot d'or", 60, "/Lingot_De_Or.png"),
 
-	CUIVRE("Cuivre", 30, "/Minerai_De_Cuivre.png", null),
+	CUIVRE("Cuivre", 30, "/Minerai_De_Cuivre.png"),
 	PLAQUE_DE_CUIVRE("Plaque de cuivre", 60,
-			"/Plaque_De_Cuivre.png", null),
-	FIL_DE_CUIVRE("Fil de cuivre", 60, "/Fil_De_Cuivre.png",
-			null),
+			"/Plaque_De_Cuivre.png"),
+	FIL_DE_CUIVRE("Fil de cuivre", 60, "/Fil_De_Cuivre.png"),
 	LINGOT_DE_CUIVRE("Lingot de cuivre", 60,
-			"/Lingot_De_Cuivre.png", null),
+			"/Lingot_De_Cuivre.png"),
 
-	ARGENT("Argent", 30, "/Minerai_De_Argent.png", null),
+	ARGENT("Argent", 30, "/Minerai_De_Argent.png"),
 	PLAQUE_DE_ARGENT("Plaque d'argent", 60,
-			"/Plaque_De_Argent.png", null),
-	FIL_DE_ARGENT("Fil d'argent", 60, "/Fil_De_Argent.png",
-			null),
+			"/Plaque_De_Argent.png"),
+	FIL_DE_ARGENT("Fil d'argent", 60, "/Fil_De_Argent.png"),
 	LINGOT_DE_ARGENT("Lingot d'argent", 60,
-			"/Lingot_De_Argent.png", null),
+			"/Lingot_De_Argent.png"),
 
-	DIAMANT("Diamant", 30, "/Minerai_De_Diamant.png", null),
-	PLAQUE_DE_DIAMANT("Plaque de diamant", 60, "/None.png",
-			null),
-	FIL_DE_DIAMANT("Fil de diamant", 60, "/None.png", null),
-	LINGOT_DE_DIAMANT("Lingot de diamant", 60, "/None.png",
-			null),
+	DIAMANT("Diamant", 30, "/Minerai_De_Diamant.png"),
+	PLAQUE_DE_DIAMANT("Plaque de diamant", 60, "/None.png"),
+	FIL_DE_DIAMANT("Fil de diamant", 60, "/None.png"),
+	LINGOT_DE_DIAMANT("Lingot de diamant", 60, "/None.png"),
 
-	ALUMINIUM("Aluminium", 30, "/Minerai_De_Aluminium.png",
-			null),
+	ALUMINIUM("Aluminium", 30, "/Minerai_De_Aluminium.png"),
 	PLAQUE_DE_ALUMINIUM("Plaque d'aluminium", 60,
-			"/Plaque_De_Aluminium.png", null),
+			"/Plaque_De_Aluminium.png"),
 	FIL_DE_ALUMINIUM("Fil d'aluminium", 60,
-			"/Fil_De_Aluminium.png", null),
+			"/Fil_De_Aluminium.png"),
 	LINGOT_DE_ALUMINIUM("Lingot d'aluminium", 60,
-			"/Lingot_De_Aluminium.png", null),
+			"/Lingot_De_Aluminium.png"),
 
 	CIRCUIT("Circuit", 250, "/Circuit.png",
 			new ArrayList<Packing>() {
@@ -156,10 +152,17 @@ public enum Resource implements Displayable {
 	String urlImg;
 	ArrayList<Packing> recette;
 
+	Resource(String nom, int value, String urlImg) {
+		this.nom = nom;
+		this.value = value;
+		this.urlImg = urlImg;
+	}
+
 	Resource(String nom, int value, String urlImg, ArrayList<Packing> list) {
 		this.nom = nom;
 		this.value = value;
 		this.urlImg = urlImg;
+		this.recette = list;
 	}
 
 	@Override
@@ -170,6 +173,9 @@ public enum Resource implements Displayable {
 		Label nom = new Label();
 		nom.setAlignment(Pos.TOP_CENTER);
 		nom.setText(this.getNom());
+		if (nom.getText().length() > 15)
+			nom.setFont(new Font(10d));
+		nom.setPrefHeight(20d);
 		root.setTop(nom);
 
 		ImageView image = new ImageView();
@@ -179,8 +185,9 @@ public enum Resource implements Displayable {
 
 		Label infos = new Label();
 		infos.setAlignment(Pos.TOP_CENTER);
-		infos.setText("Prix de vente : "
-				+ String.valueOf(this.getValue()) + " €");
+		infos.setText(
+				String.valueOf(NumberFormat.getInstance(Locale.getDefault())
+						.format(this.getValue())) + " €");
 		root.setBottom(infos);
 		return new Displayer<Resource>(root, this);
 	}

@@ -27,6 +27,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -147,10 +148,30 @@ public class GameController {
 					// For all models
 					for (DeviceModel model : devicesModel) {
 						// Creating a new device using the model
-						Device device = model.getType().getClasse()
+						final Device device = model.getType().getClasse()
 								.getConstructor(DeviceModel.class,
 										GameController.class)
 								.newInstance(model, controller);
+						device.setOnMouseEntered(
+								new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent event) {
+										device.setScaleX(0.98d);
+										device.setScaleY(0.98d);
+										Main.stage.getScene()
+												.setCursor(Cursor.HAND);
+									}
+								});
+						device.setOnMouseExited(
+								new EventHandler<MouseEvent>() {
+									@Override
+									public void handle(MouseEvent event) {
+										device.setScaleX(1d);
+										device.setScaleY(1d);
+										Main.stage.getScene()
+												.setCursor(Cursor.DEFAULT);
+									}
+								});
 
 						// Adding it to the grid (view)
 						Platform.runLater(new Runnable() {

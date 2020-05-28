@@ -20,7 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 @DatabaseTable(tableName = "games")
-public class Game implements Displayable {
+public class Game implements Displayable<Game> {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idGame;

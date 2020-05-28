@@ -7,7 +7,15 @@ import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Constructor_;
+import com.martinheywang.view.Carousel;
+import com.martinheywang.view.Carousel.CarouselEvent;
+import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
+import com.martinheywang.view.Recipe;
+
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class Constructor extends Device {
 
@@ -22,6 +30,33 @@ public class Constructor extends Device {
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Constructor_(model, controller);
+
+		final Carousel carousel = new Carousel();
+		for (Resource res : Resource.values()) {
+			if (Constructor_.acceptedResources.contains(res))
+				carousel.addNodes(
+						new Displayer<Resource>(res.getDisplayer(), res));
+		}
+
+		final VBox box = new VBox();
+		final Label extensionTitle = new Label(
+				"Changer la ressource distribuée :");
+
+		final Label recipeTitle = new Label("Aperçu de la recette :");
+		final Recipe recipeView = new Recipe(Resource.NONE);
+
+		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
+			@Override
+			public void handle(CarouselEvent event) {
+				Resource res = (Resource) ((Displayer<?>) event
+						.getNewSelection()).getSubject();
+				setProduit(res);
+				recipeView.setDisplayedResource(res);
+			}
+		});
+		box.getChildren().addAll(extensionTitle, carousel, recipeTitle,
+				recipeView);
+		dashboard.addNode(box);
 	}
 
 	@Override

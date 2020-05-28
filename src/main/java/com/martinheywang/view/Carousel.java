@@ -59,16 +59,7 @@ public class Carousel extends HBox {
 				e.printStackTrace();
 			}
 		nodes.add(nodes.size() - 1, nodes.remove(0));
-		images.getChildren().clear();
-		images.getChildren().addAll(this.nodes.get(this.nodes.size() - 1),
-				this.nodes.get(0), this.nodes.get(1));
-		images.getChildren().get(0).setScaleX(0.7d);
-		images.getChildren().get(0).setScaleY(0.7d);
-		images.getChildren().get(1).setScaleX(1d);
-		images.getChildren().get(1).setScaleY(1d);
-		images.getChildren().get(2).setScaleX(0.7d);
-		images.getChildren().get(2).setScaleY(0.7d);
-		this.fireEvent(new CarouselEvent(this, images));
+		refresh();
 	}
 
 	private void previousElement() {
@@ -107,8 +98,8 @@ public class Carousel extends HBox {
 		// We give the children nice effects
 		images.getChildren().get(0).setScaleX(0.7d);
 		images.getChildren().get(0).setScaleY(0.7d);
-		images.getChildren().get(1).setScaleX(1d);
-		images.getChildren().get(1).setScaleY(1d);
+		images.getChildren().get(1).setScaleX(1.1d);
+		images.getChildren().get(1).setScaleY(1.1d);
 		images.getChildren().get(2).setScaleX(0.7d);
 		images.getChildren().get(2).setScaleY(0.7d);
 
