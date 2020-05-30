@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.martinheywang.Database;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -17,31 +17,31 @@ import com.martinheywang.view.GameController;
 public class Constructor_ implements Behaviour {
 
 	@SuppressWarnings("serial")
-	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
+	public static List<BaseResources> acceptedResources = new ArrayList<BaseResources>() {
 		{
-			add(Resource.NONE);
+			add(BaseResources.NONE);
 
-			add(Resource.CIRCUIT);
-			add(Resource.PLAQUE_REFROIDISSANTE);
-			add(Resource.PLAQUE_CHAUFFANTE);
-			add(Resource.AMPOULE);
-			add(Resource.HORLOGE);
-			add(Resource.ANTENNE);
-			add(Resource.GRILL);
-			add(Resource.MOTEUR);
-			add(Resource.CLIMATISATION);
-			add(Resource.PILE);
-			add(Resource.PANNEAU_SOLAIRE);
-			add(Resource.PROCESSEUR);
+			add(BaseResources.CIRCUIT);
+			add(BaseResources.PLAQUE_REFROIDISSANTE);
+			add(BaseResources.PLAQUE_CHAUFFANTE);
+			add(BaseResources.AMPOULE);
+			add(BaseResources.HORLOGE);
+			add(BaseResources.ANTENNE);
+			add(BaseResources.GRILL);
+			add(BaseResources.MOTEUR);
+			add(BaseResources.CLIMATISATION);
+			add(BaseResources.PILE);
+			add(BaseResources.PANNEAU_SOLAIRE);
+			add(BaseResources.PROCESSEUR);
 		}
 	};
 
 	private Level level;
 	private GameController controller;
 
-	private Packing product;
-	private ArrayList<Resource> resources = new ArrayList<Resource>();
-	private ArrayList<Resource> recipes = new ArrayList<Resource>();
+	private Pack product;
+	private ArrayList<BaseResources> resources = new ArrayList<BaseResources>();
+	private ArrayList<BaseResources> recipes = new ArrayList<BaseResources>();
 
 	public Constructor_(DeviceModel model, GameController controller) {
 		this.level = model.getNiveau();
@@ -49,12 +49,12 @@ public class Constructor_ implements Behaviour {
 
 		try {
 			// Query for all the packages that are associated to this device
-			final List<Packing> list = Database.daoPacking().queryBuilder()
+			final List<Pack> list = Database.daoPacking().queryBuilder()
 					.where().eq("device", model.getIdAppareilModel()).query();
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
-				product = new Packing(Resource.NONE, 1, model);
+				product = new Pack(BaseResources.NONE, 1, model);
 				Database.daoPacking().create(product);
 			}
 			// Else we get at the first index the packing
@@ -72,11 +72,11 @@ public class Constructor_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Packing resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinates pointer)
 			throws MoneyException {
-		Packing tempo = new Packing(product.getRessource(), 0);
+		Pack tempo = new Pack(product.getRessource(), 0);
 
-		if (!product.getRessource().equals(Resource.NONE)) {
+		if (!product.getRessource().equals(BaseResources.NONE)) {
 			for (int level = 0; level < this.level.getNiveau()
 					|| level < resATraiter.getQuantity(); level++) {
 
@@ -106,23 +106,23 @@ public class Constructor_ implements Behaviour {
 	private boolean checkIngredients() {
 		// A temo stock to save the resources (in case there aren't enough
 		// ingredients)
-		ArrayList<Resource> stock = new ArrayList<Resource>();
+		ArrayList<BaseResources> stock = new ArrayList<BaseResources>();
 		// We make the recipes list empty
-		recipes = new ArrayList<Resource>();
+		recipes = new ArrayList<BaseResources>();
 		// Then we refill it with the current recipe
-		for (int i = 0; i < product.getRessource().getRecette().get(0)
+		for (int i = 0; i < product.getRessource().getRecipe().get(0)
 				.getQuantity(); i++) {
 			recipes.add(
-					product.getRessource().getRecette().get(0).getRessource());
+					product.getRessource().getRecipe().get(0).getRessource());
 		}
-		for (int i = 0; i < product.getRessource().getRecette().get(1)
+		for (int i = 0; i < product.getRessource().getRecipe().get(1)
 				.getQuantity(); i++) {
 			recipes.add(
-					product.getRessource().getRecette().get(1).getRessource());
+					product.getRessource().getRecipe().get(1).getRessource());
 		}
 
 		// For the size of the recipe
-		for (int j = 0; j < product.getRessource().getRecette().size(); j++) {
+		for (int j = 0; j < product.getRessource().getRecipe().size(); j++) {
 			// If the resource is available in the stock
 			if (resources.contains(recipes.get(j))) {
 				// We add it to teh tempo stock and we remove it form the
@@ -150,7 +150,7 @@ public class Constructor_ implements Behaviour {
 	 * 
 	 * @param produit the resource to set
 	 */
-	public void setProduit(Packing produit) {
+	public void setProduit(Pack produit) {
 		switch (produit.getRessource()) {
 		case FER:
 		case OR:
@@ -174,7 +174,7 @@ public class Constructor_ implements Behaviour {
 	 * 
 	 * @return produit the current product od this device
 	 */
-	public Packing getProduit() {
+	public Pack getProduit() {
 		return product;
 	}
 }

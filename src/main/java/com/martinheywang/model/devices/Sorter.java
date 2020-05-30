@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.martinheywang.Database;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
@@ -16,7 +16,7 @@ import com.martinheywang.view.GameController;
 
 public class Sorter extends Device {
 
-	private Packing crit1, crit2;
+	private Pack crit1, crit2;
 
 	private static TemplateModel templateModel = new TemplateModel(
 			PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.EXIT,
@@ -28,14 +28,14 @@ public class Sorter extends Device {
 
 		try {
 			// Query for all the packages that are associated to this device
-			final List<Packing> list = Database.daoPacking().queryBuilder()
+			final List<Pack> list = Database.daoPacking().queryBuilder()
 					.where().eq("device", model.getIdAppareilModel()).query();
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
-				crit1 = new Packing(Resource.NONE, 1, model);
+				crit1 = new Pack(BaseResources.NONE, 1, model);
 				Database.daoPacking().create(crit1);
-				crit2 = new Packing(Resource.NONE, 1, model);
+				crit2 = new Pack(BaseResources.NONE, 1, model);
 				Database.daoPacking().create(crit2);
 			}
 			// Else we get at the first index the packing
@@ -60,7 +60,7 @@ public class Sorter extends Device {
 	}
 
 	@Override
-	public void action(Packing resATraiter) throws MoneyException {
+	public void action(Pack resATraiter) throws MoneyException {
 
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
 			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
@@ -110,19 +110,19 @@ public class Sorter extends Device {
 		return templateModel;
 	}
 
-	public void setCriteria1(Resource res) {
-		this.crit1 = new Packing(res, 1);
+	public void setCriteria1(BaseResources res) {
+		this.crit1 = new Pack(res, 1);
 	}
 
-	public void setCriteria2(Resource res) {
-		this.crit2 = new Packing(res, 1);
+	public void setCriteria2(BaseResources res) {
+		this.crit2 = new Pack(res, 1);
 	}
 
-	public Resource getCriteria1() {
+	public BaseResources getCriteria1() {
 		return crit1.getRessource();
 	}
 
-	public Resource getCriteria2() {
+	public BaseResources getCriteria2() {
 		return crit2.getRessource();
 	}
 }

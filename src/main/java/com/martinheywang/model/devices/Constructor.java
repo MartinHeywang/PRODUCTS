@@ -2,8 +2,8 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Constructor_;
@@ -32,10 +32,10 @@ public class Constructor extends Device {
 		behaviour = new Constructor_(model, controller);
 
 		final Carousel carousel = new Carousel();
-		for (Resource res : Resource.values()) {
+		for (BaseResources res : BaseResources.values()) {
 			if (Constructor_.acceptedResources.contains(res))
 				carousel.addNodes(
-						new Displayer<Resource>(res.getDisplayer(), res));
+						new Displayer<BaseResources>(res.getDisplayer(), res));
 		}
 
 		final VBox box = new VBox();
@@ -43,12 +43,12 @@ public class Constructor extends Device {
 				"Changer la ressource distribuée :");
 
 		final Label recipeTitle = new Label("Aperçu de la recette :");
-		final Recipe recipeView = new Recipe(Resource.NONE);
+		final Recipe recipeView = new Recipe(BaseResources.NONE);
 
 		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
-				Resource res = (Resource) ((Displayer<?>) event
+				BaseResources res = (BaseResources) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
 				setProduit(res);
 				recipeView.setDisplayedResource(res);
@@ -64,13 +64,13 @@ public class Constructor extends Device {
 		return templateModel;
 	}
 
-	public void setProduit(Resource res) throws NullPointerException {
+	public void setProduit(BaseResources res) throws NullPointerException {
 		if (behaviour instanceof Constructor_) {
-			((Constructor_) behaviour).setProduit(new Packing(res, 1));
+			((Constructor_) behaviour).setProduit(new Pack(res, 1));
 		}
 	}
 
-	public Resource getProduit() throws NullPointerException {
+	public BaseResources getProduit() throws NullPointerException {
 		if (behaviour instanceof Constructor_)
 			return ((Constructor_) behaviour).getProduit()
 					.getRessource();

@@ -1,8 +1,8 @@
 package com.martinheywang.model.devices.behaviours;
 
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -20,7 +20,7 @@ public class Furnace_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Packing resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinates pointer)
 			throws MoneyException {
 
 		for (int i = 0; i < this.level.getNiveau()
@@ -31,9 +31,9 @@ public class Furnace_ implements Behaviour {
 			case CUIVRE:
 			case ARGENT:
 			case ALUMINIUM:
-				final Packing tempo = new Packing();
+				final Pack tempo = new Pack();
 				tempo.addQuantity(1);
-				tempo.setRessource(Resource
+				tempo.setRessource(BaseResources
 						.valueOf("LINGOT_DE_" + resATraiter.getRessource()));
 
 				controller.setArgent(Device.getElectricity(), false);

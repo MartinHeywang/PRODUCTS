@@ -1,8 +1,8 @@
 package com.martinheywang.model.devices.behaviours;
 
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -20,13 +20,13 @@ public class Seller_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Packing resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinates pointer)
 			throws MoneyException {
 		for (int i = 0; i < this.level.getNiveau()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (!resATraiter.getRessource().equals(Resource.NONE))
+			if (!resATraiter.getRessource().equals(BaseResources.NONE))
 				controller.setArgent(
-						resATraiter.getRessource().getValue() - Device
+						resATraiter.getRessource().getPrice() - Device
 								.getElectricity(),
 						true);
 		}

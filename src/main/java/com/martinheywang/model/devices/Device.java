@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
@@ -211,7 +211,7 @@ public abstract class Device extends ImageView {
 	 * 
 	 * @param resATraiter the resource who will be used by this device
 	 */
-	public void action(Packing resATraiter) throws MoneyException {
+	public void action(Pack resATraiter) throws MoneyException {
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
 			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
 				final Device pointedDevice = controller.findDevice(xy);

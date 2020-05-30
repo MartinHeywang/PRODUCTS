@@ -2,7 +2,7 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 
-import com.martinheywang.model.Packing;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Seller_;
@@ -25,7 +25,7 @@ public class Seller extends Device {
 	}
 
 	@Override
-	public void action(Packing resATraiter) throws MoneyException {
+	public void action(Pack resATraiter) throws MoneyException {
 		behaviour.action(resATraiter, null);
 		timeline.playFromStart();
 	}

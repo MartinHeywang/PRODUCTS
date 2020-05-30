@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.view.FloorController;
@@ -85,7 +85,7 @@ public class Floor extends Device {
 	}
 
 	@Override
-	public void action(Packing resATraiter) {
+	public void action(Pack resATraiter) {
 		// Here just override the method in case this device is asked for
 		// action
 		// It souldn't be invoked but it does'nt make the thread overflowed.

@@ -4,8 +4,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
@@ -36,15 +36,15 @@ public class Buyer extends Device {
 		behaviour = new Buyer_(model, controller);
 
 		Carousel carousel = new Carousel();
-		for (Resource res : Resource.values()) {
+		for (BaseResources res : BaseResources.values()) {
 			if (Buyer_.acceptedResources.contains(res))
 				carousel.addNodes(
-						new Displayer<Resource>(res.getDisplayer(), res));
+						new Displayer<BaseResources>(res.getDisplayer(), res));
 		}
 		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
-				Resource res = (Resource) ((Displayer<?>) event
+				BaseResources res = (BaseResources) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
 				setDistributedResource(res);
 			}
@@ -67,7 +67,7 @@ public class Buyer extends Device {
 	 * @throws NullPointerException if the behaviour of this device isn't
 	 *                              a buyer
 	 */
-	public Resource getDistributedResource() throws NullPointerException {
+	public BaseResources getDistributedResource() throws NullPointerException {
 		if (behaviour instanceof Buyer_)
 			return ((Buyer_) behaviour)
 					.getDistributedResource().getRessource();
@@ -78,10 +78,10 @@ public class Buyer extends Device {
 	 * 
 	 * @param res the new value of the property
 	 */
-	public void setDistributedResource(Resource res) {
+	public void setDistributedResource(BaseResources res) {
 		if (behaviour instanceof Buyer_) {
 			((Buyer_) behaviour)
-					.setDistributedResource(new Packing(res, 1));
+					.setDistributedResource(new Pack(res, 1));
 		}
 	}
 }

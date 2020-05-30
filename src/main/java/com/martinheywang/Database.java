@@ -9,7 +9,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
-import com.martinheywang.model.Packing;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.DeviceModel;
 
 public final class Database {
@@ -23,7 +23,7 @@ public final class Database {
 			connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
 
 			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
-			TableUtils.createTableIfNotExists(connection, Packing.class);
+			TableUtils.createTableIfNotExists(connection, Pack.class);
 			TableUtils.createTableIfNotExists(connection, Coordinates.class);
 			TableUtils.createTableIfNotExists(connection, Game.class);
 		} catch (SQLException e) {
@@ -50,13 +50,13 @@ public final class Database {
 		}
 	}
 
-	public static Dao<Packing, Long> daoPacking() {
-		Dao<Packing, Long> dao;
+	public static Dao<Pack, Long> daoPacking() {
+		Dao<Pack, Long> dao;
 		try {
 			if (connection == null)
 				setUp();
 
-			dao = DaoManager.createDao(connection, Packing.class);
+			dao = DaoManager.createDao(connection, Pack.class);
 			return dao;
 		} catch (SQLException e) {
 			System.err.println(

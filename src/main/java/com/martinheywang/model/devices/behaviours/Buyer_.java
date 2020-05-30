@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.martinheywang.Database;
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.Packing;
-import com.martinheywang.model.Resource;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -17,38 +17,38 @@ import com.martinheywang.view.GameController;
 public class Buyer_ implements Behaviour {
 
 	@SuppressWarnings("serial")
-	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
+	public static List<BaseResources> acceptedResources = new ArrayList<BaseResources>() {
 		{
-			add(Resource.NONE);
-			add(Resource.FER);
-			add(Resource.OR);
-			add(Resource.CUIVRE);
-			add(Resource.ARGENT);
-			add(Resource.DIAMANT);
-			add(Resource.ALUMINIUM);
+			add(BaseResources.NONE);
+			add(BaseResources.FER);
+			add(BaseResources.OR);
+			add(BaseResources.CUIVRE);
+			add(BaseResources.ARGENT);
+			add(BaseResources.DIAMANT);
+			add(BaseResources.ALUMINIUM);
 		}
 	};
 
 	private Level level;
 	private GameController controller;
 
-	private Packing distributedResource;
+	private Pack distributedResource;
 
 	public Buyer_(DeviceModel model, GameController controller) {
 		this.level = model.getNiveau();
 		this.controller = controller;
 
 		// Default definition to avoid null values
-		distributedResource = new Packing(Resource.NONE, 1, model);
+		distributedResource = new Pack(BaseResources.NONE, 1, model);
 
 		try {
 			// Query for all the packages that are associated to this device
-			final List<Packing> list = Database.daoPacking().queryBuilder()
+			final List<Pack> list = Database.daoPacking().queryBuilder()
 					.where().eq("device", model.getIdAppareilModel()).query();
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
-				distributedResource = new Packing(Resource.NONE, 1, model);
+				distributedResource = new Pack(BaseResources.NONE, 1, model);
 				Database.daoPacking().create(distributedResource);
 			}
 			// Else we get at the first index the packing
@@ -66,7 +66,7 @@ public class Buyer_ implements Behaviour {
 	}
 
 	@Override
-	public void action(Packing resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinates pointer)
 			throws MoneyException {
 
 		distributedResource.setQuantity(0);
@@ -87,7 +87,7 @@ public class Buyer_ implements Behaviour {
 
 	}
 
-	private boolean isValid(Resource res) {
+	private boolean isValid(BaseResources res) {
 		switch (res) {
 		case FER:
 		case OR:
@@ -107,7 +107,7 @@ public class Buyer_ implements Behaviour {
 	 * 
 	 * @param produit the resource to set
 	 */
-	public void setDistributedResource(Packing pack) {
+	public void setDistributedResource(Pack pack) {
 		if (acceptedResources.contains(pack.getRessource())) {
 			this.distributedResource = pack;
 			try {
@@ -123,15 +123,15 @@ public class Buyer_ implements Behaviour {
 	 * 
 	 * @return distributedResource the distributed resource
 	 */
-	public Packing getDistributedResource() {
+	public Pack getDistributedResource() {
 		return distributedResource;
 	}
 
-	public static void addAcceptedResource(Resource res) {
+	public static void addAcceptedResource(BaseResources res) {
 		acceptedResources.add(res);
 	}
 
-	public static void removeAcceptedResource(Resource res) {
+	public static void removeAcceptedResource(BaseResources res) {
 		acceptedResources.remove(res);
 	}
 }

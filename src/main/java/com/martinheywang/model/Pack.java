@@ -16,13 +16,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 @DatabaseTable(tableName = "packages")
-public class Packing implements Displayable<Packing> {
+public class Pack implements Displayable<Pack> {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idPaquet;
 
 	@DatabaseField
-	private Resource resource;
+	private BaseResources resource;
 
 	@DatabaseField
 	private int quantity;
@@ -30,26 +30,26 @@ public class Packing implements Displayable<Packing> {
 	@DatabaseField(columnName = "device", foreign = true, foreignColumnName = "id")
 	private DeviceModel model;
 
-	public Packing() {
+	public Pack() {
 	}
 
-	public Packing(Resource resource, int quantity) {
+	public Pack(BaseResources resource, int quantity) {
 		this.resource = resource;
 		this.quantity = quantity;
 	}
 
-	public Packing(Resource resource, int quantity, DeviceModel model) {
+	public Pack(BaseResources resource, int quantity, DeviceModel model) {
 		this.resource = resource;
 		this.quantity = quantity;
 		this.model = model;
 	}
 
 	@Override
-	public Displayer<Packing> getDisplayer() {
+	public Displayer<Pack> getDisplayer() {
 		// Root for the displayer (the element that is nested in the displayer
 		VBox root = new VBox();
 		// Name of the resource
-		Label name = new Label(this.getRessource().getNom());
+		Label name = new Label(this.getRessource().getName());
 		// If the text is too long, reduce its size
 		if (name.getText().length() > 15)
 			name.setFont(new Font(10d));
@@ -62,7 +62,7 @@ public class Packing implements Displayable<Packing> {
 		// Add all elements in the root
 		root.getChildren().addAll(name, view, quantity);
 		// And nest the root in the displayer
-		return new Displayer<Packing>(root, this);
+		return new Displayer<Pack>(root, this);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class Packing implements Displayable<Packing> {
 	 * 
 	 * @return the resource
 	 */
-	public Resource getRessource() {
+	public BaseResources getRessource() {
 		return resource;
 	}
 
@@ -93,7 +93,7 @@ public class Packing implements Displayable<Packing> {
 	 * 
 	 * @param res the resource to set
 	 */
-	public void setRessource(Resource res) {
+	public void setRessource(BaseResources res) {
 		this.resource = res;
 	}
 

@@ -11,7 +11,7 @@ import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
-import com.martinheywang.model.Packing;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
@@ -307,7 +307,7 @@ public class GameController {
 					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {
 							findDevice(Buyer.locations.get(i))
-									.action(new Packing());
+									.action(new Pack());
 							argentLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {
 							Platform.runLater(new Runnable() {

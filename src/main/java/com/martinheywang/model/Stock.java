@@ -2,11 +2,11 @@ package com.martinheywang.model;
 
 import java.util.ArrayList;
 
-public class Stock extends ArrayList<Packing> {
+public class Stock extends ArrayList<Pack> {
 
 	private static final long serialVersionUID = 1L;
 
-	public Stock(ArrayList<Packing> packings) throws Exception {
+	public Stock(ArrayList<Pack> packings) throws Exception {
 		super(packings);
 	}
 
@@ -14,8 +14,8 @@ public class Stock extends ArrayList<Packing> {
 		super();
 	}
 
-	public void add(Resource resource) {
-		this.add(new Packing(resource, 1));
+	public void add(BaseResources resource) {
+		this.add(new Pack(resource, 1));
 	}
 
 }
