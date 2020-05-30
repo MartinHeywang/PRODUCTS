@@ -5,14 +5,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.martinheywang.Database;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.view.Carousel;
+import com.martinheywang.view.Carousel.CarouselEvent;
+import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
+
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class Sorter extends Device {
 
@@ -57,6 +65,44 @@ public class Sorter extends Device {
 				model.getDirection());
 		behaviour = new Conveyor_(model, controller);
 
+		/* ----------- DASHBOARD EXTENSIONS ---------- */
+		Carousel carouselCrit1 = new Carousel();
+		Carousel carouselCrit2 = new Carousel();
+		for (Resource res : Resource.getReferences()) {
+			carouselCrit1.addNodes(res.getDisplayer());
+			carouselCrit2.addNodes(res.getDisplayer());
+		}
+		carouselCrit1.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
+			@Override
+			public void handle(CarouselEvent event) {
+				BaseResources res = (BaseResources) ((Displayer<?>) event
+						.getNewSelection()).getSubject();
+				setCriteria1(res);
+			}
+		});
+		carouselCrit2.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
+			@Override
+			public void handle(CarouselEvent event) {
+				BaseResources res = (BaseResources) ((Displayer<?>) event
+						.getNewSelection()).getSubject();
+				setCriteria2(res);
+			}
+		});
+
+		VBox first = new VBox();
+		Label left = new Label(
+				"Choissisez la ressource à diriger vers la gauche :");
+		VBox second = new VBox();
+		Label right = new Label(
+				"Choissiez la ressource à diriger vers la droite :");
+		Label center = new Label(
+				"Les ressources ne correspondant pas à aucun des critères seront dirigées tout droit.");
+		first.getChildren().addAll(left, carouselCrit1);
+		second.getChildren().addAll(right, carouselCrit2);
+		dashboard.addNode(center);
+		dashboard.addNode(second);
+		dashboard.addNode(first);
+
 	}
 
 	@Override
@@ -80,7 +126,6 @@ public class Sorter extends Device {
 							// Index 2 corresponds to the left because it should
 							// be the last
 							// element (we rotate clockwise)
-							timeline.playFromStart();
 						}
 						// Second case (crit2), the resource goes to the right
 						else if (resATraiter.getRessource()
@@ -88,7 +133,6 @@ public class Sorter extends Device {
 							behaviour.action(resATraiter,
 									template.getPointersFor(PointerTypes.EXIT)
 											.get(0));
-							timeline.playFromStart();
 							// Index 0 corresponds to the first element
 						}
 						// And dead in the center if there are no matching.
@@ -97,7 +141,6 @@ public class Sorter extends Device {
 									template.getPointersFor(PointerTypes.EXIT)
 											.get(1));
 							// Index 1 is the center
-							timeline.playFromStart();
 						}
 					}
 				}

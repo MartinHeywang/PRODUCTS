@@ -98,8 +98,8 @@ public class Carousel extends HBox {
 		// We give the children nice effects
 		images.getChildren().get(0).setScaleX(0.7d);
 		images.getChildren().get(0).setScaleY(0.7d);
-		images.getChildren().get(1).setScaleX(1.1d);
-		images.getChildren().get(1).setScaleY(1.1d);
+		images.getChildren().get(1).setScaleX(1d);
+		images.getChildren().get(1).setScaleY(1d);
 		images.getChildren().get(2).setScaleX(0.7d);
 		images.getChildren().get(2).setScaleY(0.7d);
 

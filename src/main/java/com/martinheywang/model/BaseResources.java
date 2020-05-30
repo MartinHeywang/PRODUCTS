@@ -1,21 +1,9 @@
 package com.martinheywang.model;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
-import com.martinheywang.view.Displayable;
-import com.martinheywang.view.Displayer;
-
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
-
-public enum BaseResources implements Displayable<BaseResources>, Resource {
+public enum BaseResources implements Resource {
 	NONE("None", 0, "/None.png"),
 
 	FER("Fer", 30, "/Minerai_De_Fer.png"),
@@ -105,7 +93,7 @@ public enum BaseResources implements Displayable<BaseResources>, Resource {
 			new Pack(BaseResources.ALUMINIUM, 7));
 
 	private String name;
-	private int price;
+	private long price;
 	private String url;
 	private List<Pack> recipe;
 
@@ -122,33 +110,6 @@ public enum BaseResources implements Displayable<BaseResources>, Resource {
 		this.url = urlImg;
 		this.recipe = Arrays.asList(ingredients);
 		Resource.addReferenceResource(this);
-	}
-
-	@Override
-	public Displayer<BaseResources> getDisplayer() {
-
-		BorderPane root = new BorderPane();
-
-		Label nom = new Label();
-		nom.setAlignment(Pos.TOP_CENTER);
-		nom.setText(this.getName());
-		if (nom.getText().length() > 15)
-			nom.setFont(new Font(10d));
-		nom.setPrefHeight(20d);
-		root.setTop(nom);
-
-		ImageView image = new ImageView();
-		image.setImage(
-				new Image(getClass().getResourceAsStream(this.getURL())));
-		root.setCenter(image);
-
-		Label infos = new Label();
-		infos.setAlignment(Pos.TOP_CENTER);
-		infos.setText(
-				String.valueOf(NumberFormat.getInstance(Locale.getDefault())
-						.format(this.getPrice())) + " €");
-		root.setBottom(infos);
-		return new Displayer<BaseResources>(root, this);
 	}
 
 	@Override

@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.martinheywang.Database;
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -17,7 +18,7 @@ import com.martinheywang.view.GameController;
 public class Constructor_ implements Behaviour {
 
 	@SuppressWarnings("serial")
-	public static List<BaseResources> acceptedResources = new ArrayList<BaseResources>() {
+	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
 		{
 			add(BaseResources.NONE);
 
