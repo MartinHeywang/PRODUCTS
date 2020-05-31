@@ -1,4 +1,4 @@
-package com.martinheywang.view;
+package com.martinheywang.view.components;
 
 import java.io.FileNotFoundException;
 

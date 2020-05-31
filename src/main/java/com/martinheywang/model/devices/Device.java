@@ -13,9 +13,9 @@ import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
 import com.martinheywang.model.devices.behaviours.None_;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.view.Dashboard;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
+import com.martinheywang.view.components.Dashboard;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

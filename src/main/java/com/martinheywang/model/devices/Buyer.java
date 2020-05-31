@@ -9,12 +9,13 @@ import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
-import com.martinheywang.view.Carousel;
-import com.martinheywang.view.Carousel.CarouselEvent;
 import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
+import com.martinheywang.view.components.Carousel;
+import com.martinheywang.view.components.Carousel.CarouselEvent;
 
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -36,15 +37,16 @@ public class Buyer extends Device {
 		behaviour = new Buyer_(model, controller);
 
 		Carousel carousel = new Carousel();
+		Node selection = null;
 		for (Resource res : Buyer_.acceptedResources) {
 			Displayer<Resource> dis = new Displayer<Resource>(
 					res.getDisplayer(), res);
 			carousel.addNodes(dis);
-			if (dis.getSubject().equals(((Buyer_) behaviour)
-					.getDistributedResource().getRessource())) {
-				carousel.setSelection(dis);
+			if (dis.getSubject().equals(this.getDistributedResource())) {
+				selection = dis;
 			}
 		}
+		carousel.setSelection(selection);
 		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {

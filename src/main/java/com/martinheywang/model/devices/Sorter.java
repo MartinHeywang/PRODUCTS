@@ -13,12 +13,13 @@ import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.view.Carousel;
-import com.martinheywang.view.Carousel.CarouselEvent;
 import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
+import com.martinheywang.view.components.Carousel;
+import com.martinheywang.view.components.Carousel.CarouselEvent;
 
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -68,10 +69,25 @@ public class Sorter extends Device {
 		/* ----------- DASHBOARD EXTENSIONS ---------- */
 		Carousel carouselCrit1 = new Carousel();
 		Carousel carouselCrit2 = new Carousel();
+		Node selection1 = null;
+		Node selection2 = null;
 		for (Resource res : Resource.getReferences()) {
-			carouselCrit1.addNodes(res.getDisplayer());
-			carouselCrit2.addNodes(res.getDisplayer());
+			Displayer<Resource> dis1 = new Displayer<Resource>(
+					res.getDisplayer(), res);
+			carouselCrit1.addNodes(dis1);
+			if (dis1.getSubject().equals(this.getCriteria1())) {
+				selection1 = dis1;
+			}
+			Displayer<Resource> dis2 = new Displayer<Resource>(
+					res.getDisplayer(), res);
+			carouselCrit2.addNodes(dis2);
+			if (dis2.getSubject().equals(this.getCriteria2())) {
+				selection2 = dis2;
+			}
+
 		}
+		carouselCrit1.setSelection(selection1);
+		carouselCrit2.setSelection(selection2);
 		carouselCrit1.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {

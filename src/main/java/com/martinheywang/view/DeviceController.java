@@ -1,6 +1,7 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.Coordinates;
+import com.martinheywang.view.components.Dashboard;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

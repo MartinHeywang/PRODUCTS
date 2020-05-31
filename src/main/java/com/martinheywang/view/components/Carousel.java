@@ -1,4 +1,4 @@
-package com.martinheywang.view;
+package com.martinheywang.view.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class Carousel extends HBox {
 		refresh();
 	}
 
-	public void refresh() {
+	private void refresh() {
 		// If the container is null, instantiate a new Node
 		if (images == null)
 			images = new HBox();
@@ -126,9 +126,11 @@ public class Carousel extends HBox {
 	public void setSelection(Node node) {
 		// Check if the given node is in the list
 		if (nodes.contains(node)) {
-			while (this.selection != node) {
-				nextElement();
+			final int selectionIndex = nodes.indexOf(node);
+			for (int i = 0; i < selectionIndex; i++) {
+				nodes.add(nodes.remove(0));
 			}
+			refresh();
 		}
 	}
 
