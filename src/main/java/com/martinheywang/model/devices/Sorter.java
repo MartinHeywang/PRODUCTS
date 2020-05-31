@@ -4,11 +4,11 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.martinheywang.Database;
 import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
@@ -75,7 +75,7 @@ public class Sorter extends Device {
 		carouselCrit1.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
-				BaseResources res = (BaseResources) ((Displayer<?>) event
+				Resource res = (Resource) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
 				setCriteria1(res);
 			}
@@ -83,7 +83,7 @@ public class Sorter extends Device {
 		carouselCrit2.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
-				BaseResources res = (BaseResources) ((Displayer<?>) event
+				Resource res = (Resource) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
 				setCriteria2(res);
 			}
@@ -153,19 +153,19 @@ public class Sorter extends Device {
 		return templateModel;
 	}
 
-	public void setCriteria1(BaseResources res) {
+	public void setCriteria1(Resource res) {
 		this.crit1 = new Pack(res, 1);
 	}
 
-	public void setCriteria2(BaseResources res) {
+	public void setCriteria2(Resource res) {
 		this.crit2 = new Pack(res, 1);
 	}
 
-	public BaseResources getCriteria1() {
+	public Resource getCriteria1() {
 		return crit1.getRessource();
 	}
 
-	public BaseResources getCriteria2() {
+	public Resource getCriteria2() {
 		return crit2.getRessource();
 	}
 }

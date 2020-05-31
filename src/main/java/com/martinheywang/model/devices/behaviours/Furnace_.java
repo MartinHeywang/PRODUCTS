@@ -1,8 +1,12 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -13,6 +17,18 @@ public class Furnace_ implements Behaviour {
 
 	private Level level;
 	private GameController controller;
+
+	@SuppressWarnings("serial")
+	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
+		{
+			add(BaseResources.NONE);
+			add(BaseResources.FER);
+			add(BaseResources.OR);
+			add(BaseResources.CUIVRE);
+			add(BaseResources.ARGENT);
+			add(BaseResources.ALUMINIUM);
+		}
+	};
 
 	public Furnace_(DeviceModel model, GameController controller) {
 		this.level = model.getNiveau();
@@ -25,12 +41,7 @@ public class Furnace_ implements Behaviour {
 
 		for (int i = 0; i < this.level.getNiveau()
 				|| i < resATraiter.getQuantity(); i++) {
-			switch (resATraiter.getRessource()) {
-			case FER:
-			case OR:
-			case CUIVRE:
-			case ARGENT:
-			case ALUMINIUM:
+			if (acceptedResources.contains(resATraiter.getRessource())) {
 				final Pack tempo = new Pack();
 				tempo.addQuantity(1);
 				tempo.setRessource(BaseResources
@@ -38,9 +49,6 @@ public class Furnace_ implements Behaviour {
 
 				controller.setArgent(Device.getElectricity(), false);
 				controller.findDevice(pointer).action(tempo);
-				break;
-			default:
-				break;
 			}
 		}
 	}

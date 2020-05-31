@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.Database;
 import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -74,32 +74,16 @@ public class Buyer_ implements Behaviour {
 
 		for (int niveau = 0; niveau < this.level.getNiveau(); niveau++) {
 
-			if (isValid(distributedResource.getRessource())) {
-				if (controller.getPartieEnCours().getArgent() < 5
-						+ Device.getElectricity())
-					throw new MoneyException();
-				else {
-					distributedResource.addQuantity(1);
-					controller.setArgent(5 + Device.getElectricity(), false);
-					controller.findDevice(pointer).action(distributedResource);
-				}
+			if (controller.getPartieEnCours().getArgent() < 5
+					+ Device.getElectricity())
+				throw new MoneyException();
+			else {
+				distributedResource.addQuantity(1);
+				controller.setArgent(5 + Device.getElectricity(), false);
+				controller.findDevice(pointer).action(distributedResource);
 			}
 		}
 
-	}
-
-	private boolean isValid(BaseResources res) {
-		switch (res) {
-		case FER:
-		case OR:
-		case CUIVRE:
-		case ARGENT:
-		case DIAMANT:
-		case ALUMINIUM:
-			return true;
-		default:
-			return false;
-		}
 	}
 
 	/**
@@ -110,9 +94,11 @@ public class Buyer_ implements Behaviour {
 	 */
 	public void setDistributedResource(Pack pack) {
 		if (acceptedResources.contains(pack.getRessource())) {
-			this.distributedResource = pack;
+			this.distributedResource.setRessource(pack.getRessource());
+
+			this.distributedResource.setQuantity(pack.getQuantity());
 			try {
-				Database.daoPacking().update(pack);
+				Database.daoPacking().update(distributedResource);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -128,11 +114,11 @@ public class Buyer_ implements Behaviour {
 		return distributedResource;
 	}
 
-	public static void addAcceptedResource(BaseResources res) {
+	public static void addAcceptedResource(Resource res) {
 		acceptedResources.add(res);
 	}
 
-	public static void removeAcceptedResource(BaseResources res) {
+	public static void removeAcceptedResource(Resource res) {
 		acceptedResources.remove(res);
 	}
 }

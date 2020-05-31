@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.Database;
 import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Level;
@@ -41,8 +41,8 @@ public class Constructor_ implements Behaviour {
 	private GameController controller;
 
 	private Pack product;
-	private ArrayList<BaseResources> resources = new ArrayList<BaseResources>();
-	private ArrayList<BaseResources> recipes = new ArrayList<BaseResources>();
+	private ArrayList<Resource> resources = new ArrayList<Resource>();
+	private ArrayList<Resource> recipes = new ArrayList<Resource>();
 
 	public Constructor_(DeviceModel model, GameController controller) {
 		this.level = model.getNiveau();
@@ -107,9 +107,9 @@ public class Constructor_ implements Behaviour {
 	private boolean checkIngredients() {
 		// A temo stock to save the resources (in case there aren't enough
 		// ingredients)
-		ArrayList<BaseResources> stock = new ArrayList<BaseResources>();
+		ArrayList<Resource> stock = new ArrayList<Resource>();
 		// We make the recipes list empty
-		recipes = new ArrayList<BaseResources>();
+		recipes = new ArrayList<Resource>();
 		// Then we refill it with the current recipe
 		for (int i = 0; i < product.getRessource().getRecipe().get(0)
 				.getQuantity(); i++) {
@@ -149,24 +149,16 @@ public class Constructor_ implements Behaviour {
 	 * Sets the products to the new value, after checking if it is a valid
 	 * resource.
 	 * 
-	 * @param produit the resource to set
+	 * @param product the resource to set
 	 */
-	public void setProduit(Pack produit) {
-		switch (produit.getRessource()) {
-		case FER:
-		case OR:
-		case CUIVRE:
-		case ARGENT:
-		case DIAMANT:
-		case ALUMINIUM:
-			this.product = produit;
+	public void setProduit(Pack product) {
+		if (Constructor_.acceptedResources.contains(product.getRessource())) {
+			this.product = product;
 			try {
-				Database.daoPacking().update(produit);
+				Database.daoPacking().update(product);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		default:
-			break;
 		}
 
 	}

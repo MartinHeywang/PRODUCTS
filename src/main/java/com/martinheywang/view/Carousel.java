@@ -22,6 +22,8 @@ public class Carousel extends HBox {
 
 	private HBox images = new HBox();
 
+	Node selection;
+
 	public Carousel() {
 		MaterialDesignIconView left_arrow = new MaterialDesignIconView();
 		left_arrow.setGlyphName("ARROW_LEFT");
@@ -103,6 +105,8 @@ public class Carousel extends HBox {
 		images.getChildren().get(2).setScaleX(0.7d);
 		images.getChildren().get(2).setScaleY(0.7d);
 
+		this.selection = images.getChildren().get(1);
+
 		// And we fire a Refresh event
 		this.fireEvent(new CarouselEvent(this, images));
 	}
@@ -117,6 +121,15 @@ public class Carousel extends HBox {
 	public void removeNode(Node node) {
 		this.nodes.remove(node);
 		refresh();
+	}
+
+	public void setSelection(Node node) {
+		// Check if the given node is in the list
+		if (nodes.contains(node)) {
+			while (this.selection != node) {
+				nextElement();
+			}
+		}
 	}
 
 	/**

@@ -2,8 +2,9 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 
-import com.martinheywang.model.Pack;
 import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Constructor_;
@@ -35,7 +36,7 @@ public class Constructor extends Device {
 		for (BaseResources res : BaseResources.values()) {
 			if (Constructor_.acceptedResources.contains(res))
 				carousel.addNodes(
-						new Displayer<BaseResources>(res.getDisplayer(), res));
+						new Displayer<Resource>(res.getDisplayer(), res));
 		}
 
 		final VBox box = new VBox();
@@ -64,13 +65,13 @@ public class Constructor extends Device {
 		return templateModel;
 	}
 
-	public void setProduit(BaseResources res) throws NullPointerException {
+	public void setProduit(Resource res) throws NullPointerException {
 		if (behaviour instanceof Constructor_) {
 			((Constructor_) behaviour).setProduit(new Pack(res, 1));
 		}
 	}
 
-	public BaseResources getProduit() throws NullPointerException {
+	public Resource getProduit() throws NullPointerException {
 		if (behaviour instanceof Constructor_)
 			return ((Constructor_) behaviour).getProduit()
 					.getRessource();

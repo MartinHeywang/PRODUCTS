@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.Database;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.database.Database;
 
 @DatabaseTable(tableName = "devicesModels")
 public class DeviceModel {

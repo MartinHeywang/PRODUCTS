@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;

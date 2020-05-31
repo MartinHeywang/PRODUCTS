@@ -1,7 +1,8 @@
 package com.martinheywang.view;
 
-import com.martinheywang.model.Pack;
 import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Pack;
+import com.martinheywang.model.Resource;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,16 +11,16 @@ import javafx.scene.layout.HBox;
 
 public class Recipe extends HBox {
 
-	BaseResources displayed;
+	Resource displayed;
 
-	public Recipe(BaseResources displayed) {
+	public Recipe(Resource displayed) {
 		this.setMinHeight(125d);
 		this.setAlignment(Pos.CENTER);
 
 		setDisplayedResource(displayed);
 	}
 
-	public void setDisplayedResource(BaseResources res) {
+	public void setDisplayedResource(Resource res) {
 		this.displayed = res;
 
 		this.getChildren().clear();

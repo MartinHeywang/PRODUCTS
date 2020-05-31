@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.BaseResources;
+import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
@@ -36,15 +36,19 @@ public class Buyer extends Device {
 		behaviour = new Buyer_(model, controller);
 
 		Carousel carousel = new Carousel();
-		for (BaseResources res : BaseResources.values()) {
-			if (Buyer_.acceptedResources.contains(res))
-				carousel.addNodes(
-						new Displayer<BaseResources>(res.getDisplayer(), res));
+		for (Resource res : Buyer_.acceptedResources) {
+			Displayer<Resource> dis = new Displayer<Resource>(
+					res.getDisplayer(), res);
+			carousel.addNodes(dis);
+			if (dis.getSubject().equals(((Buyer_) behaviour)
+					.getDistributedResource().getRessource())) {
+				carousel.setSelection(dis);
+			}
 		}
 		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
-				BaseResources res = (BaseResources) ((Displayer<?>) event
+				Resource res = (Resource) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
 				setDistributedResource(res);
 			}
@@ -53,7 +57,6 @@ public class Buyer extends Device {
 		Label extensionTitle = new Label("Changer la ressource distribuée :");
 		box.getChildren().addAll(extensionTitle, carousel);
 		dashboard.addNode(box);
-
 	}
 
 	@Override
@@ -67,7 +70,7 @@ public class Buyer extends Device {
 	 * @throws NullPointerException if the behaviour of this device isn't
 	 *                              a buyer
 	 */
-	public BaseResources getDistributedResource() throws NullPointerException {
+	public Resource getDistributedResource() throws NullPointerException {
 		if (behaviour instanceof Buyer_)
 			return ((Buyer_) behaviour)
 					.getDistributedResource().getRessource();
@@ -78,7 +81,7 @@ public class Buyer extends Device {
 	 * 
 	 * @param res the new value of the property
 	 */
-	public void setDistributedResource(BaseResources res) {
+	public void setDistributedResource(Resource res) {
 		if (behaviour instanceof Buyer_) {
 			((Buyer_) behaviour)
 					.setDistributedResource(new Pack(res, 1));

@@ -15,14 +15,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-@DatabaseTable(tableName = "packages")
+@DatabaseTable(tableName = "packs")
 public class Pack implements Displayable<Pack> {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idPaquet;
 
 	@DatabaseField
-	private BaseResources resource;
+	private Resource resource;
 
 	@DatabaseField
 	private int quantity;
@@ -33,12 +33,12 @@ public class Pack implements Displayable<Pack> {
 	public Pack() {
 	}
 
-	public Pack(BaseResources resource, int quantity) {
+	public Pack(Resource resource, int quantity) {
 		this.resource = resource;
 		this.quantity = quantity;
 	}
 
-	public Pack(BaseResources resource, int quantity, DeviceModel model) {
+	public Pack(Resource resource, int quantity, DeviceModel model) {
 		this.resource = resource;
 		this.quantity = quantity;
 		this.model = model;
@@ -85,7 +85,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @return the resource
 	 */
-	public BaseResources getRessource() {
+	public Resource getRessource() {
 		return resource;
 	}
 
@@ -93,7 +93,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param res the resource to set
 	 */
-	public void setRessource(BaseResources res) {
+	public void setRessource(Resource res) {
 		this.resource = res;
 	}
 

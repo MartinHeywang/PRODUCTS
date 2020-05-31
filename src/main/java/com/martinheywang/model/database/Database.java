@@ -1,9 +1,10 @@
-package com.martinheywang;
+package com.martinheywang.model.database;
 
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -22,8 +23,11 @@ public final class Database {
 		try {
 			connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
 
-			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
+			DataPersisterManager
+					.registerDataPersisters(ResourcePersister.getInstance());
+
 			TableUtils.createTableIfNotExists(connection, Pack.class);
+			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
 			TableUtils.createTableIfNotExists(connection, Coordinates.class);
 			TableUtils.createTableIfNotExists(connection, Game.class);
 		} catch (SQLException e) {

@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
-import com.martinheywang.Database;
 import com.martinheywang.Main;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.database.Database;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

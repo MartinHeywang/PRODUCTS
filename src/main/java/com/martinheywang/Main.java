@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import com.martinheywang.model.Game;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.Home;
 import com.martinheywang.view.Home2;

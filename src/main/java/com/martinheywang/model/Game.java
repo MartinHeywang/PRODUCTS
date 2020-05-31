@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.Database;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.Displayable;

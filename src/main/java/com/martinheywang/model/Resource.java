@@ -123,4 +123,10 @@ public interface Resource extends Displayable<Resource> {
 	public static List<Resource> getReferences() {
 		return resourceReferences;
 	}
+
+	public static Resource valueOf(String inputString) {
+		// Todo : search through all enums in all plugins
+		// For the time being, I olny search through the BaseResource class
+		return BaseResources.valueOf(inputString);
+	}
 }
