@@ -17,6 +17,9 @@ import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -36,6 +39,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class GameController {
 
@@ -110,6 +114,7 @@ public class GameController {
 									"Chargement de la partie en cours...\n"
 											+ "L'opération peut durer quelques instants.",
 									Color.INDIANRED);
+							grille.setVisible(false);
 						}
 					});
 
@@ -200,6 +205,18 @@ public class GameController {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
+							grille.setVisible(true);
+							Timeline animation = new Timeline();
+							animation.getKeyFrames().addAll(
+									new KeyFrame(Duration.millis(0d),
+											new KeyValue(
+													grille.opacityProperty(),
+													0d)),
+									new KeyFrame(Duration.millis(250d),
+											new KeyValue(
+													grille.opacityProperty(),
+													1d)));
+							animation.playFromStart();
 							argentLabel.setVisible(true);
 							progression.setVisible(false);
 							// Sets the report dialog to a little text who says
