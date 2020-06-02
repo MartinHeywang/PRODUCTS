@@ -3,7 +3,6 @@ package com.martinheywang.view.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -12,9 +11,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 
 public class Carousel extends HBox {
 
@@ -25,16 +25,10 @@ public class Carousel extends HBox {
 	Node selection;
 
 	public Carousel() {
-		MaterialDesignIconView left_arrow = new MaterialDesignIconView();
-		left_arrow.setGlyphName("ARROW_LEFT");
-		left_arrow.setGlyphSize(35.0);
-		left_arrow.setFill(Color.WHITE);
-		left_arrow.getStyleClass().add("arrow");
-		MaterialDesignIconView right_arrow = new MaterialDesignIconView();
-		right_arrow.setGlyphName("ARROW_RIGHT");
-		right_arrow.setGlyphSize(35.0);
-		right_arrow.setFill(Color.WHITE);
-		right_arrow.getStyleClass().add("arrow");
+		final ImageView left_arrow = new ImageView(new Image(
+				getClass().getResourceAsStream("/icons/left_arrow.png")));
+		final ImageView right_arrow = new ImageView(new Image(
+				getClass().getResourceAsStream("/icons/right_arrow.png")));
 
 		final Button previous = new Button();
 		previous.setGraphic(left_arrow);
