@@ -78,9 +78,12 @@ public class Buyer_ implements Behaviour {
 					+ Device.getElectricity())
 				throw new MoneyException();
 			else {
-				distributedResource.addQuantity(1);
-				controller.setArgent(5 + Device.getElectricity(), false);
-				controller.findDevice(pointer).action(distributedResource);
+				if (!distributedResource.getRessource()
+						.equals(BaseResources.NONE)) {
+					distributedResource.addQuantity(1);
+					controller.setArgent(5 + Device.getElectricity(), false);
+					controller.findDevice(pointer).action(distributedResource);
+				}
 			}
 		}
 
