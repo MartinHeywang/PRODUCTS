@@ -84,13 +84,13 @@ public class Constructor_ implements Behaviour {
 				for (int i = 0; i < resATraiter.getQuantity(); i++)
 					resources.add(resATraiter.getRessource());
 
-				if (controller.getPartieEnCours().getArgent() < 5
+				if (controller.getMoney() < 5
 						+ Device.getElectricity())
 					throw new MoneyException();
 
 				if (checkIngredients()) {
 					tempo.addQuantity(1);
-					controller.setArgent(Device.getElectricity(), false);
+					controller.removeMoney(Device.getElectricity());
 					controller.findDevice(pointer).action(tempo);
 				}
 			}

@@ -12,17 +12,22 @@ import com.martinheywang.view.Home2;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class Main extends Application {
+/**
+ * The main class of the application. Launches and setting up
+ * everything.
+ * 
+ * @author Heywang
+ *
+ */
+public final class Main extends Application {
 
-	public static Stage stage;
+	private static Stage stage;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -68,36 +73,16 @@ public class Main extends Application {
 	 * @see Home#setMainApp(Main)
 	 */
 	public void initAccueil() {
-		// Allow to load .fxml files
-		FXMLLoader loader = new FXMLLoader();
-
 		try {
-			// Defining the file to search
-			loader.setLocation(
-					getClass().getResource("/Home.fxml"));
-			// Loads the file
-			BorderPane conteneurPrincipal = (BorderPane) loader.load();
-			// Creating a new scene and add the loaded file
-			Scene scene = new Scene(conteneurPrincipal);
-			// Setting the scene to the main stage
-			stage.setScene(scene);
+			FXMLLoader loader = prepareFXMLLoader("Home");
+
+			Parent root = loader.load();
+			changeSceneTo(root);
+
 			stage.setResizable(false);
 
-			// Creating the controller of the scene
 			Home controller = loader.getController();
 			controller.setMainApp(this);
-
-			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-				@Override
-				public void handle(KeyEvent e) {
-					if (e.getCode() == KeyCode.ENTER) {
-						controller.seConnecter();
-					}
-				}
-
-			});
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -113,24 +98,16 @@ public class Main extends Application {
 	 * @see Home2#setMainApp(Main)
 	 */
 	public void initAccueil2() {
-		// Allow to load .fxml files
-		FXMLLoader loader = new FXMLLoader();
-
 		try {
-			// Which file do we want to load
-			loader.setLocation(
-					getClass().getResource("/Home2.fxml"));
-			// Load the file, obviously
-			BorderPane conteneurPrincipal = (BorderPane) loader.load();
-			// Creating a new scene, in which we put the loaded file
-			Scene scene = new Scene(conteneurPrincipal);
-			// Setting the scene of th stage
-			stage.setScene(scene);
+			FXMLLoader loader = prepareFXMLLoader("Home2");
+
+			Parent root = loader.load();
+			changeSceneTo(root);
+
 			stage.setResizable(false);
 
-			// Creating a controller for our scene
-			Home2 controler = loader.getController();
-			controler.setMainApp(this);
+			Home2 controller = loader.getController();
+			controller.setMainApp(this);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -151,13 +128,11 @@ public class Main extends Application {
 	 */
 	public void initGame(Game game) {
 		try {
+			FXMLLoader loader = prepareFXMLLoader("Game");
 
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("/Game.fxml"));
+			Parent root = loader.load();
+			changeSceneTo(root);
 
-			BorderPane Bp = (BorderPane) loader.load();
-			Scene scene = new Scene(Bp);
-			stage.setScene(scene);
 			stage.setResizable(true);
 
 			GameController controller = loader.getController();
@@ -168,7 +143,7 @@ public class Main extends Application {
 				@Override
 				public void handle(WindowEvent event) {
 					try {
-						controller.getPartieEnCours().save();
+						controller.saveGame();
 					} catch (SQLException e) {
 						System.out.println(e.getLocalizedMessage());
 
@@ -179,5 +154,46 @@ public class Main extends Application {
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Changes the whole scene to the parent node given as input.
+	 * 
+	 * @param node the new scene's root
+	 */
+	private void changeSceneTo(Parent node) {
+		Scene scene = new Scene(node);
+		stage.setScene(scene);
+	}
+
+	/**
+	 * Prepares a new {@link FXMLoader} with the given string as input. Do
+	 * not specify the extension nor the directory, as long as this file
+	 * is in a resource directory.<br>
+	 * 
+	 * <pre>
+	 * <code>
+	 * //The loaded file here is src/main/resources/fxml/Game.fxml
+	 * FXMLLoader loader = prepareFXMLLoader("Game");
+	 * 
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param file the name of the file to load
+	 * @return a new FXMLLoader
+	 * @throws IOException if the file couldn't not be loaded.
+	 */
+	private FXMLLoader prepareFXMLLoader(String file) throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/" + file + ".fxml"));
+		return loader;
+	}
+
+	/**
+	 * 
+	 * @return the main window
+	 */
+	public static Stage getMainStage() {
+		return stage;
 	}
 }

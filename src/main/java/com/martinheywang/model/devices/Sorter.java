@@ -125,7 +125,7 @@ public class Sorter extends Device {
 	public void action(Pack resATraiter) throws MoneyException {
 
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
-			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
+			if (xy.isInGrid(controller.getGridSize())) {
 				final Device pointedDevice = controller.findDevice(xy);
 				for (Coordinates enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {

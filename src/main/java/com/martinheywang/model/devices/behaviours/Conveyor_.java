@@ -23,11 +23,11 @@ public class Conveyor_ implements Behaviour {
 			throws MoneyException {
 		for (int i = 0; i < this.level.getNiveau()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (controller.getPartieEnCours().getArgent() < 5
+			if (controller.getMoney() < 5
 					+ Device.getElectricity())
 				throw new MoneyException();
 
-			controller.setArgent(Device.getElectricity(), false);
+			controller.removeMoney(Device.getElectricity());
 		}
 		controller.findDevice(pointer).action(resATraiter);
 	}

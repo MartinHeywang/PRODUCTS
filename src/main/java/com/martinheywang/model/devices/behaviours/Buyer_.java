@@ -74,14 +74,14 @@ public class Buyer_ implements Behaviour {
 
 		for (int niveau = 0; niveau < this.level.getNiveau(); niveau++) {
 
-			if (controller.getPartieEnCours().getArgent() < 5
+			if (controller.getMoney() < 5
 					+ Device.getElectricity())
 				throw new MoneyException();
 			else {
 				if (!distributedResource.getRessource()
 						.equals(BaseResources.NONE)) {
 					distributedResource.addQuantity(1);
-					controller.setArgent(5 + Device.getElectricity(), false);
+					controller.removeMoney(5 + Device.getElectricity());
 					controller.findDevice(pointer).action(distributedResource);
 				}
 			}

@@ -18,8 +18,7 @@
          <children>
             <ScrollPane fitToHeight="true" fitToWidth="true" stylesheets="@/ScrollPane.css">
                <content>
-                  <GridPane fx:id="grille" gridLinesVisible="true">
-            </GridPane>
+                  <GridPane fx:id="grid"/>
                </content>
             </ScrollPane>
             <Label fx:id="report" alignment="TOP_LEFT" focusTraversable="false" maxHeight="-Infinity" maxWidth="275.0" prefHeight="100.0" prefWidth="275.0" style="-fx-border-color: #1c8dff; -fx-border-width: 0.3em;" text="Conseil : Pour construire un appareil, sélectionner une case, et via la fenêtre dédiée, sélectionnez l'appareil voulu." wrapText="true" StackPane.alignment="BOTTOM_RIGHT">

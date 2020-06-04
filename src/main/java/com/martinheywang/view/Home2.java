@@ -48,7 +48,7 @@ public class Home2 {
 
 		try {
 			List<Game> games = Database.daoGame().queryForAll();
-			games.sort(Comparator.comparing(Game::getLastView).reversed());
+			games.sort(Comparator.comparing(Game::getLastSave).reversed());
 
 			for (Game game : games) {
 				Node displayer = game.getDisplayer();

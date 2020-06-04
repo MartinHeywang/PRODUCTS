@@ -1,8 +1,8 @@
 package com.martinheywang.view;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -28,9 +28,10 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -41,12 +42,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class GameController {
+public class GameController implements Initializable {
 
 	private Main main;
 
 	@FXML
-	private GridPane grille;
+	private GridPane grid;
 	@FXML
 	private Label argentLabel;
 	@FXML
@@ -60,9 +61,10 @@ public class GameController {
 	private static final LongProperty argentProperty = new SimpleLongProperty();
 
 	private Thread t;
-	private Game partieEnCours;
+	private Game currentGame;
 
-	public void initialize() {
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		report.textProperty().bind(reportProperty);
 		report.setVisible(false);
 		report.setTooltip(new Tooltip("Cliquez pour cacher..."));
@@ -81,7 +83,7 @@ public class GameController {
 
 			};
 		});
-		grille.setFocusTraversable(true);
+		grid.setFocusTraversable(true);
 	}
 
 	/**
@@ -96,154 +98,159 @@ public class GameController {
 	/**
 	 * Loads a game with all its informations and lauch the thread.
 	 * 
-	 * @param partieToLoad the game to load
+	 * @param gameToLoad the game to load
 	 */
-	public void load(Game partieToLoad) throws SQLException {
-		// Save this instance (used a little bit later)
-		GameController controller = this;
-		// The task defines how to load the game
+	public void load(Game gameToLoad) throws SQLException {
 		Task<Void> task = new Task<Void>() {
 			@Override
 			protected Void call() {
-				try {
-					// Little message ("The game is still loading...")
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							setReport(
-									"Chargement de la partie en cours...\n"
-											+ "L'opération peut durer quelques instants.",
-									Color.INDIANRED);
-							grille.setVisible(false);
-						}
-					});
+				currentGame = gameToLoad;
 
-					// Updating the field partieEnCours
-					partieEnCours = partieToLoad;
-					// Fetching the model of all devices in a list
-					List<DeviceModel> devicesModel = partieToLoad
-							.getAppareilsModel();
+				refreshView();
 
-					final int taille = partieToLoad.getTailleGrille();
-					// Creating the device if they aren't enough
-					if (devicesModel.size() < Math.pow(taille, 2)) {
-						for (int x = 0; x < taille; x++) {
-							for (int y = 0; y < taille; y++) {
-								try {
-									// Creating new devices models in case there
-									// aren't enough
-									final DeviceModel model = new DeviceModel(
-											new Coordinates(x, y),
-											partieToLoad);
-									devicesModel.add(model);
-									Database.daoDeviceModel().create(model);
-								} catch (SQLException e) {
-									// Catch SQLException, because we are
-									// interacting with the database
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-					// Reseting the list of buyer to fix a bug
-					Buyer.locations = new ArrayList<Coordinates>();
-
-					// Variable i for progress
-					int i = 1;
-					// For all models
-					for (DeviceModel model : devicesModel) {
-						// Creating a new device using the model
-						final Device device = model.getType().getClasse()
-								.getConstructor(DeviceModel.class,
-										GameController.class)
-								.newInstance(model, controller);
-						device.setOnMouseEntered(
-								new EventHandler<MouseEvent>() {
-									@Override
-									public void handle(MouseEvent event) {
-										device.setScaleX(0.98d);
-										device.setScaleY(0.98d);
-										Main.stage.getScene()
-												.setCursor(Cursor.HAND);
-									}
-								});
-						device.setOnMouseExited(
-								new EventHandler<MouseEvent>() {
-									@Override
-									public void handle(MouseEvent event) {
-										device.setScaleX(1d);
-										device.setScaleY(1d);
-										Main.stage.getScene()
-												.setCursor(Cursor.DEFAULT);
-									}
-								});
-
-						// Adding it to the grid (view)
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								grille.add(device,
-										device.getModel().getCoordinates()
-												.getX(),
-										device.getModel().getCoordinates()
-												.getY());
-							}
-						});
-
-						// Setting up the progress
-						i++;
-						progression.progressProperty()
-								.set((double) i
-										/ devicesModel.size());
-					}
-
-					// Starting the thread of game
-					t = new Thread(new Play());
-					t.start();
-
-					// Last view modifications
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							grille.setVisible(true);
-							Timeline animation = new Timeline();
-							animation.getKeyFrames().addAll(
-									new KeyFrame(Duration.millis(0d),
-											new KeyValue(
-													grille.opacityProperty(),
-													0d)),
-									new KeyFrame(Duration.millis(250d),
-											new KeyValue(
-													grille.opacityProperty(),
-													1d)));
-							animation.playFromStart();
-							argentLabel.setVisible(true);
-							progression.setVisible(false);
-							// Sets the report dialog to a little text who says
-							// that
-							// the game is
-							// still loading and sets the money label
-							setReport("Bienvenue !", Color.CORNFLOWERBLUE);
-							argentProperty.set(partieToLoad.getArgent());
-							argentLabel.setText(NumberFormat.getInstance()
-									.format(partieToLoad.getArgent()) + " €");
-						}
-					});
-				} catch (Exception e) {
-					System.err.println(
-							"An error occured when loading the game. Here is the full error message :\n\n\n");
-					e.printStackTrace();
-				}
-				// Here we must return something of type Void (this type can't
-				// be instantiated), so we return null
 				return null;
 			}
 		};
 
-		// Launching obviously the task defined in a new thread
 		Thread loading = new Thread(task);
 		loading.start();
 
+		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				t = new Thread(new GameLoop());
+				t.start();
+			}
+		});
+
+	}
+
+	private void refreshView() {
+		Platform.runLater(() -> toProcessView());
+		Platform.runLater(() -> clearGrid());
+		adjustDevicesModel();
+
+		/*
+		 * <!> Clear the registered buyers coords (when loading two differents
+		 * game, some devices was called instaed of the buyers).
+		 */
+		Buyer.locations.clear();
+
+		addDevices();
+		Platform.runLater(() -> toPlayableView());
+	}
+
+	private void clearGrid() {
+		grid.getChildren().clear();
+	}
+
+	private void addDevices() {
+		List<DeviceModel> devicesModel = currentGame.getDevicesModel();
+
+		progression.progressProperty()
+				.set(0.0);
+
+		int i = 1;
+		try {
+			for (DeviceModel model : devicesModel) {
+				final Device device = model.getType().getClasse()
+						.getConstructor(DeviceModel.class,
+								GameController.class)
+						.newInstance(model, this);
+
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						grid.add(device,
+								device.getModel().getCoordinates()
+										.getX(),
+								device.getModel().getCoordinates()
+										.getY());
+					}
+				});
+
+				i++;
+				progression.progressProperty().set(
+						(double) i / devicesModel.size());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setReport("Failed to add devices to the grid"
+					+ e.getLocalizedMessage(), Color.DARKRED);
+		}
+	}
+
+	/**
+	 * Adjust the devices in the devices model's list. Fill what is needed
+	 * to match the grid-size.
+	 */
+	private void adjustDevicesModel() {
+
+		final int size = currentGame.getGridSize();
+		final List<DeviceModel> devicesModel = currentGame.getDevicesModel();
+
+		if (devicesModel.size() < Math.pow(size, 2)) {
+			try {
+				for (int x = 0; x < size; x++) {
+					for (int y = 0; y < size; y++) {
+						final DeviceModel model = new DeviceModel(
+								new Coordinates(x, y),
+								currentGame);
+						devicesModel.add(model);
+						Database.daoDeviceModel().create(model);
+					}
+				}
+				currentGame.save();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				setReport("Failed to add devices model in the database",
+						Color.DARKRED);
+			}
+		}
+	}
+
+	/**
+	 * Hides the grid with a nice opacity transition.<br>
+	 * Should be executed on the JavaFx Application Thread (using
+	 * {@link Platform#runLater(Runnable)}.
+	 */
+	private void toProcessView() {
+		Timeline fadeOut = new Timeline();
+		fadeOut.getKeyFrames().addAll(
+				new KeyFrame(Duration.millis(0d),
+						new KeyValue(grid.opacityProperty(), 1d)),
+				new KeyFrame(Duration.millis(250d),
+						new KeyValue(grid.opacityProperty(), 0d)));
+		fadeOut.playFromStart();
+		grid.setVisible(false);
+		argentLabel.setVisible(false);
+		progression.setVisible(true);
+		progression.setProgress(0.0);
+	}
+
+	/**
+	 * Shows the grid with a nice opacity transition.<br>
+	 * Should be executed on the JavaFx Application Thread (using
+	 * {@link Platform#runLater(Runnable)}.
+	 */
+	private void toPlayableView() {
+		grid.setVisible(true);
+		Timeline fadeIn = new Timeline();
+		fadeIn.getKeyFrames().addAll(
+				new KeyFrame(Duration.millis(0d),
+						new KeyValue(
+								grid.opacityProperty(),
+								0d)),
+				new KeyFrame(Duration.millis(250d),
+						new KeyValue(
+								grid.opacityProperty(),
+								1d)));
+		fadeIn.playFromStart();
+		argentLabel.setVisible(true);
+		progression.setVisible(false);
+		argentProperty.set(currentGame.getMoney());
+		argentLabel.setText(NumberFormat.getInstance()
+				.format(currentGame.getMoney()) + " €");
 	}
 
 	/**
@@ -255,7 +262,7 @@ public class GameController {
 	@FXML
 	public void returnToHome() throws SQLException {
 		t.interrupt();
-		partieEnCours.save();
+		currentGame.save();
 		main.initAccueil2();
 	}
 
@@ -267,54 +274,146 @@ public class GameController {
 	@FXML
 	public void upgradeGrid() {
 		try {
-			// Defining the new size
-			final int newTaille = partieEnCours.getTailleGrille() + 1;
-
-			// Get the price of this action
 			ResourceBundle bundle = ResourceBundle
 					.getBundle("com.martinheywang.model.bundles.GrilleUpdate");
-			// This action might throw an exception : if we don't have enough
-			// money
-			// It the MoneyException is throwed, this method breaks and nothing
-			// is done.
-			setArgent(Long.valueOf(bundle.getString(String.valueOf(newTaille))),
-					false);
 
-			partieEnCours.setTailleGrille(newTaille);
-			// From 0 to the new size in each dimension
-			for (int x = 0; x < newTaille; x++) {
-				for (int y = 0; y < newTaille; y++) {
-					// If no devices exists in this zone
-					if (findDevice(new Coordinates(x, y)) == null) {
-						// Crete a new Model for Device
-						final DeviceModel model = new DeviceModel(
-								new Coordinates(x, y),
-								partieEnCours);
-						// Save the new model in the database
-						Database.daoDeviceModel().create(model);
+			final Integer newSize = currentGame.getGridSize() + 1;
+			final String bundleValue = bundle.getString(newSize.toString());
 
-						// Create the new device
-						Device device = model.getType().getClasse()
-								.getConstructor(DeviceModel.class,
-										GameController.class)
-								.newInstance(model, this);
-						// Add it to the grid
-						grille.add(device,
-								device.getModel().getCoordinates().getX(),
-								device.getModel().getCoordinates().getY());
-					}
-				}
-			}
+			removeMoney(Long.valueOf(bundleValue));
 
-			// Save the game
-			partieEnCours.save();
+			currentGame.setGridSize(newSize);
+			refreshView();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	class Play implements Runnable {
+	/**
+	 * Adds money to the game
+	 * 
+	 * @param amount how many
+	 */
+	public void addMoney(long amount) throws MoneyException {
+		currentGame.addMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Removes money to the game
+	 * 
+	 * @param amount how many
+	 * @throws MoneyException if there aren't enough money
+	 */
+	public void removeMoney(long amount) throws MoneyException {
+		currentGame.removeMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Sets the money amount to the value given as parameter.
+	 * 
+	 * @param amount the value
+	 */
+	public void setArgent(long amount) throws MoneyException {
+		currentGame.setMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Refreshes the amount money displayed by the label and update the
+	 * associated property.
+	 */
+	private void refreshMoney() {
+		Platform.runLater(() -> argentProperty.set(currentGame.getMoney()));
+	}
+
+	/**
+	 * 
+	 * @return the money
+	 */
+	public int getGridSize() {
+		return currentGame.getGridSize();
+	}
+
+	/**
+	 * 
+	 * @return the amount of money of the game
+	 */
+	public long getMoney() {
+		return currentGame.getMoney();
+	}
+
+	/**
+	 * Saves the game
+	 * 
+	 * @throws SQLException if an error occurs when saving the game
+	 */
+	public void saveGame() throws SQLException {
+		currentGame.save();
+	}
+
+	/**
+	 * Replaces a device at the given coordinates of the new device.
+	 * 
+	 * @param device     the new device that replaces the old
+	 * @param ignoreCost allow the user to avoid the cost of the operation
+	 * @throws MoneyException in case the money is set, if the money
+	 *                        amount is too low.
+	 */
+	public void setAppareil(Device device, boolean ignoreCost)
+			throws MoneyException {
+		currentGame.setDeviceModel(device.getModel());
+		if (!ignoreCost) {
+			removeMoney(device.getModel().getType().getPrix());
+		}
+		final Coordinates coords = device.getModel().getCoordinates();
+		Device oldDevice = findDevice(coords);
+		grid.getChildren().remove(oldDevice);
+		grid.add(device, coords.getX(), coords.getY());
+	}
+
+	/**
+	 * Gets the cell content at the given coordinates.
+	 * 
+	 * @param location the coords
+	 * @return the node at the given coords
+	 */
+	public Device findDevice(Coordinates location) {
+		final int x = location.getX();
+		final int y = location.getY();
+
+		for (Node node : grid.getChildren()) {
+			if (GridPane.getColumnIndex(node) == x
+					&& GridPane.getRowIndex(node) == y) {
+				if (node instanceof Device) {
+					return (Device) node;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Shows the report if hided and sets the text to String in parameter.
+	 * The must also indicates a JavaFX Color which will be the color of
+	 * the border.
+	 * 
+	 * @param text        the text to show
+	 * @param colorBorder the new color of the border
+	 */
+	public void setReport(String text, Color colorBorder) {
+		reportProperty.set(text);
+		report.getStyleClass().add("report");
+		report.setStyle("-fx-border-color: " + String.format("#%02X%02X%02X",
+				(int) (colorBorder.getRed() * 255),
+				(int) (colorBorder.getGreen() * 255),
+				(int) (colorBorder.getBlue() * 255)) + ";");
+		report.setVisible(true);
+	}
+
+	private class GameLoop implements Runnable {
 
 		@Override
 		public void run() {
@@ -343,123 +442,4 @@ public class GameController {
 
 	}
 
-	/**
-	 * Iterates over the main GridPane children's list and returns the
-	 * first obejct in the list where the coordinates matches the the
-	 * given parameter.
-	 * 
-	 * @param xy a Coordinates' instance
-	 * @return a device in the main grid
-	 */
-	public Device findDevice(Coordinates xy) {
-		for (Node node : grille.getChildren()) {
-			if (node instanceof Device) {
-				final Coordinates nodeXy = ((Device) node).getModel()
-						.getCoordinates();
-				if (nodeXy.getX() == xy.getX() && nodeXy.getY() == xy.getY()) {
-					return (Device) node;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * Sets the amount of money of the current game.
-	 * 
-	 * @param amont    how many money should be added or substracted
-	 * @param increase a boolean (true to increase, false to decrease)
-	 */
-	public void setArgent(long amont, boolean increase) throws MoneyException {
-		// This action has to be performed on the main JavaFX Thread
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				// If the value is true, increases the money
-				if (increase) {
-					argentProperty.set(argentProperty.get() + amont);
-				}
-				// Else, decrease
-				else {
-
-					if (argentProperty.get() < amont) {
-					} else {
-						argentProperty.set(argentProperty.get() - amont);
-					}
-				}
-			}
-		});
-		partieEnCours.setArgent(amont, increase);
-	}
-
-	/**
-	 * Sets the money amount to the value given as parameter.
-	 * 
-	 * @param amount the value
-	 */
-	public void setArgent(long amount) {
-		Platform.runLater(() -> argentProperty.set(amount));
-	}
-
-	/**
-	 * Replaces a device at the given coordinates of the new device.
-	 * 
-	 * @param device     the new device that replaces the old
-	 * @param ignoreCost allow the user to avoid the cost of the operation
-	 * @throws MoneyException in case the money is set, if the money
-	 *                        amount is too low.
-	 */
-	public void setAppareil(Device device, boolean ignoreCost)
-			throws MoneyException {
-		// Setting the device in the database
-		partieEnCours.setAppareil(device.getModel());
-		// If we don't want to avoid the price
-		if (!ignoreCost) {
-			// Set the money to the game
-			setArgent(device.getModel().getType().getPrix(), false);
-		}
-		// For all nodes in the main gripane
-		for (Node node : grille.getChildren()) {
-			// If it is a Device
-			if (node instanceof Device) {
-				// Getting its coordinates
-				final Coordinates nodeXy = ((Device) node).getModel()
-						.getCoordinates();
-				// if the coordinates matches
-				if (nodeXy.getX() == device.getModel().getCoordinates().getX()
-						&& nodeXy.getY() == device.getModel().getCoordinates()
-								.getY()) {
-					// Remove the old device and adding the new
-					grille.getChildren().remove(node);
-					grille.add(device,
-							device.getModel().getCoordinates().getX(),
-							device.getModel().getCoordinates().getY());
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Shows the report if hided and sets the text to String in parameter.
-	 * The must also indicates a JavaFX Color which will be the color of
-	 * the border.
-	 * 
-	 * @param text        the text to show
-	 * @param colorBorder the new color of the border
-	 */
-	public void setReport(String text, Color colorBorder) {
-		reportProperty.set(text);
-		report.getStyleClass().add("report");
-		report.setStyle("-fx-border-color: " + String.format("#%02X%02X%02X",
-				(int) (colorBorder.getRed() * 255),
-				(int) (colorBorder.getGreen() * 255),
-				(int) (colorBorder.getBlue() * 255)) + ";");
-		report.setVisible(true);
-	}
-
-	public Game getPartieEnCours() {
-		return partieEnCours;
-	}
 }

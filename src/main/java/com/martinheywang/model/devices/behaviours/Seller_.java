@@ -25,10 +25,9 @@ public class Seller_ implements Behaviour {
 		for (int i = 0; i < this.level.getNiveau()
 				|| i < resATraiter.getQuantity(); i++) {
 			if (!resATraiter.getRessource().equals(BaseResources.NONE))
-				controller.setArgent(
+				controller.addMoney(
 						resATraiter.getRessource().getPrice() - Device
-								.getElectricity(),
-						true);
+								.getElectricity());
 		}
 	}
 

@@ -43,7 +43,7 @@ public class Floor extends Device {
 					dialog = new Dialog<Object>();
 					dialog.setTitle("Sélectionnez un appareil à construire");
 					dialog.setDialogPane(dialogPane);
-					dialog.initOwner(Main.stage);
+					dialog.initOwner(Main.getMainStage());
 					dialog.initModality(Modality.NONE);
 
 					FloorController SController = loader.getController();

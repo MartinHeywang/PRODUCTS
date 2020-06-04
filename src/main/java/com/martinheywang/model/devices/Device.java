@@ -22,6 +22,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
@@ -140,7 +142,7 @@ public abstract class Device extends ImageView {
 					dialog = new Dialog<Type>();
 					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
 					dialog.setDialogPane(dialogPane);
-					dialog.initOwner(Main.stage);
+					dialog.initOwner(Main.getMainStage());
 					dialog.initModality(Modality.NONE);
 
 					DeviceController controller = loader.getController();
@@ -198,6 +200,8 @@ public abstract class Device extends ImageView {
 
 		// Def dashboard
 		dashboard = new Dashboard(this);
+
+		addHoverEffect();
 	}
 
 	/**
@@ -213,7 +217,7 @@ public abstract class Device extends ImageView {
 	 */
 	public void action(Pack resATraiter) throws MoneyException {
 		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
-			if (xy.isInGrid(controller.getPartieEnCours().getTailleGrille())) {
+			if (xy.isInGrid(controller.getGridSize())) {
 				final Device pointedDevice = controller.findDevice(xy);
 				for (Coordinates enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {
@@ -229,8 +233,33 @@ public abstract class Device extends ImageView {
 		}
 	}
 
+	private void addHoverEffect() {
+		this.setOnMouseEntered(
+				new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						Node hovered = (Node) event.getSource();
+						hovered.setScaleX(0.98d);
+						hovered.setScaleY(0.98d);
+						Main.getMainStage().getScene()
+								.setCursor(Cursor.HAND);
+					}
+				});
+		this.setOnMouseExited(
+				new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						Node exited = (Node) event.getSource();
+						exited.setScaleX(1d);
+						exited.setScaleY(1d);
+						Main.getMainStage().getScene()
+								.setCursor(Cursor.DEFAULT);
+					}
+				});
+	}
+
 	public void upgrade() {
-		// Define how the devices should upgarde themself + javadoc
+		// Todo : efine how the devices should upgarde themself
 	}
 
 	public void rotate() {
@@ -253,7 +282,7 @@ public abstract class Device extends ImageView {
 	}
 
 	public void delete() {
-		// Define how the devices should destroy themself + javadoc
+		// Todo : Define how the devices should destroy themself
 	}
 
 	protected abstract TemplateModel getTemplateModel();

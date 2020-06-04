@@ -19,11 +19,20 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
+/**
+ * Bean representing a Game.<br>
+ * Stored in the database in the <code>games</code> table. It also
+ * contains a {@link List} of {@link DeviceModel} that you can get by
+ * calling {@link Game#getDevicesModel()}.
+ * 
+ * 
+ * @author Martin Heywang
+ */
 @DatabaseTable(tableName = "games")
 public class Game implements Displayable<Game> {
 
 	@DatabaseField(columnName = "id", generatedId = true)
-	private Long idGame;
+	private Long gameId;
 
 	@DatabaseField
 	private String name;
@@ -32,7 +41,7 @@ public class Game implements Displayable<Game> {
 	private String lastSave;
 
 	@DatabaseField(columnName = "money")
-	private long argent;
+	private long money;
 
 	@DatabaseField
 	private int gridSize;
@@ -51,11 +60,10 @@ public class Game implements Displayable<Game> {
 	 */
 	public Game(String nom) throws SQLException {
 		this.name = nom;
-		this.lastSave = LocalDateTime.now().toString();
 		this.gridSize = 3;
-		this.argent = 1250;
+		this.money = 1250;
 
-		Database.daoGame().createIfNotExists(this);
+		save();
 	}
 
 	/**
@@ -66,7 +74,7 @@ public class Game implements Displayable<Game> {
 	 */
 	public void save() throws SQLException {
 		this.lastSave = LocalDateTime.now().toString();
-		Database.daoGame().update(this);
+		Database.daoGame().createOrUpdate(this);
 	}
 
 	/**
@@ -79,50 +87,84 @@ public class Game implements Displayable<Game> {
 	public void delete() throws SQLException {
 		Database.daoGame().delete(this);
 		List<DeviceModel> list = Database.daoDeviceModel().queryBuilder()
-				.where().eq("partie", idGame).query();
+				.where().eq("partie", gameId).query();
 		Database.daoDeviceModel().delete(list);
 	}
 
 	/**
+	 * Refreshes the list of devices model and return it then.
 	 * 
 	 * @return a list of all devices of this game
 	 */
-	public List<DeviceModel> getAppareilsModel() {
-		try {
-			devicesModel = Database.daoDeviceModel().queryBuilder()
-					.where()
-					.eq("game", idGame)
-					.query();
-		} catch (SQLException e) {
-			System.err.println("Couldn't load the devices for the game : "
-					+ this.toString());
-			e.printStackTrace();
-		}
+	public List<DeviceModel> getDevicesModel() {
+		refreshDevicesModel();
 		return devicesModel;
 	}
 
 	/**
-	 * Adds or substract money to the total.
-	 * 
-	 * @param argent   How many money should me added or substracted.
-	 * @param increase If the money should be added (true) or subtracted
-	 *                 (false).
-	 * @throws MoneyException if not enough money is available.
+	 * Refreshes the devices model list.
 	 */
-	public void setArgent(long argent, boolean increase)
-			throws MoneyException {
-		if (increase) {
-			this.argent += argent;
-		} else {
-			if (this.argent > argent) {
-				this.argent -= argent;
-			} else {
-				throw new MoneyException();
-			}
+	private void refreshDevicesModel() {
+		try {
+			devicesModel = Database.daoDeviceModel().queryBuilder()
+					.where()
+					.eq("game", gameId)
+					.query();
+		} catch (SQLException e) {
+			System.err.println("Couldn't refresh the list : "
+					+ this.toString());
+			e.printStackTrace();
 		}
 	}
 
-	public void setAppareil(DeviceModel deviceModel)
+	/**
+	 * Adds money to the game.
+	 * 
+	 * @param amount how many
+	 * @throws MoneyException if the amount after the transaction is under
+	 *                        0.
+	 */
+	public void addMoney(long amount) throws MoneyException {
+		this.money += amount;
+	}
+
+	/**
+	 * Removes money to the game
+	 * 
+	 * @param amount how many
+	 * @throws MoneyException if there aren't enough money to remove.
+	 */
+	public void removeMoney(long amount) throws MoneyException {
+		if (money < amount) {
+			throw new MoneyException();
+		} else {
+			this.money -= amount;
+		}
+	}
+
+	/**
+	 * Sets the money to the game. Should be used only if you want to
+	 * reset the money. If it is not the case, prefer using
+	 * {@link Game#addMoney(long)} or {@link Game#removeMoney(long)}.
+	 * 
+	 * @param amount the new amount
+	 * @throws MoneyException if the given amoung is less than 0
+	 */
+	public void setMoney(long amount) throws MoneyException {
+		if (amount < 0) {
+			throw new MoneyException();
+		} else {
+			this.money = amount;
+		}
+	}
+
+	/**
+	 * Replaces a {@link DeviceModel} in the list of this game.
+	 * 
+	 * @param deviceModel
+	 * @throws MoneyException
+	 */
+	public void setDeviceModel(DeviceModel deviceModel)
 			throws MoneyException {
 		for (int i = 0; i < devicesModel.size(); i++) {
 			if (devicesModel.get(i).getCoordinates()
@@ -140,38 +182,38 @@ public class Game implements Displayable<Game> {
 		Label nom = new Label();
 		nom.setUnderline(true);
 		nom.setAlignment(Pos.TOP_CENTER);
-		nom.setText(this.getNom());
+		nom.setText(this.getName());
 		nom.setWrapText(true);
 		root.setTop(nom);
 
 		// Changing the LocalDateTime of the game in a String representation
 		// Instead of using toString(), i ues this method to have my perso
 		// String
-		String instant = (this.getLastView().getDayOfMonth() < 10)
-				? "0" + this.getLastView().getDayOfMonth() + "/"
-				: this.getLastView().getDayOfMonth() + "/";
-		instant += (this.getLastView().getMonthValue() < 10)
-				? "0" + this.getLastView().getMonthValue() + "/"
-				: this.getLastView().getMonthValue() + "/";
-		instant += (this.getLastView().getYear() < 10)
-				? "0" + this.getLastView().getYear() + " "
-				: this.getLastView().getYear() + " ";
+		String instant = (this.getLastSave().getDayOfMonth() < 10)
+				? "0" + this.getLastSave().getDayOfMonth() + "/"
+				: this.getLastSave().getDayOfMonth() + "/";
+		instant += (this.getLastSave().getMonthValue() < 10)
+				? "0" + this.getLastSave().getMonthValue() + "/"
+				: this.getLastSave().getMonthValue() + "/";
+		instant += (this.getLastSave().getYear() < 10)
+				? "0" + this.getLastSave().getYear() + " "
+				: this.getLastSave().getYear() + " ";
 
-		instant += (this.getLastView().getHour() < 10)
-				? "0" + this.getLastView().getHour() + ":"
-				: this.getLastView().getHour() + ":";
-		instant += (this.getLastView().getMinute() < 10)
-				? "0" + this.getLastView().getMinute() + ":"
-				: this.getLastView().getMinute() + ":";
-		instant += (this.getLastView().getSecond() < 10)
-				? "0" + this.getLastView().getSecond()
-				: this.getLastView().getSecond();
+		instant += (this.getLastSave().getHour() < 10)
+				? "0" + this.getLastSave().getHour() + ":"
+				: this.getLastSave().getHour() + ":";
+		instant += (this.getLastSave().getMinute() < 10)
+				? "0" + this.getLastSave().getMinute() + ":"
+				: this.getLastSave().getMinute() + ":";
+		instant += (this.getLastSave().getSecond() < 10)
+				? "0" + this.getLastSave().getSecond()
+				: this.getLastSave().getSecond();
 
 		Label infos = new Label();
 		infos.setText("Dernière sauvegarde : " + instant
 				+ "\nArgent en compte : "
 				+ NumberFormat.getInstance(Locale.getDefault())
-						.format(this.getArgent())
+						.format(this.getMoney())
 				+ " €");
 		root.setLeft(infos);
 
@@ -183,15 +225,15 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return the id of this game
 	 */
-	public Long getIdPartie() {
-		return idGame;
+	public Long getGameId() {
+		return gameId;
 	}
 
 	/**
 	 * 
 	 * @return the name of the game
 	 */
-	public String getNom() {
+	public String getName() {
 		return name;
 	}
 
@@ -199,7 +241,7 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return the date of the latest save
 	 */
-	public LocalDateTime getLastView() {
+	public LocalDateTime getLastSave() {
 		return LocalDateTime.parse(lastSave);
 	}
 
@@ -207,31 +249,23 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return how many money the game counts
 	 */
-	public long getArgent() {
-		return argent;
+	public long getMoney() {
+		return money;
 	}
 
 	/**
 	 * 
 	 * @return the grid-size
 	 */
-	public int getTailleGrille() {
+	public int getGridSize() {
 		return gridSize;
-	}
-
-	/**
-	 * 
-	 * @param id the new id
-	 */
-	public void setIdPartie(Long id) {
-		this.idGame = id;
 	}
 
 	/**
 	 * 
 	 * @param newName the new name
 	 */
-	public void setNom(String newName) {
+	public void setName(String newName) {
 		this.name = newName;
 	}
 
@@ -239,23 +273,15 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @param lastView a parsable string to LocalDateTime object
 	 */
-	public void setLastView(String lastView) {
-		this.lastSave = lastView;
-	}
-
-	/**
-	 * 
-	 * @param lastView a parsable string to LocalDateTime object
-	 */
-	public void setLastView(LocalDateTime lastView) {
+	public void setLastSave(LocalDateTime lastView) {
 		this.lastSave = lastView.toString();
 	}
 
 	/**
 	 * 
-	 * @param tailleGrille the new grid-size
+	 * @param gridSize the new grid-size
 	 */
-	public void setTailleGrille(int tailleGrille) {
-		this.gridSize = tailleGrille;
+	public void setGridSize(int gridSize) {
+		this.gridSize = gridSize;
 	}
 }

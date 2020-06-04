@@ -47,7 +47,7 @@ public class Press_ implements Behaviour {
 				tempo.setRessource(BaseResources
 						.valueOf("PLAQUE_DE_" + resATraiter.getRessource()));
 
-				controller.setArgent(Device.getElectricity(), false);
+				controller.removeMoney(Device.getElectricity());
 				controller.findDevice(pointer).action(tempo);
 			}
 		}
