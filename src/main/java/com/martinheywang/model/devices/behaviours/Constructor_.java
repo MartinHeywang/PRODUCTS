@@ -10,12 +10,10 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.DeviceModel;
-import com.martinheywang.model.devices.Level;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
 
-public class Constructor_ implements Behaviour {
+public class Constructor_ extends Behaviour {
 
 	@SuppressWarnings("serial")
 	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
@@ -23,30 +21,25 @@ public class Constructor_ implements Behaviour {
 			add(BaseResources.NONE);
 
 			add(BaseResources.CIRCUIT);
-			add(BaseResources.PLAQUE_REFROIDISSANTE);
-			add(BaseResources.PLAQUE_CHAUFFANTE);
+			add(BaseResources.COOLER_PLATE);
+			add(BaseResources.HOTPLATE);
 			add(BaseResources.AMPOULE);
-			add(BaseResources.HORLOGE);
-			add(BaseResources.ANTENNE);
+			add(BaseResources.CLOCK);
+			add(BaseResources.ANTENNA);
 			add(BaseResources.GRILL);
-			add(BaseResources.MOTEUR);
-			add(BaseResources.CLIMATISATION);
-			add(BaseResources.PILE);
-			add(BaseResources.PANNEAU_SOLAIRE);
-			add(BaseResources.PROCESSEUR);
+			add(BaseResources.ENGINE);
+			add(BaseResources.AIR_CONDITIONER);
+			add(BaseResources.BATTERY);
+			add(BaseResources.SOLAR_PANEL);
+			add(BaseResources.PROCESSOR);
 		}
 	};
-
-	private Level level;
-	private GameController controller;
-
 	private Pack product;
 	private ArrayList<Resource> resources = new ArrayList<Resource>();
 	private ArrayList<Resource> recipes = new ArrayList<Resource>();
 
-	public Constructor_(DeviceModel model, GameController controller) {
-		this.level = model.getNiveau();
-		this.controller = controller;
+	public Constructor_(Device device, GameController controller) {
+		super(device, controller);
 
 		try {
 			// Query for all the packages that are associated to this device
@@ -78,7 +71,7 @@ public class Constructor_ implements Behaviour {
 		Pack tempo = new Pack(product.getRessource(), 0);
 
 		if (!product.getRessource().equals(BaseResources.NONE)) {
-			for (int level = 0; level < this.level.getNiveau()
+			for (int level = 0; level < this.level.getValue()
 					|| level < resATraiter.getQuantity(); level++) {
 
 				for (int i = 0; i < resATraiter.getQuantity(); i++)

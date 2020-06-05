@@ -19,7 +19,7 @@ public class Press extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new Press_(model, controller);
+		behaviour = new Press_(this, controller);
 	}
 
 	@Override

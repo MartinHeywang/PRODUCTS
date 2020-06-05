@@ -82,7 +82,7 @@ public enum Type implements Displayable<Type> {
 
 		ImageView image = new ImageView();
 		image.setImage(new Image(getClass()
-				.getResourceAsStream(Level.NIVEAU_1.getURL() + this.getURL())));
+				.getResourceAsStream(Level.LEVEL_1.getURL() + this.getURL())));
 		root.setRight(image);
 
 		Label infos = new Label();

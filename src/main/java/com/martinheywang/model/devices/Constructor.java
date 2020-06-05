@@ -31,7 +31,7 @@ public class Constructor extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new Constructor_(model, controller);
+		behaviour = new Constructor_(this, controller);
 	}
 
 	@Override

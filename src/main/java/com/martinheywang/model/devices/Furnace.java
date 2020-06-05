@@ -19,7 +19,7 @@ public class Furnace extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new Furnace_(model, controller);
+		behaviour = new Furnace_(this, controller);
 	}
 
 	@Override

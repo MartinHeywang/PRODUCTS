@@ -19,7 +19,7 @@ public class Conveyor extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new Conveyor_(model, controller);
+		behaviour = new Conveyor_(this, controller);
 	}
 
 	@Override

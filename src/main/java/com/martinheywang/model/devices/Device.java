@@ -11,7 +11,6 @@ import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
-import com.martinheywang.model.devices.behaviours.None_;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
@@ -61,7 +60,7 @@ public abstract class Device extends ImageView {
 	 * 
 	 * @see Behaviour
 	 */
-	protected Behaviour behaviour = new None_();
+	protected Behaviour behaviour;
 
 	/**
 	 * The controller is useful when you want to change somme data about
@@ -255,7 +254,6 @@ public abstract class Device extends ImageView {
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
 							enter.getY() == model.getCoordinates().getY()) {
-						timeline.playFromStart();
 						behaviour.action(resATraiter,
 								template.getPointersFor(PointerTypes.EXIT)
 										.get(0));
@@ -263,6 +261,15 @@ public abstract class Device extends ImageView {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Mark this device as activated. This action is only visual, it just
+	 * make the device glowing a little bit.
+	 */
+	public void activate() {
+		timeline.stop();
+		timeline.playFromStart();
 	}
 
 	/**
@@ -300,7 +307,7 @@ public abstract class Device extends ImageView {
 					model.getCoordinates(),
 					model.getGame(),
 					Type.FLOOR,
-					Level.NIVEAU_1,
+					Level.LEVEL_1,
 					Direction.UP);
 			controller.setAppareil(new Floor(newModel, controller),
 					false);

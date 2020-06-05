@@ -21,7 +21,7 @@ public class Seller extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new Seller_(model, controller);
+		behaviour = new Seller_(this, controller);
 	}
 
 	@Override

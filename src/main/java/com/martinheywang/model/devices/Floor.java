@@ -60,7 +60,7 @@ public class Floor extends Device {
 								model.getGame(),
 								(Type) dialog
 										.getResult(),
-								Level.NIVEAU_1,
+								Level.LEVEL_1,
 								Direction.UP);
 						controller.setAppareil(
 								((Type) dialog.getResult()).getClasse()

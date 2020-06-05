@@ -19,7 +19,7 @@ public class WireDrawer extends Device {
 
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
-		behaviour = new WireDrawer_(model, controller);
+		behaviour = new WireDrawer_(this, controller);
 	}
 
 	@Override
