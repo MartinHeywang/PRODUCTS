@@ -36,6 +36,16 @@ public class Buyer extends Device {
 				model.getDirection());
 		behaviour = new Buyer_(model, controller);
 
+	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
+	@Override
+	protected void initDashboard() {
+		super.initDashboard();
 		Carousel carousel = new Carousel();
 		Node selection = null;
 		for (Resource res : Buyer_.acceptedResources) {
@@ -59,11 +69,6 @@ public class Buyer extends Device {
 		Label extensionTitle = new Label("Changer la ressource distribuée :");
 		box.getChildren().addAll(extensionTitle, carousel);
 		dashboard.addNode(box);
-	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
 	}
 
 	/**

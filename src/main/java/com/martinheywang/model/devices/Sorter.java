@@ -66,7 +66,59 @@ public class Sorter extends Device {
 				model.getDirection());
 		behaviour = new Conveyor_(model, controller);
 
-		/* ----------- DASHBOARD EXTENSIONS ---------- */
+	}
+
+	@Override
+	public void action(Pack resATraiter) throws MoneyException {
+
+		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
+			if (xy.isInGrid(controller.getGridSize())) {
+				final Device pointedDevice = controller.findDevice(xy);
+				for (Coordinates enter : pointedDevice.getTemplate()
+						.getPointersFor(PointerTypes.ENTRY)) {
+					if (enter.getX() == model.getCoordinates().getX() &&
+							enter.getY() == model.getCoordinates().getY()) {
+						timeline.playFromStart();
+						// Check for criterias to give the good pointer
+						// First case (crit1), resource goes to the left
+						if (resATraiter.getRessource()
+								.equals(crit1.getRessource())) {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(2));
+							// Index 2 corresponds to the left because it should
+							// be the last
+							// element (we rotate clockwise)
+						}
+						// Second case (crit2), the resource goes to the right
+						else if (resATraiter.getRessource()
+								.equals(crit2.getRessource())) {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(0));
+							// Index 0 corresponds to the first element
+						}
+						// And dead in the center if there are no matching.
+						else {
+							behaviour.action(resATraiter,
+									template.getPointersFor(PointerTypes.EXIT)
+											.get(1));
+							// Index 1 is the center
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
+	@Override
+	protected void initDashboard() {
+		super.initDashboard();
 		Carousel carouselCrit1 = new Carousel();
 		Carousel carouselCrit2 = new Carousel();
 		Node selection1 = null;
@@ -118,55 +170,6 @@ public class Sorter extends Device {
 		dashboard.addNode(center);
 		dashboard.addNode(second);
 		dashboard.addNode(first);
-
-	}
-
-	@Override
-	public void action(Pack resATraiter) throws MoneyException {
-
-		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
-			if (xy.isInGrid(controller.getGridSize())) {
-				final Device pointedDevice = controller.findDevice(xy);
-				for (Coordinates enter : pointedDevice.getTemplate()
-						.getPointersFor(PointerTypes.ENTRY)) {
-					if (enter.getX() == model.getCoordinates().getX() &&
-							enter.getY() == model.getCoordinates().getY()) {
-						timeline.playFromStart();
-						// Check for criterias to give the good pointer
-						// First case (crit1), resource goes to the left
-						if (resATraiter.getRessource()
-								.equals(crit1.getRessource())) {
-							behaviour.action(resATraiter,
-									template.getPointersFor(PointerTypes.EXIT)
-											.get(2));
-							// Index 2 corresponds to the left because it should
-							// be the last
-							// element (we rotate clockwise)
-						}
-						// Second case (crit2), the resource goes to the right
-						else if (resATraiter.getRessource()
-								.equals(crit2.getRessource())) {
-							behaviour.action(resATraiter,
-									template.getPointersFor(PointerTypes.EXIT)
-											.get(0));
-							// Index 0 corresponds to the first element
-						}
-						// And dead in the center if there are no matching.
-						else {
-							behaviour.action(resATraiter,
-									template.getPointersFor(PointerTypes.EXIT)
-											.get(1));
-							// Index 1 is the center
-						}
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
 	}
 
 	public void setCriteria1(Resource res) {

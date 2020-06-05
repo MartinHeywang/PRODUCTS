@@ -13,6 +13,7 @@ import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
 import com.martinheywang.model.devices.behaviours.None_;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.components.Dashboard;
@@ -26,10 +27,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.util.Duration;
 
@@ -131,9 +134,7 @@ public abstract class Device extends ImageView {
 				try {
 					// Loading and opening the dialog
 					// Creating a fxml file loader
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(
-							getClass().getResource("/Device.fxml"));
+					FXMLLoader loader = Tools.prepareFXMLLoader("Device");
 
 					Dialog<Type> dialog;
 					DialogPane dialogPane;
@@ -144,6 +145,10 @@ public abstract class Device extends ImageView {
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.getMainStage());
 					dialog.initModality(Modality.NONE);
+
+					if (dashboard == null) {
+						initDashboard();
+					}
 
 					DeviceController controller = loader.getController();
 					controller.setMainApp(model.getCoordinates(), dashboard);
@@ -173,20 +178,20 @@ public abstract class Device extends ImageView {
 	 */
 	protected Device(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
-		super();
+
 		this.setImage(new Image(
 				getClass().getResourceAsStream(model.getNiveau().getURL()
 						+ model.getType().getURL())));
-
-		// Defs
 		this.model = model;
 		this.controller = controller;
 
-		// Defs visual effect
-		this.setRotate(model.getDirection().getRotate());
-		this.setOpacity(0.7);
+		initDefaultAppearance();
+		initActiveAnimation();
+		addHoverEffect();
+		this.setOnMouseClicked(onClicked);
+	}
 
-		// Def Timeline
+	private void initActiveAnimation() {
 		timeline = new Timeline();
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(0),
 				new KeyValue(this.opacityProperty(), 1)));
@@ -194,14 +199,41 @@ public abstract class Device extends ImageView {
 				new KeyValue(this.opacityProperty(), 1)));
 		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(2),
 				new KeyValue(this.opacityProperty(), 0.7)));
+	}
 
-		// Def onClick
-		this.setOnMouseClicked(onClicked);
+	private void initDefaultAppearance() {
+		this.setRotate(model.getDirection().getRotate());
+		this.setOpacity(0.7);
+	}
 
-		// Def dashboard
+	/**
+	 * Inits (or resets) the dashboard opened by default on click.
+	 */
+	protected void initDashboard() {
 		dashboard = new Dashboard(this);
+	}
 
-		addHoverEffect();
+	protected void addHoverEffect() {
+		this.setOnMouseEntered(
+				new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						final Node hovered = (Node) event.getSource();
+						Main.getMainStage().getScene()
+								.setCursor(Cursor.HAND);
+						hovered.setEffect(new Glow(0.4d));
+					}
+				});
+		this.setOnMouseExited(
+				new EventHandler<MouseEvent>() {
+					@Override
+					public void handle(MouseEvent event) {
+						final Node exited = (Node) event.getSource();
+						Main.getMainStage().getScene()
+								.setCursor(Cursor.DEFAULT);
+						exited.setEffect(new Glow(0d));
+					}
+				});
 	}
 
 	/**
@@ -233,33 +265,11 @@ public abstract class Device extends ImageView {
 		}
 	}
 
-	private void addHoverEffect() {
-		this.setOnMouseEntered(
-				new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						Node hovered = (Node) event.getSource();
-						hovered.setScaleX(0.98d);
-						hovered.setScaleY(0.98d);
-						Main.getMainStage().getScene()
-								.setCursor(Cursor.HAND);
-					}
-				});
-		this.setOnMouseExited(
-				new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						Node exited = (Node) event.getSource();
-						exited.setScaleX(1d);
-						exited.setScaleY(1d);
-						Main.getMainStage().getScene()
-								.setCursor(Cursor.DEFAULT);
-					}
-				});
-	}
-
+	/**
+	 * Upgrades the device by 1 if the level isn't already at maximum.
+	 */
 	public void upgrade() {
-		// Todo : efine how the devices should upgarde themself
+		// Todo : define how the devices should upgarde themself
 	}
 
 	public void rotate() {
@@ -281,8 +291,31 @@ public abstract class Device extends ImageView {
 		}
 	}
 
-	public void delete() {
-		// Todo : Define how the devices should destroy themself
+	/**
+	 * Deletes this device and replaces it by a {@link Floor}.
+	 */
+	public void delete() throws MoneyException {
+		try {
+			DeviceModel newModel = new DeviceModel(
+					model.getCoordinates(),
+					model.getGame(),
+					Type.FLOOR,
+					Level.NIVEAU_1,
+					Direction.UP);
+			controller.setAppareil(new Floor(newModel, controller),
+					false);
+
+			Database.daoDeviceModel().delete(model);
+			Database.daoDeviceModel().create(newModel);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			controller.setReport(
+					"L'appareil ne semble pas s'être détruit correctement...",
+					Color.DARKRED);
+			e.printStackTrace();
+		}
+
 	}
 
 	protected abstract TemplateModel getTemplateModel();

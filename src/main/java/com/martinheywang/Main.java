@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.Home;
 import com.martinheywang.view.Home2;
@@ -74,7 +75,7 @@ public final class Main extends Application {
 	 */
 	public void initAccueil() {
 		try {
-			FXMLLoader loader = prepareFXMLLoader("Home");
+			FXMLLoader loader = Tools.prepareFXMLLoader("Home");
 
 			Parent root = loader.load();
 			changeSceneTo(root);
@@ -99,7 +100,7 @@ public final class Main extends Application {
 	 */
 	public void initAccueil2() {
 		try {
-			FXMLLoader loader = prepareFXMLLoader("Home2");
+			FXMLLoader loader = Tools.prepareFXMLLoader("Home2");
 
 			Parent root = loader.load();
 			changeSceneTo(root);
@@ -128,7 +129,7 @@ public final class Main extends Application {
 	 */
 	public void initGame(Game game) {
 		try {
-			FXMLLoader loader = prepareFXMLLoader("Game");
+			FXMLLoader loader = Tools.prepareFXMLLoader("Game");
 
 			Parent root = loader.load();
 			changeSceneTo(root);
@@ -164,29 +165,6 @@ public final class Main extends Application {
 	private void changeSceneTo(Parent node) {
 		Scene scene = new Scene(node);
 		stage.setScene(scene);
-	}
-
-	/**
-	 * Prepares a new {@link FXMLoader} with the given string as input. Do
-	 * not specify the extension nor the directory, as long as this file
-	 * is in a resource directory.<br>
-	 * 
-	 * <pre>
-	 * <code>
-	 * //The loaded file here is src/main/resources/fxml/Game.fxml
-	 * FXMLLoader loader = prepareFXMLLoader("Game");
-	 * 
-	 * </code>
-	 * </pre>
-	 * 
-	 * @param file the name of the file to load
-	 * @return a new FXMLLoader
-	 * @throws IOException if the file couldn't not be loaded.
-	 */
-	private FXMLLoader prepareFXMLLoader(String file) throws IOException {
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("/" + file + ".fxml"));
-		return loader;
 	}
 
 	/**

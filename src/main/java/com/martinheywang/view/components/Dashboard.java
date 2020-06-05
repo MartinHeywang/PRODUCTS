@@ -1,9 +1,8 @@
 package com.martinheywang.view.components;
 
-import java.io.FileNotFoundException;
-
 import com.martinheywang.model.LocatedHashMap;
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.exceptions.MoneyException;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +17,7 @@ import javafx.scene.text.Font;
 
 public class Dashboard extends VBox {
 
-	public Dashboard(Device device) throws FileNotFoundException {
+	public Dashboard(Device device) {
 
 		// Default styling for nodes
 		final String border = "-fx-border-color: white";
@@ -96,9 +95,16 @@ public class Dashboard extends VBox {
 			this.getChildren().add(rowBox);
 		}
 
-		this.getChildren().get(1).setOnMouseClicked((e) -> device.upgrade());
-		this.getChildren().get(2).setOnMouseClicked((e) -> device.rotate());
-		this.getChildren().get(3).setOnMouseClicked((e) -> device.delete());
+		this.getChildren().get(1)
+				.setOnMouseClicked((event) -> device.upgrade());
+		this.getChildren().get(2).setOnMouseClicked((event) -> device.rotate());
+		this.getChildren().get(3).setOnMouseClicked((event) -> {
+			try {
+				device.delete();
+			} catch (MoneyException e) {
+				e.printStackTrace();
+			}
+		});
 
 		// And a little bit of space !
 		this.setSpacing(7d);

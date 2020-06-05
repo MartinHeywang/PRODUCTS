@@ -32,7 +32,16 @@ public class Constructor extends Device {
 		template = templateModel.createTemplate(model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Constructor_(model, controller);
+	}
 
+	@Override
+	protected TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
+	@Override
+	protected void initDashboard() {
+		super.initDashboard();
 		final Carousel carousel = new Carousel();
 		Node selection = null;
 		for (BaseResources res : BaseResources.values()) {
@@ -64,11 +73,6 @@ public class Constructor extends Device {
 		box.getChildren().addAll(extensionTitle, carousel, recipeTitle,
 				recipeView);
 		dashboard.addNode(box);
-	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
 	}
 
 	public void setProduct(Resource res) throws NullPointerException {
