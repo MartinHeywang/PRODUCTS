@@ -3,6 +3,7 @@ package com.martinheywang.model;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,7 +47,7 @@ public class Game implements Displayable<Game> {
 	@DatabaseField
 	private int gridSize;
 
-	private List<DeviceModel> devicesModel;
+	private List<DeviceModel> devicesModel = new ArrayList<DeviceModel>();
 
 	public Game() {
 	}
@@ -75,6 +76,10 @@ public class Game implements Displayable<Game> {
 	public void save() throws SQLException {
 		this.lastSave = LocalDateTime.now().toString();
 		Database.daoGame().createOrUpdate(this);
+
+		for (DeviceModel model : devicesModel) {
+			Database.daoDeviceModel().createOrUpdate(model);
+		}
 	}
 
 	/**
@@ -97,14 +102,13 @@ public class Game implements Displayable<Game> {
 	 * @return a list of all devices of this game
 	 */
 	public List<DeviceModel> getDevicesModel() {
-		refreshDevicesModel();
 		return devicesModel;
 	}
 
 	/**
 	 * Refreshes the devices model list.
 	 */
-	private void refreshDevicesModel() {
+	public void refreshDevicesModel() {
 		try {
 			devicesModel = Database.daoDeviceModel().queryBuilder()
 					.where()

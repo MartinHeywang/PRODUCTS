@@ -11,7 +11,6 @@ import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
@@ -28,7 +27,6 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -60,7 +58,8 @@ public class GameController implements Initializable {
 	private static final StringProperty reportProperty = new SimpleStringProperty();
 	private static final LongProperty argentProperty = new SimpleLongProperty();
 
-	private Thread t;
+	private Thread gameLoopThread;
+	private GameLoop gameLoop;
 	private Game currentGame;
 
 	@Override
@@ -101,43 +100,41 @@ public class GameController implements Initializable {
 	 * @param gameToLoad the game to load
 	 */
 	public void load(Game gameToLoad) throws SQLException {
+		currentGame = gameToLoad;
+
+		refreshView();
+
+	}
+
+	private void refreshView() {
+
 		Task<Void> task = new Task<Void>() {
 			@Override
-			protected Void call() {
-				currentGame = gameToLoad;
+			public Void call() {
+				Platform.runLater(() -> toProcessView());
+				currentGame.refreshDevicesModel();
+				adjustDevicesModel();
+				Platform.runLater(() -> clearGrid());
 
-				refreshView();
+				/*
+				 * <!> Clear the registered buyers coords (when loading two
+				 * differents game, some devices was called instead of the
+				 * buyers).
+				 */
+				Buyer.locations.clear();
+
+				addDevices();
+				Platform.runLater(() -> toPlayableView());
 
 				return null;
 			}
 		};
 
-		Thread loading = new Thread(task);
-		loading.start();
-
-		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				t = new Thread(new GameLoop());
-				t.start();
-			}
-		});
-
-	}
-
-	private void refreshView() {
-		Platform.runLater(() -> toProcessView());
-		Platform.runLater(() -> clearGrid());
-		adjustDevicesModel();
-
-		/*
-		 * <!> Clear the registered buyers coords (when loading two differents
-		 * game, some devices was called instaed of the buyers).
-		 */
-		Buyer.locations.clear();
-
-		addDevices();
-		Platform.runLater(() -> toPlayableView());
+		final Thread refreshing = new Thread(task);
+		task.setOnRunning(event -> stopGameLoop());
+		task.setOnSucceeded(event -> startGameLoop());
+		task.setOnFailed(event -> System.err.println("Refreshing task failed"));
+		refreshing.start();
 	}
 
 	private void clearGrid() {
@@ -147,10 +144,9 @@ public class GameController implements Initializable {
 	private void addDevices() {
 		List<DeviceModel> devicesModel = currentGame.getDevicesModel();
 
-		progression.progressProperty()
-				.set(0.0);
+		progression.progressProperty().set(0.0);
 
-		int i = 1;
+		int progress = 1;
 		try {
 			for (DeviceModel model : devicesModel) {
 				final Device device = model.getType().getClasse()
@@ -169,9 +165,12 @@ public class GameController implements Initializable {
 					}
 				});
 
-				i++;
+				/*
+				 * <?> Updating the progress bar
+				 */
+				progress++;
 				progression.progressProperty().set(
-						(double) i / devicesModel.size());
+						(double) progress / devicesModel.size());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -189,15 +188,24 @@ public class GameController implements Initializable {
 		final int size = currentGame.getGridSize();
 		final List<DeviceModel> devicesModel = currentGame.getDevicesModel();
 
+		int progress = 0;
 		if (devicesModel.size() < Math.pow(size, 2)) {
 			try {
 				for (int x = 0; x < size; x++) {
 					for (int y = 0; y < size; y++) {
-						final DeviceModel model = new DeviceModel(
-								new Coordinates(x, y),
-								currentGame);
-						devicesModel.add(model);
-						Database.daoDeviceModel().create(model);
+						if (findDevice(new Coordinates(x, y)) == null) {
+							final DeviceModel model = new DeviceModel(
+									new Coordinates(x, y),
+									currentGame);
+							devicesModel.add(model);
+						}
+
+						/*
+						 * <?> Updating the progress bar
+						 */
+						progress++;
+						progression.progressProperty().set(
+								(double) progress / devicesModel.size());
 					}
 				}
 				currentGame.save();
@@ -253,6 +261,22 @@ public class GameController implements Initializable {
 				.format(currentGame.getMoney()) + " €");
 	}
 
+	public void stopGameLoop() {
+		try {
+			if (gameLoopThread != null) {
+				gameLoop.terminate();
+				gameLoopThread.join();
+			}
+		} catch (InterruptedException e) {
+		}
+	}
+
+	public void startGameLoop() {
+		gameLoop = new GameLoop();
+		gameLoopThread = new Thread(gameLoop);
+		gameLoopThread.start();
+	}
+
 	/**
 	 * This method closes the game and set up the stage on the home scene,
 	 * where we can chose which game we want to load.
@@ -260,15 +284,30 @@ public class GameController implements Initializable {
 	 * @see Main#initAccueil2()
 	 */
 	@FXML
-	public void returnToHome() throws SQLException {
-		t.interrupt();
-		currentGame.save();
+	public void returnToHome() {
+
+		Task<Void> task = new Task<Void>() {
+			@Override
+			public Void call() {
+				try {
+					stopGameLoop();
+					currentGame.save();
+				} catch (SQLException e) {
+					System.err.println("Error while saving the game.");
+				}
+				return null;
+			}
+		};
+		Thread stop = new Thread(task);
+		stop.start();
+
 		main.initAccueil2();
 	}
 
 	@FXML
 	public void research() {
 		// Todo : research frame
+		refreshView();
 	}
 
 	@FXML
@@ -413,12 +452,14 @@ public class GameController implements Initializable {
 		report.setVisible(true);
 	}
 
-	private class GameLoop implements Runnable {
+	class GameLoop implements Runnable {
+
+		private volatile boolean running = true;
 
 		@Override
 		public void run() {
 			try {
-				while (true) {
+				while (running) {
 					Thread.sleep(750);
 					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {
@@ -437,7 +478,12 @@ public class GameController implements Initializable {
 					}
 				}
 			} catch (IllegalArgumentException | InterruptedException e) {
+				running = false;
 			}
+		}
+
+		public void terminate() {
+			this.running = false;
 		}
 
 	}
