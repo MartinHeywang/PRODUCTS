@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
@@ -275,11 +275,11 @@ public abstract class Device extends ImageView {
 	/**
 	 * Upgrades the device by 1 if the level isn't already at maximum.
 	 */
-	public void upgrade() {
+	public final void upgrade() {
 		// Todo : define how the devices should upgarde themself
 	}
 
-	public void rotate() {
+	public final void rotate() {
 
 		// Sets the new direction
 		model.setDirection(model.getDirection().getNext());
@@ -290,9 +290,8 @@ public abstract class Device extends ImageView {
 		this.setTemplate(
 				this.getTemplateModel().createTemplate(model.getCoordinates(),
 						model.getDirection()));
-		// Save it in the database
 		try {
-			Database.daoDeviceModel().update(model);
+			Saver.saveDeviceModel(model);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -301,7 +300,7 @@ public abstract class Device extends ImageView {
 	/**
 	 * Deletes this device and replaces it by a {@link Floor}.
 	 */
-	public void delete() throws MoneyException {
+	public final void delete() throws MoneyException {
 		try {
 			DeviceModel newModel = new DeviceModel(
 					model.getCoordinates(),
@@ -312,8 +311,7 @@ public abstract class Device extends ImageView {
 			controller.setAppareil(new Floor(newModel, controller),
 					false);
 
-			Database.daoDeviceModel().delete(model);
-			Database.daoDeviceModel().create(newModel);
+			Saver.replace(DeviceModel.class, model, newModel);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

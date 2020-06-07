@@ -1,5 +1,6 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +45,21 @@ public class Press_ extends Behaviour {
 
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (acceptedResources.contains(resATraiter.getRessource())) {
-				final Pack tempo = new Pack();
-				tempo.addQuantity(1);
-				tempo.setRessource(BaseResources
-						.valueOf("PLAQUE_DE_" + resATraiter.getRessource()));
+			if (controller.getMoney()
+					.compareTo(BigInteger
+							.valueOf(5 + Device.getElectricity())) == -1)
+				throw new MoneyException();
+			else {
+				if (acceptedResources.contains(resATraiter.getRessource())) {
+					final Pack tempo = new Pack();
+					tempo.addQuantity(1);
+					tempo.setRessource(BaseResources
+							.valueOf("PLATE_OF_" + resATraiter.getRessource()));
 
-				controller.removeMoney(Device.getElectricity());
-				controller.findDevice(pointer).action(tempo);
+					controller.removeMoney(Device.getElectricity());
+					device.activate();
+					controller.findDevice(pointer).action(tempo);
+				}
 			}
 		}
 

@@ -31,7 +31,7 @@ public class ResourcePersister extends BaseDataType {
 	@Override
 	public Resource sqlArgToJava(FieldType fieldType, Object sqlArg,
 			int columnPos) {
-		return Resource.valueOf(sqlArg.toString());
+		return Resource.valueOf((String) sqlArg);
 
 	}
 

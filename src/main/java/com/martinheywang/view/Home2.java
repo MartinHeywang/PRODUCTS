@@ -10,7 +10,6 @@ import com.martinheywang.model.database.Database;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -47,11 +46,12 @@ public class Home2 {
 		this.main = main;
 
 		try {
-			List<Game> games = Database.daoGame().queryForAll();
+			List<Game> games = Database.createDao(Game.class).queryForAll();
 			games.sort(Comparator.comparing(Game::getLastSave).reversed());
 
 			for (Game game : games) {
-				Node displayer = game.getDisplayer();
+				Displayer<Game> displayer = game.getDisplayer();
+				displayer.addHoverEffect();
 				listePartie.getChildren().add(displayer);
 
 				displayer.setOnMouseClicked(new EventHandler<MouseEvent>() {

@@ -9,6 +9,7 @@ import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
@@ -37,15 +38,16 @@ public class Sorter extends Device {
 
 		try {
 			// Query for all the packages that are associated to this device
-			final List<Pack> list = Database.daoPacking().queryBuilder()
-					.where().eq("device", model.getIdAppareilModel()).query();
+			final List<Pack> list = Database.createDao(Pack.class)
+					.queryBuilder()
+					.where().eq("device", model.getID()).query();
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
 				crit1 = new Pack(BaseResources.NONE, 1, model);
-				Database.daoPacking().create(crit1);
+				Saver.savePack(crit1);
 				crit2 = new Pack(BaseResources.NONE, 1, model);
-				Database.daoPacking().create(crit2);
+				Saver.savePack(crit2);
 			}
 			// Else we get at the first index the packing
 			else {

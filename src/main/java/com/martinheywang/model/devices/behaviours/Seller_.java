@@ -1,5 +1,7 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
+
 import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
@@ -18,11 +20,17 @@ public class Seller_ extends Behaviour {
 			throws MoneyException {
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (!resATraiter.getRessource().equals(BaseResources.NONE)) {
-				controller.addMoney(
-						resATraiter.getRessource().getPrice() - Device
-								.getElectricity());
-				device.activate();
+			if (controller.getMoney()
+					.compareTo(BigInteger
+							.valueOf(5 + Device.getElectricity())) == -1)
+				throw new MoneyException();
+			else {
+				if (!resATraiter.getRessource().equals(BaseResources.NONE)) {
+					controller.addMoney(
+							resATraiter.getRessource().getPrice() - Device
+									.getElectricity());
+					device.activate();
+				}
 			}
 		}
 	}

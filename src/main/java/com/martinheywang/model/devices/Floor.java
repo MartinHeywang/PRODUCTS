@@ -62,6 +62,8 @@ public class Floor extends Device {
 										.getResult(),
 								Level.LEVEL_1,
 								Direction.UP);
+						Database.createDao(DeviceModel.class).delete(model);
+						Database.createDao(DeviceModel.class).create(newModel);
 						controller.setAppareil(
 								((Type) dialog.getResult()).getClasse()
 										.getConstructor(DeviceModel.class,
@@ -70,8 +72,6 @@ public class Floor extends Device {
 												newModel,
 												controller),
 								false);
-						Database.daoDeviceModel().delete(model);
-						Database.daoDeviceModel().create(newModel);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

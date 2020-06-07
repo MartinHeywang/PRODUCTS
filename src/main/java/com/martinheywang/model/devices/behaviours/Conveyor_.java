@@ -1,5 +1,7 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
+
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
@@ -21,8 +23,9 @@ public class Conveyor_ extends Behaviour {
 			throws MoneyException {
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (controller.getMoney() < 5
-					+ Device.getElectricity())
+			if (controller.getMoney()
+					.compareTo(BigInteger
+							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 
 			controller.removeMoney(Device.getElectricity());

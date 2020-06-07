@@ -1,5 +1,6 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +9,10 @@ import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Level;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
 
 public class WireDrawer_ extends Behaviour {
-
-	private Level level;
-	private GameController controller;
 
 	@SuppressWarnings("serial")
 	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
@@ -39,14 +36,21 @@ public class WireDrawer_ extends Behaviour {
 
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {
-			if (acceptedResources.contains(resATraiter.getRessource())) {
-				final Pack tempo = new Pack();
-				tempo.addQuantity(1);
-				tempo.setRessource(BaseResources
-						.valueOf("FIL_DE_" + resATraiter.getRessource()));
+			if (controller.getMoney()
+					.compareTo(BigInteger
+							.valueOf(5 + Device.getElectricity())) == -1)
+				throw new MoneyException();
+			else {
+				if (acceptedResources.contains(resATraiter.getRessource())) {
+					final Pack tempo = new Pack();
+					tempo.addQuantity(1);
+					tempo.setRessource(BaseResources
+							.valueOf(resATraiter.getRessource() + "_WIRE"));
 
-				controller.removeMoney(Device.getElectricity());
-				controller.findDevice(pointer).action(tempo);
+					controller.removeMoney(Device.getElectricity());
+					device.activate();
+					controller.findDevice(pointer).action(tempo);
+				}
 			}
 		}
 

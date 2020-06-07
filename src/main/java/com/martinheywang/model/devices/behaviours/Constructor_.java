@@ -1,5 +1,6 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +44,14 @@ public class Constructor_ extends Behaviour {
 
 		try {
 			// Query for all the packages that are associated to this device
-			final List<Pack> list = Database.daoPacking().queryBuilder()
-					.where().eq("device", model.getIdAppareilModel()).query();
+			final List<Pack> list = Database.createDao(Pack.class)
+					.queryBuilder()
+					.where().eq("device", model.getID()).query();
 			// If its size equals 0, then create the resource and save it in the
 			// database
 			if (list.size() == 0) {
 				product = new Pack(BaseResources.NONE, 1, model);
-				Database.daoPacking().create(product);
+				Database.createDao(Pack.class).create(product);
 			}
 			// Else we get at the first index the packing
 			else {
@@ -77,14 +79,16 @@ public class Constructor_ extends Behaviour {
 				for (int i = 0; i < resATraiter.getQuantity(); i++)
 					resources.add(resATraiter.getRessource());
 
-				if (controller.getMoney() < 5
-						+ Device.getElectricity())
+				if (controller.getMoney()
+						.compareTo(BigInteger
+								.valueOf(5 + Device.getElectricity())) == -1)
 					throw new MoneyException();
-
-				if (checkIngredients()) {
-					tempo.addQuantity(1);
-					controller.removeMoney(Device.getElectricity());
-					controller.findDevice(pointer).action(tempo);
+				else {
+					if (checkIngredients()) {
+						tempo.addQuantity(1);
+						controller.removeMoney(Device.getElectricity());
+						controller.findDevice(pointer).action(tempo);
+					}
 				}
 			}
 		}
@@ -148,7 +152,7 @@ public class Constructor_ extends Behaviour {
 		if (Constructor_.acceptedResources.contains(product.getRessource())) {
 			this.product = product;
 			try {
-				Database.daoPacking().update(product);
+				Database.createDao(Pack.class).update(product);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

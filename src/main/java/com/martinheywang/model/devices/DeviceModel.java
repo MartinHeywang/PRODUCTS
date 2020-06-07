@@ -8,6 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Saver;
 
 @DatabaseTable(tableName = "devicesModels")
 public class DeviceModel {
@@ -81,12 +82,12 @@ public class DeviceModel {
 		this.direction = Direction.UP;
 
 		try {
-			final List<Coordinates> list = Database.daoCoordinates()
+			final List<Coordinates> list = Database.createDao(Coordinates.class)
 					.queryBuilder().where()
 					.eq("x", coordinates.getX()).and()
 					.eq("y", coordinates.getY()).query();
 			if (list.size() == 0) {
-				Database.daoCoordinates().create(coordinates);
+				Saver.saveCoordinate(coordinates);
 				this.coordinates = coordinates;
 			} else {
 				this.coordinates = list.get(0);
@@ -97,7 +98,7 @@ public class DeviceModel {
 	}
 
 	/**
-	 * Creates a new AppareilModel.
+	 * Creates a new DeviceModel.
 	 * 
 	 * @param coordinates the coordinates
 	 * @param game        the game
@@ -112,35 +113,13 @@ public class DeviceModel {
 		this.type = type;
 		this.level = level;
 		this.direction = direction;
-
-		try {
-			final List<Coordinates> list = Database.daoCoordinates()
-					.queryBuilder().where()
-					.eq("x", coordinates.getX()).and()
-					.eq("y", coordinates.getY()).query();
-			if (list.size() == 0) {
-				Database.daoCoordinates().create(coordinates);
-				this.coordinates = coordinates;
-			} else {
-				this.coordinates = list.get(0);
-			}
-		} catch (SQLException e) {
-
-		}
 	}
 
 	/**
 	 * @return the idAppareilModel
 	 */
-	public Long getIdAppareilModel() {
+	public Long getID() {
 		return idAppareilModel;
-	}
-
-	/**
-	 * @param idAppareilModel the idAppareilModel to set
-	 */
-	public void setIdAppareilModel(Long idAppareilModel) {
-		this.idAppareilModel = idAppareilModel;
 	}
 
 	/**

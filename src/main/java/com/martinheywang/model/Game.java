@@ -1,5 +1,6 @@
 package com.martinheywang.model;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -10,6 +11,8 @@ import java.util.Locale;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Deleter;
+import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.Displayable;
@@ -42,7 +45,7 @@ public class Game implements Displayable<Game> {
 	private String lastSave;
 
 	@DatabaseField(columnName = "money")
-	private long money;
+	private BigInteger money;
 
 	@DatabaseField
 	private int gridSize;
@@ -62,7 +65,7 @@ public class Game implements Displayable<Game> {
 	public Game(String nom) throws SQLException {
 		this.name = nom;
 		this.gridSize = 3;
-		this.money = 1250;
+		this.money = BigInteger.valueOf(1250);
 
 		save();
 	}
@@ -74,12 +77,8 @@ public class Game implements Displayable<Game> {
 	 * @throws SQLException if the saving process fails.
 	 */
 	public void save() throws SQLException {
-		this.lastSave = LocalDateTime.now().toString();
-		Database.daoGame().createOrUpdate(this);
-
-		for (DeviceModel model : devicesModel) {
-			Database.daoDeviceModel().createOrUpdate(model);
-		}
+		lastSave = LocalDateTime.now().toString();
+		Saver.saveGame(this);
 	}
 
 	/**
@@ -90,10 +89,7 @@ public class Game implements Displayable<Game> {
 	 * @throws SQLException if the deletion process fails.
 	 */
 	public void delete() throws SQLException {
-		Database.daoGame().delete(this);
-		List<DeviceModel> list = Database.daoDeviceModel().queryBuilder()
-				.where().eq("partie", gameId).query();
-		Database.daoDeviceModel().delete(list);
+		Deleter.deleteGame(this);
 	}
 
 	/**
@@ -110,7 +106,7 @@ public class Game implements Displayable<Game> {
 	 */
 	public void refreshDevicesModel() {
 		try {
-			devicesModel = Database.daoDeviceModel().queryBuilder()
+			devicesModel = Database.createDao(DeviceModel.class).queryBuilder()
 					.where()
 					.eq("game", gameId)
 					.query();
@@ -129,7 +125,7 @@ public class Game implements Displayable<Game> {
 	 *                        0.
 	 */
 	public void addMoney(long amount) throws MoneyException {
-		this.money += amount;
+		this.money.add(BigInteger.valueOf(amount));
 	}
 
 	/**
@@ -139,10 +135,10 @@ public class Game implements Displayable<Game> {
 	 * @throws MoneyException if there aren't enough money to remove.
 	 */
 	public void removeMoney(long amount) throws MoneyException {
-		if (money < amount) {
+		if (money.compareTo(BigInteger.valueOf(amount)) == -1) {
 			throw new MoneyException();
 		} else {
-			this.money -= amount;
+			this.money.subtract(BigInteger.valueOf(amount));
 		}
 	}
 
@@ -158,7 +154,7 @@ public class Game implements Displayable<Game> {
 		if (amount < 0) {
 			throw new MoneyException();
 		} else {
-			this.money = amount;
+			this.money = BigInteger.valueOf(amount);
 		}
 	}
 
@@ -253,7 +249,7 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return how many money the game counts
 	 */
-	public long getMoney() {
+	public BigInteger getMoney() {
 		return money;
 	}
 

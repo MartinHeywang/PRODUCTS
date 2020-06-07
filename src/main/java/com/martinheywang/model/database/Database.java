@@ -13,13 +13,31 @@ import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.DeviceModel;
 
+/**
+ * Class that manages connectivity to the Database. See {@link Saver}
+ * to know more about saving object in the database. This class should
+ * be used to save objects in the database, instead of creating a Dao
+ * by this class, because Saver respects saving conventions.
+ * 
+ * @see Saver
+ * @see Deleter
+ * 
+ * @author Martin Heywang
+ *
+ */
 public final class Database {
+
 	private static ConnectionSource connection;
 
 	private Database() {
 	}
 
-	private static void setUp() {
+	/**
+	 * Sets everything up to manages database connectivity.
+	 * 
+	 * @throws SQLException
+	 */
+	private static void setUp() throws SQLException {
 		try {
 			connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
 
@@ -38,68 +56,19 @@ public final class Database {
 		}
 	}
 
-	public static Dao<DeviceModel, Long> daoDeviceModel() {
-		Dao<DeviceModel, Long> dao;
-		try {
-			if (connection == null)
-				setUp();
-
-			dao = DaoManager.createDao(connection, DeviceModel.class);
-			return dao;
-		} catch (SQLException e) {
-			System.err.println(
-					"Couldn't not create a DAO for class DeviceModel.\nHere is th full error message :\n\n\n");
-			e.printStackTrace();
-			return null;
+	/**
+	 * Creates an returns a DAO for the given Class.
+	 * 
+	 * @param typeClass the Type of the Dao.
+	 * @return a new DAO
+	 * @throws SQLException if the DAO couldn't be created.
+	 */
+	public static <Type> Dao<Type, Long> createDao(Class<Type> typeClass)
+			throws SQLException {
+		if (connection == null) {
+			setUp();
 		}
-	}
-
-	public static Dao<Pack, Long> daoPacking() {
-		Dao<Pack, Long> dao;
-		try {
-			if (connection == null)
-				setUp();
-
-			dao = DaoManager.createDao(connection, Pack.class);
-			return dao;
-		} catch (SQLException e) {
-			System.err.println(
-					"Couldn't not create a DAO for class Packing.\nHere is th full error message :\n\n\n");
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static Dao<Coordinates, Long> daoCoordinates() {
-		Dao<Coordinates, Long> dao;
-		try {
-			if (connection == null)
-				setUp();
-
-			dao = DaoManager.createDao(connection, Coordinates.class);
-			return dao;
-		} catch (SQLException e) {
-			System.err.println(
-					"Couldn't not create a DAO for class Coordinates.\nHere is th full error message :\n\n\n");
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static Dao<Game, Long> daoGame() {
-		Dao<Game, Long> dao;
-		try {
-			if (connection == null)
-				setUp();
-
-			dao = DaoManager.createDao(connection, Game.class);
-			return dao;
-		} catch (SQLException e) {
-			System.err.println(
-					"Couldn't not create a DAO for class Game.\nHere is th full error message :\n\n\n");
-			e.printStackTrace();
-			return null;
-		}
+		return DaoManager.createDao(connection, typeClass);
 	}
 
 }

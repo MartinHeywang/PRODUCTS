@@ -1,10 +1,12 @@
 package com.martinheywang.view;
 
+import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import com.martinheywang.Main;
@@ -20,8 +22,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -56,7 +58,7 @@ public class GameController implements Initializable {
 	private ProgressBar progression;
 
 	private static final StringProperty reportProperty = new SimpleStringProperty();
-	private static final LongProperty argentProperty = new SimpleLongProperty();
+	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
 
 	private Thread gameLoopThread;
 	private GameLoop gameLoop;
@@ -73,12 +75,13 @@ public class GameController implements Initializable {
 				report.setVisible(false);
 			}
 		});
-		argentProperty.addListener(new ChangeListener<Number>() {
+		argentProperty.addListener(new ChangeListener<BigInteger>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, Number newValue) {
+			public void changed(
+					ObservableValue<? extends BigInteger> observable,
+					BigInteger oldValue, BigInteger newValue) {
 				NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-				argentLabel.setText(nf.format(newValue) + " €");
+				argentLabel.setText(nf.format(newValue.longValue()) + " €");
 
 			};
 		});
@@ -193,7 +196,7 @@ public class GameController implements Initializable {
 			try {
 				for (int x = 0; x < size; x++) {
 					for (int y = 0; y < size; y++) {
-						if (findDevice(new Coordinates(x, y)) == null) {
+						if (findModel(new Coordinates(x, y)) == null) {
 							final DeviceModel model = new DeviceModel(
 									new Coordinates(x, y),
 									currentGame);
@@ -205,7 +208,7 @@ public class GameController implements Initializable {
 						 */
 						progress++;
 						progression.progressProperty().set(
-								(double) progress / devicesModel.size());
+								progress / Math.pow(size, 2));
 					}
 				}
 				currentGame.save();
@@ -284,23 +287,9 @@ public class GameController implements Initializable {
 	 * @see Main#initAccueil2()
 	 */
 	@FXML
-	public void returnToHome() {
-
-		Task<Void> task = new Task<Void>() {
-			@Override
-			public Void call() {
-				try {
-					stopGameLoop();
-					currentGame.save();
-				} catch (SQLException e) {
-					System.err.println("Error while saving the game.");
-				}
-				return null;
-			}
-		};
-		Thread stop = new Thread(task);
-		stop.start();
-
+	public void returnToHome() throws SQLException {
+		stopGameLoop();
+		currentGame.save();
 		main.initAccueil2();
 	}
 
@@ -355,7 +344,7 @@ public class GameController implements Initializable {
 	 * 
 	 * @param amount the value
 	 */
-	public void setArgent(long amount) throws MoneyException {
+	public void setMoney(long amount) throws MoneyException {
 		currentGame.setMoney(amount);
 		refreshMoney();
 	}
@@ -365,7 +354,10 @@ public class GameController implements Initializable {
 	 * associated property.
 	 */
 	private void refreshMoney() {
-		Platform.runLater(() -> argentProperty.set(currentGame.getMoney()));
+		final NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+		Platform.runLater(
+				() -> argentLabel.setText(nf.format(currentGame.getMoney())));
+
 	}
 
 	/**
@@ -380,7 +372,7 @@ public class GameController implements Initializable {
 	 * 
 	 * @return the amount of money of the game
 	 */
-	public long getMoney() {
+	public BigInteger getMoney() {
 		return currentGame.getMoney();
 	}
 
@@ -414,7 +406,7 @@ public class GameController implements Initializable {
 	}
 
 	/**
-	 * Gets the cell content at the given coordinates.
+	 * Gets the cell content of the grid at the given coordinates.
 	 * 
 	 * @param location the coords
 	 * @return the node at the given coords
@@ -430,6 +422,30 @@ public class GameController implements Initializable {
 					return (Device) node;
 				}
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds in the devices' model list a device with the given x and y
+	 * coordinates. If none is found, returns null.
+	 * 
+	 * @param location
+	 * @return a deviceModel
+	 */
+	public DeviceModel findModel(Coordinates location) {
+		final int x = location.getX();
+		final int y = location.getY();
+		final List<DeviceModel> models = currentGame.getDevicesModel();
+
+		try {
+			final DeviceModel model = models.stream()
+					.filter(m -> m.getCoordinates().getX() == x)
+					.filter(m -> m.getCoordinates().getY() == y).findFirst()
+					.get();
+			return model;
+		} catch (NoSuchElementException e) {
+
 		}
 		return null;
 	}

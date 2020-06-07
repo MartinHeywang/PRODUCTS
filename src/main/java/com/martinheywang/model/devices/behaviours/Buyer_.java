@@ -1,5 +1,6 @@
 package com.martinheywang.model.devices.behaviours;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.Resource;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
@@ -58,11 +60,11 @@ public class Buyer_ extends Behaviour {
 	}
 
 	private void loadDistributedResource() throws SQLException {
-		final List<Pack> list = Database.daoPacking().queryBuilder()
-				.where().eq("device", model.getIdAppareilModel()).query();
+		final List<Pack> list = Database.createDao(Pack.class).queryBuilder()
+				.where().eq("device", this.model.getID()).query();
 		if (list.size() == 0) {
 			distributedResource = new Pack(BaseResources.NONE, 1, model);
-			Database.daoPacking().create(distributedResource);
+			Saver.savePack(distributedResource);
 		} else {
 			distributedResource = list.get(0);
 		}
@@ -76,8 +78,9 @@ public class Buyer_ extends Behaviour {
 
 		for (int niveau = 0; niveau < this.level.getValue(); niveau++) {
 
-			if (controller.getMoney() < 5
-					+ Device.getElectricity())
+			if (controller.getMoney()
+					.compareTo(BigInteger
+							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 			else {
 				if (!distributedResource.getRessource()
@@ -104,7 +107,7 @@ public class Buyer_ extends Behaviour {
 
 			this.distributedResource.setQuantity(pack.getQuantity());
 			try {
-				Database.daoPacking().update(distributedResource);
+				Saver.savePack(distributedResource);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

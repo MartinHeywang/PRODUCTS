@@ -28,6 +28,7 @@ public class FloorController {
 	public void initialize() {
 		for (int i = 0; i < Type.values().length - 1; i++) {
 			Displayer<Type> display = Type.values()[i].getDisplayer();
+			display.addHoverEffect();
 			listeAppareils.getChildren().add(display);
 			display.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
