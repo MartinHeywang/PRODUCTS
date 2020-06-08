@@ -127,18 +127,6 @@
 			<version>15-ea+4</version>
 		</dependency>
 
-		<!-- Allows to add icons in the app -->
-		<dependency>
-			<groupId>org.kordamp.ikonli</groupId>
-			<artifactId>ikonli-javafx</artifactId>
-			<version>2.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kordamp.ikonli</groupId>
-			<artifactId>ikonli-materialdesign-pack</artifactId>
-			<version>2.6.0</version>
-		</dependency>
-
 
 	</dependencies>
 </project>

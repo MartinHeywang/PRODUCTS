@@ -124,8 +124,8 @@ public class Game implements Displayable<Game> {
 	 * @throws MoneyException if the amount after the transaction is under
 	 *                        0.
 	 */
-	public void addMoney(long amount) throws MoneyException {
-		this.money.add(BigInteger.valueOf(amount));
+	public void addMoney(BigInteger amount) throws MoneyException {
+		removeMoney(amount.negate());
 	}
 
 	/**
@@ -134,11 +134,11 @@ public class Game implements Displayable<Game> {
 	 * @param amount how many
 	 * @throws MoneyException if there aren't enough money to remove.
 	 */
-	public void removeMoney(long amount) throws MoneyException {
-		if (money.compareTo(BigInteger.valueOf(amount)) == -1) {
+	public void removeMoney(BigInteger amount) throws MoneyException {
+		if (money.compareTo(amount) == -1) {
 			throw new MoneyException();
 		} else {
-			this.money.subtract(BigInteger.valueOf(amount));
+			this.money = this.money.subtract(amount);
 		}
 	}
 
@@ -150,11 +150,11 @@ public class Game implements Displayable<Game> {
 	 * @param amount the new amount
 	 * @throws MoneyException if the given amoung is less than 0
 	 */
-	public void setMoney(long amount) throws MoneyException {
-		if (amount < 0) {
+	public void setMoney(BigInteger amount) throws MoneyException {
+		if (amount.compareTo(new BigInteger("0")) == -1) {
 			throw new MoneyException();
 		} else {
-			this.money = BigInteger.valueOf(amount);
+			this.money = amount;
 		}
 	}
 

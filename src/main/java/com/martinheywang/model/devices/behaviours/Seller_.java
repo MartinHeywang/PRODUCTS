@@ -27,8 +27,10 @@ public class Seller_ extends Behaviour {
 			else {
 				if (!resATraiter.getRessource().equals(BaseResources.NONE)) {
 					controller.addMoney(
-							resATraiter.getRessource().getPrice() - Device
-									.getElectricity());
+							BigInteger.valueOf(
+									resATraiter.getRessource().getPrice()
+											- Device
+													.getElectricity()));
 					device.activate();
 				}
 			}

@@ -87,7 +87,8 @@ public class Buyer_ extends Behaviour {
 						.equals(BaseResources.NONE)) {
 					distributedResource.addQuantity(1);
 					device.activate();
-					controller.removeMoney(5 + Device.getElectricity());
+					controller.removeMoney(
+							BigInteger.valueOf(5 + Device.getElectricity()));
 					controller.findDevice(pointer).action(distributedResource);
 				}
 			}

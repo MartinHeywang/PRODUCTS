@@ -1,8 +1,8 @@
 package com.martinheywang.view.components;
 
-import com.martinheywang.model.LocatedHashMap;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.toolbox.LocatedHashMap;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

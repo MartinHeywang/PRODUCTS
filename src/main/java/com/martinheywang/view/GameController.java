@@ -5,7 +5,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
@@ -17,6 +16,7 @@ import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.toolbox.MoneyFormat;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -80,9 +80,9 @@ public class GameController implements Initializable {
 			public void changed(
 					ObservableValue<? extends BigInteger> observable,
 					BigInteger oldValue, BigInteger newValue) {
-				NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-				argentLabel.setText(nf.format(newValue.longValue()) + " €");
-
+				Platform.runLater(
+						() -> argentLabel.setText(MoneyFormat.getSingleton()
+								.format(newValue.add(new BigInteger("1000")))));
 			};
 		});
 		grid.setFocusTraversable(true);
@@ -308,7 +308,7 @@ public class GameController implements Initializable {
 			final Integer newSize = currentGame.getGridSize() + 1;
 			final String bundleValue = bundle.getString(newSize.toString());
 
-			removeMoney(Long.valueOf(bundleValue));
+			removeMoney(new BigInteger(bundleValue));
 
 			currentGame.setGridSize(newSize);
 			refreshView();
@@ -323,7 +323,7 @@ public class GameController implements Initializable {
 	 * 
 	 * @param amount how many
 	 */
-	public void addMoney(long amount) throws MoneyException {
+	public void addMoney(BigInteger amount) throws MoneyException {
 		currentGame.addMoney(amount);
 		refreshMoney();
 	}
@@ -334,7 +334,7 @@ public class GameController implements Initializable {
 	 * @param amount how many
 	 * @throws MoneyException if there aren't enough money
 	 */
-	public void removeMoney(long amount) throws MoneyException {
+	public void removeMoney(BigInteger amount) throws MoneyException {
 		currentGame.removeMoney(amount);
 		refreshMoney();
 	}
@@ -344,7 +344,7 @@ public class GameController implements Initializable {
 	 * 
 	 * @param amount the value
 	 */
-	public void setMoney(long amount) throws MoneyException {
+	public void setMoney(BigInteger amount) throws MoneyException {
 		currentGame.setMoney(amount);
 		refreshMoney();
 	}
@@ -354,9 +354,7 @@ public class GameController implements Initializable {
 	 * associated property.
 	 */
 	private void refreshMoney() {
-		final NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-		Platform.runLater(
-				() -> argentLabel.setText(nf.format(currentGame.getMoney())));
+		argentProperty.set(getMoney());
 
 	}
 
@@ -397,7 +395,8 @@ public class GameController implements Initializable {
 			throws MoneyException {
 		currentGame.setDeviceModel(device.getModel());
 		if (!ignoreCost) {
-			removeMoney(device.getModel().getType().getPrix());
+			removeMoney(
+					BigInteger.valueOf(device.getModel().getType().getPrix()));
 		}
 		final Coordinates coords = device.getModel().getCoordinates();
 		Device oldDevice = findDevice(coords);

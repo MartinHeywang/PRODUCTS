@@ -1,4 +1,4 @@
-package com.martinheywang.model;
+package com.martinheywang.toolbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
