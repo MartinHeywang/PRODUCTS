@@ -1,0 +1,11 @@
+/*
+ * This file defines all the style relative to TitledPane.
+ * Those styles are still overridable.
+ */
+
+.titled-pane{
+}
+
+.titled-pane > *.content {
+    -fx-border-color: transparent;
+}

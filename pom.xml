@@ -63,11 +63,6 @@
 			</plugin>
 		</plugins>
 		<resources>
-			<!-- The resources (only the fxml folder need to filtered) -->
-			<resource>
-				<directory>src/main/resources/css</directory>
-				<filtering>false</filtering>
-			</resource>
 			<resource>
 				<directory>src/main/resources/fxml</directory>
 				<filtering>true</filtering>

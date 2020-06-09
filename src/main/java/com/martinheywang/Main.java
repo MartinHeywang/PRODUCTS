@@ -106,7 +106,11 @@ public final class Main extends Application {
 			Parent root = loader.load();
 			changeSceneTo(root);
 
-			stage.setResizable(false);
+			stage.setResizable(true);
+			stage.setMaxWidth(700d);
+			stage.setMaxHeight(600d);
+			stage.setMinWidth(500d);
+			stage.setMinHeight(530d);
 
 			Home2 controller = loader.getController();
 			controller.setMainApp(this);

@@ -1,0 +1,13 @@
+/*
+ * This file defines all the style relative to both TextField and TextArea.
+ * Those styles are still overridable.
+ */
+TextField, TextArea {
+	-fx-border-color: transparent;
+}
+TextField:hover, TextArea:hover {
+	-fx-border-color: rgba(0, 255, 0, 0.1);
+}
+TextField:focused, TextArea:focused {
+	-fx-border-color: rgba(0, 255, 0, 0.2);
+}

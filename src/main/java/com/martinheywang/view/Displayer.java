@@ -1,8 +1,5 @@
 package com.martinheywang.view;
 
-import com.martinheywang.Main;
-
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 
@@ -42,11 +39,11 @@ public class Displayer<T> extends AnchorPane {
 	}
 
 	private void mouseover() {
-		Main.getMainStage().getScene().setCursor(Cursor.HAND);
+		this.getStyleClass().add("hovered-element");
 	}
 
 	private void mouseexit() {
-		Main.getMainStage().getScene().setCursor(Cursor.DEFAULT);
+		this.getStyleClass().remove("hovered-element");
 	}
 
 }

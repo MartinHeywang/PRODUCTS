@@ -1,0 +1,27 @@
+/*
+ * This file defines all the styles relative to each buttons in the windows.
+ * Those styles are still overridable.
+ * 
+ * NOTE: As JavaFX does not support all css styles, to make your buttons looks like mine, you should :
+ *   - Uppercase the text content,
+ *   - Find a representive icon
+ */
+.button{
+	-fx-background-color: transparent;
+	-fx-border-color: rgba(0, 255, 0, 0.2);
+	-fx-padding: 3px 10px;
+}
+
+.button:hover{
+	-fx-background-color: rgba(0, 255, 0, 0.3);
+	-fx-background-insets: 0px;
+	-fx-border-color: rgba(0, 255, 0, 0.3);
+}
+
+.button.danger{
+	-fx-border-color: rgba(255, 0, 0, 0.2);
+}
+
+.button.danger:hover{
+	-fx-background-color: rgba(255, 0, 0, 0.3);
+}

@@ -12,18 +12,7 @@
 }
 
 /* The basic Button */
-.button{
-	-fx-border-color: #107801;
-	-fx-text-fill: #107801;
-}
 
-.button:hover{
-	-fx-background-color: #107801;
-	
-	-fx-border-color: #107801;
-	
-	-fx-text-fill: #242729;
-}
 
 /* A Button who is dangerous */
 .dangerousButton{
