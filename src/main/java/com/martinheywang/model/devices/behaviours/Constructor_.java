@@ -86,7 +86,8 @@ public class Constructor_ extends Behaviour {
 				else {
 					if (checkIngredients()) {
 						tempo.addQuantity(1);
-						controller.removeMoney(Device.getElectricity());
+						controller.removeMoney(
+								BigInteger.valueOf(Device.getElectricity()));
 						controller.findDevice(pointer).action(tempo);
 					}
 				}

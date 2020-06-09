@@ -3,7 +3,8 @@ package com.martinheywang.view;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
@@ -82,7 +83,12 @@ public class GameController implements Initializable {
 					BigInteger oldValue, BigInteger newValue) {
 				Platform.runLater(
 						() -> argentLabel.setText(MoneyFormat.getSingleton()
-								.format(newValue.add(new BigInteger("1000")))));
+								.format(newValue)));
+
+				if (oldValue != null) {
+					final BigInteger difference = newValue.subtract(oldValue);
+					currentGame.setGrowPerSecond(difference);
+				}
 			};
 		});
 		grid.setFocusTraversable(true);
@@ -98,7 +104,7 @@ public class GameController implements Initializable {
 	}
 
 	/**
-	 * Loads a game with all its informations and lauch the thread.
+	 * Loads a game with all its informations and launch the thread.
 	 * 
 	 * @param gameToLoad the game to load
 	 */
@@ -107,6 +113,24 @@ public class GameController implements Initializable {
 
 		refreshView();
 
+		addOfflineMoney();
+	}
+
+	private void addOfflineMoney() {
+		try {
+			final BigInteger grow = currentGame.getGrowPerSecond();
+			final LocalDateTime lastSave = currentGame.getLastSave();
+			final long offlineTime = lastSave.until(LocalDateTime.now(),
+					ChronoUnit.SECONDS);
+			BigInteger additionnalMoney = grow
+					.multiply(BigInteger.valueOf(offlineTime));
+			additionnalMoney = additionnalMoney.divide(new BigInteger("3"));
+
+			addMoney(additionnalMoney);
+		} catch (MoneyException e) {
+			System.err.print("Couldn't add offline money");
+			e.printStackTrace();
+		}
 	}
 
 	private void refreshView() {
@@ -259,9 +283,7 @@ public class GameController implements Initializable {
 		fadeIn.playFromStart();
 		argentLabel.setVisible(true);
 		progression.setVisible(false);
-		argentProperty.set(currentGame.getMoney());
-		argentLabel.setText(NumberFormat.getInstance()
-				.format(currentGame.getMoney()) + " €");
+		refreshMoney();
 	}
 
 	public void stopGameLoop() {
@@ -325,7 +347,6 @@ public class GameController implements Initializable {
 	 */
 	public void addMoney(BigInteger amount) throws MoneyException {
 		currentGame.addMoney(amount);
-		refreshMoney();
 	}
 
 	/**
@@ -336,7 +357,6 @@ public class GameController implements Initializable {
 	 */
 	public void removeMoney(BigInteger amount) throws MoneyException {
 		currentGame.removeMoney(amount);
-		refreshMoney();
 	}
 
 	/**
@@ -346,7 +366,6 @@ public class GameController implements Initializable {
 	 */
 	public void setMoney(BigInteger amount) throws MoneyException {
 		currentGame.setMoney(amount);
-		refreshMoney();
 	}
 
 	/**
@@ -475,6 +494,7 @@ public class GameController implements Initializable {
 		public void run() {
 			try {
 				while (running) {
+					refreshMoney();
 					Thread.sleep(750);
 					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {

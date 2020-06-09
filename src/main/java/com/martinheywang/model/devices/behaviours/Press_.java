@@ -56,7 +56,8 @@ public class Press_ extends Behaviour {
 					tempo.setRessource(BaseResources
 							.valueOf("PLATE_OF_" + resATraiter.getRessource()));
 
-					controller.removeMoney(Device.getElectricity());
+					controller.removeMoney(
+							BigInteger.valueOf(Device.getElectricity()));
 					device.activate();
 					controller.findDevice(pointer).action(tempo);
 				}

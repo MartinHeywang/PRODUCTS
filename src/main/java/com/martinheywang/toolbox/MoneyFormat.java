@@ -1,7 +1,6 @@
 package com.martinheywang.toolbox;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 
 /**
  * Singleton used to format big amount of money.
@@ -10,16 +9,9 @@ import java.util.HashMap;
  */
 public final class MoneyFormat {
 
-	private static final HashMap<Integer, String> associations = new HashMap<>();
 	private static final MoneyFormat instance = new MoneyFormat();
 
 	private MoneyFormat() {
-		associations.put(4, "K");
-		associations.put(5, "K");
-		associations.put(6, "K");
-		associations.put(7, "M");
-		associations.put(8, "M");
-		associations.put(9, "M");
 	}
 
 	public final String format(BigInteger value) {
@@ -55,6 +47,15 @@ public final class MoneyFormat {
 		return builder.toString();
 	}
 
+	/**
+	 * Formats the given BigInteger by dividing his value and appending
+	 * the corresponding suffix.
+	 * 
+	 * @param sb      the builder to append the formatted string
+	 * @param value   the value to format
+	 * @param divider by how many the value should be divided
+	 * @param suffix  the suffix to append after the value.
+	 */
 	private void divideAndAppend(StringBuilder sb, BigInteger value,
 			BigInteger divider,
 			String suffix) {

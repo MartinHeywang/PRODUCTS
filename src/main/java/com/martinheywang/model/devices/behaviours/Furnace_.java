@@ -47,7 +47,8 @@ public class Furnace_ extends Behaviour {
 					tempo.setRessource(Resource
 							.valueOf(resATraiter.getRessource() + "_INGOT"));
 
-					controller.removeMoney(Device.getElectricity());
+					controller.removeMoney(
+							BigInteger.valueOf(Device.getElectricity()));
 					device.activate();
 					controller.findDevice(pointer).action(tempo);
 				}

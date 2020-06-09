@@ -28,7 +28,7 @@ public class Conveyor_ extends Behaviour {
 							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 
-			controller.removeMoney(Device.getElectricity());
+			controller.removeMoney(BigInteger.valueOf(Device.getElectricity()));
 		}
 		controller.findDevice(pointer).action(resATraiter);
 	}

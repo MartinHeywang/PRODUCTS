@@ -50,6 +50,9 @@ public class Game implements Displayable<Game> {
 	@DatabaseField
 	private int gridSize;
 
+	@DatabaseField(columnName = "grow")
+	private BigInteger growPerSecond;
+
 	private List<DeviceModel> devicesModel = new ArrayList<DeviceModel>();
 
 	public Game() {
@@ -66,6 +69,7 @@ public class Game implements Displayable<Game> {
 		this.name = nom;
 		this.gridSize = 3;
 		this.money = BigInteger.valueOf(1250);
+		this.growPerSecond = BigInteger.ZERO;
 
 		save();
 	}
@@ -254,6 +258,13 @@ public class Game implements Displayable<Game> {
 	}
 
 	/**
+	 * @return how much the money evolved between the last second
+	 */
+	public BigInteger getGrowPerSecond() {
+		return growPerSecond;
+	}
+
+	/**
 	 * 
 	 * @return the grid-size
 	 */
@@ -283,5 +294,9 @@ public class Game implements Displayable<Game> {
 	 */
 	public void setGridSize(int gridSize) {
 		this.gridSize = gridSize;
+	}
+
+	public void setGrowPerSecond(BigInteger difference) {
+		this.growPerSecond = difference;
 	}
 }

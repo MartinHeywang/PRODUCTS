@@ -47,7 +47,8 @@ public class WireDrawer_ extends Behaviour {
 					tempo.setRessource(BaseResources
 							.valueOf(resATraiter.getRessource() + "_WIRE"));
 
-					controller.removeMoney(Device.getElectricity());
+					controller.removeMoney(
+							BigInteger.valueOf(Device.getElectricity()));
 					device.activate();
 					controller.findDevice(pointer).action(tempo);
 				}
