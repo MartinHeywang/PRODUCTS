@@ -1,7 +1,7 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.Coordinates;
-import com.martinheywang.model.devices.Type;
+import com.martinheywang.model.types.BaseTypes;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,8 +26,8 @@ public class FloorController {
 	 * constructor.
 	 */
 	public void initialize() {
-		for (int i = 0; i < Type.values().length - 1; i++) {
-			Displayer<Type> display = Type.values()[i].getDisplayer();
+		for (int i = 0; i < BaseTypes.values().length - 1; i++) {
+			Displayer<BaseTypes> display = BaseTypes.values()[i].getDisplayer();
 			display.addHoverEffect();
 			listeAppareils.getChildren().add(display);
 			display.setOnMouseClicked(new EventHandler<MouseEvent>() {

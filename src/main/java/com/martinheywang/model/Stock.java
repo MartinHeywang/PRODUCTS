@@ -2,6 +2,8 @@ package com.martinheywang.model;
 
 import java.util.ArrayList;
 
+import com.martinheywang.model.resources.BaseResources;
+
 public class Stock extends ArrayList<Pack> {
 
 	private static final long serialVersionUID = 1L;

@@ -4,12 +4,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.GameController;
 
 public class Press_ extends Behaviour {

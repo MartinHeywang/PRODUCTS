@@ -6,6 +6,7 @@ import java.util.Locale;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 

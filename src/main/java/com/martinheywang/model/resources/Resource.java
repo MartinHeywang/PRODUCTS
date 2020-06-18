@@ -1,10 +1,11 @@
-package com.martinheywang.model;
+package com.martinheywang.model.resources;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.martinheywang.model.Pack;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 

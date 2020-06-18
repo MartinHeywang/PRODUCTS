@@ -8,6 +8,7 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
+import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.FloorController;
 import com.martinheywang.view.GameController;
@@ -53,18 +54,19 @@ public class Floor extends Device {
 
 					dialog.showAndWait();
 
-					if (dialog.getResult() instanceof Type) {
+					if (dialog.getResult() instanceof BaseTypes) {
 						DeviceModel newModel = new DeviceModel(
 								model.getCoordinates(),
 								model.getGame(),
-								(Type) dialog
+								(BaseTypes) dialog
 										.getResult(),
 								Level.LEVEL_1,
 								Direction.UP);
 						Database.createDao(DeviceModel.class).delete(model);
 						Database.createDao(DeviceModel.class).create(newModel);
 						controller.setAppareil(
-								((Type) dialog.getResult()).getClasse()
+								((BaseTypes) dialog.getResult())
+										.getAssociatedClass()
 										.getConstructor(DeviceModel.class,
 												GameController.class)
 										.newInstance(

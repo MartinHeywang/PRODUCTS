@@ -1,7 +1,9 @@
-package com.martinheywang.model;
+package com.martinheywang.model.resources;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.martinheywang.model.Pack;
 
 public enum BaseResources implements Resource {
 	NONE("None", 0, "/None.png"),

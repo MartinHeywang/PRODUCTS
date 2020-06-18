@@ -12,6 +12,7 @@ import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
@@ -133,11 +134,11 @@ public abstract class Device extends ImageView {
 				try {
 					final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
 
-					Dialog<Type> dialog;
+					Dialog<BaseTypes> dialog;
 					DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<Type>();
+					dialog = new Dialog<BaseTypes>();
 					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.getMainStage());
@@ -303,7 +304,7 @@ public abstract class Device extends ImageView {
 			DeviceModel newModel = new DeviceModel(
 					model.getCoordinates(),
 					model.getGame(),
-					Type.FLOOR,
+					BaseTypes.FLOOR,
 					Level.LEVEL_1,
 					Direction.UP);
 			controller.setAppareil(new Floor(newModel, controller),

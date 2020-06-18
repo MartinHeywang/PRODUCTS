@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
+import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.components.Carousel;

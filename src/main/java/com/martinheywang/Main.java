@@ -20,8 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * The main class of the application. Launches and setting up
- * everything.
+ * The main class of the application. Launches and sets up everything.
  * 
  * @author Heywang
  *
@@ -31,6 +30,7 @@ public final class Main extends Application {
 	private static Stage stage;
 
 	public static void main(String[] args) {
+		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
 
 		launch(args);
 	}
@@ -38,13 +38,11 @@ public final class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			// Little stage paramatering
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
 			stage.getIcons().add(
 					new Image(getClass().getResourceAsStream("/Icone.png")));
 
-			// Then one or the other
 			if (Database.createDao(Game.class).queryForAll().size() == 0)
 				initAccueil();
 			else {

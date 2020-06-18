@@ -42,7 +42,9 @@ public final class Database {
 			connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
 
 			DataPersisterManager
-					.registerDataPersisters(ResourcePersister.getInstance());
+					.registerDataPersisters(
+							ResourcePersister.getInstance(),
+							TypePersister.getInstance());
 
 			TableUtils.createTableIfNotExists(connection, Pack.class);
 			TableUtils.createTableIfNotExists(connection, DeviceModel.class);

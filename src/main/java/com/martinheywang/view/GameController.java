@@ -198,7 +198,7 @@ public class GameController implements Initializable {
 		int progress = 1;
 		try {
 			for (DeviceModel model : devicesModel) {
-				final Device device = model.getType().getClasse()
+				final Device device = model.getType().getAssociatedClass()
 						.getConstructor(DeviceModel.class,
 								GameController.class)
 						.newInstance(model, this);
@@ -447,7 +447,7 @@ public class GameController implements Initializable {
 		currentGame.setDeviceModel(device.getModel());
 		if (!ignoreCost) {
 			removeMoney(
-					BigInteger.valueOf(device.getModel().getType().getPrix()));
+					device.getModel().getType().getPrice());
 		}
 		final Coordinates coords = device.getModel().getCoordinates();
 		Device oldDevice = findDevice(coords);

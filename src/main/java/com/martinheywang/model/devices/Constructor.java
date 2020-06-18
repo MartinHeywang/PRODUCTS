@@ -2,12 +2,12 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 
-import com.martinheywang.model.BaseResources;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.Resource;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Constructor_;
+import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.Recipe;

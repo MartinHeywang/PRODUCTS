@@ -9,6 +9,7 @@ import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.database.Saver;
+import com.martinheywang.model.types.BaseTypes;
 
 @DatabaseTable(tableName = "devicesModels")
 public class DeviceModel {
@@ -38,10 +39,10 @@ public class DeviceModel {
 	/**
 	 * The type
 	 * 
-	 * @see com.martin.model.appareils.Type
+	 * @see com.martinheywang.model.types.BaseTypes.model.appareils.Type
 	 */
 	@DatabaseField
-	private Type type;
+	private BaseTypes type;
 
 	/**
 	 * The level
@@ -77,7 +78,7 @@ public class DeviceModel {
 	 */
 	public DeviceModel(Coordinates coordinates, Game game) {
 		this.game = game;
-		this.type = Type.FLOOR;
+		this.type = BaseTypes.FLOOR;
 		this.level = Level.LEVEL_1;
 		this.direction = Direction.UP;
 
@@ -106,7 +107,7 @@ public class DeviceModel {
 	 * @param level       the level
 	 * @param direction   the direction
 	 */
-	public DeviceModel(Coordinates coordinates, Game game, Type type,
+	public DeviceModel(Coordinates coordinates, Game game, BaseTypes type,
 			Level level, Direction direction) {
 		this.coordinates = coordinates;
 		this.game = game;
@@ -153,14 +154,14 @@ public class DeviceModel {
 	/**
 	 * @return the type
 	 */
-	public Type getType() {
+	public BaseTypes getType() {
 		return type;
 	}
 
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(Type type) {
+	public void setType(BaseTypes type) {
 		this.type = type;
 	}
 

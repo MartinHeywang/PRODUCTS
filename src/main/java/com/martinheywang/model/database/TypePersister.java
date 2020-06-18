@@ -7,13 +7,14 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.martinheywang.model.resources.Resource;
+import com.martinheywang.model.types.Type;
 
-public class ResourcePersister extends BaseDataType {
+public class TypePersister extends BaseDataType {
 
 	private static final ResourcePersister instance = new ResourcePersister();
 
-	public ResourcePersister() {
-		super(SqlType.STRING, new Class<?>[] { Resource.class });
+	public TypePersister() {
+		super(SqlType.STRING, new Class<?>[] { Type.class });
 	}
 
 	@Override
