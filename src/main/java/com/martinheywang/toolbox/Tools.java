@@ -2,6 +2,8 @@ package com.martinheywang.toolbox;
 
 import java.io.IOException;
 
+import com.martinheywang.Main;
+
 import javafx.fxml.FXMLLoader;
 
 public final class Tools {
@@ -28,7 +30,7 @@ public final class Tools {
 	 */
 	public static FXMLLoader prepareFXMLLoader(String file) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Class.class.getResource("/" + file + ".fxml"));
+		loader.setLocation(Main.class.getResource("/" + file + ".fxml"));
 		return loader;
 	}
 

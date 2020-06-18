@@ -1,0 +1,8 @@
+/*
+ * This styles applies only on SplitPane nodes. Those are still overridable.
+ */
+
+SplitPane > .split-pane-divider {
+	-fx-background-color: white;
+	-fx-padding: 0 1px 0 1px;
+}

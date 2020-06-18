@@ -8,6 +8,7 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
+import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.FloorController;
 import com.martinheywang.view.GameController;
 
@@ -20,7 +21,7 @@ import javafx.stage.Modality;
 
 public class Floor extends Device {
 
-	private static TemplateModel templateModel = new TemplateModel(
+	private static final TemplateModel templateModel = new TemplateModel(
 			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.NONE,
 			PointerTypes.NONE);
 
@@ -32,9 +33,7 @@ public class Floor extends Device {
 			@Override
 			public void handle(MouseEvent event) {
 				try {
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(
-							getClass().getResource("/Floor.fxml"));
+					final FXMLLoader loader = Tools.prepareFXMLLoader("Floor");
 
 					Dialog<Object> dialog;
 					DialogPane dialogPane;
@@ -46,7 +45,7 @@ public class Floor extends Device {
 					dialog.initOwner(Main.getMainStage());
 					dialog.initModality(Modality.NONE);
 
-					FloorController SController = loader.getController();
+					final FloorController SController = loader.getController();
 					SController.setMainApp(
 							new Coordinates(model.getCoordinates().getX(),
 									model.getCoordinates().getY()),

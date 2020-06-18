@@ -14,3 +14,10 @@ HBox.selection-box *:hover, VBox.selection-box *:hover{
 	-fx-background-color: rgb(29, 29, 29);
 	-fx-cursor: hand;
 }
+
+VBox.sidebar{
+	-fx-background-color: rgb(0, 100, 0);
+}
+VBox.sidebar *{
+	-fx-background-color: rgb(0, 95, 0);
+}

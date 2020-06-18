@@ -2,6 +2,6 @@
  * Main css file to applies to ALL elements.
  */
 * {
-	-fx-background-color: rgb(33, 33, 33);
+	-fx-background-color: rgb(30, 30, 30);
 	-fx-text-fill: rgba(255, 255, 255, 0.9);
 }

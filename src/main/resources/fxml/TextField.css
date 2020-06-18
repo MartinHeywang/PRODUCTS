@@ -3,11 +3,10 @@
  * Those styles are still overridable.
  */
 TextField, TextArea {
-	-fx-border-color: transparent;
+	-fx-border-color: #ddd;
+	-fx-text-fill: #ddd;
 }
 TextField:hover, TextArea:hover {
-	-fx-border-color: rgba(0, 255, 0, 0.1);
-}
-TextField:focused, TextArea:focused {
-	-fx-border-color: rgba(0, 255, 0, 0.2);
+	-fx-border-color: #eee;
+	-fx-text-fill: #eee;
 }

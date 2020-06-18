@@ -25,21 +25,19 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -50,15 +48,21 @@ public class GameController implements Initializable {
 	@FXML
 	private GridPane grid;
 	@FXML
-	private Label argentLabel;
+	private Label moneyLabel;
 	@FXML
-	private Label report;
-	@FXML
-	private Button upgradeGridButton;
+	private VBox toasts;
 	@FXML
 	private ProgressBar progression;
+	@FXML
+	private AnchorPane sidebar;
 
-	private static final StringProperty reportProperty = new SimpleStringProperty();
+	/*
+	 * <!> Icons ImageView must be loaded in the Java code. The fxml are
+	 * reading to a wrong location.
+	 */
+	@FXML
+	private ImageView research_icon, grid_icon, edit_icon;
+
 	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
 
 	private Thread gameLoopThread;
@@ -67,22 +71,13 @@ public class GameController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		report.textProperty().bind(reportProperty);
-		report.setVisible(false);
-		report.setTooltip(new Tooltip("Cliquez pour cacher..."));
-		report.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				report.setVisible(false);
-			}
-		});
 		argentProperty.addListener(new ChangeListener<BigInteger>() {
 			@Override
 			public void changed(
 					ObservableValue<? extends BigInteger> observable,
 					BigInteger oldValue, BigInteger newValue) {
 				Platform.runLater(
-						() -> argentLabel.setText(MoneyFormat.getSingleton()
+						() -> moneyLabel.setText(MoneyFormat.getSingleton()
 								.format(newValue)));
 
 				if (oldValue != null) {
@@ -92,6 +87,16 @@ public class GameController implements Initializable {
 			};
 		});
 		grid.setFocusTraversable(true);
+
+		/*
+		 * Loading the icons
+		 */
+		research_icon.setImage(new Image(
+				Main.class.getResourceAsStream("/icons/research.png")));
+		grid_icon.setImage(new Image(
+				Main.class.getResourceAsStream("/icons/grid_update.png")));
+		edit_icon.setImage(new Image(
+				Main.class.getResourceAsStream("/icons/add.png")));
 	}
 
 	/**
@@ -114,8 +119,15 @@ public class GameController implements Initializable {
 		refreshView();
 
 		addOfflineMoney();
+
+		toast("La partie a été chargée !", Color.CORNFLOWERBLUE,
+				10d);
 	}
 
+	/**
+	 * Calculates and adds offline money according to the difference
+	 * between the last save and the current time.
+	 */
 	private void addOfflineMoney() {
 		try {
 			final BigInteger grow = currentGame.getGrowPerSecond();
@@ -133,6 +145,9 @@ public class GameController implements Initializable {
 		}
 	}
 
+	/**
+	 * Refreshes the grid
+	 */
 	private void refreshView() {
 
 		Task<Void> task = new Task<Void>() {
@@ -160,14 +175,21 @@ public class GameController implements Initializable {
 		final Thread refreshing = new Thread(task);
 		task.setOnRunning(event -> stopGameLoop());
 		task.setOnSucceeded(event -> startGameLoop());
-		task.setOnFailed(event -> System.err.println("Refreshing task failed"));
+		task.setOnFailed(event -> toast("La vue n'a pas pu être rafraîchie...",
+				Color.DARKRED, 7d));
 		refreshing.start();
 	}
 
+	/**
+	 * Clears the devices from the grid
+	 */
 	private void clearGrid() {
 		grid.getChildren().clear();
 	}
 
+	/**
+	 * Adds the devices from the current game in the grid
+	 */
 	private void addDevices() {
 		List<DeviceModel> devicesModel = currentGame.getDevicesModel();
 
@@ -201,8 +223,8 @@ public class GameController implements Initializable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			setReport("Failed to add devices to the grid"
-					+ e.getLocalizedMessage(), Color.DARKRED);
+			toast("Failed to add devices to the grid"
+					+ e.getLocalizedMessage(), Color.DARKRED, 5d);
 		}
 	}
 
@@ -238,8 +260,8 @@ public class GameController implements Initializable {
 				currentGame.save();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				setReport("Failed to add devices model in the database",
-						Color.DARKRED);
+				toast("Failed to add devices model in the database",
+						Color.DARKRED, 5d);
 			}
 		}
 	}
@@ -258,7 +280,7 @@ public class GameController implements Initializable {
 						new KeyValue(grid.opacityProperty(), 0d)));
 		fadeOut.playFromStart();
 		grid.setVisible(false);
-		argentLabel.setVisible(false);
+		moneyLabel.setVisible(false);
 		progression.setVisible(true);
 		progression.setProgress(0.0);
 	}
@@ -281,11 +303,16 @@ public class GameController implements Initializable {
 								grid.opacityProperty(),
 								1d)));
 		fadeIn.playFromStart();
-		argentLabel.setVisible(true);
+		moneyLabel.setVisible(true);
 		progression.setVisible(false);
 		refreshMoney();
 	}
 
+	/**
+	 * Stops properly the game loop
+	 * 
+	 * @see GameLoop
+	 */
 	public void stopGameLoop() {
 		try {
 			if (gameLoopThread != null) {
@@ -296,6 +323,11 @@ public class GameController implements Initializable {
 		}
 	}
 
+	/**
+	 * Starts the game loop properly
+	 * 
+	 * @see GameLoop
+	 */
 	public void startGameLoop() {
 		gameLoop = new GameLoop();
 		gameLoopThread = new Thread(gameLoop);
@@ -469,21 +501,73 @@ public class GameController implements Initializable {
 	}
 
 	/**
-	 * Shows the report if hided and sets the text to String in parameter.
-	 * The must also indicates a JavaFX Color which will be the color of
-	 * the border.
+	 * Displays a toast in the bottom-right corner of the view.
 	 * 
-	 * @param text        the text to show
-	 * @param colorBorder the new color of the border
+	 * Default colors (you may want to use your own for a specific
+	 * plugin).
+	 * <ul>
+	 * <li>INFO : javafx.scene.paint.Color.CORNFLOWERBLUE</li>
+	 * <li>ERROR : javafx.scene.paint.Color.DARKRED</li>
+	 * </ul>
+	 * But if you want to use your own color, make sure that it isn't too
+	 * bright. As the text is white, it may cause some reading problems.
+	 * Experiment with that, but test it before.<br>
+	 * <br>
+	 * 
+	 * @param text       the text of the toast
+	 * @param background the background-color of the toast
+	 * @param duration   how long the toast will be displayed, <strong>in
+	 *                   seconds</strong>
 	 */
-	public void setReport(String text, Color colorBorder) {
-		reportProperty.set(text);
-		report.getStyleClass().add("report");
-		report.setStyle("-fx-border-color: " + String.format("#%02X%02X%02X",
-				(int) (colorBorder.getRed() * 255),
-				(int) (colorBorder.getGreen() * 255),
-				(int) (colorBorder.getBlue() * 255)) + ";");
-		report.setVisible(true);
+	public void toast(String text, Color background, double duration) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				final Label toast = new Label(text);
+				toast.getStyleClass().addAll("toast", "bold");
+				toasts.getChildren().add(toast);
+
+				toast.setStyle(
+						"-fx-background-color: "
+								+ String.format("#%02X%02X%02X",
+										(int) (background.getRed() * 255),
+										(int) (background.getGreen() * 255),
+										(int) (background.getBlue() * 255))
+								+ ";");
+
+				final Timeline animation = new Timeline();
+				animation.getKeyFrames().addAll(
+						// Come in 1 second
+						new KeyFrame(Duration.ZERO,
+								new KeyValue(toast.translateXProperty(),
+										160.0)),
+						new KeyFrame(Duration.ZERO,
+								new KeyValue(toast.opacityProperty(), 0.0)),
+
+						new KeyFrame(Duration.seconds(1),
+								new KeyValue(toast.translateXProperty(), 0.0)),
+						new KeyFrame(Duration.seconds(1),
+								new KeyValue(toast.opacityProperty(), 1.0)),
+
+						// And stay during the given duration
+						new KeyFrame(Duration.seconds(duration - 1),
+								new KeyValue(toast.translateXProperty(), 0.0)),
+						new KeyFrame(Duration.seconds(duration - 1),
+								new KeyValue(toast.opacityProperty(), 1.0)),
+
+						// Leave in one second
+						new KeyFrame(Duration.seconds(duration),
+								new KeyValue(toast.translateXProperty(),
+										160.0)),
+						new KeyFrame(Duration.seconds(duration),
+								new KeyValue(toast.opacityProperty(), 0.0)));
+
+				animation.setOnFinished(
+						(arg0) -> toasts.getChildren().remove(toast));
+				animation.playFromStart();
+			}
+		});
+
 	}
 
 	class GameLoop implements Runnable {
@@ -495,17 +579,17 @@ public class GameController implements Initializable {
 			try {
 				while (running) {
 					refreshMoney();
-					Thread.sleep(750);
+					Thread.sleep(1000);
 					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {
 							findDevice(Buyer.locations.get(i))
 									.action(new Pack());
-							argentLabel.setTextFill(Color.WHITE);
+							moneyLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									argentLabel.setTextFill(Color.DARKRED);
+									moneyLabel.setTextFill(Color.DARKRED);
 								}
 							});
 

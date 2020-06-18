@@ -140,6 +140,10 @@ public final class Main extends Application {
 			changeSceneTo(root);
 
 			stage.setResizable(true);
+			stage.setMaxWidth(Double.MAX_VALUE);
+			stage.setMaxHeight(Double.MAX_VALUE);
+			stage.setMinWidth(550d);
+			stage.setMinHeight(600d);
 
 			GameController controller = loader.getController();
 			controller.setMainApp(this);

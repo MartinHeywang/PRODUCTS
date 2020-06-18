@@ -3,25 +3,29 @@
  * Those styles are still overridable.
  * 
  * NOTE: As JavaFX does not support all css styles, to make your buttons looks like mine, you should :
- *   - Uppercase the text content,
- *   - Find a representive icon
+ *   - Uppercase the text content (there isn't any property to do it acutally),
+ *   - Find a representive icon (to make it look nicer).
+ * 
+ *  <!> Don't forget to apply those styles to your buttons !!
  */
-.button{
-	-fx-background-color: transparent;
-	-fx-border-color: rgba(0, 255, 0, 0.2);
-	-fx-padding: 3px 10px;
+Button, .button{
+	-fx-border-color: transparent;
+	-fx-background-color: rgba(0, 255, 0, 0.2);
+	-fx-padding: 5px 10px;
+	
+	-fx-min-width: 70px;
 }
 
-.button:hover{
+Button:hover, .button:hover{
 	-fx-background-color: rgba(0, 255, 0, 0.3);
-	-fx-background-insets: 0px;
-	-fx-border-color: rgba(0, 255, 0, 0.3);
+	-fx-text-fill: lightgray;
+	-fx-cursor: hand;
 }
 
-.button.danger{
+Button.danger, .button.danger{
 	-fx-border-color: rgba(255, 0, 0, 0.2);
 }
 
-.button.danger:hover{
+Button.danger:hover, .button.danger:hover{
 	-fx-background-color: rgba(255, 0, 0, 0.3);
 }

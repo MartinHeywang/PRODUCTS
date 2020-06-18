@@ -3,9 +3,11 @@
  * Those styles are still overridable.
  */
 
-.titled-pane{
+TitledPane{
+	-fx-background-color: transparent;
 }
 
-.titled-pane > *.content {
+TitledPane > *.content {
     -fx-border-color: transparent;
 }
+

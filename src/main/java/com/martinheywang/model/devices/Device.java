@@ -131,9 +131,7 @@ public abstract class Device extends ImageView {
 		public void handle(MouseEvent event) {
 			if (event.getButton().equals(MouseButton.PRIMARY)) {
 				try {
-					// Loading and opening the dialog
-					// Creating a fxml file loader
-					FXMLLoader loader = Tools.prepareFXMLLoader("Device");
+					final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
 
 					Dialog<Type> dialog;
 					DialogPane dialogPane;
@@ -149,7 +147,7 @@ public abstract class Device extends ImageView {
 						initDashboard();
 					}
 
-					DeviceController controller = loader.getController();
+					final DeviceController controller = loader.getController();
 					controller.setMainApp(model.getCoordinates(), dashboard);
 
 					dialog.showAndWait();
@@ -315,9 +313,9 @@ public abstract class Device extends ImageView {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			controller.setReport(
+			controller.toast(
 					"L'appareil ne semble pas s'être détruit correctement...",
-					Color.DARKRED);
+					Color.DARKRED, 10d);
 			e.printStackTrace();
 		}
 

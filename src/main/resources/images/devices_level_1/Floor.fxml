@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
+
+
+<Group id="_root" autoSizeChildren="false" xmlns:fxsvg="http://efxclipse.org/fxml-svg" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<Rectangle height="490.0" opacity="1" width="490.0">
+			<fill>
+				<Color>
+					<red>0.37254901960784315</red>
+					<green>0.3686274509803922</green>
+					<blue>0.3686274509803922</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="10.0" y="10.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="170.0" y="10.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="330.0" y="10.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="330.0" y="170.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="170.0" y="170.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="10.0" y="170.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="10.0" y="330.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="170.0" y="330.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="150.0" opacity="1" width="150.0" x="330.0" y="330.0">
+			<fill>
+				<Color>
+					<red>0.8901960784313725</red>
+					<green>0.8823529411764706</green>
+					<blue>0.8823529411764706</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="20.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="180.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="300.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="140.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="20.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="180.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="300.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="460.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="460.0" y="340.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+		<Rectangle height="10.0" opacity="1" width="10.0" x="340.0" y="140.0">
+			<fill>
+				<Color>
+					<red>0.29411764705882354</red>
+					<green>0.48627450980392156</green>
+					<blue>0.5764705882352941</blue>
+				</Color>
+			</fill>
+			
+      		</Rectangle>
+	</children>
+</Group>
