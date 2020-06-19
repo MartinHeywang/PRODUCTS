@@ -30,9 +30,4 @@ public class Seller extends Device {
 		timeline.playFromStart();
 	}
 
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
-	}
-
 }

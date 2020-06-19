@@ -35,11 +35,6 @@ public class Constructor extends Device {
 	}
 
 	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
-	}
-
-	@Override
 	protected void initDashboard() {
 		super.initDashboard();
 		final Carousel carousel = new Carousel();

@@ -1,5 +1,6 @@
 package com.martinheywang.view;
 
+import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.toolbox.MoneyFormat;
 
@@ -435,24 +437,52 @@ public class GameController implements Initializable {
 	}
 
 	/**
-	 * Replaces a device at the given coordinates of the new device.
+	 * Builds the given device with its coordinates in the grid
 	 * 
-	 * @param device     the new device that replaces the old
-	 * @param ignoreCost allow the user to avoid the cost of the operation
-	 * @throws MoneyException in case the money is set, if the money
-	 *                        amount is too low.
+	 * @param device     the device to build
+	 * @param ignoreCost if the cost of the operation should be ignored
+	 * @throws MoneyException if an error when intercating with money
+	 *                        occurs
 	 */
-	public void setAppareil(Device device, boolean ignoreCost)
-			throws MoneyException {
+	public void build(Device device, boolean ignoreCost) throws MoneyException {
 		currentGame.setDeviceModel(device.getModel());
 		if (!ignoreCost) {
+			final String key = device.getModel().getLevel().toString()
+					.toLowerCase() + "_build";
 			removeMoney(
-					device.getModel().getType().getPrice());
+					device.getModel().getType().getPrice(key));
 		}
 		final Coordinates coords = device.getModel().getCoordinates();
 		Device oldDevice = findDevice(coords);
 		grid.getChildren().remove(oldDevice);
 		grid.add(device, coords.getX(), coords.getY());
+	}
+
+	/**
+	 * Destroys the device at the given coords.
+	 * 
+	 * @param coords     the coords of the device to destroy
+	 * @param ignoreCost if the cost of the operation should be ignored
+	 * @throws MoneyException if an error occurs when interacting with
+	 *                        money
+	 */
+	public void delete(Coordinates coords, boolean ignoreCost)
+			throws MoneyException {
+		DeviceModel model = new DeviceModel(coords, currentGame);
+		currentGame.setDeviceModel(model);
+		if (!ignoreCost) {
+			final String key = model.getLevel().toString()
+					.toLowerCase() + "delete";
+			removeMoney(
+					model.getType().getPrice(key));
+		}
+		try {
+			Device oldDevice = findDevice(coords);
+			grid.getChildren().remove(oldDevice);
+			grid.add(new Floor(model, this), coords.getX(), coords.getY());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

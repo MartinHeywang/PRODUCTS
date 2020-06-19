@@ -55,7 +55,7 @@ public abstract class Device extends ImageView {
 
 	/**
 	 * The Behaviour is basically his behaviour that runs each iterations
-	 * of the Play class in GameController.
+	 * of the game loop.
 	 * 
 	 * @see GameController
 	 * 
@@ -73,41 +73,51 @@ public abstract class Device extends ImageView {
 
 	/**
 	 * The template is a data object who gives all the pointers of this
-	 * device, and can indicates which type of connection it is.<br>
-	 * <br>
+	 * device, and can indicates which type of connection it is.
+	 * 
 	 * It is good practice to create first a private static TemplateModel
-	 * :<br>
-	 * <br>
+	 * :
+	 * 
+	 * <pre>
 	 * <code>
 	 * private static TemplateModel templateModel = new TemplateModel(PointerTypes.NONE, ...);
-	 * </code> <br>
-	 * <br>
+	 * </code>
+	 * </pre>
+	 * 
 	 * Four values of type PointerTypes must be given to the contructor :
 	 * four PointerTypes values that indicates which type of connection it
 	 * is, respectively for the top, then right, then bottom, and to
-	 * finish left. <br>
-	 * This way you can easily create the template, invoking the
-	 * <code>createTemplate</code> method in the constructor, like this
-	 * :<br>
-	 * <br>
+	 * finish left. This way you can easily create the template, invoking
+	 * {@link TemplateModel#createTemplate(Coordinates, Direction) this
+	 * method} in the constructor of the device, like this :
+	 * 
+	 * <pre>
 	 * <code>
 	 * template = templateModel.createTemplate(model.getCoordinates(), model.getDirection());
-	 * </code> <br>
+	 * </code>
+	 * </pre>
+	 * 
 	 * where <em>model</em> is the current model of the device.
 	 * 
-	 * <em>Here is an example with the conveyor :</em> <blockquote><code>
+	 * <em>Here is an example with the conveyor :</em>
 	 * 
-	 * // As a field<br>
-	 * private static TemplateModel templateModel = new TemplateModel(<br>
-			PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,<br>
-			PointerTypes.NONE);<br><br>
-				
-				
-		// Later in the constructor<br>
-		template = templateModel.createTemplate(model.getCoordinates(),
-			model.getDirection());
-			
-	 * </code></blockquote>
+	 * <pre>
+	 * <code>
+	 * // As a field
+	 * private static final TemplateModel templateModel = 
+	 * 	new TemplateModel(
+	 * 		PointerTypes.ENTRY, 
+	 * 		PointerTypes.NONE, 
+	 * 		PointerTypes.EXIT, 
+	 * 		PointerTypes.NONE);
+	 * 		
+	 *		
+	 * // Later in the constructor
+	 * template = templateModel.createTemplate(model.getCoordinates(),
+	 *	model.getDirection());
+	 *	
+	 * </code>
+	 * </pre>
 	 * 
 	 * @see Template
 	 */
@@ -127,18 +137,24 @@ public abstract class Device extends ImageView {
 	 */
 	protected Dashboard dashboard;
 
+	/**
+	 * The dialog shown on a click
+	 */
+	protected Dialog<Object> dialog;
+
+	/**
+	 * What is did in case the user clicks on the Device.
+	 */
 	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			if (event.getButton().equals(MouseButton.PRIMARY)) {
 				try {
 					final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
-
-					Dialog<BaseTypes> dialog;
 					DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<BaseTypes>();
+					dialog = new Dialog<>();
 					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.getMainStage());
@@ -178,7 +194,7 @@ public abstract class Device extends ImageView {
 			throws FileNotFoundException {
 
 		this.setImage(new Image(
-				getClass().getResourceAsStream(model.getNiveau().getURL()
+				getClass().getResourceAsStream(model.getLevel().getURL()
 						+ model.getType().getURL())));
 		this.model = model;
 		this.controller = controller;
@@ -274,8 +290,35 @@ public abstract class Device extends ImageView {
 	/**
 	 * Upgrades the device by 1 if the level isn't already at maximum.
 	 */
-	public final void upgrade() {
+	public final void upgrade() throws MoneyException {
 		// Todo : define how the devices should upgarde themself
+		try {
+			// Create the exact same model with the next level
+			DeviceModel newModel = new DeviceModel(
+					model.getCoordinates(),
+					model.getGame(),
+					model.getType(),
+					model.getLevel().getNext(),
+					model.getDirection());
+			newModel.setID(model.getID());
+
+			controller.build(this.getClass()
+					.getConstructor(DeviceModel.class, GameController.class)
+					.newInstance(newModel, controller), false);
+
+			Saver.replace(DeviceModel.class, model, newModel);
+		} catch (SQLException e) {
+			controller.toast(
+					"L'appareil ne semble pas s'être amélioré correctement...",
+					Color.DARKRED, 10d);
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			System.err.println(
+					"Each class that has as superclass Device MUST have a constructor <init>(DeviceModel, GameController).");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public final void rotate() {
@@ -287,7 +330,8 @@ public abstract class Device extends ImageView {
 		// Sets the template (such a module that describes the entry and the
 		// exit
 		this.setTemplate(
-				this.getTemplateModel().createTemplate(model.getCoordinates(),
+				this.getModel().getType().getTemplateModel().createTemplate(
+						model.getCoordinates(),
 						model.getDirection()));
 		try {
 			Saver.saveDeviceModel(model);
@@ -307,12 +351,13 @@ public abstract class Device extends ImageView {
 					BaseTypes.FLOOR,
 					Level.LEVEL_1,
 					Direction.UP);
-			controller.setAppareil(new Floor(newModel, controller),
-					false);
+			controller.delete(model.getCoordinates(), false);
 
+			final String id = this.model.getLevel().toString().toLowerCase()
+					+ "_delete";
+			controller.addMoney(this.model.getType().getPrice(id));
+			dialog.close();
 			Saver.replace(DeviceModel.class, model, newModel);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			controller.toast(
 					"L'appareil ne semble pas s'être détruit correctement...",
@@ -321,8 +366,6 @@ public abstract class Device extends ImageView {
 		}
 
 	}
-
-	protected abstract TemplateModel getTemplateModel();
 
 	public DeviceModel getModel() {
 		return model;

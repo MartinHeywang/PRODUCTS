@@ -21,9 +21,4 @@ public class LeftConveyor extends Device {
 				model.getDirection());
 		behaviour = new Conveyor_(this, controller);
 	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
-	}
 }

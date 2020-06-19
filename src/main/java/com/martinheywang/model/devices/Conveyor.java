@@ -22,9 +22,4 @@ public class Conveyor extends Device {
 		behaviour = new Conveyor_(this, controller);
 	}
 
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
-	}
-
 }

@@ -73,7 +73,7 @@ public class Template {
 				// case that someone will add a feature that uses it.
 	}
 
-	final static class TemplateModel {
+	public final static class TemplateModel {
 		// This array represents the type of the pointer of each side,
 		// considering that the device is oriented UP
 		PointerTypes[] pointers = new PointerTypes[4];

@@ -95,8 +95,13 @@ public class Dashboard extends VBox {
 			this.getChildren().add(rowBox);
 		}
 
-		this.getChildren().get(1)
-				.setOnMouseClicked((event) -> device.upgrade());
+		this.getChildren().get(1).setOnMouseClicked((event) -> {
+			try {
+				device.upgrade();
+			} catch (MoneyException e) {
+				e.printStackTrace();
+			}
+		});
 		this.getChildren().get(2).setOnMouseClicked((event) -> device.rotate());
 		this.getChildren().get(3).setOnMouseClicked((event) -> {
 			try {

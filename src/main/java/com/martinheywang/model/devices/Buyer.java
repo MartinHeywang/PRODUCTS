@@ -22,7 +22,8 @@ import javafx.scene.layout.VBox;
 public class Buyer extends Device {
 
 	public static ArrayList<Coordinates> locations = new ArrayList<Coordinates>();
-	private static TemplateModel templateModel = new TemplateModel(
+
+	public static TemplateModel templateModel = new TemplateModel(
 			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.EXIT,
 			PointerTypes.NONE);
 
@@ -36,11 +37,6 @@ public class Buyer extends Device {
 				model.getDirection());
 		behaviour = new Buyer_(this, controller);
 
-	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
 	}
 
 	@Override

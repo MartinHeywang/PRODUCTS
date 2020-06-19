@@ -1,6 +1,7 @@
 package com.martinheywang.model.types;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Constructor;
@@ -14,6 +15,7 @@ import com.martinheywang.model.devices.Press;
 import com.martinheywang.model.devices.RightConveyor;
 import com.martinheywang.model.devices.Seller;
 import com.martinheywang.model.devices.Sorter;
+import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.WireDrawer;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
@@ -34,52 +36,59 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 	 * is ignored when displaying the Floor.fxml scene.
 	 */
 
-	BUYER("Acheteur", "Acheteur.png", "Achète les ressources de base.", "500",
-			Buyer.class),
-	SELLER("Vendeur", "Vendeur.png",
-			"Vend les ressources et objets \nlui parvenant.", "500",
-			Seller.class),
-	CONVEYOR("Convoyeur", "Convoyeur.png",
-			"Transporte les ressources sur \nla case du bas.", "100",
-			Conveyor.class),
-	RIGHT_CONVEYOR("Convoyeur droite", "Convoyeur_Droite.png",
-			"Transporte les ressources sur \nla case de droite.", "100",
-			RightConveyor.class),
-	LEFT_CONVEYOR("Convoyeur gauche", "Convoyeur_Gauche.png",
-			"Transporte les ressources sur \nla case de gauche.", "100",
-			LeftConveyor.class),
-	FURNACE("Four", "Four.png",
-			"Fond toutes les ressources en lingots, \nsauf le diamant.", "2000",
-			Furnace.class),
-	PRESS("Presse", "Presse.png",
-			"Transforme toutes les ressources en plaques, \nsauf le diamant.",
-			"2000", Press.class),
-	WIRE_DRAWER("Presse à fil", "Appareil_Fil.png",
-			"Transforme les ressources en fil, \nsauf le diamant.", "2000",
-			WireDrawer.class),
-	CONSTRUCTOR("Assembleur", "Assembleur.png",
-			"Assemble les ressources pour les \ntransformer en produits.",
-			"10000", Constructor.class),
-	SORTER("Trieur", "Trieur.png",
-			"Trie les ressources selon un schéma précis \nde votre décision.",
-			"17500", Sorter.class),
+	BUYER("Achète les ressources de base.",
+			Buyer.class, "500", "30000", "150000", "400", "20000", "120000"),
+	SELLER("Vend les ressources et objets \nlui parvenant.",
+			Seller.class, "500", "30000", "150000", "400", "20000", "120000"),
+	CONVEYOR("Transporte les ressources sur \nla case du bas.",
+			Conveyor.class, "100", "20000", "100000", "100", "20000", "100000"),
+	RIGHT_CONVEYOR("Transporte les ressources sur \nla case de droite.",
+			RightConveyor.class, "100", "20000", "100000", "100", "20000",
+			"100000"),
+	LEFT_CONVEYOR("Transporte les ressources sur \nla case de gauche.",
+			LeftConveyor.class, "100", "20000", "100000", "100", "20000",
+			"100000"),
+	FURNACE("Fond toutes les ressources en lingots, \nsauf le diamant.",
+			Furnace.class, "2000", "50000", "400000", "1800", "40000",
+			"350000"),
+	PRESS("Transforme toutes les ressources en plaques, \nsauf le diamant.",
+			Press.class, "2000", "50000", "400000", "1800", "40000", "350000"),
+	WIRE_DRAWER("Transforme les ressources en fil, \nsauf le diamant.",
+			WireDrawer.class, "2000", "50000", "400000", "1800", "40000",
+			"350000"),
+	CONSTRUCTOR("Assemble les ressources pour les \ntransformer en produits.",
+			Constructor.class, "20000", "150000", "1000000", "15000", "120000",
+			"800000"),
+	SORTER("Trie les ressources selon un schéma précis \nde votre décision.",
+			Sorter.class, "15000", "125000", "750000", "12500", "110000",
+			"720000"),
 
-	FLOOR("Sol", "Sol.png", "Le sol à nu sans appareil. Il ne fait rien.", "0",
-			Floor.class);
+	FLOOR("Le sol à nu sans appareil. Il ne fait rien.",
+			Floor.class, "0", "0", "0", "0", "0", "0");
 
-	String nom;
-	String url;
-	String desc;
-	BigInteger prix;
-	Class<? extends Device> classe;
+	private String nom;
+	private String url;
+	private String desc;
+	private HashMap<String, BigInteger> prices;
+	private TemplateModel templateModel;
+	private Class<? extends Device> classe;
 
-	BaseTypes(String nom, String url, String desc, String prix,
-			Class<? extends Device> classe) {
-		this.nom = nom;
-		this.url = url;
+	BaseTypes(String desc,
+			Class<? extends Device> classe, String... prices) {
+		this.nom = this.toString();
+		this.url = this.nom + ".png";
 		this.desc = desc;
-		this.prix = new BigInteger(prix);
 		this.classe = classe;
+
+		this.prices = new HashMap<>();
+
+		this.prices.put("level_1_build", new BigInteger(prices[0]));
+		this.prices.put("level_2_build", new BigInteger(prices[1]));
+		this.prices.put("level_3_build", new BigInteger(prices[2]));
+
+		this.prices.put("level_1_delete", new BigInteger(prices[3]));
+		this.prices.put("level_2_delete", new BigInteger(prices[4]));
+		this.prices.put("level_3_delete", new BigInteger(prices[5]));
 	}
 
 	@Override
@@ -101,7 +110,8 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 		Label infos = new Label();
 		infos.setAlignment(Pos.TOP_CENTER);
 		infos.setText(
-				"Prix de construction : " + this.getPrice() + " €\n\n"
+				"Prix de construction : " + this.getPrice("level_1_build")
+						+ " €\n\n"
 						+ this.getDescription());
 		infos.setWrapText(true);
 		root.setLeft(infos);
@@ -126,8 +136,13 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 	}
 
 	@Override
-	public BigInteger getPrice() {
-		return prix;
+	public TemplateModel getTemplateModel() {
+		return templateModel;
+	}
+
+	@Override
+	public HashMap<String, BigInteger> getPrices() {
+		return prices;
 	}
 
 	@Override

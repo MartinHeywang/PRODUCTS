@@ -114,11 +114,6 @@ public class Sorter extends Device {
 	}
 
 	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
-	}
-
-	@Override
 	protected void initDashboard() {
 		super.initDashboard();
 		Carousel carouselCrit1 = new Carousel();

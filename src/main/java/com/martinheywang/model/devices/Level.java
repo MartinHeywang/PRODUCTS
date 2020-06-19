@@ -13,6 +13,22 @@ public enum Level {
 		this.niveau = niveau;
 	}
 
+	/**
+	 * Returns the next value in this enum. For example, this method
+	 * invoked on a LEVEL_1 will return a LEVEL_2. If the level, is
+	 * already at maximum, will return the max.
+	 * 
+	 * @return the next ordinal
+	 */
+	public Level getNext() {
+		final int ordinal = this.ordinal();
+		if (Level.values().length < ordinal + 1) {
+			return Level.LEVEL_3;
+		} else {
+			return Level.values()[ordinal + 1];
+		}
+	}
+
 	public String getURL() {
 		return url;
 	}

@@ -35,12 +35,10 @@ public class Floor extends Device {
 			public void handle(MouseEvent event) {
 				try {
 					final FXMLLoader loader = Tools.prepareFXMLLoader("Floor");
-
-					Dialog<Object> dialog;
 					DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<Object>();
+					dialog = new Dialog<>();
 					dialog.setTitle("Sélectionnez un appareil à construire");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.getMainStage());
@@ -64,7 +62,7 @@ public class Floor extends Device {
 								Direction.UP);
 						Database.createDao(DeviceModel.class).delete(model);
 						Database.createDao(DeviceModel.class).create(newModel);
-						controller.setAppareil(
+						controller.build(
 								((BaseTypes) dialog.getResult())
 										.getAssociatedClass()
 										.getConstructor(DeviceModel.class,
@@ -89,11 +87,6 @@ public class Floor extends Device {
 		// Here just override the method in case this device is asked for
 		// action
 		// It souldn't be invoked but it does'nt make the thread overflowed.
-	}
-
-	@Override
-	protected TemplateModel getTemplateModel() {
-		return templateModel;
 	}
 
 }

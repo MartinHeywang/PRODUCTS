@@ -124,6 +124,15 @@ public class DeviceModel {
 	}
 
 	/**
+	 * Sets the id
+	 * 
+	 * @param id the new id
+	 */
+	public void setID(Long id) {
+		this.idAppareilModel = id;
+	}
+
+	/**
 	 * @return the coordonnees
 	 */
 	public Coordinates getCoordinates() {
@@ -168,14 +177,14 @@ public class DeviceModel {
 	/**
 	 * @return the niveau
 	 */
-	public Level getNiveau() {
+	public Level getLevel() {
 		return level;
 	}
 
 	/**
 	 * @param level the niveau to set
 	 */
-	public void setNiveau(Level level) {
+	public void setLevel(Level level) {
 		this.level = level;
 	}
 

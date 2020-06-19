@@ -20,7 +20,7 @@ public abstract class Behaviour {
 		this.device = device;
 		this.model = device.getModel();
 		this.controller = controller;
-		this.level = model.getNiveau();
+		this.level = model.getLevel();
 	}
 
 	/**
