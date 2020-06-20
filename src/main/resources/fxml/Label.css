@@ -6,36 +6,36 @@
 	-fx-border-color: white;
 	-fx-border-width: 0.0px;
 }
-.label{
+Label{
 	-fx-background-color: transparent;
 }
 
-.label.h1{
+Label.h1{
 	-fx-font-size: 60.0;
 }
-.label.h2{
+Label.h2{
 	-fx-font-size: 35.0;
 }
-.label.h3{
+Label.h3{
 	-fx-font-size: 28.0;
 }
-.label.h4{
+Label.h4{
 	-fx-font-size: 22.0;
 }
-.label.h5{
+Label.h5{
 	-fx-font-size: 19.0;
 }
-.label.h6{
+Label.h6{
 	-fx-font-size: 16.0;
 }
-.label.text{
+Label.text{
 	-fx-font-size: 12.0;
 }
-.label.bold{
+Label.bold{
 	-fx-font-weight: bold;
 }
 
-.label.toast{
+Label.toast{
 	-fx-max-width: 150.0px;
 	-fx-min-height: 30px;
 	
@@ -45,8 +45,9 @@
 	-fx-font-weight: bold;
 	-fx-text-fill: white;
 	-fx-wrap-text: true;
+	-fx-alignment: top-right;
 	
-	-fx-opacity: 0.75;
+	-fx-opacity: 0.9;
 	
 	-fx-background-color: darkgreen;
 	-fx-background-radius: 2.0px;

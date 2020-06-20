@@ -8,24 +8,24 @@
  * 
  *  <!> Don't forget to apply those styles to your buttons !!
  */
-Button, .button{
+.button{
 	-fx-border-color: transparent;
-	-fx-background-color: rgba(0, 255, 0, 0.2);
+	-fx-background-color: #00770C;
 	-fx-padding: 5px 10px;
 	
 	-fx-min-width: 70px;
 }
 
-Button:hover, .button:hover{
-	-fx-background-color: rgba(0, 255, 0, 0.3);
+.button:hover{
+	-fx-background-color: #018E0F;
 	-fx-text-fill: lightgray;
 	-fx-cursor: hand;
 }
 
-Button.danger, .button.danger{
-	-fx-border-color: rgba(255, 0, 0, 0.2);
+.button.danger{
+	-fx-background-color: #700;
 }
 
-Button.danger:hover, .button.danger:hover{
-	-fx-background-color: rgba(255, 0, 0, 0.3);
+.button.danger:hover{
+	-fx-background-color: #960101;
 }

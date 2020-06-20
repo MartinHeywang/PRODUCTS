@@ -7,12 +7,12 @@ import java.sql.SQLException;
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.database.Deleter;
 import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Behaviour;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
@@ -306,7 +306,7 @@ public abstract class Device extends ImageView {
 					.getConstructor(DeviceModel.class, GameController.class)
 					.newInstance(newModel, controller), false);
 
-			Saver.replace(DeviceModel.class, model, newModel);
+			Saver.saveDeviceModel(newModel);
 		} catch (SQLException e) {
 			controller.toast(
 					"L'appareil ne semble pas s'être amélioré correctement...",
@@ -345,19 +345,10 @@ public abstract class Device extends ImageView {
 	 */
 	public final void delete() throws MoneyException {
 		try {
-			DeviceModel newModel = new DeviceModel(
-					model.getCoordinates(),
-					model.getGame(),
-					BaseTypes.FLOOR,
-					Level.LEVEL_1,
-					Direction.UP);
 			controller.delete(model.getCoordinates(), false);
-
-			final String id = this.model.getLevel().toString().toLowerCase()
-					+ "_delete";
-			controller.addMoney(this.model.getType().getPrice(id));
 			dialog.close();
-			Saver.replace(DeviceModel.class, model, newModel);
+
+			Deleter.deleteDeviceModel(model);
 		} catch (SQLException e) {
 			controller.toast(
 					"L'appareil ne semble pas s'être détruit correctement...",

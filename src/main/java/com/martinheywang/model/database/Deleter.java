@@ -77,11 +77,6 @@ public final class Deleter {
 	public final static void deletePack(Pack pack) throws SQLException {
 		final Dao<Pack, Long> dao = Database.createDao(Pack.class);
 		dao.delete(pack);
-
-		if (cascadeActivated) {
-			final Game associatedGame = pack.getAppareil().getGame();
-			deleteGame(associatedGame);
-		}
 	}
 
 	/**

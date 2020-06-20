@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
@@ -15,76 +16,85 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox minHeight="550.0" minWidth="700.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
+<StackPane prefHeight="600.0" prefWidth="900.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
    <children>
-      <StackPane HBox.hgrow="ALWAYS">
+      <AnchorPane>
          <children>
-            <AnchorPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+               <content>
+                  <GridPane fx:id="grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+               </content>
+            </ScrollPane>
+            <VBox fx:id="toasts" alignment="TOP_RIGHT" minWidth="150.0" spacing="10.0" style="-fx-background-color: transparent;" stylesheets="@Label.css" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="30.0">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+            <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
-                     <content>
-                        <GridPane fx:id="grid" />
-                     </content>
-                  </ScrollPane>
-                  <VBox fx:id="toasts" alignment="BOTTOM_RIGHT" maxHeight="150.0" maxWidth="1.7976931348623157E308" minWidth="150.0" spacing="10.0" style="-fx-background-color: transparent;" stylesheets="@Label.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </VBox>
+                  <Label fx:id="moneyLabel" alignment="CENTER" prefHeight="30.0" style="-fx-border-color: eee;" styleClass="h5" stylesheets="@Label.css" text="Chargement en cours..." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ProgressBar fx:id="progression" prefHeight="30.0" progress="0.0" stylesheets="@ProgressBar.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
             </AnchorPane>
-            <AnchorPane fx:id="sidebar" maxHeight="35.0" StackPane.alignment="TOP_CENTER">
+            <HBox alignment="CENTER_LEFT" minHeight="40.0" spacing="20.0" style="-fx-background-color: #333;" stylesheets="@Box.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
                <children>
-                  <ProgressBar fx:id="progression" minHeight="30.0" progress="0.19" style="-fx-border-color: #eee;" stylesheets="@ProgressBar.css" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                  </ProgressBar>
-                  <Label fx:id="moneyLabel" alignment="CENTER" minHeight="30.0" style="-fx-border-color: #eee;" styleClass="h6" stylesheets="@Label.css" text="Argent indisponible, veuillez patientez..." AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
-                     <padding>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                     </padding>
+                  <Label text="Action" translateY="-15.0">
+                     <stylesheets>
+                        <URL value="@Label.css" />
+                        <URL value="@Buttons.css" />
+                     </stylesheets>
+                     <styleClass>
+                        <String fx:value="button" />
+                        <String fx:value="h6" />
+                     </styleClass>
                   </Label>
                </children>
-            </AnchorPane>
-         </children>
-      </StackPane>
-      <AnchorPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" style="-fx-background-color: #004B07;" HBox.hgrow="NEVER">
-         <children>
-            <VBox layoutX="10.0" layoutY="10.0" style="-fx-background-color: #005708;" stylesheets="@Box.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            </HBox>
+            <VBox fx:id="sidebar" minWidth="200.0" style="-fx-background-color: #005B07;" stylesheets="@Box.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="34.0">
                <children>
                   <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h5" stylesheets="@Label.css" text="Options :" VBox.vgrow="NEVER">
                      <padding>
-                        <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </Label>
-                  <Accordion VBox.vgrow="ALWAYS">
-                     <stylesheets>
-                        <URL value="@Accordion.css" />
-                        <URL value="@TitledPane.css" />
-                     </stylesheets>
+                  <Accordion>
                      <panes>
-                        <TitledPane expanded="false" prefHeight="200.0" prefWidth="200.0" text="Recherche">
+                        <TitledPane animated="false" text="Recherche">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
                            <graphic>
-                              <ImageView fx:id="research_icon" fitHeight="30.0" fitWidth="30.0">
+                              <ImageView fx:id="research_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/icons/research.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </TitledPane>
-                        <TitledPane prefHeight="200.0" prefWidth="200.0" text="Grille">
+                        <TitledPane animated="false" text="Grille">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
                            <graphic>
-                              <ImageView fx:id="grid_icon" fitHeight="30.0" fitWidth="30.0">
+                              <ImageView fx:id="grid_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/icons/grid_update.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </TitledPane>
-                        <TitledPane prefHeight="200.0" prefWidth="200.0" text="Modificateurs">
+                        <TitledPane animated="false" text="Modificateurs">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
                            <graphic>
-                              <ImageView fx:id="edit_icon" fitHeight="30.0" fitWidth="30.0">
+                              <ImageView fx:id="edit_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/icons/add.png" />
                                  </image>
@@ -92,10 +102,13 @@
                            </graphic>
                         </TitledPane>
                      </panes>
+                     <stylesheets>
+                        <URL value="@Accordion.css" />
+                        <URL value="@TitledPane.css" />
+                     </stylesheets>
                   </Accordion>
                </children>
             </VBox>
-         </children>
-      </AnchorPane>
+         </children></AnchorPane>
    </children>
-</HBox>
+</StackPane>

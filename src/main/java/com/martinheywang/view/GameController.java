@@ -37,7 +37,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -56,7 +55,7 @@ public class GameController implements Initializable {
 	@FXML
 	private ProgressBar progression;
 	@FXML
-	private AnchorPane sidebar;
+	private VBox sidebar;
 
 	/*
 	 * <!> Icons ImageView must be loaded in the Java code. The fxml are
@@ -122,7 +121,8 @@ public class GameController implements Initializable {
 
 		addOfflineMoney();
 
-		toast("La partie a été chargée !", Color.CORNFLOWERBLUE,
+		toast("Bienvenue dans la partie : " + currentGame.getName(),
+				Color.CORNFLOWERBLUE,
 				10d);
 	}
 
@@ -138,7 +138,7 @@ public class GameController implements Initializable {
 					ChronoUnit.SECONDS);
 			BigInteger additionnalMoney = grow
 					.multiply(BigInteger.valueOf(offlineTime));
-			additionnalMoney = additionnalMoney.divide(new BigInteger("3"));
+			additionnalMoney = additionnalMoney.divide(new BigInteger("10"));
 
 			addMoney(additionnalMoney);
 		} catch (MoneyException e) {
@@ -374,6 +374,11 @@ public class GameController implements Initializable {
 
 	}
 
+	@FXML
+	private void showOrHideSidebar() {
+
+	}
+
 	/**
 	 * Adds money to the game
 	 * 
@@ -445,6 +450,8 @@ public class GameController implements Initializable {
 	 *                        occurs
 	 */
 	public void build(Device device, boolean ignoreCost) throws MoneyException {
+		this.delete(device.getModel().getCoordinates(), ignoreCost);
+
 		currentGame.setDeviceModel(device.getModel());
 		if (!ignoreCost) {
 			final String key = device.getModel().getLevel().toString()
@@ -468,16 +475,20 @@ public class GameController implements Initializable {
 	 */
 	public void delete(Coordinates coords, boolean ignoreCost)
 			throws MoneyException {
-		DeviceModel model = new DeviceModel(coords, currentGame);
+
+		final Device oldDevice = findDevice(coords);
+		final DeviceModel oldDeviceModel = oldDevice.getModel();
+		final DeviceModel model = new DeviceModel(coords, currentGame);
+
 		currentGame.setDeviceModel(model);
 		if (!ignoreCost) {
-			final String key = model.getLevel().toString()
-					.toLowerCase() + "delete";
-			removeMoney(
-					model.getType().getPrice(key));
+			final String key = oldDeviceModel.getLevel().toString()
+					.toLowerCase() + "_delete";
+			addMoney(
+					oldDeviceModel.getType().getPrice(key));
 		}
 		try {
-			Device oldDevice = findDevice(coords);
+
 			grid.getChildren().remove(oldDevice);
 			grid.add(new Floor(model, this), coords.getX(), coords.getY());
 		} catch (FileNotFoundException e) {
@@ -554,7 +565,7 @@ public class GameController implements Initializable {
 			@Override
 			public void run() {
 				final Label toast = new Label(text);
-				toast.getStyleClass().addAll("toast", "bold");
+				toast.getStyleClass().addAll("toast", "bold", "h6");
 				toasts.getChildren().add(toast);
 
 				toast.setStyle(
