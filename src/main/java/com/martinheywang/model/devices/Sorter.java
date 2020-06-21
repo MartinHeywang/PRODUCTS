@@ -9,7 +9,6 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Template.PointerTypes;
-import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Conveyor_;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.resources.BaseResources;
@@ -27,10 +26,6 @@ import javafx.scene.layout.VBox;
 public class Sorter extends Device {
 
 	private Pack crit1, crit2;
-
-	private static TemplateModel templateModel = new TemplateModel(
-			PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.EXIT,
-			PointerTypes.EXIT);
 
 	public Sorter(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
@@ -64,7 +59,8 @@ public class Sorter extends Device {
 
 		}
 
-		template = templateModel.createTemplate(model.getCoordinates(),
+		template = this.model.getType().getTemplateModel().createTemplate(
+				model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Conveyor_(this, controller);
 

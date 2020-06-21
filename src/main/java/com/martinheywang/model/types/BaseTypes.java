@@ -1,8 +1,5 @@
 package com.martinheywang.model.types;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-
 import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Constructor;
 import com.martinheywang.model.devices.Conveyor;
@@ -15,8 +12,10 @@ import com.martinheywang.model.devices.Press;
 import com.martinheywang.model.devices.RightConveyor;
 import com.martinheywang.model.devices.Seller;
 import com.martinheywang.model.devices.Sorter;
+import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.WireDrawer;
+import com.martinheywang.model.types.info.PricesModule;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
@@ -27,68 +26,117 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
+/**
+ * This enum represents all the static data about the different base
+ * devices.
+ * 
+ * @author Heywang
+ *
+ */
 public enum BaseTypes implements Displayable<BaseTypes>, Type {
 
-	/*
-	 * The list of all type that devices can have in the base of the game.
-	 * Each contains a name, the class that take care of the device. Note
-	 * : the floor must stay in the last position, because this position
-	 * is ignored when displaying the Floor.fxml scene.
-	 */
+	BUYER("Acheteur", "Achète les ressources de base.",
+			Buyer.class,
+			new PricesModule("500", "30000", "150000", "400", "20000",
+					"120000"),
+			new TemplateModel(PointerTypes.NONE, PointerTypes.NONE,
+					PointerTypes.EXIT, PointerTypes.NONE)),
+	SELLER("Vendeur", "Vend les ressources et objets lui parvenant.",
+			Seller.class,
+			new PricesModule("500", "30000", "150000", "400", "20000",
+					"120000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.NONE,
+					PointerTypes.NONE)),
+	CONVEYOR("Convoyeur", "Transporte les ressources sur la case du bas.",
+			Conveyor.class,
+			new PricesModule("100", "20000", "100000", "100", "20000",
+					"100000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE,
+					PointerTypes.EXIT,
+					PointerTypes.NONE)),
+	RIGHT_CONVEYOR("Convoyeur à droite",
+			"Transporte les ressources sur la case de droite.",
+			RightConveyor.class,
+			new PricesModule("100", "20000", "100000", "100", "20000",
+					"100000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.NONE,
+					PointerTypes.NONE)),
+	LEFT_CONVEYOR("Convoyeur à gauche",
+			"Transporte les ressources sur la case de gauche.",
+			LeftConveyor.class,
+			new PricesModule("100", "20000", "100000", "100", "20000",
+					"100000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.NONE,
+					PointerTypes.EXIT)),
+	FURNACE("Four", "Fond toutes les ressources en lingots, sauf le diamant.",
+			Furnace.class,
+			new PricesModule("2000", "50000", "400000", "1800", "40000",
+					"350000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,
+					PointerTypes.NONE)),
+	PRESS("Presse",
+			"Transforme toutes les ressources en plaques, sauf le diamant.",
+			Press.class,
+			new PricesModule("2000", "50000", "400000", "1800", "40000",
+					"350000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,
+					PointerTypes.NONE)),
+	WIRE_DRAWER("Presse à fil",
+			"Transforme les ressources en fil, sauf le diamant.",
+			WireDrawer.class,
+			new PricesModule("2000", "50000", "400000", "1800", "40000",
+					"350000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,
+					PointerTypes.NONE)),
+	CONSTRUCTOR("Constructeur",
+			"Assemble les ressources pour les transformer en produits.",
+			Constructor.class,
+			new PricesModule("20000", "150000", "1000000", "15000",
+					"120000",
+					"800000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.EXIT,
+					PointerTypes.NONE,
+					PointerTypes.ENTRY)),
+	SORTER("Trieur",
+			"Trie les ressources selon un schéma précis de votre décision.",
+			Sorter.class,
+			new PricesModule("15000", "125000", "750000", "12500",
+					"110000",
+					"720000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.EXIT,
+					PointerTypes.EXIT)),
 
-	BUYER("Achète les ressources de base.",
-			Buyer.class, "500", "30000", "150000", "400", "20000", "120000"),
-	SELLER("Vend les ressources et objets \nlui parvenant.",
-			Seller.class, "500", "30000", "150000", "400", "20000", "120000"),
-	CONVEYOR("Transporte les ressources sur \nla case du bas.",
-			Conveyor.class, "100", "20000", "100000", "100", "20000", "100000"),
-	RIGHT_CONVEYOR("Transporte les ressources sur \nla case de droite.",
-			RightConveyor.class, "100", "20000", "100000", "100", "20000",
-			"100000"),
-	LEFT_CONVEYOR("Transporte les ressources sur \nla case de gauche.",
-			LeftConveyor.class, "100", "20000", "100000", "100", "20000",
-			"100000"),
-	FURNACE("Fond toutes les ressources en lingots, \nsauf le diamant.",
-			Furnace.class, "2000", "50000", "400000", "1800", "40000",
-			"350000"),
-	PRESS("Transforme toutes les ressources en plaques, \nsauf le diamant.",
-			Press.class, "2000", "50000", "400000", "1800", "40000", "350000"),
-	WIRE_DRAWER("Transforme les ressources en fil, \nsauf le diamant.",
-			WireDrawer.class, "2000", "50000", "400000", "1800", "40000",
-			"350000"),
-	CONSTRUCTOR("Assemble les ressources pour les \ntransformer en produits.",
-			Constructor.class, "20000", "150000", "1000000", "15000", "120000",
-			"800000"),
-	SORTER("Trie les ressources selon un schéma précis \nde votre décision.",
-			Sorter.class, "15000", "125000", "750000", "12500", "110000",
-			"720000"),
-
-	FLOOR("Le sol à nu sans appareil. Il ne fait rien.",
-			Floor.class, "0", "0", "0", "0", "0", "0");
+	FLOOR("Sol", "Le sol à nu sans appareil. Il ne fait rien.",
+			Floor.class,
+			new PricesModule("0", "0", "0", "0", "0", "0"),
+			new TemplateModel(
+					PointerTypes.NONE, PointerTypes.NONE, PointerTypes.NONE,
+					PointerTypes.NONE));
 
 	private String nom;
 	private String url;
 	private String desc;
-	private HashMap<String, BigInteger> prices;
+	private PricesModule prices;
 	private TemplateModel templateModel;
 	private Class<? extends Device> classe;
 
-	BaseTypes(String desc,
-			Class<? extends Device> classe, String... prices) {
-		this.nom = this.toString();
-		this.url = this.nom + ".png";
+	BaseTypes(String accesibleName, String desc, Class<? extends Device> classe,
+			PricesModule prices, TemplateModel templateModel) {
+		this.nom = accesibleName;
+		this.url = this.toString() + ".png";
 		this.desc = desc;
+		this.templateModel = templateModel;
 		this.classe = classe;
-
-		this.prices = new HashMap<>();
-
-		this.prices.put("level_1_build", new BigInteger(prices[0]));
-		this.prices.put("level_2_build", new BigInteger(prices[1]));
-		this.prices.put("level_3_build", new BigInteger(prices[2]));
-
-		this.prices.put("level_1_delete", new BigInteger(prices[3]));
-		this.prices.put("level_2_delete", new BigInteger(prices[4]));
-		this.prices.put("level_3_delete", new BigInteger(prices[5]));
+		this.prices = prices;
 	}
 
 	@Override
@@ -110,10 +158,11 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 		Label infos = new Label();
 		infos.setAlignment(Pos.TOP_CENTER);
 		infos.setText(
-				"Prix de construction : " + this.getPrice("level_1_build")
+				"Prix de construction : " + this.getPrices().getLevel1Build()
 						+ " €\n\n"
 						+ this.getDescription());
 		infos.setWrapText(true);
+		infos.setMaxWidth(200d);
 		root.setLeft(infos);
 
 		root.setPadding(new Insets(3, 3, 3, 3));
@@ -141,7 +190,7 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 	}
 
 	@Override
-	public HashMap<String, BigInteger> getPrices() {
+	public PricesModule getPrices() {
 		return prices;
 	}
 

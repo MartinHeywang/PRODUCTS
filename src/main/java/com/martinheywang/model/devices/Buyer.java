@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.devices.Template.PointerTypes;
-import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Buyer_;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
@@ -23,17 +21,14 @@ public class Buyer extends Device {
 
 	public static ArrayList<Coordinates> locations = new ArrayList<Coordinates>();
 
-	public static TemplateModel templateModel = new TemplateModel(
-			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.EXIT,
-			PointerTypes.NONE);
-
 	public Buyer(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
 
 		super(model, controller);
 		locations.add(model.getCoordinates());
 
-		template = templateModel.createTemplate(model.getCoordinates(),
+		template = this.model.getType().getTemplateModel().createTemplate(
+				model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Buyer_(this, controller);
 

@@ -517,7 +517,8 @@ public class GameController implements Initializable {
 			final String key = device.getModel().getLevel().toString()
 					.toLowerCase() + "_build";
 			removeMoney(
-					device.getModel().getType().getPrice(key));
+					device.getModel().getType().getPrices()
+							.getPriceFromKey(key));
 		}
 		final Coordinates coords = device.getModel().getCoordinates();
 		Device oldDevice = findDevice(coords);
@@ -545,7 +546,7 @@ public class GameController implements Initializable {
 			final String key = oldDeviceModel.getLevel().toString()
 					.toLowerCase() + "_delete";
 			addMoney(
-					oldDeviceModel.getType().getPrice(key));
+					oldDeviceModel.getType().getPrices().getPriceFromKey(key));
 		}
 		try {
 

@@ -6,8 +6,6 @@ import com.martinheywang.Main;
 import com.martinheywang.model.Coordinates;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
-import com.martinheywang.model.devices.Template.PointerTypes;
-import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.FloorController;
@@ -21,10 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 
 public class Floor extends Device {
-
-	private static final TemplateModel templateModel = new TemplateModel(
-			PointerTypes.NONE, PointerTypes.NONE, PointerTypes.NONE,
-			PointerTypes.NONE);
 
 	public Floor(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
@@ -78,7 +72,8 @@ public class Floor extends Device {
 			}
 		});
 
-		template = templateModel.createTemplate(model.getCoordinates(),
+		template = this.model.getType().getTemplateModel().createTemplate(
+				model.getCoordinates(),
 				model.getDirection());
 	}
 

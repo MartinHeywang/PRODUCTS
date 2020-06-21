@@ -3,8 +3,6 @@ package com.martinheywang.model.devices;
 import java.io.FileNotFoundException;
 
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.devices.Template.PointerTypes;
-import com.martinheywang.model.devices.Template.TemplateModel;
 import com.martinheywang.model.devices.behaviours.Constructor_;
 import com.martinheywang.model.resources.BaseResources;
 import com.martinheywang.model.resources.Resource;
@@ -21,15 +19,12 @@ import javafx.scene.layout.VBox;
 
 public class Constructor extends Device {
 
-	private static TemplateModel templateModel = new TemplateModel(
-			PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.NONE,
-			PointerTypes.ENTRY);
-
 	public Constructor(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
 		super(model, controller);
 
-		template = templateModel.createTemplate(model.getCoordinates(),
+		template = this.model.getType().getTemplateModel().createTemplate(
+				model.getCoordinates(),
 				model.getDirection());
 		behaviour = new Constructor_(this, controller);
 	}

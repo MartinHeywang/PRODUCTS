@@ -53,7 +53,7 @@ public class Template {
 	}
 
 	// A little enum who distinct the different pointers type
-	enum PointerTypes {
+	public enum PointerTypes {
 		/**
 		 * Neither entry or exit
 		 */
