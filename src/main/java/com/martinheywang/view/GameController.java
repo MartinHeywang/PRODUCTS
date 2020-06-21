@@ -38,24 +38,54 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class GameController implements Initializable {
 
+	/**
+	 * Instance of Main used to changed the view for example (return to
+	 * home...)
+	 */
 	private Main main;
 
+	/**
+	 * The main grid with all the devices
+	 */
 	@FXML
 	private GridPane grid;
+
+	/**
+	 * The label showing the money
+	 */
 	@FXML
 	private Label moneyLabel;
-	@FXML
-	private VBox toasts;
+	/**
+	 * The Progress Bar showing the progress on long treatment.
+	 */
 	@FXML
 	private ProgressBar progression;
+
+	/**
+	 * The box displaying the sidebars. (For example: options, toasts...)
+	 */
 	@FXML
-	private VBox sidebar;
+	private HBox sidebarsContainer;
+
+	/**
+	 * The list of all the toasts
+	 * 
+	 * @see GameController#toast(String, Color, double)
+	 */
+	@FXML
+	private VBox toasts;
+	/**
+	 * The list showing the options (research, grid...)
+	 */
+	@FXML
+	private HBox options;
 
 	/*
 	 * <!> Icons ImageView must be loaded in the Java code. The fxml are
@@ -65,6 +95,11 @@ public class GameController implements Initializable {
 	private ImageView research_icon, grid_icon, edit_icon;
 
 	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
+
+	/**
+	 * Is true if the options sidebar is shown
+	 */
+	private static boolean optionsSidebarShown = true;
 
 	private Thread gameLoopThread;
 	private GameLoop gameLoop;
@@ -123,7 +158,7 @@ public class GameController implements Initializable {
 
 		toast("Bienvenue dans la partie : " + currentGame.getName(),
 				Color.CORNFLOWERBLUE,
-				10d);
+				15d);
 	}
 
 	/**
@@ -374,9 +409,34 @@ public class GameController implements Initializable {
 
 	}
 
+	/**
+	 * Shows / Hide the options sidebar according ot its actual poisition
+	 */
 	@FXML
 	private void showOrHideSidebar() {
+		final Timeline transition = new Timeline();
+		if (!optionsSidebarShown) {
+			transition.getKeyFrames().addAll(
+					new KeyFrame(Duration.ZERO,
+							new KeyValue(sidebarsContainer.translateXProperty(),
+									202d)),
+					new KeyFrame(Duration.millis(250),
+							new KeyValue(sidebarsContainer.translateXProperty(),
+									0d)));
+			transition.playFromStart();
 
+		} else {
+			transition.getKeyFrames().addAll(
+					new KeyFrame(Duration.ZERO,
+							new KeyValue(sidebarsContainer.translateXProperty(),
+									0d)),
+					new KeyFrame(Duration.millis(250),
+							new KeyValue(sidebarsContainer.translateXProperty(),
+									202d)));
+			transition.playFromStart();
+		}
+
+		optionsSidebarShown = !optionsSidebarShown;
 	}
 
 	/**
