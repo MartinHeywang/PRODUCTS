@@ -41,7 +41,8 @@ public final class Main extends Application {
 			stage = primaryStage;
 			stage.setTitle("PRODUCTS.");
 			stage.getIcons().add(
-					new Image(getClass().getResourceAsStream("/Icone.png")));
+					new Image(getClass()
+							.getResourceAsStream("/images/Icone.png")));
 
 			if (Database.createDao(Game.class).queryForAll().size() == 0)
 				initAccueil();

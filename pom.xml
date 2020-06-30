@@ -64,23 +64,7 @@
 		</plugins>
 		<resources>
 			<resource>
-				<directory>src/main/resources/fxml</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/images</directory>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/images/resources</directory>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/music</directory>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/images/dashboard</directory>
+				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 			</resource>
 		</resources>

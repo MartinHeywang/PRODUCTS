@@ -3,7 +3,7 @@ package com.martinheywang.model.devices;
 import java.io.FileNotFoundException;
 
 import com.martinheywang.Main;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.types.BaseTypes;
@@ -29,10 +29,10 @@ public class Floor extends Device {
 			public void handle(MouseEvent event) {
 				try {
 					final FXMLLoader loader = Tools.prepareFXMLLoader("Floor");
-					DialogPane dialogPane;
+					final Dialog<Object> dialog = new Dialog<>();
+					final DialogPane dialogPane;
 
 					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<>();
 					dialog.setTitle("Sélectionnez un appareil à construire");
 					dialog.setDialogPane(dialogPane);
 					dialog.initOwner(Main.getMainStage());
@@ -40,7 +40,7 @@ public class Floor extends Device {
 
 					final FloorController SController = loader.getController();
 					SController.setMainApp(
-							new Coordinates(model.getCoordinates().getX(),
+							new Coordinate(model.getCoordinates().getX(),
 									model.getCoordinates().getY()),
 							dialog);
 

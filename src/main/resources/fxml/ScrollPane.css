@@ -1,8 +1,4 @@
-ScrollPane:horizontal, ScrollPane:vertical{
-    -fx-background-color: #242729;
-}
-ScrollPane:horizontal .thumb,
-ScrollPane:vertical .thumb {
+ScrollPane .thumb {
     -fx-background-color: lightgray;
     -fx-background-radius: 1px;
 }
@@ -13,11 +9,11 @@ ScrollPane:horizontal .thumb{
 	-fx-max-height: 3px;
 }
 
-ScrollPane:horizontal .thumb:hover, ScrollPane:vertical .thumb:hover {
+ScrollPane .thumb:hover, ScrollPane .thumb:hover {
     -fx-background-color: white;
     -fx-background-radius: 1px;
 }
 
 ScrollPane > .corner {
-    -fx-background-color: #242729;
+    -fx-background-color: #222;
 }

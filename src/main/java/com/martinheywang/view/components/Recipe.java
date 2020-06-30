@@ -1,8 +1,9 @@
-package com.martinheywang.view;
+package com.martinheywang.view.components;
 
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.resources.BaseResources;
 import com.martinheywang.model.resources.Resource;
+import com.martinheywang.view.Displayer;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

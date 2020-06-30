@@ -1,6 +1,6 @@
 package com.martinheywang.view;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.types.BaseTypes;
 
 import javafx.event.EventHandler;
@@ -46,7 +46,7 @@ public class FloorController {
 	 * @param xy     the xy coordinates corresponding to a device.
 	 * @param dialog the dialog who is displayed
 	 */
-	public void setMainApp(Coordinates xy, Dialog<Object> dialog) {
+	public void setMainApp(Coordinate xy, Dialog<Object> dialog) {
 		coordinates.setText("X: " + xy.getX() + " Y: " + xy.getY());
 		this.dialog = dialog;
 	}

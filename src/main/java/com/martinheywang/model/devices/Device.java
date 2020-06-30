@@ -3,9 +3,11 @@ package com.martinheywang.model.devices;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.martinheywang.Main;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Deleter;
 import com.martinheywang.model.database.Saver;
@@ -16,7 +18,6 @@ import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
-import com.martinheywang.view.components.Dashboard;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -88,7 +89,7 @@ public abstract class Device extends ImageView {
 	 * four PointerTypes values that indicates which type of connection it
 	 * is, respectively for the top, then right, then bottom, and to
 	 * finish left. This way you can easily create the template, invoking
-	 * {@link TemplateModel#createTemplate(Coordinates, Direction) this
+	 * {@link TemplateModel#createTemplate(Coordinate, Direction) this
 	 * method} in the constructor of the device, like this :
 	 * 
 	 * <pre>
@@ -131,47 +132,13 @@ public abstract class Device extends ImageView {
 	protected Timeline timeline;
 
 	/**
-	 * The dashboard is an optional function. It is a pane included in the
-	 * dialog of the device that can give a lot of informations about the
-	 * object.
-	 */
-	protected Dashboard dashboard;
-
-	/**
-	 * The dialog shown on a click
-	 */
-	protected Dialog<Object> dialog;
-
-	/**
 	 * What is did in case the user clicks on the Device.
 	 */
 	private EventHandler<MouseEvent> onClicked = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			if (event.getButton().equals(MouseButton.PRIMARY)) {
-				try {
-					final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
-					DialogPane dialogPane;
-
-					dialogPane = (DialogPane) loader.load();
-					dialog = new Dialog<>();
-					dialog.setTitle("Sélection d'appareil - PRODUCTS.");
-					dialog.setDialogPane(dialogPane);
-					dialog.initOwner(Main.getMainStage());
-					dialog.initModality(Modality.NONE);
-
-					if (dashboard == null) {
-						initDashboard();
-					}
-
-					final DeviceController controller = loader.getController();
-					controller.setMainApp(model.getCoordinates(), dashboard);
-
-					dialog.showAndWait();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				openDialog();
 			} else if (event.getButton().equals(MouseButton.SECONDARY)) {
 				rotate();
 			}
@@ -194,8 +161,9 @@ public abstract class Device extends ImageView {
 			throws FileNotFoundException {
 
 		this.setImage(new Image(
-				getClass().getResourceAsStream(model.getLevel().getURL()
-						+ model.getType().getURL())));
+				getClass().getResourceAsStream(
+						"/images" + model.getLevel().getURL()
+								+ model.getType().getURL())));
 		this.model = model;
 		this.controller = controller;
 
@@ -220,14 +188,43 @@ public abstract class Device extends ImageView {
 		this.setOpacity(0.7);
 	}
 
-	/**
-	 * Inits (or resets) the dashboard opened by default on click.
-	 */
-	protected void initDashboard() {
-		dashboard = new Dashboard(this);
+	private void openDialog() {
+		try {
+			final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
+			final Dialog<?> dialog = new Dialog<Void>();
+			final DialogPane dialogPane;
+
+			dialogPane = (DialogPane) loader.load();
+			dialog.setTitle("Tableau de bord - PRODUCTS.");
+			dialog.setDialogPane(dialogPane);
+			dialog.initOwner(Main.getMainStage());
+			dialog.initModality(Modality.NONE);
+
+			final DeviceController controller = loader.getController();
+			controller.setContent(this, dialog);
+			controller.addActions(getWidgets());
+
+			dialog.showAndWait();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	protected void addHoverEffect() {
+	/**
+	 * This method returns the list of the widgets of the devices. By
+	 * default, it returns nothing. That's why you will need to ovverride
+	 * it if you need to add additionnal actions components to the dialog.
+	 * Those may have some behaviors on click (event listeners) to add
+	 * some features to the device.
+	 * 
+	 * @return the list of the widgets
+	 */
+	protected List<Node> getWidgets() {
+		return new ArrayList<Node>();
+	}
+
+	private void addHoverEffect() {
 		this.setOnMouseEntered(
 				new EventHandler<MouseEvent>() {
 					@Override
@@ -262,10 +259,10 @@ public abstract class Device extends ImageView {
 	 * @param resATraiter the resource who will be used by this device
 	 */
 	public void action(Pack resATraiter) throws MoneyException {
-		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
+		for (Coordinate xy : template.getPointersFor(PointerTypes.EXIT)) {
 			if (xy.isInGrid(controller.getGridSize())) {
 				final Device pointedDevice = controller.findDevice(xy);
-				for (Coordinates enter : pointedDevice.getTemplate()
+				for (Coordinate enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
 							enter.getY() == model.getCoordinates().getY()) {
@@ -291,9 +288,7 @@ public abstract class Device extends ImageView {
 	 * Upgrades the device by 1 if the level isn't already at maximum.
 	 */
 	public final void upgrade() throws MoneyException {
-		// Todo : define how the devices should upgarde themself
 		try {
-			// Create the exact same model with the next level
 			DeviceModel newModel = new DeviceModel(
 					model.getCoordinates(),
 					model.getGame(),
@@ -323,12 +318,8 @@ public abstract class Device extends ImageView {
 
 	public final void rotate() {
 
-		// Sets the new direction
 		model.setDirection(model.getDirection().getNext());
-		// Sets the visual effect
 		this.setRotate(model.getDirection().getRotate());
-		// Sets the template (such a module that describes the entry and the
-		// exit
 		this.setTemplate(
 				this.getModel().getType().getTemplateModel().createTemplate(
 						model.getCoordinates(),
@@ -346,8 +337,6 @@ public abstract class Device extends ImageView {
 	public final void delete() throws MoneyException {
 		try {
 			controller.delete(model.getCoordinates(), false);
-			dialog.close();
-
 			Deleter.deleteDeviceModel(model);
 		} catch (SQLException e) {
 			controller.toast(

@@ -10,6 +10,8 @@ import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,22 +49,23 @@ public class Pack implements Displayable<Pack> {
 
 	@Override
 	public Displayer<Pack> getDisplayer() {
-		// Root for the displayer (the element that is nested in the displayer
+
 		VBox root = new VBox();
-		// Name of the resource
-		Label name = new Label(this.getRessource().getName());
-		// If the text is too long, reduce its size
+		root.setAlignment(Pos.CENTER);
+		root.setPadding(new Insets(3));
+
+		Label name = new Label(this.getResource().getName());
+
 		if (name.getText().length() > 15)
 			name.setFont(new Font(10d));
-		// View of the resource
+
 		ImageView view = new ImageView(new Image(
-				getClass().getResourceAsStream(this.getRessource().getURL())));
-		// And how many there is this pack
+				getClass().getResourceAsStream(this.getResource().getURL())));
 		Label quantity = new Label(String.valueOf(NumberFormat
 				.getInstance(Locale.getDefault()).format(getQuantity())));
-		// Add all elements in the root
+
 		root.getChildren().addAll(name, view, quantity);
-		// And nest the root in the displayer
+
 		return new Displayer<Pack>(root, this);
 	}
 
@@ -70,7 +73,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @return the id
 	 */
-	public Long getIdPaquet() {
+	public Long getID() {
 		return idPaquet;
 	}
 
@@ -78,7 +81,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param id the id to set
 	 */
-	public void setIdPaquet(Long id) {
+	public void setID(Long id) {
 		this.idPaquet = id;
 	}
 
@@ -86,7 +89,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @return the resource
 	 */
-	public Resource getRessource() {
+	public Resource getResource() {
 		return resource;
 	}
 
@@ -94,7 +97,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param res the resource to set
 	 */
-	public void setRessource(Resource res) {
+	public void setResource(Resource res) {
 		this.resource = res;
 	}
 
@@ -126,7 +129,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @return the associated-device
 	 */
-	public DeviceModel getAppareil() {
+	public DeviceModel getDeviceModel() {
 		return model;
 	}
 
@@ -134,13 +137,12 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param appareil the device to set
 	 */
-	public void setAppareil(DeviceModel appareil) {
-		this.model = appareil;
+	public void setDeviceModel(DeviceModel model) {
+		this.model = model;
 	}
 
 	@Override
 	public String toString() {
-		return "Object type Paquet. Id : " + idPaquet + ". Ressource : "
-				+ resource + ". Quantity : " + quantity + ".";
+		return resource + " x" + quantity;
 	}
 }

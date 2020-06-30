@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.database.Saver;
@@ -71,7 +71,7 @@ public class Buyer_ extends Behaviour {
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinate pointer)
 			throws MoneyException {
 
 		distributedResource.setQuantity(0);
@@ -83,7 +83,7 @@ public class Buyer_ extends Behaviour {
 							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 			else {
-				if (!distributedResource.getRessource()
+				if (!distributedResource.getResource()
 						.equals(BaseResources.NONE)) {
 					distributedResource.addQuantity(1);
 					device.activate();
@@ -103,8 +103,8 @@ public class Buyer_ extends Behaviour {
 	 * @param produit the resource to set
 	 */
 	public void setDistributedResource(Pack pack) {
-		if (acceptedResources.contains(pack.getRessource())) {
-			this.distributedResource.setRessource(pack.getRessource());
+		if (acceptedResources.contains(pack.getResource())) {
+			this.distributedResource.setResource(pack.getResource());
 
 			this.distributedResource.setQuantity(pack.getQuantity());
 			try {

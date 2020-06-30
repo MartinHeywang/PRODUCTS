@@ -25,6 +25,9 @@ public class Carousel extends HBox {
 	Node selection;
 
 	public Carousel() {
+		this.getStylesheets()
+				.add(getClass().getResource("/fxml/Buttons.css").toString());
+
 		final ImageView left_arrow = new ImageView(new Image(
 				getClass().getResourceAsStream("/icons/left_arrow.png")));
 		final ImageView right_arrow = new ImageView(new Image(
@@ -32,9 +35,9 @@ public class Carousel extends HBox {
 
 		final Button previous = new Button();
 		previous.setGraphic(left_arrow);
-		previous.getStyleClass().add("carousel-btn");
+		previous.getStyleClass().add("as-icon");
 		final Button next = new Button();
-		next.getStyleClass().add("carousel-btn");
+		next.getStyleClass().add("as-icon");
 		next.setGraphic(right_arrow);
 
 		previous.setOnMouseClicked((event) -> previousElement());

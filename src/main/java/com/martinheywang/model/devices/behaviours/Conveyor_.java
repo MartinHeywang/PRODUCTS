@@ -2,7 +2,7 @@ package com.martinheywang.model.devices.behaviours;
 
 import java.math.BigInteger;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.Level;
@@ -19,7 +19,7 @@ public class Conveyor_ extends Behaviour {
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinate pointer)
 			throws MoneyException {
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {

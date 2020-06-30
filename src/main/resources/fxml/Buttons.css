@@ -29,3 +29,11 @@
 .button.danger:hover{
 	-fx-background-color: #960101;
 }
+
+.button.as-icon{
+	-fx-border-color: transparent;
+	-fx-background-color: transparent;
+}
+.button.as-icon:hover{
+	-fx-cursor: hand;
+}

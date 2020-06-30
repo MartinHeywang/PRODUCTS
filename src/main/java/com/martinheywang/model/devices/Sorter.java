@@ -2,9 +2,10 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.database.Saver;
@@ -69,18 +70,18 @@ public class Sorter extends Device {
 	@Override
 	public void action(Pack resATraiter) throws MoneyException {
 
-		for (Coordinates xy : template.getPointersFor(PointerTypes.EXIT)) {
+		for (Coordinate xy : template.getPointersFor(PointerTypes.EXIT)) {
 			if (xy.isInGrid(controller.getGridSize())) {
 				final Device pointedDevice = controller.findDevice(xy);
-				for (Coordinates enter : pointedDevice.getTemplate()
+				for (Coordinate enter : pointedDevice.getTemplate()
 						.getPointersFor(PointerTypes.ENTRY)) {
 					if (enter.getX() == model.getCoordinates().getX() &&
 							enter.getY() == model.getCoordinates().getY()) {
 						timeline.playFromStart();
 						// Check for criterias to give the good pointer
 						// First case (crit1), resource goes to the left
-						if (resATraiter.getRessource()
-								.equals(crit1.getRessource())) {
+						if (resATraiter.getResource()
+								.equals(crit1.getResource())) {
 							behaviour.action(resATraiter,
 									template.getPointersFor(PointerTypes.EXIT)
 											.get(2));
@@ -89,8 +90,8 @@ public class Sorter extends Device {
 							// element (we rotate clockwise)
 						}
 						// Second case (crit2), the resource goes to the right
-						else if (resATraiter.getRessource()
-								.equals(crit2.getRessource())) {
+						else if (resATraiter.getResource()
+								.equals(crit2.getResource())) {
 							behaviour.action(resATraiter,
 									template.getPointersFor(PointerTypes.EXIT)
 											.get(0));
@@ -110,12 +111,14 @@ public class Sorter extends Device {
 	}
 
 	@Override
-	protected void initDashboard() {
-		super.initDashboard();
+	protected List<Node> getWidgets() {
+
 		Carousel carouselCrit1 = new Carousel();
 		Carousel carouselCrit2 = new Carousel();
+
 		Node selection1 = null;
 		Node selection2 = null;
+
 		for (Resource res : Resource.getReferences()) {
 			Displayer<Resource> dis1 = new Displayer<Resource>(
 					res.getDisplayer(), res);
@@ -131,8 +134,10 @@ public class Sorter extends Device {
 			}
 
 		}
+
 		carouselCrit1.setSelection(selection1);
 		carouselCrit2.setSelection(selection2);
+
 		carouselCrit1.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
@@ -141,6 +146,7 @@ public class Sorter extends Device {
 				setCriteria1(res);
 			}
 		});
+
 		carouselCrit2.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
@@ -158,26 +164,37 @@ public class Sorter extends Device {
 				"Choissiez la ressource à diriger vers la droite :");
 		Label center = new Label(
 				"Les ressources ne correspondant pas à aucun des critères seront dirigées tout droit.");
+
 		first.getChildren().addAll(left, carouselCrit1);
 		second.getChildren().addAll(right, carouselCrit2);
-		dashboard.addNode(center);
-		dashboard.addNode(second);
-		dashboard.addNode(first);
+		return Arrays.asList(first, second, center);
 	}
 
 	public void setCriteria1(Resource res) {
-		this.crit1 = new Pack(res, 1);
+		this.crit1.setResource(res);
+		this.crit1.setQuantity(1);
+		try {
+			Saver.savePack(crit1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setCriteria2(Resource res) {
-		this.crit2 = new Pack(res, 1);
+		this.crit2.setResource(res);
+		this.crit2.setQuantity(1);
+		try {
+			Saver.savePack(crit2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Resource getCriteria1() {
-		return crit1.getRessource();
+		return crit1.getResource();
 	}
 
 	public Resource getCriteria2() {
-		return crit2.getRessource();
+		return crit2.getResource();
 	}
 }

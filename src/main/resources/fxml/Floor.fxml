@@ -20,7 +20,7 @@
             </Label>
          </top>
          <center>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: darkgray;" stylesheets="@/ScrollPane.css" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: darkgray;" stylesheets="@ScrollPane.css" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
                <content>
                   <VBox fx:id="listeAppareils" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>

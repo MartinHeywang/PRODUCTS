@@ -2,8 +2,10 @@ package com.martinheywang.model.devices;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.behaviours.Buyer_;
 import com.martinheywang.model.resources.Resource;
@@ -19,7 +21,7 @@ import javafx.scene.layout.VBox;
 
 public class Buyer extends Device {
 
-	public static ArrayList<Coordinates> locations = new ArrayList<Coordinates>();
+	public static ArrayList<Coordinate> locations = new ArrayList<Coordinate>();
 
 	public Buyer(DeviceModel model, GameController controller)
 			throws FileNotFoundException {
@@ -35,10 +37,13 @@ public class Buyer extends Device {
 	}
 
 	@Override
-	protected void initDashboard() {
-		super.initDashboard();
-		Carousel carousel = new Carousel();
+	protected List<Node> getWidgets() {
+
+		final VBox root = new VBox();
+		final Carousel carousel = new Carousel();
+
 		Node selection = null;
+
 		for (Resource res : Buyer_.acceptedResources) {
 			Displayer<Resource> dis = new Displayer<Resource>(
 					res.getDisplayer(), res);
@@ -47,7 +52,9 @@ public class Buyer extends Device {
 				selection = dis;
 			}
 		}
+
 		carousel.setSelection(selection);
+
 		carousel.setOnSelectionChanged(new EventHandler<CarouselEvent>() {
 			@Override
 			public void handle(CarouselEvent event) {
@@ -56,10 +63,13 @@ public class Buyer extends Device {
 				setDistributedResource(res);
 			}
 		});
-		VBox box = new VBox();
-		Label extensionTitle = new Label("Changer la ressource distribuée :");
-		box.getChildren().addAll(extensionTitle, carousel);
-		dashboard.addNode(box);
+
+		final Label title = new Label("Modifier la ressource distribuée :");
+		title.getStyleClass().add("h5");
+
+		root.getChildren().addAll(title, carousel);
+
+		return Arrays.asList(root);
 	}
 
 	/**
@@ -71,7 +81,7 @@ public class Buyer extends Device {
 	public Resource getDistributedResource() throws NullPointerException {
 		if (behaviour instanceof Buyer_)
 			return ((Buyer_) behaviour)
-					.getDistributedResource().getRessource();
+					.getDistributedResource().getResource();
 		return null;
 	}
 

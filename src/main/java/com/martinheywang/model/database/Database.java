@@ -8,7 +8,7 @@ import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.DeviceModel;
@@ -48,7 +48,7 @@ public final class Database {
 
 			TableUtils.createTableIfNotExists(connection, Pack.class);
 			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
-			TableUtils.createTableIfNotExists(connection, Coordinates.class);
+			TableUtils.createTableIfNotExists(connection, Coordinate.class);
 			TableUtils.createTableIfNotExists(connection, Game.class);
 		} catch (SQLException e) {
 			System.err.println(

@@ -11,3 +11,6 @@ TitledPane > *.content {
     -fx-border-color: transparent;
 }
 
+TitledPane.hidden-arrow .arrow-button{
+	-fx-opacity: 0.0;
+}

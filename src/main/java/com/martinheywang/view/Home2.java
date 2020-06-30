@@ -14,8 +14,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -25,9 +23,6 @@ public class Home2 implements Initializable {
 	VBox listePartie;
 	@FXML
 	TextField field;
-
-	@FXML
-	ImageView open_graphic, create_graphic, add_graphic;
 
 	Main main;
 
@@ -45,15 +40,6 @@ public class Home2 implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle resources) {
-		open_graphic
-				.setImage(new Image(
-						getClass().getResourceAsStream("/icons/open.png")));
-		create_graphic
-				.setImage(new Image(
-						getClass().getResourceAsStream("/icons/create.png")));
-		add_graphic
-				.setImage(new Image(
-						getClass().getResourceAsStream("/icons/add.png")));
 	}
 
 	/**

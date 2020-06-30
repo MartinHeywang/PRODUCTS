@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.database.Saver;
@@ -23,10 +23,10 @@ public class DeviceModel {
 	/**
 	 * An XY coordinates.
 	 * 
-	 * @see com.martin.model.Coordinates
+	 * @see com.Coordinate.model.Coordinates
 	 */
 	@DatabaseField(columnName = "coordonnees", foreign = true, foreignColumnName = "id", uniqueCombo = true)
-	private Coordinates coordinates;
+	private Coordinate coordinates;
 
 	/**
 	 * The associated game
@@ -76,14 +76,14 @@ public class DeviceModel {
 	 * @param coordinates the coordinates
 	 * @param game        the game
 	 */
-	public DeviceModel(Coordinates coordinates, Game game) {
+	public DeviceModel(Coordinate coordinates, Game game) {
 		this.game = game;
 		this.type = BaseTypes.FLOOR;
 		this.level = Level.LEVEL_1;
 		this.direction = Direction.UP;
 
 		try {
-			final List<Coordinates> list = Database.createDao(Coordinates.class)
+			final List<Coordinate> list = Database.createDao(Coordinate.class)
 					.queryBuilder().where()
 					.eq("x", coordinates.getX()).and()
 					.eq("y", coordinates.getY()).query();
@@ -107,7 +107,7 @@ public class DeviceModel {
 	 * @param level       the level
 	 * @param direction   the direction
 	 */
-	public DeviceModel(Coordinates coordinates, Game game, BaseTypes type,
+	public DeviceModel(Coordinate coordinates, Game game, BaseTypes type,
 			Level level, Direction direction) {
 		this.coordinates = coordinates;
 		this.game = game;
@@ -135,14 +135,14 @@ public class DeviceModel {
 	/**
 	 * @return the coordonnees
 	 */
-	public Coordinates getCoordinates() {
+	public Coordinate getCoordinates() {
 		return coordinates;
 	}
 
 	/**
 	 * @param coordinates the coordonnees to set
 	 */
-	public void setCoordinates(Coordinates coordinates) {
+	public void setCoordinates(Coordinate coordinates) {
 		this.coordinates = coordinates;
 	}
 

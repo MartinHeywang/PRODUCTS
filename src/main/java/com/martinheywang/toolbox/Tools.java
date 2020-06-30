@@ -30,7 +30,7 @@ public final class Tools {
 	 */
 	public static FXMLLoader prepareFXMLLoader(String file) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Main.class.getResource("/" + file + ".fxml"));
+		loader.setLocation(Main.class.getResource("/fxml/" + file + ".fxml"));
 		return loader;
 	}
 

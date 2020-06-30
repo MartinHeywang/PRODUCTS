@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import com.martinheywang.Main;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Buyer;
@@ -35,8 +35,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -87,13 +85,6 @@ public class GameController implements Initializable {
 	@FXML
 	private HBox options;
 
-	/*
-	 * <!> Icons ImageView must be loaded in the Java code. The fxml are
-	 * reading to a wrong location.
-	 */
-	@FXML
-	private ImageView research_icon, grid_icon, edit_icon;
-
 	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
 
 	/**
@@ -115,24 +106,9 @@ public class GameController implements Initializable {
 				Platform.runLater(
 						() -> moneyLabel.setText(MoneyFormat.getSingleton()
 								.format(newValue)));
-
-				if (oldValue != null) {
-					final BigInteger difference = newValue.subtract(oldValue);
-					currentGame.setGrowPerSecond(difference);
-				}
 			};
 		});
 		grid.setFocusTraversable(true);
-
-		/*
-		 * Loading the icons
-		 */
-		research_icon.setImage(new Image(
-				Main.class.getResourceAsStream("/icons/research.png")));
-		grid_icon.setImage(new Image(
-				Main.class.getResourceAsStream("/icons/grid_update.png")));
-		edit_icon.setImage(new Image(
-				Main.class.getResourceAsStream("/icons/add.png")));
 	}
 
 	/**
@@ -167,7 +143,9 @@ public class GameController implements Initializable {
 	 */
 	private void addOfflineMoney() {
 		try {
-			final BigInteger grow = currentGame.getGrowPerSecond();
+			final BigInteger grow = currentGame.getGrowPerSecond() == null
+					? currentGame.getGrowPerSecond()
+					: new BigInteger("0");
 			final LocalDateTime lastSave = currentGame.getLastSave();
 			final long offlineTime = lastSave.until(LocalDateTime.now(),
 					ChronoUnit.SECONDS);
@@ -279,9 +257,9 @@ public class GameController implements Initializable {
 			try {
 				for (int x = 0; x < size; x++) {
 					for (int y = 0; y < size; y++) {
-						if (findModel(new Coordinates(x, y)) == null) {
+						if (findModel(new Coordinate(x, y)) == null) {
 							final DeviceModel model = new DeviceModel(
-									new Coordinates(x, y),
+									new Coordinate(x, y),
 									currentGame);
 							devicesModel.add(model);
 						}
@@ -510,17 +488,24 @@ public class GameController implements Initializable {
 	 *                        occurs
 	 */
 	public void build(Device device, boolean ignoreCost) throws MoneyException {
-		this.delete(device.getModel().getCoordinates(), ignoreCost);
-
-		currentGame.setDeviceModel(device.getModel());
 		if (!ignoreCost) {
 			final String key = device.getModel().getLevel().toString()
 					.toLowerCase() + "_build";
-			removeMoney(
-					device.getModel().getType().getPrices()
-							.getPriceFromKey(key));
+			try {
+				removeMoney(
+						device.getModel().getType().getPrices()
+								.getPriceFromKey(key));
+			} catch (MoneyException e) {
+				return;
+			}
 		}
-		final Coordinates coords = device.getModel().getCoordinates();
+
+		// FixMe : don't create device when moeny is too low
+		this.delete(device.getModel().getCoordinates(), ignoreCost);
+
+		currentGame.setDeviceModel(device.getModel());
+
+		final Coordinate coords = device.getModel().getCoordinates();
 		Device oldDevice = findDevice(coords);
 		grid.getChildren().remove(oldDevice);
 		grid.add(device, coords.getX(), coords.getY());
@@ -534,7 +519,7 @@ public class GameController implements Initializable {
 	 * @throws MoneyException if an error occurs when interacting with
 	 *                        money
 	 */
-	public void delete(Coordinates coords, boolean ignoreCost)
+	public void delete(Coordinate coords, boolean ignoreCost)
 			throws MoneyException {
 
 		final Device oldDevice = findDevice(coords);
@@ -563,7 +548,7 @@ public class GameController implements Initializable {
 	 * @param location the coords
 	 * @return the node at the given coords
 	 */
-	public Device findDevice(Coordinates location) {
+	public Device findDevice(Coordinate location) {
 		final int x = location.getX();
 		final int y = location.getY();
 
@@ -585,7 +570,7 @@ public class GameController implements Initializable {
 	 * @param location
 	 * @return a deviceModel
 	 */
-	public DeviceModel findModel(Coordinates location) {
+	public DeviceModel findModel(Coordinate location) {
 		final int x = location.getX();
 		final int y = location.getY();
 		final List<DeviceModel> models = currentGame.getDevicesModel();
@@ -672,6 +657,13 @@ public class GameController implements Initializable {
 
 	}
 
+	private void calculateDifference(BigInteger oldValue, BigInteger newValue) {
+		if (oldValue != null) {
+			final BigInteger difference = newValue.subtract(oldValue);
+			currentGame.setGrowPerSecond(difference);
+		}
+	}
+
 	class GameLoop implements Runnable {
 
 		private volatile boolean running = true;
@@ -680,8 +672,9 @@ public class GameController implements Initializable {
 		public void run() {
 			try {
 				while (running) {
-					refreshMoney();
 					Thread.sleep(1000);
+					refreshMoney();
+					final BigInteger moneyBefore = currentGame.getMoney();
 					for (int i = 0; i < Buyer.locations.size(); i++) {
 						try {
 							findDevice(Buyer.locations.get(i))
@@ -696,6 +689,8 @@ public class GameController implements Initializable {
 							});
 
 						}
+						final BigInteger moneyAfter = currentGame.getMoney();
+						calculateDifference(moneyBefore, moneyAfter);
 					}
 				}
 			} catch (IllegalArgumentException | InterruptedException e) {

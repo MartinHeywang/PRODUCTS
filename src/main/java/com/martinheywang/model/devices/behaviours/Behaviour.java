@@ -1,6 +1,6 @@
 package com.martinheywang.model.devices.behaviours;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
@@ -29,7 +29,7 @@ public abstract class Behaviour {
 	 * @param resource the resource to use by this device
 	 * @throws MoneyException if money reaches 0 or less
 	 */
-	public abstract void action(Pack resource, Coordinates pointer)
+	public abstract void action(Pack resource, Coordinate pointer)
 			throws MoneyException;
 
 	/**

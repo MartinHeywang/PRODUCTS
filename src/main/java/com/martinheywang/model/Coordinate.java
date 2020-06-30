@@ -2,10 +2,9 @@ package com.martinheywang.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.model.devices.Direction;
 
 @DatabaseTable
-public class Coordinates {
+public class Coordinate {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idCoordonnees;
@@ -19,17 +18,12 @@ public class Coordinates {
 	 * @param x x coordinates of the object
 	 * @param y y coordinates of the object
 	 */
-	public Coordinates(int x, int y) {
+	public Coordinate(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public Coordinates() {
-	}
-
-	public Coordinates(Coordinates coordinates, Direction direction) {
-		this.x = coordinates.getX() + direction.getxPlus();
-		this.y = coordinates.getY() + direction.getyPlus();
+	public Coordinate() {
 	}
 
 	public Long getIdCoordonnees() {
@@ -105,7 +99,7 @@ public class Coordinates {
 	 *         </ul>
 	 * @param coordinates a coordinate object to compare
 	 */
-	public boolean isNearFrom(Coordinates coordinates) {
+	public boolean isNearFrom(Coordinate coordinates) {
 		if (this.x == coordinates.getX() + 1
 				|| this.x == coordinates.getX() - 1) {
 			return true;
@@ -119,11 +113,10 @@ public class Coordinates {
 
 	@Override
 	public String toString() {
-		return "Object type Coordonnees. ID : " + idCoordonnees + ". X : " + x
-				+ ". Y : " + y + ".";
+		return "X: " + x + ", Y: " + y;
 	}
 
-	public boolean propertiesEquals(Coordinates coordinates) {
+	public boolean propertiesEquals(Coordinate coordinates) {
 		return this.x == coordinates.getX() && this.y == coordinates.getY()
 				? true
 				: false;

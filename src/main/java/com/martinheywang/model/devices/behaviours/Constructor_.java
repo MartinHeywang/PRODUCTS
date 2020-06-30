@@ -5,9 +5,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.resources.BaseResources;
@@ -68,16 +69,16 @@ public class Constructor_ extends Behaviour {
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinate pointer)
 			throws MoneyException {
-		Pack tempo = new Pack(product.getRessource(), 0);
+		Pack tempo = new Pack(product.getResource(), 0);
 
-		if (!product.getRessource().equals(BaseResources.NONE)) {
+		if (!product.getResource().equals(BaseResources.NONE)) {
 			for (int level = 0; level < this.level.getValue()
 					|| level < resATraiter.getQuantity(); level++) {
 
 				for (int i = 0; i < resATraiter.getQuantity(); i++)
-					resources.add(resATraiter.getRessource());
+					resources.add(resATraiter.getResource());
 
 				if (controller.getMoney()
 						.compareTo(BigInteger
@@ -109,19 +110,19 @@ public class Constructor_ extends Behaviour {
 		// We make the recipes list empty
 		recipes = new ArrayList<Resource>();
 		// Then we refill it with the current recipe
-		for (int i = 0; i < product.getRessource().getRecipe().get(0)
+		for (int i = 0; i < product.getResource().getRecipe().get(0)
 				.getQuantity(); i++) {
 			recipes.add(
-					product.getRessource().getRecipe().get(0).getRessource());
+					product.getResource().getRecipe().get(0).getResource());
 		}
-		for (int i = 0; i < product.getRessource().getRecipe().get(1)
+		for (int i = 0; i < product.getResource().getRecipe().get(1)
 				.getQuantity(); i++) {
 			recipes.add(
-					product.getRessource().getRecipe().get(1).getRessource());
+					product.getResource().getRecipe().get(1).getResource());
 		}
 
 		// For the size of the recipe
-		for (int j = 0; j < product.getRessource().getRecipe().size(); j++) {
+		for (int j = 0; j < product.getResource().getRecipe().size(); j++) {
 			// If the resource is available in the stock
 			if (resources.contains(recipes.get(j))) {
 				// We add it to teh tempo stock and we remove it form the
@@ -149,11 +150,12 @@ public class Constructor_ extends Behaviour {
 	 * 
 	 * @param product the resource to set
 	 */
-	public void setProduit(Pack product) {
-		if (Constructor_.acceptedResources.contains(product.getRessource())) {
-			this.product = product;
+	public void setProduct(Pack product) {
+		if (Constructor_.acceptedResources.contains(product.getResource())) {
+			this.product.setResource(product.getResource());
+			this.product.setQuantity(product.getQuantity());
 			try {
-				Database.createDao(Pack.class).update(product);
+				Saver.savePack(this.product);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -165,7 +167,7 @@ public class Constructor_ extends Behaviour {
 	 * 
 	 * @return produit the current product od this device
 	 */
-	public Pack getProduit() {
+	public Pack getProduct() {
 		return product;
 	}
 }

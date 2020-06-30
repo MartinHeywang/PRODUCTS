@@ -2,17 +2,12 @@
  * This file defines styles for both HBox and VBox.
  * Those are still overridable, but it is not recommended.
  */
-HBox, VBox{
-	
-}
-
 HBox *, VBox *{
 	-fx-background-color: transparent;
 }
 
-HBox.selection-box *:hover, VBox.selection-box *:hover{
-	-fx-background-color: rgb(29, 29, 29);
-	-fx-cursor: hand;
+HBox.selection-box > *:hover, VBox.selection-box > *:hover{
+	-fx-background-color: #252525;
 }
 
 VBox.sidebar{

@@ -9,11 +9,12 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
@@ -92,7 +93,9 @@ public interface Resource extends Displayable<Resource> {
 	@Override
 	public default Displayer<Resource> getDisplayer() {
 
-		BorderPane root = new BorderPane();
+		VBox root = new VBox();
+		root.setAlignment(Pos.CENTER_LEFT);
+		root.setPadding(new Insets(3));
 
 		Label nom = new Label();
 		nom.setAlignment(Pos.TOP_CENTER);
@@ -100,19 +103,19 @@ public interface Resource extends Displayable<Resource> {
 		if (nom.getText().length() > 15)
 			nom.setFont(new Font(10d));
 		nom.setPrefHeight(20d);
-		root.setTop(nom);
+		root.getChildren().add(nom);
 
 		ImageView image = new ImageView();
 		image.setImage(
 				new Image(getClass().getResourceAsStream(this.getURL())));
-		root.setCenter(image);
+		root.getChildren().add(image);
 
 		Label infos = new Label();
 		infos.setAlignment(Pos.TOP_CENTER);
 		infos.setText(
 				String.valueOf(NumberFormat.getInstance(Locale.getDefault())
 						.format(this.getPrice())) + " €");
-		root.setBottom(infos);
+		root.getChildren().add(infos);
 		return new Displayer<Resource>(root, this);
 	}
 

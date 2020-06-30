@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
@@ -40,7 +40,7 @@ public class Press_ extends Behaviour {
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinates pointer)
+	public void action(Pack resATraiter, Coordinate pointer)
 			throws MoneyException {
 
 		for (int i = 0; i < this.level.getValue()
@@ -50,11 +50,11 @@ public class Press_ extends Behaviour {
 							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 			else {
-				if (acceptedResources.contains(resATraiter.getRessource())) {
+				if (acceptedResources.contains(resATraiter.getResource())) {
 					final Pack tempo = new Pack();
 					tempo.addQuantity(1);
-					tempo.setRessource(BaseResources
-							.valueOf("PLATE_OF_" + resATraiter.getRessource()));
+					tempo.setResource(BaseResources
+							.valueOf("PLATE_OF_" + resATraiter.getResource()));
 
 					controller.removeMoney(
 							BigInteger.valueOf(Device.getElectricity()));

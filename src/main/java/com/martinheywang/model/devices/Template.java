@@ -2,7 +2,7 @@ package com.martinheywang.model.devices;
 
 import java.util.ArrayList;
 
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.toolbox.LocatedHashMap;
 
 public class Template {
@@ -10,7 +10,7 @@ public class Template {
 	// This array represents the type of each the side
 	// The first is top, the second is left, the third is bottom (like
 	// padding and margin in CSS)
-	private LocatedHashMap<PointerTypes, Coordinates> pointers = new LocatedHashMap<>();
+	private LocatedHashMap<PointerTypes, Coordinate> pointers = new LocatedHashMap<>();
 
 	/**
 	 * Creates a new Template with an array of PointerTypes.
@@ -20,24 +20,24 @@ public class Template {
 	 */
 	// This constructor is 'private', because, this type can only be
 	// instantiated by her nested class TemplateModel.
-	private Template(Coordinates location, PointerTypes top, PointerTypes right,
+	private Template(Coordinate location, PointerTypes top, PointerTypes right,
 			PointerTypes bottom, PointerTypes left) {
 		// We put in the HashMap the coordinates, according to the location
 		this.pointers.put(top,
-				new Coordinates(location.getX(), location.getY() - 1));
+				new Coordinate(location.getX(), location.getY() - 1));
 		this.pointers.put(right,
-				new Coordinates(location.getX() + 1, location.getY()));
+				new Coordinate(location.getX() + 1, location.getY()));
 		this.pointers.put(bottom,
-				new Coordinates(location.getX(), location.getY() + 1));
+				new Coordinate(location.getX(), location.getY() + 1));
 		this.pointers.put(left,
-				new Coordinates(location.getX() - 1, location.getY()));
+				new Coordinate(location.getX() - 1, location.getY()));
 	}
 
 	/**
 	 * 
 	 * @return the pointers
 	 */
-	public LocatedHashMap<PointerTypes, Coordinates> getPointers() {
+	public LocatedHashMap<PointerTypes, Coordinate> getPointers() {
 		return pointers;
 	}
 
@@ -48,7 +48,7 @@ public class Template {
 	 * @param type the key in the HashMap
 	 * @return a list of pointers
 	 */
-	public ArrayList<Coordinates> getPointersFor(PointerTypes type) {
+	public ArrayList<Coordinate> getPointersFor(PointerTypes type) {
 		return pointers.get(type);
 	}
 
@@ -99,7 +99,7 @@ public class Template {
 		 * @param location  the current location of this template's device
 		 * @return the new template.
 		 */
-		public Template createTemplate(Coordinates location,
+		public Template createTemplate(Coordinate location,
 				Direction direction) {
 			switch (direction) {
 			case UP:

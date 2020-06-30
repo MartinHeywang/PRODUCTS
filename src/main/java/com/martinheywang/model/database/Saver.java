@@ -3,7 +3,7 @@ package com.martinheywang.model.database;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
-import com.martinheywang.model.Coordinates;
+import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.DeviceModel;
@@ -71,10 +71,10 @@ public final class Saver {
 	 * 
 	 * @param coords the coords to save.
 	 */
-	public final static void saveCoordinate(Coordinates coords) {
+	public final static void saveCoordinate(Coordinate coords) {
 		try {
-			final Dao<Coordinates, Long> dao = Database
-					.createDao(Coordinates.class);
+			final Dao<Coordinate, Long> dao = Database
+					.createDao(Coordinate.class);
 			dao.createOrUpdate(coords);
 		} catch (SQLException e) {
 			// In most cases, it would be a constraint violation, so I don't
@@ -94,7 +94,7 @@ public final class Saver {
 		dao.createOrUpdate(pack);
 
 		if (cascadeActivated) {
-			final Game associatedGame = pack.getAppareil().getGame();
+			final Game associatedGame = pack.getDeviceModel().getGame();
 			saveGame(associatedGame);
 		}
 	}
