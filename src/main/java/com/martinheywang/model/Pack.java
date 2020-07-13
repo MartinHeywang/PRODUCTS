@@ -10,6 +10,8 @@ import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -25,7 +27,7 @@ public class Pack implements Displayable<Pack> {
 	private Long idPaquet;
 
 	@DatabaseField
-	private Resource resource;
+	private ObjectProperty<Resource> resource;
 
 	@DatabaseField
 	private int quantity;
@@ -37,12 +39,12 @@ public class Pack implements Displayable<Pack> {
 	}
 
 	public Pack(Resource resource, int quantity) {
-		this.resource = resource;
+		this.resource = new SimpleObjectProperty<>(resource);
 		this.quantity = quantity;
 	}
 
 	public Pack(Resource resource, int quantity, DeviceModel model) {
-		this.resource = resource;
+		this.resource = new SimpleObjectProperty<>(resource);
 		this.quantity = quantity;
 		this.model = model;
 	}
@@ -90,7 +92,7 @@ public class Pack implements Displayable<Pack> {
 	 * @return the resource
 	 */
 	public Resource getResource() {
-		return resource;
+		return resource.get();
 	}
 
 	/**
@@ -98,7 +100,7 @@ public class Pack implements Displayable<Pack> {
 	 * @param res the resource to set
 	 */
 	public void setResource(Resource res) {
-		this.resource = res;
+		this.resource.set(res);
 	}
 
 	/**

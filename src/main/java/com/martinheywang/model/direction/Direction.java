@@ -1,4 +1,4 @@
-package com.martinheywang.model.devices;
+package com.martinheywang.model.direction;
 
 public enum Direction {
 	UP(0d, "0°"),

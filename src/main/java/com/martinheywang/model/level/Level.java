@@ -1,4 +1,4 @@
-package com.martinheywang.model.devices;
+package com.martinheywang.model.level;
 
 public enum Level {
 	LEVEL_1("/devices_level_1/", 1, "Niveau 1"),

@@ -1,15 +1,13 @@
 package com.martinheywang.model.devices;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
-import com.martinheywang.model.database.Database;
-import com.martinheywang.model.database.Saver;
+import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.level.Level;
 import com.martinheywang.model.types.BaseTypes;
+import com.martinheywang.model.types.Type;
 
 @DatabaseTable(tableName = "devicesModels")
 public class DeviceModel {
@@ -42,12 +40,12 @@ public class DeviceModel {
 	 * @see com.martinheywang.model.types.BaseTypes.model.appareils.Type
 	 */
 	@DatabaseField
-	private BaseTypes type;
+	private Type type;
 
 	/**
 	 * The level
 	 * 
-	 * @see com.martin.model.appareils.Level
+	 * @see com.martinheywang.model.level.martin.model.appareils.Level
 	 */
 	@DatabaseField
 	private Level level;
@@ -77,25 +75,11 @@ public class DeviceModel {
 	 * @param game        the game
 	 */
 	public DeviceModel(Coordinate coordinates, Game game) {
+		this.coordinates = coordinates;
 		this.game = game;
 		this.type = BaseTypes.FLOOR;
 		this.level = Level.LEVEL_1;
 		this.direction = Direction.UP;
-
-		try {
-			final List<Coordinate> list = Database.createDao(Coordinate.class)
-					.queryBuilder().where()
-					.eq("x", coordinates.getX()).and()
-					.eq("y", coordinates.getY()).query();
-			if (list.size() == 0) {
-				Saver.saveCoordinate(coordinates);
-				this.coordinates = coordinates;
-			} else {
-				this.coordinates = list.get(0);
-			}
-		} catch (SQLException e) {
-
-		}
 	}
 
 	/**
@@ -107,7 +91,7 @@ public class DeviceModel {
 	 * @param level       the level
 	 * @param direction   the direction
 	 */
-	public DeviceModel(Coordinate coordinates, Game game, BaseTypes type,
+	public DeviceModel(Coordinate coordinates, Game game, Type type,
 			Level level, Direction direction) {
 		this.coordinates = coordinates;
 		this.game = game;
@@ -160,17 +144,21 @@ public class DeviceModel {
 		this.game = game;
 	}
 
+	public Type typeProperty() {
+		return type;
+	}
+
 	/**
 	 * @return the type
 	 */
-	public BaseTypes getType() {
+	public Type getType() {
 		return type;
 	}
 
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(BaseTypes type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 

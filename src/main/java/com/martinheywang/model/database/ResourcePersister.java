@@ -6,20 +6,25 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
+import com.martinheywang.model.resources.DefaultResources;
 import com.martinheywang.model.resources.Resource;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public class ResourcePersister extends BaseDataType {
 
 	private static final ResourcePersister instance = new ResourcePersister();
 
-	public ResourcePersister() {
-		super(SqlType.STRING, new Class<?>[] { Resource.class });
+	private ResourcePersister() {
+		super(SqlType.STRING, new Class<?>[] { ObjectProperty.class });
 	}
 
 	@Override
-	public Object parseDefaultString(FieldType fieldType, String defaultStr)
+	public ObjectProperty<Resource> parseDefaultString(FieldType fieldType,
+			String defaultStr)
 			throws SQLException {
-		return Resource.valueOf(defaultStr);
+		return new SimpleObjectProperty<Resource>(DefaultResources.NONE);
 	}
 
 	@Override
@@ -29,9 +34,11 @@ public class ResourcePersister extends BaseDataType {
 	}
 
 	@Override
-	public Resource sqlArgToJava(FieldType fieldType, Object sqlArg,
+	public ObjectProperty<Resource> sqlArgToJava(FieldType fieldType,
+			Object sqlArg,
 			int columnPos) {
-		return Resource.valueOf((String) sqlArg);
+		return new SimpleObjectProperty<Resource>(
+				Resource.valueOf((String) sqlArg));
 
 	}
 

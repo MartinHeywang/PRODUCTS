@@ -1,24 +1,25 @@
 package com.martinheywang.view;
 
-import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
-import com.martinheywang.model.devices.Floor;
+import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.exceptions.EditException;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.level.Level;
+import com.martinheywang.model.types.BaseTypes;
+import com.martinheywang.model.types.Type;
 import com.martinheywang.toolbox.MoneyFormat;
 
 import javafx.animation.KeyFrame;
@@ -35,6 +36,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -79,11 +86,18 @@ public class GameController implements Initializable {
 	 */
 	@FXML
 	private VBox toasts;
+
 	/**
 	 * The list showing the options (research, grid...)
 	 */
 	@FXML
-	private HBox options;
+	private AnchorPane options;
+
+	/**
+	 * The list showing the
+	 */
+	@FXML
+	private VBox devicesBuild;
 
 	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
 
@@ -131,6 +145,7 @@ public class GameController implements Initializable {
 		refreshView();
 
 		addOfflineMoney();
+		prepareToolbar();
 
 		toast("Bienvenue dans la partie : " + currentGame.getName(),
 				Color.CORNFLOWERBLUE,
@@ -151,9 +166,11 @@ public class GameController implements Initializable {
 					ChronoUnit.SECONDS);
 			BigInteger additionnalMoney = grow
 					.multiply(BigInteger.valueOf(offlineTime));
-			additionnalMoney = additionnalMoney.divide(new BigInteger("10"));
+			additionnalMoney = additionnalMoney.divide(new BigInteger("5"));
 
 			addMoney(additionnalMoney);
+
+			setMoney(new BigInteger("10000"));
 		} catch (MoneyException e) {
 			System.err.print("Couldn't add offline money");
 			e.printStackTrace();
@@ -174,11 +191,11 @@ public class GameController implements Initializable {
 				Platform.runLater(() -> clearGrid());
 
 				/*
-				 * <!> Clear the registered buyers coords (when loading two
-				 * differents game, some devices was called instead of the
-				 * buyers).
+				 * <!> The locations lists all the coords that points a buyer.
+				 * This list must be cleared when loading the game, so that only
+				 * byers of the current game are called.
 				 */
-				Buyer.locations.clear();
+				Device.buyersLocations.clear();
 
 				addDevices();
 				Platform.runLater(() -> toPlayableView());
@@ -213,21 +230,62 @@ public class GameController implements Initializable {
 		int progress = 1;
 		try {
 			for (DeviceModel model : devicesModel) {
-				final Device device = model.getType().getAssociatedClass()
-						.getConstructor(DeviceModel.class,
-								GameController.class)
-						.newInstance(model, this);
+				final Device device = new Device(
+						new DeviceModel(model.getCoordinates(), currentGame),
+						this);
 
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						grid.add(device,
-								device.getModel().getCoordinates()
-										.getX(),
-								device.getModel().getCoordinates()
-										.getY());
-					}
-				});
+				final int x = device.getModel().getCoordinates().getX();
+				final int y = device.getModel().getCoordinates().getY();
+
+				Platform.runLater(() -> grid.add(device, x, y));
+
+				if (model.getType().equals(BaseTypes.FLOOR)) {
+					device.setOnDragOver(event -> {
+						if (event.getGestureSource() != device &&
+								event.getDragboard().hasString()) {
+							event.acceptTransferModes(
+									TransferMode.COPY);
+						}
+					});
+
+					device.setOnDragEntered(event -> {
+						if (event.getGestureSource() != device &&
+								event.getDragboard().hasString()) {
+							device.setEffect(new Glow(0.4d));
+						}
+
+						event.consume();
+					});
+					device.setOnDragExited(event -> {
+						device.setEffect(new Glow(0d));
+					});
+					device.setOnDragDropped(event -> {
+
+						Dragboard db = event.getDragboard();
+						boolean success = false;
+
+						if (db.hasString()) {
+							final Type type = Type.valueOf(db.getString());
+							try {
+								this.build(type, model.getCoordinates(), false);
+							} catch (MoneyException e) {
+								toast("Vous n'avez pas assez d'argent !",
+										Color.DARKORANGE, 3d);
+								e.printStackTrace();
+							} catch (EditException e) {
+								toast("L'action n'a pas pu être réalisé",
+										Color.DARKRED, 5d);
+								e.printStackTrace();
+							}
+
+							success = true;
+						}
+
+						event.setDropCompleted(success);
+
+						event.consume();
+					});
+				}
 
 				/*
 				 * <?> Updating the progress bar
@@ -397,7 +455,7 @@ public class GameController implements Initializable {
 			transition.getKeyFrames().addAll(
 					new KeyFrame(Duration.ZERO,
 							new KeyValue(sidebarsContainer.translateXProperty(),
-									202d)),
+									240d)),
 					new KeyFrame(Duration.millis(250),
 							new KeyValue(sidebarsContainer.translateXProperty(),
 									0d)));
@@ -410,7 +468,7 @@ public class GameController implements Initializable {
 									0d)),
 					new KeyFrame(Duration.millis(250),
 							new KeyValue(sidebarsContainer.translateXProperty(),
-									202d)));
+									240d)));
 			transition.playFromStart();
 		}
 
@@ -418,128 +476,121 @@ public class GameController implements Initializable {
 	}
 
 	/**
-	 * Adds money to the game
-	 * 
-	 * @param amount how many
+	 * Prepares the toolbar at the end of a refresh
 	 */
-	public void addMoney(BigInteger amount) throws MoneyException {
-		currentGame.addMoney(amount);
-	}
+	private void prepareToolbar() {
+		Platform.runLater(() -> {
+			for (Type type : Type.getReferences()) {
+				if (!type.equals(BaseTypes.FLOOR)) {
+					Displayer<Type> display = type.getDisplayer();
+					display.getStyleClass().add("selectable");
+					display.addHoverEffect();
+					display.setFocusTraversable(true);
 
-	/**
-	 * Removes money to the game
-	 * 
-	 * @param amount how many
-	 * @throws MoneyException if there aren't enough money
-	 */
-	public void removeMoney(BigInteger amount) throws MoneyException {
-		currentGame.removeMoney(amount);
-	}
+					display.setOnDragDetected(event -> {
+						Dragboard db = display
+								.startDragAndDrop(TransferMode.COPY);
 
-	/**
-	 * Sets the money amount to the value given as parameter.
-	 * 
-	 * @param amount the value
-	 */
-	public void setMoney(BigInteger amount) throws MoneyException {
-		currentGame.setMoney(amount);
-	}
+						ClipboardContent content = new ClipboardContent();
+						content.putString(display.getSubject().toString());
+						content.putImage(new Image(
+								getClass()
+										.getResourceAsStream(
+												"/images"
+														+ Level.LEVEL_1.getURL()
+														+ display.getSubject()
+																.getURL())));
 
-	/**
-	 * Refreshes the amount money displayed by the label and update the
-	 * associated property.
-	 */
-	private void refreshMoney() {
-		argentProperty.set(getMoney());
+						db.setContent(content);
 
-	}
+						event.consume();
+					});
 
-	/**
-	 * 
-	 * @return the money
-	 */
-	public int getGridSize() {
-		return currentGame.getGridSize();
-	}
-
-	/**
-	 * 
-	 * @return the amount of money of the game
-	 */
-	public BigInteger getMoney() {
-		return currentGame.getMoney();
-	}
-
-	/**
-	 * Saves the game
-	 * 
-	 * @throws SQLException if an error occurs when saving the game
-	 */
-	public void saveGame() throws SQLException {
-		currentGame.save();
-	}
-
-	/**
-	 * Builds the given device with its coordinates in the grid
-	 * 
-	 * @param device     the device to build
-	 * @param ignoreCost if the cost of the operation should be ignored
-	 * @throws MoneyException if an error when intercating with money
-	 *                        occurs
-	 */
-	public void build(Device device, boolean ignoreCost) throws MoneyException {
-		if (!ignoreCost) {
-			final String key = device.getModel().getLevel().toString()
-					.toLowerCase() + "_build";
-			try {
-				removeMoney(
-						device.getModel().getType().getPrices()
-								.getPriceFromKey(key));
-			} catch (MoneyException e) {
-				return;
+					devicesBuild.getChildren().add(display);
+				}
 			}
-		}
-
-		// FixMe : don't create device when moeny is too low
-		this.delete(device.getModel().getCoordinates(), ignoreCost);
-
-		currentGame.setDeviceModel(device.getModel());
-
-		final Coordinate coords = device.getModel().getCoordinates();
-		Device oldDevice = findDevice(coords);
-		grid.getChildren().remove(oldDevice);
-		grid.add(device, coords.getX(), coords.getY());
+		});
 	}
 
 	/**
-	 * Destroys the device at the given coords.
+	 * Build a device of the given Type at the given Coordinate.
 	 * 
-	 * @param coords     the coords of the device to destroy
+	 * @param type       the type of the device to build
+	 * @param coords     the coordinate where to build the device
 	 * @param ignoreCost if the cost of the operation should be ignored
-	 * @throws MoneyException if an error occurs when interacting with
-	 *                        money
+	 * @throws MoneyException if there isn't enough money (only if
+	 *                        ignoreCost is set to false)
+	 * @throws EditException  if an error occurs during the operation
 	 */
-	public void delete(Coordinate coords, boolean ignoreCost)
-			throws MoneyException {
+	public void build(Type type, Coordinate coords, boolean ignoreCost)
+			throws MoneyException, EditException {
 
-		final Device oldDevice = findDevice(coords);
-		final DeviceModel oldDeviceModel = oldDevice.getModel();
-		final DeviceModel model = new DeviceModel(coords, currentGame);
-
-		currentGame.setDeviceModel(model);
-		if (!ignoreCost) {
-			final String key = oldDeviceModel.getLevel().toString()
-					.toLowerCase() + "_delete";
-			addMoney(
-					oldDeviceModel.getType().getPrices().getPriceFromKey(key));
-		}
 		try {
+			final Device device = findDevice(coords);
 
-			grid.getChildren().remove(oldDevice);
-			grid.add(new Floor(model, this), coords.getX(), coords.getY());
-		} catch (FileNotFoundException e) {
+			// Throwing possible exceptions before doing anything
+			if (!device.getModel().getType().equals(BaseTypes.FLOOR)) {
+				throw new EditException(
+						"A device can only be built on a floor.");
+			}
+			if (type.equals(BaseTypes.FLOOR)) {
+				throw new EditException(
+						"A floor cannot be build. Use the delete method instead.");
+			}
+			if (!coords
+					.isInGrid(currentGame.getGridSize())) {
+				throw new EditException(
+						"The given coordinate is out of the grid.");
+			}
+
+			if (!ignoreCost) {
+				removeMoney(type.getPrices().getLevel1Build());
+			}
+
+			device.setData(type, Level.LEVEL_1, Direction.UP);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Delete the device founded at the given coords.
+	 * 
+	 * @param coords     the coords of the device to destroy
+	 * @param ignoreGain if the gain should be ignored
+	 * @throws MoneyException (only if ignoreGain is false) if an error
+	 *                        with the money occurs
+	 * @throws EditException  if the action couldn't not be performed
+	 */
+	public void delete(Coordinate coords, boolean ignoreGain)
+			throws MoneyException, EditException {
+
+		final Device device = findDevice(coords);
+
+		if (!coords
+				.isInGrid(currentGame.getGridSize())) {
+			throw new EditException(
+					"The given coordinate is out of the grid.");
+		}
+		if (device.getModel().getType().equals(BaseTypes.FLOOR)) {
+			throw new EditException("A floor can not be destroyed.");
+		}
+
+		if (!ignoreGain) {
+			addMoney(device.getDeletePrice());
+		}
+
+		device.setData(BaseTypes.FLOOR, Level.LEVEL_1, Direction.UP);
+	}
+
+	public void turn(Coordinate coords) throws EditException {
+
+	}
+
+	public void upgrade(Coordinate coords, boolean ignoreCost)
+			throws MoneyException, EditException {
+
 	}
 
 	/**
@@ -571,18 +622,12 @@ public class GameController implements Initializable {
 	 * @return a deviceModel
 	 */
 	public DeviceModel findModel(Coordinate location) {
-		final int x = location.getX();
-		final int y = location.getY();
 		final List<DeviceModel> models = currentGame.getDevicesModel();
 
-		try {
-			final DeviceModel model = models.stream()
-					.filter(m -> m.getCoordinates().getX() == x)
-					.filter(m -> m.getCoordinates().getY() == y).findFirst()
-					.get();
-			return model;
-		} catch (NoSuchElementException e) {
-
+		for (DeviceModel model : models) {
+			if (model.getCoordinates().propertiesEquals(location)) {
+				return model;
+			}
 		}
 		return null;
 	}
@@ -664,6 +709,71 @@ public class GameController implements Initializable {
 		}
 	}
 
+	/**
+	 * Adds money to the game
+	 * 
+	 * @param amount how many
+	 */
+	public void addMoney(BigInteger amount) throws MoneyException {
+		currentGame.addMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Removes money to the game
+	 * 
+	 * @param amount how many
+	 * @throws MoneyException if there aren't enough money
+	 */
+	public void removeMoney(BigInteger amount) throws MoneyException {
+		currentGame.removeMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Sets the money amount to the value given as parameter.
+	 * 
+	 * @param amount the value
+	 */
+	public void setMoney(BigInteger amount) throws MoneyException {
+		currentGame.setMoney(amount);
+		refreshMoney();
+	}
+
+	/**
+	 * Refreshes the amount money displayed by the label and update the
+	 * associated property.
+	 */
+	private void refreshMoney() {
+		argentProperty.set(getMoney());
+
+	}
+
+	/**
+	 * 
+	 * @return the money
+	 */
+	public int getGridSize() {
+		return currentGame.getGridSize();
+	}
+
+	/**
+	 * 
+	 * @return the amount of money of the game
+	 */
+	public BigInteger getMoney() {
+		return currentGame.getMoney();
+	}
+
+	/**
+	 * Saves the game
+	 * 
+	 * @throws SQLException if an error occurs when saving the game
+	 */
+	public void saveGame() throws SQLException {
+		currentGame.save();
+	}
+
 	class GameLoop implements Runnable {
 
 		private volatile boolean running = true;
@@ -675,9 +785,9 @@ public class GameController implements Initializable {
 					Thread.sleep(1000);
 					refreshMoney();
 					final BigInteger moneyBefore = currentGame.getMoney();
-					for (int i = 0; i < Buyer.locations.size(); i++) {
+					for (int i = 0; i < Device.buyersLocations.size(); i++) {
 						try {
-							findDevice(Buyer.locations.get(i))
+							findDevice(Device.buyersLocations.get(i))
 									.action(new Pack());
 							moneyLabel.setTextFill(Color.WHITE);
 						} catch (MoneyException e) {

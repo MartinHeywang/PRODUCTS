@@ -1,30 +1,18 @@
 package com.martinheywang.model.types;
 
-import com.martinheywang.model.devices.Buyer;
-import com.martinheywang.model.devices.Constructor;
-import com.martinheywang.model.devices.Conveyor;
-import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Floor;
-import com.martinheywang.model.devices.Furnace;
-import com.martinheywang.model.devices.LeftConveyor;
-import com.martinheywang.model.devices.Level;
-import com.martinheywang.model.devices.Press;
-import com.martinheywang.model.devices.RightConveyor;
-import com.martinheywang.model.devices.Seller;
-import com.martinheywang.model.devices.Sorter;
+import org.pf4j.Extension;
+
+import com.martinheywang.model.behaviours.Behaviour;
+import com.martinheywang.model.behaviours.Buyer;
+import com.martinheywang.model.behaviours.Constructor;
+import com.martinheywang.model.behaviours.Conveyor;
+import com.martinheywang.model.behaviours.Floor;
+import com.martinheywang.model.behaviours.Seller;
+import com.martinheywang.model.behaviours.Sorter;
+import com.martinheywang.model.behaviours.Transform;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.devices.Template.TemplateModel;
-import com.martinheywang.model.devices.WireDrawer;
 import com.martinheywang.model.types.info.PricesModule;
-import com.martinheywang.view.Displayable;
-import com.martinheywang.view.Displayer;
-
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 
 /**
  * This enum represents all the static data about the different base
@@ -33,7 +21,8 @@ import javafx.scene.layout.BorderPane;
  * @author Heywang
  *
  */
-public enum BaseTypes implements Displayable<BaseTypes>, Type {
+@Extension
+public enum BaseTypes implements Type {
 
 	BUYER("Acheteur", "Achète les ressources de base.",
 			Buyer.class,
@@ -56,24 +45,16 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 					PointerTypes.ENTRY, PointerTypes.NONE,
 					PointerTypes.EXIT,
 					PointerTypes.NONE)),
-	RIGHT_CONVEYOR("Convoyeur à droite",
-			"Transporte les ressources sur la case de droite.",
-			RightConveyor.class,
-			new PricesModule("100", "20000", "100000", "100", "20000",
-					"100000"),
-			new TemplateModel(
-					PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.NONE,
-					PointerTypes.NONE)),
 	LEFT_CONVEYOR("Convoyeur à gauche",
 			"Transporte les ressources sur la case de gauche.",
-			LeftConveyor.class,
+			Conveyor.class,
 			new PricesModule("100", "20000", "100000", "100", "20000",
 					"100000"),
 			new TemplateModel(
 					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.NONE,
 					PointerTypes.EXIT)),
 	FURNACE("Four", "Fond toutes les ressources en lingots, sauf le diamant.",
-			Furnace.class,
+			Transform.class,
 			new PricesModule("2000", "50000", "400000", "1800", "40000",
 					"350000"),
 			new TemplateModel(
@@ -81,15 +62,23 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 					PointerTypes.NONE)),
 	PRESS("Presse",
 			"Transforme toutes les ressources en plaques, sauf le diamant.",
-			Press.class,
+			Transform.class,
 			new PricesModule("2000", "50000", "400000", "1800", "40000",
 					"350000"),
 			new TemplateModel(
 					PointerTypes.ENTRY, PointerTypes.NONE, PointerTypes.EXIT,
 					PointerTypes.NONE)),
+	RIGHT_CONVEYOR("Convoyeur à droite",
+			"Transporte les ressources sur la case de droite.",
+			Conveyor.class,
+			new PricesModule("100", "20000", "100000", "100", "20000",
+					"100000"),
+			new TemplateModel(
+					PointerTypes.ENTRY, PointerTypes.EXIT, PointerTypes.NONE,
+					PointerTypes.NONE)),
 	WIRE_DRAWER("Presse à fil",
 			"Transforme les ressources en fil, sauf le diamant.",
-			WireDrawer.class,
+			Transform.class,
 			new PricesModule("2000", "50000", "400000", "1800", "40000",
 					"350000"),
 			new TemplateModel(
@@ -127,46 +116,23 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 	private String desc;
 	private PricesModule prices;
 	private TemplateModel templateModel;
-	private Class<? extends Device> classe;
+	private Class<? extends Behaviour> behaviourClass;
+	private Object[] behaviourArgs;
 
-	BaseTypes(String accesibleName, String desc, Class<? extends Device> classe,
-			PricesModule prices, TemplateModel templateModel) {
+	BaseTypes(String accesibleName, String desc,
+			Class<? extends Behaviour> behaviourClass,
+			PricesModule prices, TemplateModel templateModel,
+			Object... behaviourArgs) {
+
 		this.nom = accesibleName;
 		this.url = this.toString() + ".png";
 		this.desc = desc;
 		this.templateModel = templateModel;
-		this.classe = classe;
+		this.behaviourClass = behaviourClass;
 		this.prices = prices;
-	}
+		this.behaviourArgs = behaviourArgs;
 
-	@Override
-	public Displayer<BaseTypes> getDisplayer() {
-		BorderPane root = new BorderPane();
-
-		Label nom = new Label();
-		nom.setUnderline(true);
-		nom.setAlignment(Pos.TOP_CENTER);
-		nom.setText(this.getName());
-		nom.setWrapText(true);
-		root.setTop(nom);
-
-		ImageView image = new ImageView();
-		image.setImage(new Image(getClass()
-				.getResourceAsStream(Level.LEVEL_1.getURL() + this.getURL())));
-		root.setRight(image);
-
-		Label infos = new Label();
-		infos.setAlignment(Pos.TOP_CENTER);
-		infos.setText(
-				"Prix de construction : " + this.getPrices().getLevel1Build()
-						+ " €\n\n"
-						+ this.getDescription());
-		infos.setWrapText(true);
-		infos.setMaxWidth(200d);
-		root.setLeft(infos);
-
-		root.setPadding(new Insets(3, 3, 3, 3));
-		return new Displayer<BaseTypes>(root, this);
+		Type.addReferences(this);
 	}
 
 	@Override
@@ -195,7 +161,12 @@ public enum BaseTypes implements Displayable<BaseTypes>, Type {
 	}
 
 	@Override
-	public Class<? extends Device> getAssociatedClass() {
-		return classe;
+	public Class<? extends Behaviour> getBehaviourClass() {
+		return behaviourClass;
+	}
+
+	@Override
+	public Object[] getBehaviourArgs() {
+		return behaviourArgs;
 	}
 }

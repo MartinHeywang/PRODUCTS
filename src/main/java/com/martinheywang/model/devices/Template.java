@@ -3,6 +3,7 @@ package com.martinheywang.model.devices;
 import java.util.ArrayList;
 
 import com.martinheywang.model.Coordinate;
+import com.martinheywang.model.direction.Direction;
 import com.martinheywang.toolbox.LocatedHashMap;
 
 public class Template {

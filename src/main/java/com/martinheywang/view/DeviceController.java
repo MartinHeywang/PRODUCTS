@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Direction;
-import com.martinheywang.model.devices.Level;
+import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.exceptions.EditException;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.level.Level;
 import com.martinheywang.model.types.Type;
 
 import javafx.fxml.FXML;
@@ -79,15 +80,9 @@ public class DeviceController implements Initializable {
 				+ direction.getLiteral());
 		// Setting the literal at format Type | Level | Direction
 
-		final String upgradePriceKey = level.getNext().toString().toLowerCase()
-				+ "_build";
-		upgradePrice.setText("- " + type.getPrices()
-				.getPriceFromKey(upgradePriceKey).toString() + " €");
+		upgradePrice.setText("- " + device.getUpgradePrice() + " €");
 		// Adapting the prices for both destroy and upgrade
-		final String deletePriceKey = level.toString().toLowerCase()
-				+ "_delete";
-		destroyPrice.setText("+ " + type.getPrices()
-				.getPriceFromKey(deletePriceKey).toString() + " €");
+		destroyPrice.setText("+ " + device.getDeletePrice() + " €");
 
 		// Remove the upgarde option if the device is already at max
 		if (level.equals(Level.LEVEL_3)) {
@@ -134,25 +129,31 @@ public class DeviceController implements Initializable {
 	@FXML
 	private void upgrade() {
 		try {
-			origin.upgrade();
+			origin.getController().upgrade(origin.getModel().getCoordinates(),
+					false);
 			refresh();
-		} catch (MoneyException e) {
+		} catch (MoneyException | EditException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
 	private void turn() {
-		origin.rotate();
+		try {
+			origin.getController().turn(origin.getModel().getCoordinates());
+		} catch (EditException e) {
+			e.printStackTrace();
+		}
 		refresh();
 	}
 
 	@FXML
 	private void delete() {
 		try {
-			origin.delete();
+			origin.getController().delete(origin.getModel().getCoordinates(),
+					false);
 			scene.close();
-		} catch (MoneyException e) {
+		} catch (MoneyException | EditException e) {
 			e.printStackTrace();
 		}
 	}

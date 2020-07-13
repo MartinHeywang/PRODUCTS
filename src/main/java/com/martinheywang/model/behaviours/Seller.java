@@ -1,22 +1,24 @@
-package com.martinheywang.model.devices.behaviours;
+package com.martinheywang.model.behaviours;
 
 import java.math.BigInteger;
+import java.util.List;
 
-import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.DefaultResources;
 import com.martinheywang.view.GameController;
 
-public class Seller_ extends Behaviour {
+import javafx.scene.Node;
 
-	public Seller_(Device device, GameController controller) {
+public class Seller extends Behaviour {
+
+	public Seller(Device device, GameController controller) {
 		super(device, controller);
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinate pointer)
+	public void action(Pack resATraiter)
 			throws MoneyException {
 		for (int i = 0; i < this.level.getValue()
 				|| i < resATraiter.getQuantity(); i++) {
@@ -25,16 +27,19 @@ public class Seller_ extends Behaviour {
 							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 			else {
-				if (!resATraiter.getResource().equals(BaseResources.NONE)) {
-					controller.addMoney(
-							BigInteger.valueOf(
-									resATraiter.getResource().getPrice()
-											- Device
-													.getElectricity()));
+				if (!resATraiter.getResource().equals(DefaultResources.NONE)) {
+					controller.addMoney(resATraiter.getResource().getPrice()
+							.subtract(BigInteger
+									.valueOf(Device.getElectricity())));
 					device.activate();
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<Node> getWidgets() {
+		return null;
 	}
 
 }

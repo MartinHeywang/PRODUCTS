@@ -53,7 +53,7 @@
                   <DropShadow />
                </effect>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" stylesheets="@ScrollPane.css" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" pannable="true" stylesheets="@ScrollPane.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
                <padding>
                   <Insets bottom="10.0" left="70.0" right="70.0" top="10.0" />
                </padding>

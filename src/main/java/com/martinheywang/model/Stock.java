@@ -2,7 +2,7 @@ package com.martinheywang.model;
 
 import java.util.ArrayList;
 
-import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.Resource;
 
 public class Stock extends ArrayList<Pack> {
 
@@ -16,7 +16,7 @@ public class Stock extends ArrayList<Pack> {
 		super();
 	}
 
-	public void add(BaseResources resource) {
+	public void add(Resource resource) {
 		this.add(new Pack(resource, 1));
 	}
 

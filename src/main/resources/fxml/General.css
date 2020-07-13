@@ -14,3 +14,14 @@
 	-fx-background-color: #333; 
 	-fx-cursor: hand;
 }
+
+*.selectable{
+	-fx-opacity: 0.8;
+}
+*.selectable:hover{
+	-fx-cursor: hand;
+}
+*.selectable:focused{
+	-fx-opacity: 0.95;
+	-fx-cursor: default;
+}

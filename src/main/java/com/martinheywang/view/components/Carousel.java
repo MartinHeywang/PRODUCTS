@@ -29,9 +29,11 @@ public class Carousel extends HBox {
 				.add(getClass().getResource("/fxml/Buttons.css").toString());
 
 		final ImageView left_arrow = new ImageView(new Image(
-				getClass().getResourceAsStream("/icons/left_arrow.png")));
+				getClass()
+						.getResourceAsStream("/images/icons/left_arrow.png")));
 		final ImageView right_arrow = new ImageView(new Image(
-				getClass().getResourceAsStream("/icons/right_arrow.png")));
+				getClass()
+						.getResourceAsStream("/images/icons/right_arrow.png")));
 
 		final Button previous = new Button();
 		previous.setGraphic(left_arrow);
@@ -43,9 +45,9 @@ public class Carousel extends HBox {
 		previous.setOnMouseClicked((event) -> previousElement());
 		next.setOnMouseClicked((event) -> nextElement());
 
+		this.setAlignment(Pos.CENTER);
 		this.getChildren().addAll(previous, images, next);
 		this.setMinHeight(150d);
-		this.setAlignment(Pos.CENTER);
 		Carousel.setHgrow(images, Priority.ALWAYS);
 	}
 
@@ -95,12 +97,14 @@ public class Carousel extends HBox {
 					this.nodes.get(0), this.nodes.get(1));
 
 		// We give the children nice effects
-		images.getChildren().get(0).setScaleX(0.7d);
-		images.getChildren().get(0).setScaleY(0.7d);
+		final double scaledown = .7d;
+
+		images.getChildren().get(0).setScaleX(scaledown);
+		images.getChildren().get(0).setScaleY(scaledown);
 		images.getChildren().get(1).setScaleX(1d);
 		images.getChildren().get(1).setScaleY(1d);
-		images.getChildren().get(2).setScaleX(0.7d);
-		images.getChildren().get(2).setScaleY(0.7d);
+		images.getChildren().get(2).setScaleX(scaledown);
+		images.getChildren().get(2).setScaleY(scaledown);
 
 		this.selection = images.getChildren().get(1);
 

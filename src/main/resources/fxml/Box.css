@@ -6,10 +6,6 @@ HBox *, VBox *{
 	-fx-background-color: transparent;
 }
 
-HBox.selection-box > *:hover, VBox.selection-box > *:hover{
-	-fx-background-color: #252525;
-}
-
 VBox.sidebar{
 	-fx-background-color: rgb(0, 100, 0);
 }

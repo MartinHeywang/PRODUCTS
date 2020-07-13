@@ -1,26 +1,26 @@
 package com.martinheywang.model.devices;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.database.Deleter;
-import com.martinheywang.model.database.Saver;
-import com.martinheywang.model.devices.Template.PointerTypes;
+import com.martinheywang.model.behaviours.Behaviour;
+import com.martinheywang.model.behaviours.Buyer;
 import com.martinheywang.model.devices.Template.TemplateModel;
-import com.martinheywang.model.devices.behaviours.Behaviour;
+import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.exceptions.EditException;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.level.Level;
+import com.martinheywang.model.types.BaseTypes;
+import com.martinheywang.model.types.Type;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.DeviceController;
 import com.martinheywang.view.GameController;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -33,9 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import javafx.util.Duration;
 
 /**
  * The <em>Device</em> is an abstract class that all the devices
@@ -44,7 +42,7 @@ import javafx.util.Duration;
  * 
  * @author Martin Heywang
  */
-public abstract class Device extends ImageView {
+public class Device extends ImageView {
 
 	/**
 	 * The DeviceModel that contains all the data specified about this
@@ -140,12 +138,18 @@ public abstract class Device extends ImageView {
 			if (event.getButton().equals(MouseButton.PRIMARY)) {
 				openDialog();
 			} else if (event.getButton().equals(MouseButton.SECONDARY)) {
-				rotate();
+				try {
+					controller.turn(model.getCoordinates());
+				} catch (EditException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	};
 
 	public static int electricity = 5;
+
+	public static List<Coordinate> buyersLocations = new ArrayList<>();
 
 	/**
 	 * Creates a new device.
@@ -157,35 +161,14 @@ public abstract class Device extends ImageView {
 	 * @param controller the game controller
 	 * 
 	 */
-	protected Device(DeviceModel model, GameController controller)
-			throws FileNotFoundException {
+	public Device(DeviceModel model, GameController controller) {
 
-		this.setImage(new Image(
-				getClass().getResourceAsStream(
-						"/images" + model.getLevel().getURL()
-								+ model.getType().getURL())));
+		this.setOpacity(0.7);
+
 		this.model = model;
 		this.controller = controller;
 
-		initDefaultAppearance();
-		initActiveAnimation();
-		addHoverEffect();
-		this.setOnMouseClicked(onClicked);
-	}
-
-	private void initActiveAnimation() {
-		timeline = new Timeline();
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(0),
-				new KeyValue(this.opacityProperty(), 1)));
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(750),
-				new KeyValue(this.opacityProperty(), 1)));
-		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(2),
-				new KeyValue(this.opacityProperty(), 0.7)));
-	}
-
-	private void initDefaultAppearance() {
-		this.setRotate(model.getDirection().getRotate());
-		this.setOpacity(0.7);
+		setData(model.getType(), model.getLevel(), model.getDirection());
 	}
 
 	private void openDialog() {
@@ -202,26 +185,13 @@ public abstract class Device extends ImageView {
 
 			final DeviceController controller = loader.getController();
 			controller.setContent(this, dialog);
-			controller.addActions(getWidgets());
+			controller.addActions(behaviour.getWidgets());
 
 			dialog.showAndWait();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * This method returns the list of the widgets of the devices. By
-	 * default, it returns nothing. That's why you will need to ovverride
-	 * it if you need to add additionnal actions components to the dialog.
-	 * Those may have some behaviors on click (event listeners) to add
-	 * some features to the device.
-	 * 
-	 * @return the list of the widgets
-	 */
-	protected List<Node> getWidgets() {
-		return new ArrayList<Node>();
 	}
 
 	private void addHoverEffect() {
@@ -259,20 +229,7 @@ public abstract class Device extends ImageView {
 	 * @param resATraiter the resource who will be used by this device
 	 */
 	public void action(Pack resATraiter) throws MoneyException {
-		for (Coordinate xy : template.getPointersFor(PointerTypes.EXIT)) {
-			if (xy.isInGrid(controller.getGridSize())) {
-				final Device pointedDevice = controller.findDevice(xy);
-				for (Coordinate enter : pointedDevice.getTemplate()
-						.getPointersFor(PointerTypes.ENTRY)) {
-					if (enter.getX() == model.getCoordinates().getX() &&
-							enter.getY() == model.getCoordinates().getY()) {
-						behaviour.action(resATraiter,
-								template.getPointersFor(PointerTypes.EXIT)
-										.get(0));
-					}
-				}
-			}
-		}
+		behaviour.action(resATraiter);
 	}
 
 	/**
@@ -285,66 +242,42 @@ public abstract class Device extends ImageView {
 	}
 
 	/**
-	 * Upgrades the device by 1 if the level isn't already at maximum.
+	 * Returns the valid delete price key for this device.
+	 * 
+	 * @return a string
 	 */
-	public final void upgrade() throws MoneyException {
-		try {
-			DeviceModel newModel = new DeviceModel(
-					model.getCoordinates(),
-					model.getGame(),
-					model.getType(),
-					model.getLevel().getNext(),
-					model.getDirection());
-			newModel.setID(model.getID());
-
-			controller.build(this.getClass()
-					.getConstructor(DeviceModel.class, GameController.class)
-					.newInstance(newModel, controller), false);
-
-			Saver.saveDeviceModel(newModel);
-		} catch (SQLException e) {
-			controller.toast(
-					"L'appareil ne semble pas s'être amélioré correctement...",
-					Color.DARKRED, 10d);
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			System.err.println(
-					"Each class that has as superclass Device MUST have a constructor <init>(DeviceModel, GameController).");
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public final void rotate() {
-
-		model.setDirection(model.getDirection().getNext());
-		this.setRotate(model.getDirection().getRotate());
-		this.setTemplate(
-				this.getModel().getType().getTemplateModel().createTemplate(
-						model.getCoordinates(),
-						model.getDirection()));
-		try {
-			Saver.saveDeviceModel(model);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public String getDeletePriceKey() {
+		return this.model.getLevel().toString().toLowerCase() + "_delete";
 	}
 
 	/**
-	 * Deletes this device and replaces it by a {@link Floor}.
+	 * Returns the valid upgarde price key for this device.
+	 * 
+	 * @return a string
 	 */
-	public final void delete() throws MoneyException {
-		try {
-			controller.delete(model.getCoordinates(), false);
-			Deleter.deleteDeviceModel(model);
-		} catch (SQLException e) {
-			controller.toast(
-					"L'appareil ne semble pas s'être détruit correctement...",
-					Color.DARKRED, 10d);
-			e.printStackTrace();
-		}
+	public String getUpgradePriceKey() {
+		return this.model.getLevel().getNext().toString().toLowerCase()
+				+ "_build";
+	}
 
+	/**
+	 * Returns the price (or gain) of deleting this device.
+	 * 
+	 * @return a price as a BigInteger
+	 */
+	public BigInteger getDeletePrice() {
+		final String key = getDeletePriceKey();
+		return this.model.getType().getPrices().getPriceFromKey(key);
+	}
+
+	/**
+	 * Returns the price of upgrading this device.
+	 * 
+	 * @return a price as a BigInteger
+	 */
+	public BigInteger getUpgradePrice() {
+		final String key = getUpgradePriceKey();
+		return this.model.getType().getPrices().getPriceFromKey(key);
 	}
 
 	public DeviceModel getModel() {
@@ -352,9 +285,121 @@ public abstract class Device extends ImageView {
 	}
 
 	/**
+	 * @return the level of this device
+	 */
+	public Level getLevel() {
+		return model.getLevel();
+	}
+
+	/**
+	 * 
+	 * @return the direction of this device
+	 */
+	public Direction getDirection() {
+		return model.getDirection();
+	}
+
+	/**
+	 * 
+	 * @return the type of this device
+	 */
+	public Type getType() {
+		return model.getType();
+	}
+
+	/**
+	 * 
+	 * @param level the new level
+	 */
+	public void setLevel(Level level) {
+		model.setLevel(level);
+
+		this.setImage(new Image(
+				getClass().getResourceAsStream(
+						"/images" + model.getLevel().getURL()
+								+ model.getType().getURL())));
+	}
+
+	/**
+	 * 
+	 * @param direction the new direction
+	 */
+	public void setDirection(Direction direction) {
+		model.setDirection(direction);
+
+		this.template = model.getType().getTemplateModel()
+				.createTemplate(model.getCoordinates(), model.getDirection());
+
+		this.setRotate(direction.getRotate());
+	}
+
+	/**
+	 * 
+	 * @param type the new type
+	 */
+	public void setType(Type type) {
+		model.setType(type);
+
+		try {
+
+			this.setImage(new Image(
+					getClass().getResourceAsStream(
+							"/images" + model.getLevel().getURL()
+									+ model.getType().getURL())));
+
+			this.template = type.getTemplateModel()
+					.createTemplate(model.getCoordinates(),
+							model.getDirection());
+
+			this.behaviour = type.getBehaviourClass()
+					.getConstructor(Device.class, GameController.class)
+					.newInstance(this, controller);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setData(Type type, Level level, Direction direction) {
+		try {
+			Device.buyersLocations.remove(model.getCoordinates());
+
+			model.setType(type);
+			model.setLevel(level);
+			model.setDirection(direction);
+
+			this.setImage(new Image(
+					getClass().getResourceAsStream(
+							"/images" + model.getLevel().getURL()
+									+ model.getType().getURL())));
+			this.setRotate(direction.getRotate());
+
+			this.template = type.getTemplateModel()
+					.createTemplate(model.getCoordinates(),
+							model.getDirection());
+
+			this.behaviour = type.getBehaviourClass()
+					.getConstructor(Device.class, GameController.class)
+					.newInstance(this, controller);
+
+			// We must reference Buyers in the list of coords
+			if (behaviour.getClass().equals(Buyer.class)) {
+				Device.buyersLocations.add(model.getCoordinates());
+			}
+
+			// Only floor doesn't have a click event
+			if (!type.equals(BaseTypes.FLOOR)) {
+				addHoverEffect();
+				this.setOnMouseClicked(onClicked);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * @return the comportement
 	 */
-	public Behaviour getComportement() {
+	public Behaviour getBehaviour() {
 		return behaviour;
 	}
 
@@ -380,21 +425,7 @@ public abstract class Device extends ImageView {
 		return electricity;
 	}
 
-	/**
-	 * @param behaviour the comportement to set
-	 */
-	public void setComportement(Behaviour behaviour) {
-		this.behaviour = behaviour;
-	}
-
-	/**
-	 * @param controller the controller to set
-	 */
-	public void setController(GameController controller) {
-		this.controller = controller;
-	}
-
-	public void setTemplate(Template template) {
+	protected void setTemplate(Template template) {
 		this.template = template;
 	}
 

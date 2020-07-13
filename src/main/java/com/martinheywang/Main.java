@@ -5,6 +5,11 @@ import java.sql.SQLException;
 
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
+import com.martinheywang.model.resources.BuyerAndTransformResources;
+import com.martinheywang.model.resources.BuyerResources;
+import com.martinheywang.model.resources.ConstructorResources;
+import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.GameController;
 import com.martinheywang.view.Home;
@@ -31,6 +36,21 @@ public final class Main extends Application {
 
 	public static void main(String[] args) {
 		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
+
+		/*
+		 * <?> Here we forces the VM to load the enums before the launching of
+		 * the app. This is mandatory so that when we want to use, it is
+		 * already to use. In fact, we use them for the first time by
+		 * iterrating over them. But every programmer should know that
+		 * iterrating over an array while editing it is not a good thing to
+		 * do.
+		 */
+		DefaultResources.values();
+		BuyerAndTransformResources.values();
+		BuyerResources.values();
+		ConstructorResources.values();
+
+		BaseTypes.values();
 
 		launch(args);
 	}

@@ -24,7 +24,7 @@ public class Displayer<T> extends AnchorPane {
 
 	/**
 	 * 
-	 * @return the subject used to creates this Displayer
+	 * @return the subject used to create this Displayer
 	 */
 	public T getSubject() {
 		return type;

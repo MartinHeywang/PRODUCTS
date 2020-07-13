@@ -59,17 +59,16 @@ public final class MoneyFormat {
 	private void divideAndAppend(StringBuilder sb, BigInteger value,
 			BigInteger divider,
 			String suffix) {
-		BigInteger[] n;
-		String integer;
-		String decimal = "";
+		final BigInteger[] n = value.divideAndRemainder(divider);
+		final String integer = n[0].toString();
 
-		n = value.divideAndRemainder(divider);
+		sb.append(integer);
 
-		integer = String.valueOf(n[0].intValue());
-		if (n[1].toString().length() > 1)
-			decimal = String.valueOf(n[1].intValue()).substring(0, 2);
+		if (!n[1].toString().equals("0")) {
+			sb.append(".");
+			sb.append(n[1].toString());
+		}
 
-		sb.append(integer + "." + decimal);
 		sb.append(suffix);
 	}
 

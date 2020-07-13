@@ -1,7 +1,9 @@
 package com.martinheywang.model.resources;
 
+import java.math.BigInteger;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,12 +25,21 @@ import javafx.scene.text.Font;
  * This interface represents a <em>Resource</em> that can be used by
  * all the devices. It extends {@link Displayable}, that does mean
  * that it provides a common displayer for the Resource, that you can
- * override. <br>
+ * override.
+ * </p>
+ * <p>
  * It manages also all the Resource in the game, with it List. You can
  * directly found this list by calling
  * {@link Resource#getReferences()}, and add a Resource that your
  * plugin provides by calling
  * {@link Resource#addReferenceResource(Resource)}.
+ * </p>
+ * <p>
+ * But this action does not mean that every devices will be able to
+ * use it. To make a resource acceptable by a specific device, such as
+ * buyers, you will need to use the method of the behaviour of this
+ * device. But be careful, some devices may have some additionnal
+ * rules.
  * </p>
  * 
  * 
@@ -40,7 +51,7 @@ public interface Resource extends Displayable<Resource> {
 	/**
 	 * All the resources in the game.
 	 */
-	List<Resource> resourceReferences = new ArrayList<Resource>();
+	HashMap<String, Resource> references = new HashMap<>();
 
 	/**
 	 * Returns the displayable name of the resource.
@@ -54,7 +65,7 @@ public interface Resource extends Displayable<Resource> {
 	 * 
 	 * @return
 	 */
-	public long getPrice();
+	public BigInteger getPrice();
 
 	/**
 	 * Returns a String representing a relative path to the view
@@ -71,24 +82,6 @@ public interface Resource extends Displayable<Resource> {
 	 * @return a list of resources
 	 */
 	public List<Pack> getRecipe();
-
-	/**
-	 * Adds the specified Resource in the list of all the game. This
-	 * method is protected againts adding twice the same Resource. But for
-	 * safety measures, it is good manner to call this method only in the
-	 * constructor of the enum where you specified your additional
-	 * resources.
-	 * 
-	 * @param resource the resource to add
-	 */
-	public static void addReferenceResource(Resource resource) {
-		if (!resourceReferences.contains(resource)) {
-			resourceReferences.add(resource);
-		} else {
-			System.out.println(
-					"WARNING: This resource was already added in the list.");
-		}
-	}
 
 	@Override
 	public default Displayer<Resource> getDisplayer() {
@@ -124,13 +117,41 @@ public interface Resource extends Displayable<Resource> {
 	 * 
 	 * @return a list of resources
 	 */
-	public static List<Resource> getReferences() {
-		return resourceReferences;
+	public static Collection<Resource> getReferences() {
+		return references.values();
 	}
 
+	/**
+	 * Returns a Resource from the given input String. Those are examples
+	 * of valid input String :
+	 * <ul>
+	 * <li>BaseResources.NONE -> NONE</li>
+	 * <li>BaseResources.CIRCUIT -> CIRCUIT</li>
+	 * </ul>
+	 * 
+	 * @param inputString a valid input
+	 * @return a Resource from the given input, or null if none is found.
+	 */
 	public static Resource valueOf(String inputString) {
-		// Todo : search through all enums in all plugins
-		// For the time being, I olny search through the BaseResource class
-		return BaseResources.valueOf(inputString);
+		return references.get(inputString);
+	}
+
+	/**
+	 * Register a new Resource in the list of references. This method is
+	 * protected against adding twice the same type.
+	 * 
+	 * @param resource the resource to add
+	 */
+	public static void addReferences(Resource resource) {
+		references.put(resource.toString(), resource);
+	}
+
+	/**
+	 * Unregister the given resource in the list of references.
+	 * 
+	 * @param resource the resource to remove
+	 */
+	public static void removeReferences(Resource resource) {
+		references.remove(resource.toString());
 	}
 }

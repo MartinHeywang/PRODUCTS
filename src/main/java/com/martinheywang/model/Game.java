@@ -2,11 +2,10 @@ package com.martinheywang.model;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -15,6 +14,7 @@ import com.martinheywang.model.database.Deleter;
 import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.toolbox.MoneyFormat;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
@@ -190,35 +190,14 @@ public class Game implements Displayable<Game> {
 		nom.setWrapText(true);
 		root.setTop(nom);
 
-		// Changing the LocalDateTime of the game in a String representation
-		// Instead of using toString(), i ues this method to have my perso
-		// String
-		String instant = (this.getLastSave().getDayOfMonth() < 10)
-				? "0" + this.getLastSave().getDayOfMonth() + "/"
-				: this.getLastSave().getDayOfMonth() + "/";
-		instant += (this.getLastSave().getMonthValue() < 10)
-				? "0" + this.getLastSave().getMonthValue() + "/"
-				: this.getLastSave().getMonthValue() + "/";
-		instant += (this.getLastSave().getYear() < 10)
-				? "0" + this.getLastSave().getYear() + " "
-				: this.getLastSave().getYear() + " ";
-
-		instant += (this.getLastSave().getHour() < 10)
-				? "0" + this.getLastSave().getHour() + ":"
-				: this.getLastSave().getHour() + ":";
-		instant += (this.getLastSave().getMinute() < 10)
-				? "0" + this.getLastSave().getMinute() + ":"
-				: this.getLastSave().getMinute() + ":";
-		instant += (this.getLastSave().getSecond() < 10)
-				? "0" + this.getLastSave().getSecond()
-				: this.getLastSave().getSecond();
+		final DateTimeFormatter formatter = DateTimeFormatter
+				.ofPattern("dd/MM/yyyy HH:mm");
 
 		Label infos = new Label();
-		infos.setText("Dernière sauvegarde : " + instant
-				+ "\nArgent en compte : "
-				+ NumberFormat.getInstance(Locale.getDefault())
-						.format(this.getMoney())
-				+ " €");
+		infos.setText(
+				"Dernière sauvegarde : " + this.getLastSave().format(formatter)
+						+ "\nArgent en compte : "
+						+ MoneyFormat.getSingleton().format(this.getMoney()));
 		root.setLeft(infos);
 
 		root.setPadding(new Insets(3, 3, 3, 3));

@@ -64,6 +64,7 @@ public class Home2 implements Initializable {
 				Displayer<Game> displayer = game.getDisplayer();
 				displayer.addHoverEffect();
 				displayer.setMinHeight(70d);
+				displayer.getStyleClass().add("selectable");
 				listePartie.getChildren().add(displayer);
 
 				displayer.setOnMouseClicked(new EventHandler<MouseEvent>() {

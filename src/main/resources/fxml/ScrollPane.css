@@ -1,7 +1,15 @@
+/**
+ * This styles applies only to ScrollPane and its children.
+ */
+ScrollPane {
+	-fx-background-color: transparent;
+}
+
 ScrollPane .thumb {
     -fx-background-color: lightgray;
     -fx-background-radius: 1px;
 }
+
 ScrollPane:vertical .thumb{
 	-fx-max-width: 3px;
 }
@@ -9,11 +17,18 @@ ScrollPane:horizontal .thumb{
 	-fx-max-height: 3px;
 }
 
-ScrollPane .thumb:hover, ScrollPane .thumb:hover {
-    -fx-background-color: white;
+ScrollPane .thumb:hover {
+    -fx-background-color: #eee;
     -fx-background-radius: 1px;
 }
 
-ScrollPane > .corner {
-    -fx-background-color: #222;
+ScrollPane > .corner, ScrollPane > .viewport {
+    -fx-background-color: transparent;
+}
+.increment-button, .decrement-button {
+    -fx-background-color:  #005B07;
+    -fx-border-color:  #005B07;
+}
+ScrollPane .scroll-bar .track{
+	-fx-background-color:  #005B07;
 }

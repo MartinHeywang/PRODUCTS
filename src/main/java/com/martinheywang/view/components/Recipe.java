@@ -1,7 +1,7 @@
 package com.martinheywang.view.components;
 
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.DefaultResources;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
 
@@ -25,7 +25,7 @@ public class Recipe extends HBox {
 		this.displayed = res;
 
 		this.getChildren().clear();
-		if (!res.equals(BaseResources.NONE)) {
+		if (!res.equals(DefaultResources.NONE)) {
 
 			for (Pack pack : displayed.getRecipe()) {
 				Displayer<Pack> display = pack.getDisplayer();

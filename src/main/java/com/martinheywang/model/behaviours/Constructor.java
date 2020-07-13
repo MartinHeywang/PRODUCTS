@@ -1,4 +1,4 @@
-package com.martinheywang.model.devices.behaviours;
+package com.martinheywang.model.behaviours;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -8,60 +8,37 @@ import java.util.List;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
-import com.martinheywang.model.database.Saver;
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.BaseResources;
+import com.martinheywang.model.resources.DefaultResources;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.GameController;
 
-public class Constructor_ extends Behaviour {
+import javafx.scene.Node;
 
-	@SuppressWarnings("serial")
-	public static List<Resource> acceptedResources = new ArrayList<Resource>() {
-		{
-			add(BaseResources.NONE);
+public class Constructor extends Behaviour {
 
-			add(BaseResources.CIRCUIT);
-			add(BaseResources.COOLER_PLATE);
-			add(BaseResources.HOTPLATE);
-			add(BaseResources.AMPOULE);
-			add(BaseResources.CLOCK);
-			add(BaseResources.ANTENNA);
-			add(BaseResources.GRILL);
-			add(BaseResources.ENGINE);
-			add(BaseResources.AIR_CONDITIONER);
-			add(BaseResources.BATTERY);
-			add(BaseResources.SOLAR_PANEL);
-			add(BaseResources.PROCESSOR);
-		}
-	};
+	public static List<Resource> acceptedResources = new ArrayList<Resource>();
+
 	private Pack product;
 	private ArrayList<Resource> resources = new ArrayList<Resource>();
 	private ArrayList<Resource> recipes = new ArrayList<Resource>();
 
-	public Constructor_(Device device, GameController controller) {
+	public Constructor(Device device, GameController controller) {
 		super(device, controller);
 
 		try {
-			// Query for all the packages that are associated to this device
 			final List<Pack> list = Database.createDao(Pack.class)
 					.queryBuilder()
 					.where().eq("device", model.getID()).query();
-			// If its size equals 0, then create the resource and save it in the
-			// database
 			if (list.size() == 0) {
-				product = new Pack(BaseResources.NONE, 1, model);
+				product = new Pack(DefaultResources.NONE, 1, model);
 				Database.createDao(Pack.class).create(product);
-			}
-			// Else we get at the first index the packing
-			else {
+			} else {
 				product = list.get(0);
 			}
 
-			// If the list is bigger than 1, there is an error (the resource was
-			// added by the user (not in game)).
-			// So the rest just doesn't matter
 		} catch (SQLException e) {
 			System.err.println(e.getLocalizedMessage());
 
@@ -69,11 +46,14 @@ public class Constructor_ extends Behaviour {
 	}
 
 	@Override
-	public void action(Pack resATraiter, Coordinate pointer)
+	public void action(Pack resATraiter)
 			throws MoneyException {
+		final Coordinate exit = template.getPointersFor(PointerTypes.EXIT)
+				.get(0);
+
 		Pack tempo = new Pack(product.getResource(), 0);
 
-		if (!product.getResource().equals(BaseResources.NONE)) {
+		if (!product.getResource().equals(DefaultResources.NONE)) {
 			for (int level = 0; level < this.level.getValue()
 					|| level < resATraiter.getQuantity(); level++) {
 
@@ -89,7 +69,7 @@ public class Constructor_ extends Behaviour {
 						tempo.addQuantity(1);
 						controller.removeMoney(
 								BigInteger.valueOf(Device.getElectricity()));
-						controller.findDevice(pointer).action(tempo);
+						controller.findDevice(exit).action(tempo);
 					}
 				}
 			}
@@ -144,6 +124,11 @@ public class Constructor_ extends Behaviour {
 		return true;
 	}
 
+	@Override
+	public List<Node> getWidgets() {
+		return null;
+	}
+
 	/**
 	 * Sets the products to the new value, after checking if it is a valid
 	 * resource.
@@ -151,14 +136,9 @@ public class Constructor_ extends Behaviour {
 	 * @param product the resource to set
 	 */
 	public void setProduct(Pack product) {
-		if (Constructor_.acceptedResources.contains(product.getResource())) {
+		if (Constructor.acceptedResources.contains(product.getResource())) {
 			this.product.setResource(product.getResource());
 			this.product.setQuantity(product.getQuantity());
-			try {
-				Saver.savePack(this.product);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 
 	}
@@ -169,5 +149,13 @@ public class Constructor_ extends Behaviour {
 	 */
 	public Pack getProduct() {
 		return product;
+	}
+
+	public static final void addAcceptedResource(Resource res) {
+		acceptedResources.add(res);
+	}
+
+	public static final void removeAcceptedResource(Resource res) {
+		acceptedResources.remove(res);
 	}
 }

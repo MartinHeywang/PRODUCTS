@@ -3,19 +3,19 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <StackPane prefHeight="600.0" prefWidth="900.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
    <children>
@@ -35,83 +35,138 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </AnchorPane>
-            <HBox alignment="CENTER_LEFT" layoutY="561.0" maxWidth="1.7976931348623157E308" minHeight="40.0" spacing="20.0" style="-fx-background-color: #333;" stylesheets="@Box.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               <padding>
-                  <Insets left="20.0" right="20.0" />
-               </padding>
-            </HBox>
-            <HBox fx:id="sidebarsContainer" alignment="CENTER_RIGHT" layoutX="698.0" layoutY="34.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="34.0">
+            <HBox fx:id="sidebarsContainer" alignment="CENTER_RIGHT" layoutX="698.0" layoutY="34.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                <children>
                   <VBox fx:id="toasts" alignment="TOP_RIGHT" minWidth="150.0" spacing="10.0" style="-fx-background-color: transparent;" stylesheets="@Label.css">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                      <HBox.margin>
-                        <Insets bottom="150.0" />
+                        <Insets bottom="200.0" />
                      </HBox.margin>
                   </VBox>
-                  <HBox fx:id="options">
+                  <AnchorPane fx:id="options" minWidth="250.0" onMouseClicked="#showOrHideSidebar" style="-fx-background-color: #00500A;">
                      <children>
-                        <Pane maxWidth="10.0" minWidth="10.0" onMouseClicked="#showOrHideSidebar" prefWidth="10.0" style="-fx-background-color: #00500A;">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="10.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <cursor>
-                              <Cursor fx:constant="HAND" />
+                              <Cursor fx:constant="DEFAULT" />
                            </cursor>
-                        </Pane>
-                        <VBox minWidth="200.0" style="-fx-background-color: #005B07;" stylesheets="@Box.css">
-                           <children>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h5" stylesheets="@Label.css" text="Options :" VBox.vgrow="NEVER">
+                           <content>
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #005B07;" stylesheets="@Box.css">
+                                 <children>
+                                    <VBox>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                       <children>
+                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h4" text="Construction" />
+                                          <TitledPane animated="true" collapsible="false" text="Construire">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/construction.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <content>
+                                                <VBox fx:id="devicesBuild" styleClass="selection-box" />
+                                             </content>
+                                          </TitledPane>
+                                          <TitledPane animated="false" collapsible="false" expanded="false" layoutX="10.0" layoutY="52.0" text="Améliorer">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/upgrade.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </TitledPane>
+                                          <TitledPane animated="false" collapsible="false" expanded="false" layoutX="10.0" layoutY="95.0" text="Détruire">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/delete.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </TitledPane>
+                                       </children>
+                                       <stylesheets>
+                                          <URL value="@Label.css" />
+                                          <URL value="@TitledPane.css" />
+                                       </stylesheets>
+                                    </VBox>
+                                    <Separator prefWidth="200.0" />
+                                    <VBox>
+                                       <children>
+                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h4" text="Options" />
+                                          <TitledPane animated="false" collapsible="false" text="Recherche">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/research.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </TitledPane>
+                                          <TitledPane animated="false" collapsible="false" layoutX="10.0" layoutY="42.0" text="Grille">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/grid_update.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </TitledPane>
+                                          <TitledPane animated="false" collapsible="false" layoutX="10.0" layoutY="84.0" text="Modificateurs">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/icons/add.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </TitledPane>
+                                       </children>
+                                       <stylesheets>
+                                          <URL value="@Label.css" />
+                                          <URL value="@TitledPane.css" />
+                                       </stylesheets>
+                                    </VBox>
+                                 </children>
                                  <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    <Insets left="20.0" right="20.0" top="10.0" />
                                  </padding>
-                              </Label>
-                              <Accordion>
-                                 <panes>
-                                    <TitledPane animated="false" text="Recherche">
-                                       <content>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0" />
-                                       </content>
-                                       <graphic>
-                                          <ImageView fx:id="research_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../images/icons/research.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Grille">
-                                       <content>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0" />
-                                       </content>
-                                       <graphic>
-                                          <ImageView fx:id="grid_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../images/icons/grid_update.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Modificateurs">
-                                       <content>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0" />
-                                       </content>
-                                       <graphic>
-                                          <ImageView fx:id="edit_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../images/icons/add.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </TitledPane>
-                                 </panes>
-                                 <stylesheets>
-                                    <URL value="@Accordion.css" />
-                                    <URL value="@TitledPane.css" />
-                                 </stylesheets>
-                              </Accordion>
-                           </children>
-                        </VBox>
+                              </VBox>
+                           </content>
+                           <stylesheets>
+                              <URL value="@ScrollPane.css" />
+                              <URL value="@Box.css" />
+                           </stylesheets>
+                        </ScrollPane>
                      </children>
-                  </HBox>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </AnchorPane>
                </children>
             </HBox>
          </children></AnchorPane>

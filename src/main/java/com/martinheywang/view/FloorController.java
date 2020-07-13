@@ -1,22 +1,25 @@
 package com.martinheywang.view;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import com.martinheywang.model.Coordinate;
-import com.martinheywang.model.types.BaseTypes;
+import com.martinheywang.model.types.Type;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-public class FloorController {
+public class FloorController implements Initializable {
 
 	@FXML
-	private Label coordinates; // Label for coordinates on top of the scene
+	private Label coordinates;
 	@FXML
-	private VBox listeAppareils; // List of all the devices integrated to the
-									// VBox
+	private VBox listeAppareils;
 
 	private Dialog<Object> dialog;
 
@@ -25,9 +28,11 @@ public class FloorController {
 	 * ground at the cooresponding coordinates. Called automatically as a
 	 * constructor.
 	 */
-	public void initialize() {
-		for (int i = 0; i < BaseTypes.values().length - 1; i++) {
-			Displayer<BaseTypes> display = BaseTypes.values()[i].getDisplayer();
+	@Override
+	public void initialize(URL url, ResourceBundle resources) {
+		for (int i = 0; i < Type.getReferences().size(); i++) {
+			Displayer<Type> display = Type.getReferences().get(i)
+					.getDisplayer();
 			display.addHoverEffect();
 			listeAppareils.getChildren().add(display);
 			display.setOnMouseClicked(new EventHandler<MouseEvent>() {
