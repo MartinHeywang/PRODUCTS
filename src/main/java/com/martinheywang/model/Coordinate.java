@@ -1,10 +1,14 @@
 package com.martinheywang.model;
 
+import java.io.Serializable;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
-public class Coordinate {
+public class Coordinate implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idCoordonnees;

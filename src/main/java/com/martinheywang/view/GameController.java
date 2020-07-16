@@ -36,9 +36,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -48,6 +50,22 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+/**
+ * <h3>Controller class for <code>Game.fxml</code> file.</h3>
+ * <p>
+ * The GameController represents a major part of the game. It loads a
+ * game and take care of it : sets, adds, removes the money, loads its
+ * devices, can build, delete, turn, swap devices. It also handles
+ * toasts to inform the player about what's going on (why an action
+ * couldn't be performed, for example).
+ * </p>
+ * <p>
+ * This class is called each seconds to edit the money amount, for
+ * example. It is why it is very long.
+ * </p>
+ * 
+ * @author Heywang
+ */
 public class GameController implements Initializable {
 
 	/**
@@ -55,6 +73,9 @@ public class GameController implements Initializable {
 	 * home...)
 	 */
 	private Main main;
+
+	@FXML
+	private ScrollPane scrollpane;
 
 	/**
 	 * The main grid with all the devices
@@ -110,6 +131,9 @@ public class GameController implements Initializable {
 	private GameLoop gameLoop;
 	private Game currentGame;
 
+	private static final DataFormat coordinateType = new DataFormat(
+			"coordinate");
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		argentProperty.addListener(new ChangeListener<BigInteger>() {
@@ -146,6 +170,32 @@ public class GameController implements Initializable {
 
 		addOfflineMoney();
 		prepareToolbar();
+
+		scrollpane.setOnDragOver(event -> {
+
+			final double x = event.getX();
+			final double y = event.getY();
+			final double height = scrollpane.getHeight();
+			final double width = scrollpane.getWidth();
+
+			final double variation = 0.004d;
+			final double reactZone = 125d;
+
+			if (x > width - reactZone) {
+				scrollpane.setHvalue(scrollpane.getHvalue() + variation);
+			} else if (x < reactZone) {
+				scrollpane.setHvalue(scrollpane.getHvalue() - variation);
+			} else {
+				scrollpane.setHvalue(scrollpane.getHvalue());
+			}
+
+			if (y > height - reactZone) {
+				scrollpane.setVvalue(scrollpane.getVvalue() + variation);
+			} else if (y < reactZone) {
+				scrollpane.setVvalue(scrollpane.getVvalue() - variation);
+			}
+
+		});
 
 		toast("Bienvenue dans la partie : " + currentGame.getName(),
 				Color.CORNFLOWERBLUE,
@@ -239,53 +289,7 @@ public class GameController implements Initializable {
 
 				Platform.runLater(() -> grid.add(device, x, y));
 
-				if (model.getType().equals(BaseTypes.FLOOR)) {
-					device.setOnDragOver(event -> {
-						if (event.getGestureSource() != device &&
-								event.getDragboard().hasString()) {
-							event.acceptTransferModes(
-									TransferMode.COPY);
-						}
-					});
-
-					device.setOnDragEntered(event -> {
-						if (event.getGestureSource() != device &&
-								event.getDragboard().hasString()) {
-							device.setEffect(new Glow(0.4d));
-						}
-
-						event.consume();
-					});
-					device.setOnDragExited(event -> {
-						device.setEffect(new Glow(0d));
-					});
-					device.setOnDragDropped(event -> {
-
-						Dragboard db = event.getDragboard();
-						boolean success = false;
-
-						if (db.hasString()) {
-							final Type type = Type.valueOf(db.getString());
-							try {
-								this.build(type, model.getCoordinates(), false);
-							} catch (MoneyException e) {
-								toast("Vous n'avez pas assez d'argent !",
-										Color.DARKORANGE, 3d);
-								e.printStackTrace();
-							} catch (EditException e) {
-								toast("L'action n'a pas pu être réalisé",
-										Color.DARKRED, 5d);
-								e.printStackTrace();
-							}
-
-							success = true;
-						}
-
-						event.setDropCompleted(success);
-
-						event.consume();
-					});
-				}
+				resetDragnDropBehaviour(device);
 
 				/*
 				 * <?> Updating the progress bar
@@ -299,6 +303,117 @@ public class GameController implements Initializable {
 			toast("Failed to add devices to the grid"
 					+ e.getLocalizedMessage(), Color.DARKRED, 5d);
 		}
+	}
+
+	private void resetDragnDropBehaviour(Device device) {
+		// Eveything below in this method is about drag behaviour of the
+		// device. To make things a little bit clearer, here is a
+		// summary :
+		//
+		// A device can recieve a COPY (for build) transfer mode from
+		// the sidebar.
+		// A device can recieve a MOVE (for move, swap) transfer mode
+		// from another device.
+		// A device can send a MOVE (for delete) transfer mode to the
+		// sidebar
+
+		if (!device.getType().equals(BaseTypes.FLOOR)) {
+			device.setOnDragDetected(event -> {
+				// A device send MOVE
+				// With it, we can found :
+				Dragboard db = device
+						.startDragAndDrop(TransferMode.MOVE);
+
+				ClipboardContent content = new ClipboardContent();
+				// Its coordinate
+				content.put(coordinateType,
+						device.getModel().getCoordinates());
+				// Its image
+				content.putImage(new Image(
+						getClass()
+								.getResourceAsStream(
+										"/images"
+												+ device.getLevel()
+														.getURL()
+												+ device.getType()
+														.getURL())));
+
+				db.setContent(content);
+
+				device.setOpacity(Device.cutOpacity);
+
+				event.consume();
+			});
+		}
+		device.setOnDragEntered(event -> {
+			// A device glows a little bit when drag is over
+			device.setEffect(new Glow(0.4d));
+
+			event.consume();
+		});
+		device.setOnDragExited(event -> {
+			// On drag exit, obviously remove the effect
+			device.setEffect(new Glow(0d));
+		});
+		device.setOnDragDropped(event -> {
+
+			// A device recieves both COPY and MOVE
+			Dragboard db = event.getDragboard();
+			boolean success = false;
+
+			// If it's COPY, let's build a new one
+			if (db.getTransferModes().contains(TransferMode.COPY)) {
+				if (db.hasString()) {
+
+					final Type type = Type.valueOf(db.getString());
+
+					try {
+						this.build(type, device.getModel().getCoordinates(),
+								false);
+					} catch (MoneyException e) {
+						toast("Vous n'avez pas assez d'argent !",
+								Color.DARKORANGE, 3d);
+						e.printStackTrace();
+					} catch (EditException e) {
+						toast("L'appareil n'a pas été construit.",
+								Color.DARKRED, 5d);
+						e.printStackTrace();
+					}
+
+					success = true;
+				}
+
+			}
+			// If it's MOVE, ... let's move it!
+			else if (db.getTransferModes()
+					.contains(TransferMode.MOVE)) {
+				if (db.hasContent(coordinateType)) {
+					Coordinate other = (Coordinate) db
+							.getContent(coordinateType);
+					if (!other.propertiesEquals(
+							device.getModel().getCoordinates())) {
+						this.swap(device.getModel().getCoordinates(),
+								other);
+					}
+				}
+			}
+
+			event.setDropCompleted(success);
+
+			event.consume();
+		});
+		device.setOnDragDone(event -> {
+			final Dragboard db = event.getDragboard();
+			if (db.hasContent(coordinateType)) {
+				findDevice((Coordinate) db.getContent(coordinateType))
+						.setOpacity(Device.defaultOpacity);
+
+			}
+		});
+		device.setOnDragOver(event -> {
+			event.acceptTransferModes(
+					TransferMode.COPY_OR_MOVE);
+		});
 	}
 
 	/**
@@ -506,6 +621,29 @@ public class GameController implements Initializable {
 						event.consume();
 					});
 
+					options.setOnDragOver(event -> {
+						event.acceptTransferModes(TransferMode.MOVE);
+					});
+					options.setOnDragDropped(event -> {
+						final Dragboard db = event.getDragboard();
+						if (db.getTransferModes().contains(TransferMode.MOVE)) {
+							if (db.hasContent(coordinateType)) {
+								try {
+									this.delete(
+											(Coordinate) db
+													.getContent(coordinateType),
+											false);
+								} catch (MoneyException e) {
+									e.printStackTrace();
+								} catch (EditException e) {
+									toast("L'appareil n'a pas été supprimé correctement !",
+											Color.DARKRED, 5d);
+									e.printStackTrace();
+								}
+							}
+						}
+					});
+
 					devicesBuild.getChildren().add(display);
 				}
 			}
@@ -547,7 +685,7 @@ public class GameController implements Initializable {
 				removeMoney(type.getPrices().getLevel1Build());
 			}
 
-			device.setData(type, Level.LEVEL_1, Direction.UP);
+			setData(device, type, Level.LEVEL_1, Direction.UP);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -581,16 +719,47 @@ public class GameController implements Initializable {
 			addMoney(device.getDeletePrice());
 		}
 
-		device.setData(BaseTypes.FLOOR, Level.LEVEL_1, Direction.UP);
+		setData(device, BaseTypes.FLOOR, Level.LEVEL_1, Direction.UP);
 	}
 
 	public void turn(Coordinate coords) throws EditException {
-
+		// Todo : turn method
 	}
 
 	public void upgrade(Coordinate coords, boolean ignoreCost)
 			throws MoneyException, EditException {
+		// Todo : upgrade method
+	}
 
+	/**
+	 * Swaps the devices at the given coordinates.
+	 * 
+	 * @param first  the coordinate of the first device
+	 * @param second the coordinate of the second device
+	 * @throws EditException if an error occurs while swaping
+	 */
+	public void swap(Coordinate first, Coordinate second) {
+		final Device firstDevice = findDevice(first);
+		final Device secondDevice = findDevice(second);
+
+		final Type firstType = firstDevice.getModel().getType();
+		final Level firstLevel = firstDevice.getModel().getLevel();
+		final Direction firstDirection = firstDevice.getModel().getDirection();
+
+		final Type secondType = secondDevice.getModel().getType();
+		final Level secondLevel = secondDevice.getModel().getLevel();
+		final Direction secondDirection = secondDevice.getModel()
+				.getDirection();
+
+		setData(firstDevice, secondType, secondLevel, secondDirection);
+		setData(secondDevice, firstType, firstLevel, firstDirection);
+
+	}
+
+	private void setData(Device device, Type type, Level level,
+			Direction direction) {
+		device.setData(type, level, direction);
+		resetDragnDropBehaviour(device);
 	}
 
 	/**
@@ -672,7 +841,7 @@ public class GameController implements Initializable {
 						// Come in 1 second
 						new KeyFrame(Duration.ZERO,
 								new KeyValue(toast.translateXProperty(),
-										160.0)),
+										-160.0)),
 						new KeyFrame(Duration.ZERO,
 								new KeyValue(toast.opacityProperty(), 0.0)),
 
@@ -690,7 +859,7 @@ public class GameController implements Initializable {
 						// Leave in one second
 						new KeyFrame(Duration.seconds(duration),
 								new KeyValue(toast.translateXProperty(),
-										160.0)),
+										-160.0)),
 						new KeyFrame(Duration.seconds(duration),
 								new KeyValue(toast.opacityProperty(), 0.0)));
 

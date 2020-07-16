@@ -18,10 +18,11 @@
 <?import javafx.scene.text.Font?>
 
 <StackPane prefHeight="600.0" prefWidth="900.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
+   <!-- The root -->
    <children>
       <AnchorPane>
          <children>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+            <ScrollPane pannable="true" fx:id="scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                <content>
                   <GridPane fx:id="grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>
@@ -37,17 +38,9 @@
             </AnchorPane>
             <HBox fx:id="sidebarsContainer" alignment="CENTER_RIGHT" layoutX="698.0" layoutY="34.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                <children>
-                  <VBox fx:id="toasts" alignment="TOP_RIGHT" minWidth="150.0" spacing="10.0" style="-fx-background-color: transparent;" stylesheets="@Label.css">
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets bottom="200.0" />
-                     </HBox.margin>
-                  </VBox>
                   <AnchorPane fx:id="options" minWidth="250.0" onMouseClicked="#showOrHideSidebar" style="-fx-background-color: #00500A;">
                      <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="10.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutX="10.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <cursor>
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>
@@ -169,6 +162,15 @@
                   </AnchorPane>
                </children>
             </HBox>
+            <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="42.0">
+               <stylesheets>
+                  <URL value="@Box.css" />
+                  <URL value="@Label.css" />
+               </stylesheets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
          </children></AnchorPane>
    </children>
 </StackPane>

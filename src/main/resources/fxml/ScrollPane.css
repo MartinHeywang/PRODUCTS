@@ -22,13 +22,6 @@ ScrollPane .thumb:hover {
     -fx-background-radius: 1px;
 }
 
-ScrollPane > .corner, ScrollPane > .viewport {
+ScrollPane > .corner {
     -fx-background-color: transparent;
-}
-.increment-button, .decrement-button {
-    -fx-background-color:  #005B07;
-    -fx-border-color:  #005B07;
-}
-ScrollPane .scroll-bar .track{
-	-fx-background-color:  #005B07;
 }

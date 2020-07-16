@@ -10,7 +10,7 @@ import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.model.types.Type;
 
 @DatabaseTable(tableName = "devicesModels")
-public class DeviceModel {
+public class DeviceModel implements Cloneable {
 
 	/**
 	 * The id in the database
@@ -188,6 +188,11 @@ public class DeviceModel {
 	 */
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	@Override
+	public DeviceModel clone() {
+		return this.clone();
 	}
 
 }

@@ -36,9 +36,83 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 
 /**
- * The <em>Device</em> is an abstract class that all the devices
- * extends. In the JavaFX scene, it is an ImageView. In the game, it
- * corresponds to each square in the main GridPane.
+ * <h3>A Device represents each square on the main game grid.</h3>
+ * <p>
+ * Each of them is different, it saves :
+ * </p>
+ * <ul>
+ * <li>A game and its controller,</li>
+ * <li>A coordinate,</li>
+ * <li>A model,</li>
+ * <li>A behaviour,</li>
+ * <li>A template,</li>
+ * <li>+ all the fields of
+ * <code>javafx.scene.image.ImageView</code>,</li>
+ * 
+ * <li>and that's already enough...!</li>
+ * </ul>
+ * 
+ * <h4>Game and Controller</h4>
+ * <p>
+ * A Device associates a Game on its constructor to difference it from
+ * another Device with same Coordinate. Also, it has a
+ * {@link GameController controller} from which it can destroy or
+ * upgrade itself, or edit the money, for example. You should mess
+ * around on your own with that property.
+ * </p>
+ * <h4>Coordinate</h4>
+ * <p>
+ * The Coordinate of a Device makes the difference between another
+ * Device of the same game. Those two properties can be considered as
+ * an identifier of the device. The behaviour, for example, will use
+ * it a lot, to send data to near devices.
+ * </p>
+ * <h4>Model</h4>
+ * <p>
+ * The Model is the part of the Device that is stored in the database.
+ * It contains all of the persistent data, such as the game and the
+ * coordinate. But it has also three more properties : the Type, the
+ * Level, and the Direction.
+ * </p>
+ * <h5>Type</h5>
+ * <p>
+ * Each Device of one partical Type has some common data. I can give
+ * as an example the prices (build, delete, and whatsoever), his
+ * behaviour class, his accesible name. {@link Type Here} you can find
+ * the interface that manages Type.
+ * </p>
+ * <h5>Level</h5>
+ * <p>
+ * The level of the Device defines how efficient this Device is.
+ * Basically, more the level is high, more it will do some actions
+ * when it is called.
+ * </p>
+ * <h5>Direction</h5>
+ * <p>
+ * Of course, Device can also be turned (by right-clicking over it, by
+ * the way). That's why they must save their direction, to be rebuild
+ * the next time.
+ * </p>
+ * <h4>Behaviour</h4>
+ * <p>
+ * The Behaviour is obviously what this Device does. It depends and
+ * changes according to the Type, that references a behaviour class.
+ * </p>
+ * <h4>Template</h4>
+ * <p>
+ * The Template defines where are the entrances and the exit of this
+ * devices. (Resources enters by a entrances, Resources exits by an
+ * exit). It depends on the Coordinate and the Direction, as it stores
+ * the pointer of each exit and entrance. For example, you can say :
+ * "Give me the list of coordinates from which the device can recieves
+ * resources", and it will do it for you.
+ * </p>
+ * <p>
+ * This type (in java-context) cannot be instantiated, it must be done
+ * by the {@link TemplateModel}. In his own javadoc you will find how
+ * to use it. (But the game already do it for you, so you won't have
+ * to worry tooo much about it :)
+ * </p>
  * 
  * @author Martin Heywang
  */
@@ -147,7 +221,12 @@ public class Device extends ImageView {
 		}
 	};
 
+	// CONSTANTS TIME !!!
 	public static int electricity = 5;
+	public static final double defaultOpacity = .7d;
+	// Opacity when a device is dragged but hasn't find a place yet
+	public static final double cutOpacity = .4d;
+	public static final double glowAmount = .4d;
 
 	public static List<Coordinate> buyersLocations = new ArrayList<>();
 
@@ -163,7 +242,7 @@ public class Device extends ImageView {
 	 */
 	public Device(DeviceModel model, GameController controller) {
 
-		this.setOpacity(0.7);
+		this.setOpacity(defaultOpacity);
 
 		this.model = model;
 		this.controller = controller;
@@ -202,7 +281,7 @@ public class Device extends ImageView {
 						final Node hovered = (Node) event.getSource();
 						Main.getMainStage().getScene()
 								.setCursor(Cursor.HAND);
-						hovered.setEffect(new Glow(0.4d));
+						hovered.setEffect(new Glow(glowAmount));
 					}
 				});
 		this.setOnMouseExited(
