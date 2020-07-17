@@ -6,39 +6,36 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
-import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Resource;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 public class ResourcePersister extends BaseDataType {
 
 	private static final ResourcePersister instance = new ResourcePersister();
 
 	private ResourcePersister() {
-		super(SqlType.STRING, new Class<?>[] { ObjectProperty.class });
+		super(SqlType.STRING, new Class<?>[] { Resource.class });
 	}
 
 	@Override
-	public ObjectProperty<Resource> parseDefaultString(FieldType fieldType,
+	public Resource parseDefaultString(FieldType fieldType,
 			String defaultStr)
 			throws SQLException {
-		return new SimpleObjectProperty<Resource>(DefaultResources.NONE);
+		return DefaultResource.NONE;
 	}
 
 	@Override
 	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results,
 			int columnPos) throws SQLException {
+		System.out.println(fieldType.getField().toString());
 		return results.getObject(columnPos);
 	}
 
 	@Override
-	public ObjectProperty<Resource> sqlArgToJava(FieldType fieldType,
+	public Resource sqlArgToJava(FieldType fieldType,
 			Object sqlArg,
 			int columnPos) {
-		return new SimpleObjectProperty<Resource>(
-				Resource.valueOf((String) sqlArg));
+		return Resource.valueOf((String) sqlArg);
 
 	}
 

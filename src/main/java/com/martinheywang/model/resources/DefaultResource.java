@@ -1,18 +1,16 @@
 package com.martinheywang.model.resources;
 
 import java.math.BigInteger;
-import java.util.List;
 
-import com.martinheywang.model.Pack;
+public enum DefaultResource implements Resource {
 
-public enum DefaultResources implements Resource {
 	NONE("None", 0, "/None.png");
 
 	private String name;
 	private BigInteger price;
 	private String url;
 
-	DefaultResources(String name, long value, String url) {
+	DefaultResource(String name, long value, String url) {
 		this.name = name;
 		this.price = BigInteger.valueOf(value);
 		this.url = url;
@@ -33,10 +31,5 @@ public enum DefaultResources implements Resource {
 	@Override
 	public String getURL() {
 		return url;
-	}
-
-	@Override
-	public List<Pack> getRecipe() {
-		return null;
 	}
 }

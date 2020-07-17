@@ -11,7 +11,7 @@ import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.GameController;
 
@@ -33,7 +33,7 @@ public class Constructor extends Behaviour {
 					.queryBuilder()
 					.where().eq("device", model.getID()).query();
 			if (list.size() == 0) {
-				product = new Pack(DefaultResources.NONE, 1, model);
+				product = new Pack(DefaultResource.NONE, 1, model);
 				Database.createDao(Pack.class).create(product);
 			} else {
 				product = list.get(0);
@@ -53,7 +53,7 @@ public class Constructor extends Behaviour {
 
 		Pack tempo = new Pack(product.getResource(), 0);
 
-		if (!product.getResource().equals(DefaultResources.NONE)) {
+		if (!product.getResource().equals(DefaultResource.NONE)) {
 			for (int level = 0; level < this.level.getValue()
 					|| level < resATraiter.getQuantity(); level++) {
 

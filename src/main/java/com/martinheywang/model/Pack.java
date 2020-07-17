@@ -1,5 +1,6 @@
 package com.martinheywang.model;
 
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -10,8 +11,6 @@ import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -27,10 +26,10 @@ public class Pack implements Displayable<Pack> {
 	private Long idPaquet;
 
 	@DatabaseField
-	private ObjectProperty<Resource> resource;
+	private Resource resource;
 
 	@DatabaseField
-	private int quantity;
+	private BigInteger quantity;
 
 	@DatabaseField(columnName = "device", foreign = true, foreignColumnName = "id")
 	private DeviceModel model;
@@ -38,15 +37,15 @@ public class Pack implements Displayable<Pack> {
 	public Pack() {
 	}
 
-	public Pack(Resource resource, int quantity) {
-		this.resource = new SimpleObjectProperty<>(resource);
-		this.quantity = quantity;
-	}
-
-	public Pack(Resource resource, int quantity, DeviceModel model) {
-		this.resource = new SimpleObjectProperty<>(resource);
+	public Pack(Resource resource, BigInteger quantity, DeviceModel model) {
+		this.resource = resource;
 		this.quantity = quantity;
 		this.model = model;
+	}
+
+	public Pack(Resource resource, BigInteger quantity) {
+		this.resource = resource;
+		this.quantity = quantity;
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class Pack implements Displayable<Pack> {
 	 * @return the resource
 	 */
 	public Resource getResource() {
-		return resource.get();
+		return resource;
 	}
 
 	/**
@@ -100,14 +99,14 @@ public class Pack implements Displayable<Pack> {
 	 * @param res the resource to set
 	 */
 	public void setResource(Resource res) {
-		this.resource.set(res);
+		this.resource = res;
 	}
 
 	/**
 	 * 
 	 * @return the quantity
 	 */
-	public int getQuantity() {
+	public BigInteger getQuantity() {
 		return quantity;
 	}
 
@@ -115,7 +114,7 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param quantity the quantity to set
 	 */
-	public void setQuantity(int quantity) {
+	public void setQuantity(BigInteger quantity) {
 		this.quantity = quantity;
 	}
 
@@ -123,8 +122,8 @@ public class Pack implements Displayable<Pack> {
 	 * 
 	 * @param quantity the quantity to add
 	 */
-	public void addQuantity(int quantity) {
-		this.quantity += quantity;
+	public void addQuantity(BigInteger quantity) {
+		this.quantity = this.quantity.add(quantity);
 	}
 
 	/**

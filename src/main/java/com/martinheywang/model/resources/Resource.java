@@ -1,13 +1,12 @@
 package com.martinheywang.model.resources;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.NumberFormat;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.martinheywang.model.Pack;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
@@ -51,7 +50,7 @@ public interface Resource extends Displayable<Resource> {
 	/**
 	 * All the resources in the game.
 	 */
-	HashMap<String, Resource> references = new HashMap<>();
+	List<Resource> references = new ArrayList<>();
 
 	/**
 	 * Returns the displayable name of the resource.
@@ -74,14 +73,6 @@ public interface Resource extends Displayable<Resource> {
 	 * @return
 	 */
 	public String getURL();
-
-	/**
-	 * Returns the recipe used to create this product. May be null.
-	 * 
-	 * @throws NullPointerException in case the resource is not craftable
-	 * @return a list of resources
-	 */
-	public List<Pack> getRecipe();
 
 	@Override
 	public default Displayer<Resource> getDisplayer() {
@@ -117,23 +108,75 @@ public interface Resource extends Displayable<Resource> {
 	 * 
 	 * @return a list of resources
 	 */
-	public static Collection<Resource> getReferences() {
-		return references.values();
+	public static List<Resource> getReferences() {
+		return references;
 	}
 
 	/**
-	 * Returns a Resource from the given input String. Those are examples
-	 * of valid input String :
-	 * <ul>
-	 * <li>BaseResources.NONE -> NONE</li>
-	 * <li>BaseResources.CIRCUIT -> CIRCUIT</li>
-	 * </ul>
+	 * Returns a Resource from the given input String. It must his full
+	 * name, for example:
+	 * <code>you.username.plugin.YourClass.NAME_OF_THE_FIELD</code>
 	 * 
-	 * @param inputString a valid input
+	 * <strong>NOTE: the path must be a dotted one (as shown in the
+	 * example)</strong>
+	 * 
+	 * @param input a valid input
 	 * @return a Resource from the given input, or null if none is found.
 	 */
-	public static Resource valueOf(String inputString) {
-		return references.get(inputString);
+	public static Resource valueOf(String input) {
+		final int lastDot = input.lastIndexOf('.');
+		final String classFullName = input.substring(0, lastDot);
+		final String fieldName = input.substring(lastDot + 1);
+		final Class<?> cl;
+		try {
+			cl = Class.forName(classFullName);
+
+			final Resource res = (Resource) cl.getDeclaredField(fieldName)
+					.get(null);
+			if (!references.contains(res)) {
+				System.err.println(
+						"WARNING: The requested resource has been found, "
+								+ "but is not registered in the references.");
+			}
+			return res;
+		} catch (ClassNotFoundException e) {
+			System.err.println("The requested class has not be found.");
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			System.err.println(
+					"The class has been found, but the requested field doesn't exist.");
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public default String toText() {
+		return this.getClass().toString().substring(6) + "." + toString();
+	}
+
+	public static void register(Class<? extends Resource> clazz) {
+		if (!clazz.isEnum()) {
+			System.out.println(
+					"WARNING: Implementations of Resource must be an enum. Skipping.");
+			return;
+		}
+
+		for (Field field : clazz.getFields()) {
+			try {
+				if (Resource.class.isAssignableFrom(field.getType())) {
+					addReferences((Resource) field.get(null));
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	/**
@@ -142,8 +185,10 @@ public interface Resource extends Displayable<Resource> {
 	 * 
 	 * @param resource the resource to add
 	 */
-	public static void addReferences(Resource resource) {
-		references.put(resource.toString(), resource);
+	public static void addReferences(Resource... resource) {
+		for (Resource res : resource) {
+			references.add(res);
+		}
 	}
 
 	/**
@@ -151,7 +196,9 @@ public interface Resource extends Displayable<Resource> {
 	 * 
 	 * @param resource the resource to remove
 	 */
-	public static void removeReferences(Resource resource) {
-		references.remove(resource.toString());
+	public static void removeReferences(Resource... resource) {
+		for (Resource res : resource) {
+			references.remove(res);
+		}
 	}
 }

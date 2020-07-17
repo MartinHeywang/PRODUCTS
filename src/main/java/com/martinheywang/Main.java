@@ -5,10 +5,13 @@ import java.sql.SQLException;
 
 import com.martinheywang.model.Game;
 import com.martinheywang.model.database.Database;
-import com.martinheywang.model.resources.BuyerAndTransformResources;
-import com.martinheywang.model.resources.BuyerResources;
-import com.martinheywang.model.resources.ConstructorResources;
-import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.resources.DefaultResource;
+import com.martinheywang.model.resources.Ingot;
+import com.martinheywang.model.resources.Ore;
+import com.martinheywang.model.resources.Plate;
+import com.martinheywang.model.resources.Product;
+import com.martinheywang.model.resources.Resource;
+import com.martinheywang.model.resources.Wire;
 import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.Tools;
 import com.martinheywang.view.GameController;
@@ -38,17 +41,14 @@ public final class Main extends Application {
 		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
 
 		/*
-		 * <?> Here we forces the VM to load the enums before the launching of
-		 * the app. This is mandatory so that when we want to use, it is
-		 * already to use. In fact, we use them for the first time by
-		 * iterrating over them. But every programmer should know that
-		 * iterrating over an array while editing it is not a good thing to
-		 * do.
+		 * <?> Registering resources means making the game able to use them.
 		 */
-		DefaultResources.values();
-		BuyerAndTransformResources.values();
-		BuyerResources.values();
-		ConstructorResources.values();
+		Resource.register(DefaultResource.class);
+		Resource.register(Ore.class);
+		Resource.register(Plate.class);
+		Resource.register(Wire.class);
+		Resource.register(Ingot.class);
+		Resource.register(Product.class);
 
 		BaseTypes.values();
 

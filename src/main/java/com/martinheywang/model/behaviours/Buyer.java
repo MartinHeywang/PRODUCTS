@@ -1,5 +1,6 @@
 package com.martinheywang.model.behaviours;
 
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +11,7 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
 import com.martinheywang.view.GameController;
@@ -44,7 +45,8 @@ public class Buyer extends Behaviour {
 	public Buyer(Device device, GameController controller) {
 		super(device, controller);
 
-		distributedResource = new Pack(DefaultResources.NONE, 1,
+		distributedResource = new Pack(DefaultResource.NONE,
+				new BigInteger("0"),
 				device.getModel());
 
 		try {
@@ -129,7 +131,7 @@ public class Buyer extends Behaviour {
 			public void handle(CarouselEvent event) {
 				Resource res = (Resource) ((Displayer<?>) event
 						.getNewSelection()).getSubject();
-				setDistributedResource(new Pack(res, 0));
+				setDistributedResource(new Pack(res, new BigInteger("0")));
 			}
 		});
 

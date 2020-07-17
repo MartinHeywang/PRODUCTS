@@ -6,7 +6,7 @@ import java.util.List;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.DefaultResources;
+import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
@@ -27,7 +27,7 @@ public class Seller extends Behaviour {
 							.valueOf(5 + Device.getElectricity())) == -1)
 				throw new MoneyException();
 			else {
-				if (!resATraiter.getResource().equals(DefaultResources.NONE)) {
+				if (!resATraiter.getResource().equals(DefaultResource.NONE)) {
 					controller.addMoney(resATraiter.getResource().getPrice()
 							.subtract(BigInteger
 									.valueOf(Device.getElectricity())));

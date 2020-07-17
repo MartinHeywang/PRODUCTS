@@ -35,8 +35,10 @@ public final class Furnace extends Transform {
 	 * Add a resource to the 'acceptedResource'.
 	 * </p>
 	 * <p>
-	 * But note that this Resource must have a double with the given
-	 * prefix and sufix. If none is found, will give an error.
+	 * <strong> This resource must have a 'friend' that has the same name
+	 * as it, but with the prefix and the suffix of the devices. This
+	 * method won't give a warning but you'll get an error if this
+	 * condition is not respected.</strong>
 	 * </p>
 	 * 
 	 * @param resource the resource to add
