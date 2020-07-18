@@ -29,16 +29,23 @@ import javafx.scene.text.Font;
  * <p>
  * It manages also all the Resource in the game, with it List. You can
  * directly found this list by calling
- * {@link Resource#getReferences()}, and add a Resource that your
- * plugin provides by calling
- * {@link Resource#addReferenceResource(Resource)}.
+ * {@link Resource#getReferences()}.
  * </p>
  * <p>
- * But this action does not mean that every devices will be able to
- * use it. To make a resource acceptable by a specific device, such as
- * buyers, you will need to use the method of the behaviour of this
- * device. But be careful, some devices may have some additionnal
- * rules.
+ * You can register an enum type (extending Resource) by calling
+ * {@link #register(Class)}.
+ * </p>
+ * <p>
+ * When registering, make sure to add some of the annotations on your
+ * fields provided by the API such as {@link Buyable @Buyable},
+ * {@link Craftable @Craftable}, or {@link ToWire @ToWire}. This will
+ * add the resources automatically (as long as you register the class)
+ * according to the annotations. But still, you can do that manually
+ * by calling {@link #addReferences(Resource...)}.
+ * </p>
+ * <p>
+ * By the way, you can also remove references by calling
+ * {@link #removeReferences(Resource...)}.
  * </p>
  * 
  * 

@@ -4,6 +4,11 @@ import java.math.BigInteger;
 
 import com.martinheywang.model.resources.info.Prices;
 
+/**
+ * This enum defines all the Plate available by default in the game.
+ * 
+ * @author Martin Heywang
+ */
 public enum Plate implements Resource {
 
 	PLATE_OF_IRON("Plaque de fer", Prices.transformedPrice(),

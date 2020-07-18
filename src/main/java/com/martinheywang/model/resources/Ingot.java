@@ -4,6 +4,11 @@ import java.math.BigInteger;
 
 import com.martinheywang.model.resources.info.Prices;
 
+/**
+ * This enum defines all the ingots available by default in the game.
+ * 
+ * @author Martin Heywang
+ */
 public enum Ingot implements Resource {
 
 	IRON_INGOT("Lingot de fer", Prices.transformedPrice(),

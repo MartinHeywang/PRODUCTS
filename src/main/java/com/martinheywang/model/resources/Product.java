@@ -2,7 +2,20 @@ package com.martinheywang.model.resources;
 
 import java.math.BigInteger;
 
+/**
+ * This enum defines all the products available in the game.
+ * 
+ * @author Heywang
+ */
 public enum Product implements Resource {
+
+	/*
+	 * For forkers and stargazers on Github: this enum will be extended a
+	 * lot. This is just a minimal set to test some of the features that
+	 * my game may need one day. I will greatly appreciate some ideas
+	 * about what I can add here. You can send your ideas either to
+	 * 'martin.heywang1@gmail.com' or by opening an issue.
+	 */
 
 	@Craftable(recipe = { "1|com.martinheywang.model.resources.Ore.GOLD",
 			"1|com.martinheywang.model.resources.Wire.COPPER_WIRE" })
@@ -63,8 +76,6 @@ public enum Product implements Resource {
 		this.name = nom;
 		this.price = new BigInteger(value);
 		this.url = urlImg;
-
-		Resource.addReferences(this);
 	}
 
 	@Override

@@ -2,6 +2,12 @@ package com.martinheywang.model.resources;
 
 import java.math.BigInteger;
 
+/**
+ * This enum defines a NONE resource. It actually has no effect to any
+ * device.
+ * 
+ * @author Heywang
+ */
 public enum DefaultResource implements Resource {
 
 	NONE("None", 0, "/None.png");
@@ -14,8 +20,6 @@ public enum DefaultResource implements Resource {
 		this.name = name;
 		this.price = BigInteger.valueOf(value);
 		this.url = url;
-
-		Resource.addReferences(this);
 	}
 
 	@Override

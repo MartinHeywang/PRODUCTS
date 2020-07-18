@@ -4,6 +4,12 @@ import java.math.BigInteger;
 
 import com.martinheywang.model.resources.info.Prices;
 
+/**
+ * This enum defines all the wire that are available by default in the
+ * game.
+ * 
+ * @author Martin Heywang
+ */
 public enum Wire implements Resource {
 
 	IRON_WIRE("Fil de fer", Prices.transformedPrice(), "/Fil_De_Fer.png"),
@@ -12,8 +18,10 @@ public enum Wire implements Resource {
 
 	COPPER_WIRE("Fil de cuivre", Prices.transformedPrice(),
 			"/Fil_De_Cuivre.png"),
+
 	SILVER_WIRE("Fil d'argent", Prices.transformedPrice(),
 			"/Fil_De_Argent.png"),
+
 	ALUMINIUM_WIRE("Fil d'aluminium", Prices.transformedPrice(),
 			"/Fil_De_Aluminium.png");
 
