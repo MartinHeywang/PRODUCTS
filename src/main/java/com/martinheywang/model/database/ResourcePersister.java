@@ -7,9 +7,12 @@ import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
 import com.martinheywang.model.resources.DefaultResource;
+import com.martinheywang.model.resources.Ore;
 import com.martinheywang.model.resources.Resource;
 
 public class ResourcePersister extends BaseDataType {
+
+	// Todo : Resource Persister
 
 	private static final ResourcePersister instance = new ResourcePersister();
 
@@ -27,7 +30,13 @@ public class ResourcePersister extends BaseDataType {
 	@Override
 	public Object resultToSqlArg(FieldType fieldType, DatabaseResults results,
 			int columnPos) throws SQLException {
-		System.out.println(fieldType.getField().toString());
+		try {
+			System.out.println(fieldType.getField().get(null));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		return results.getObject(columnPos);
 	}
 
@@ -35,7 +44,7 @@ public class ResourcePersister extends BaseDataType {
 	public Resource sqlArgToJava(FieldType fieldType,
 			Object sqlArg,
 			int columnPos) {
-		return Resource.valueOf((String) sqlArg);
+		return Ore.IRON;
 
 	}
 

@@ -19,7 +19,7 @@ public enum DefaultResource implements Resource {
 	DefaultResource(String name, long value, String url) {
 		this.name = name;
 		this.price = BigInteger.valueOf(value);
-		this.url = url;
+		this.url = "/images/resources" + url;
 	}
 
 	@Override

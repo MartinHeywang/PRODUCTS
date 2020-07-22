@@ -3,8 +3,8 @@ package com.martinheywang.view.components;
 import java.lang.reflect.Field;
 
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.Recipe;
 import com.martinheywang.model.resources.Craftable;
+import com.martinheywang.model.resources.Craftable.RemotePack;
 import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayer;
@@ -40,9 +40,9 @@ public class RecipeView extends HBox {
 
 					Craftable craftable = displayedField
 							.getAnnotation(Craftable.class);
-					String[] annotationValue = craftable.recipe();
+					RemotePack[] annotationValue = craftable.recipe();
 
-					for (Pack pack : new Recipe(annotationValue).getPacks()) {
+					for (Pack pack : Pack.toPack(annotationValue)) {
 						Displayer<Pack> display = pack.getDisplayer();
 						RecipeView.setMargin(display, new Insets(0, 10, 0, 10));
 						this.getChildren().add(display);

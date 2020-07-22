@@ -1,5 +1,6 @@
 package com.martinheywang.model.resources;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -7,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.martinheywang.model.behaviours.Buyer;
+import com.martinheywang.model.behaviours.Furnace;
+import com.martinheywang.model.behaviours.Press;
+import com.martinheywang.model.behaviours.WireDrawer;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
@@ -74,10 +79,19 @@ public interface Resource extends Displayable<Resource> {
 	public BigInteger getPrice();
 
 	/**
+	 * <p>
 	 * Returns a String representing a relative path to the view
 	 * representing this resource.
+	 * </p>
+	 * <p>
+	 * For example, the following expression :
+	 * <code>this.getClass().getResourceAsStream(this.getURL())</code>
+	 * must not be null, where the url is the value returned by the
+	 * <code>getURL()</code> method, and <code>this.getClass()</code> the
+	 * class where the valeu is defined.
+	 * </p>
 	 * 
-	 * @return
+	 * @return the local uri of the image
 	 */
 	public String getURL();
 
@@ -97,8 +111,10 @@ public interface Resource extends Displayable<Resource> {
 		root.getChildren().add(nom);
 
 		ImageView image = new ImageView();
+		System.out.println(this.getURL());
+		System.out.println(this.getClass());
 		image.setImage(
-				new Image(getClass().getResourceAsStream(this.getURL())));
+				new Image(this.getClass().getResourceAsStream(this.getURL())));
 		root.getChildren().add(image);
 
 		Label infos = new Label();
@@ -120,25 +136,16 @@ public interface Resource extends Displayable<Resource> {
 	}
 
 	/**
-	 * Returns a Resource from the given input String. It must his full
-	 * name, for example:
-	 * <code>you.username.plugin.YourClass.NAME_OF_THE_FIELD</code>
+	 * Returns the value of the
 	 * 
-	 * <strong>NOTE: the path must be a dotted one (as shown in the
-	 * example)</strong>
-	 * 
-	 * @param input a valid input
-	 * @return a Resource from the given input, or null if none is found.
+	 * @param clazz
+	 * @param field
+	 * @return
 	 */
-	public static Resource valueOf(String input) {
-		final int lastDot = input.lastIndexOf('.');
-		final String classFullName = input.substring(0, lastDot);
-		final String fieldName = input.substring(lastDot + 1);
-		final Class<?> cl;
+	public static Resource valueOf(Class<? extends Resource> clazz,
+			String field) {
 		try {
-			cl = Class.forName(classFullName);
-
-			final Resource res = (Resource) cl.getDeclaredField(fieldName)
+			final Resource res = (Resource) clazz.getField(field)
 					.get(null);
 			if (!references.contains(res)) {
 				System.err.println(
@@ -146,21 +153,38 @@ public interface Resource extends Displayable<Resource> {
 								+ "but is not registered in the references.");
 			}
 			return res;
-		} catch (ClassNotFoundException e) {
-			System.err.println("The requested class has not be found.");
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
 			System.err.println(
-					"The class has been found, but the requested field doesn't exist.");
+					"The requested field has not been found (requested: "
+							+ field + " in " + clazz.getCanonicalName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Returns true if this Resource object owns the given annotation. It
+	 * allows you to check if this Resource object is Buyable, for
+	 * instance.
+	 * 
+	 * @param annotation
+	 * @return
+	 */
+	public default boolean hasAnnotation(
+			Class<? extends Annotation> annotation) {
+		try {
+			return this.getClass().getField(toString())
+					.isAnnotationPresent(annotation);
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public default String toText() {
@@ -178,6 +202,20 @@ public interface Resource extends Displayable<Resource> {
 			try {
 				if (Resource.class.isAssignableFrom(field.getType())) {
 					addReferences((Resource) field.get(null));
+
+					if (field.isAnnotationPresent(Buyable.class)) {
+						Buyer.addAcceptedResource((Resource) field.get(null));
+					}
+					if (field.isAnnotationPresent(ToWire.class)) {
+						WireDrawer.addAcceptedResource(
+								(Resource) field.get(null));
+					}
+					if (field.isAnnotationPresent(ToPlate.class)) {
+						Press.addAcceptedResource((Resource) field.get(null));
+					}
+					if (field.isAnnotationPresent(ToIngot.class)) {
+						Furnace.addAcceptedResource((Resource) field.get(null));
+					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();

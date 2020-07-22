@@ -26,17 +26,20 @@ import java.lang.annotation.Target;
 public @interface ToPlate {
 
 	/**
-	 * <p>
-	 * Returns the full doted path of the filed that represents this
-	 * Resource after transformation.
-	 * </p>
-	 * <p>
-	 * For example:
-	 * <code>com.username.app.plugin.YourClass.SomeSortOfField</code>
-	 * </p>
+	 * Returns the class where can be found the given field name (in
+	 * field()). You probably want to define this Resource in a proper
+	 * enum named Plate.
 	 * 
-	 * @return the full doted path to the field
+	 * @return the class of the field
 	 */
-	String to();
+	Class<? extends Resource> clazz();
+
+	/**
+	 * Returns the name of the field that will be search in the given
+	 * class (in clazz()).
+	 * 
+	 * @return the name of the field
+	 */
+	String field();
 
 }

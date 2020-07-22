@@ -5,42 +5,42 @@ import java.math.BigInteger;
 import com.martinheywang.model.resources.info.Prices;
 
 /**
- * This class register all the ores that can be found in the game. Is
- * of them is marked with some annotation (visible in the JavaDoc),
- * that defines their default behaviours.
+ * This class register all the ores that can be found in the game.
+ * Each of them is marked with some annotation (visible in the
+ * JavaDoc), that defines their default behaviours.
  * 
  * @author Martin Heywang
  */
 public enum Ore implements Resource {
 
 	@Buyable
-	@ToWire(to = "com.martinheywang.model.resources.Wire.IRON_WIRE")
-	@ToPlate(to = "com.martinheywang.model.resources.Plate.IRON_PLATE")
-	@ToIngot(to = "com.martinheywang.model.resources.Ingot.IRON_INGOT")
+	@ToWire(clazz = Wire.class, field = "IRON_WIRE")
+	@ToPlate(clazz = Plate.class, field = "IRON_PLATE")
+	@ToIngot(clazz = Ingot.class, field = "IRON_INGOT")
 	IRON("Fer", Prices.rawPrice(), "/Minerai_De_Fer.png"),
 
 	@Buyable
-	@ToWire(to = "com.martinheywang.model.resources.Wire.GOLD_WIRE")
-	@ToPlate(to = "com.martinheywang.model.resources.Plate.GOLD_PLATE")
-	@ToIngot(to = "com.martinheywang.model.resources.Ingot.GOLD_INGOT")
+	@ToWire(clazz = Wire.class, field = "GOLD_WIRE")
+	@ToPlate(clazz = Plate.class, field = "GOLD_PLATE")
+	@ToIngot(clazz = Ingot.class, field = "GOLD_INGOT")
 	GOLD("Or", Prices.rawPrice(), "/Minerai_De_Or.png"),
 
 	@Buyable
-	@ToWire(to = "com.martinheywang.model.resources.Wire.COPPER_WIRE")
-	@ToPlate(to = "com.martinheywang.model.resources.Plate.COPPER_PLATE")
-	@ToIngot(to = "com.martinheywang.model.resources.Ingot.COPPER_INGOT")
+	@ToWire(clazz = Wire.class, field = "COPPER_WIRE")
+	@ToPlate(clazz = Plate.class, field = "COPPER_PLATE")
+	@ToIngot(clazz = Ingot.class, field = "COPPER_INGOT")
 	COPPER("Cuivre", Prices.rawPrice(), "/Minerai_De_Cuivre.png"),
 
 	@Buyable
-	@ToWire(to = "com.martinheywang.model.resources.Wire.SILVER_WIRE")
-	@ToPlate(to = "com.martinheywang.model.resources.Plate.SILVER_PLATE")
-	@ToIngot(to = "com.martinheywang.model.resources.Ingot.SILVER_INGOT")
+	@ToWire(clazz = Wire.class, field = "SILVER_WIRE")
+	@ToPlate(clazz = Plate.class, field = "SILVER_PLATE")
+	@ToIngot(clazz = Ingot.class, field = "SILVER_INGOT")
 	SILVER("Argent", Prices.rawPrice(), "/Minerai_De_Argent.png"),
 
 	@Buyable
-	@ToWire(to = "com.martinheywang.model.resources.Wire.ALUMINIUM_WIRE")
-	@ToPlate(to = "com.martinheywang.model.resources.Plate.ALUMINIUM_PLATE")
-	@ToIngot(to = "com.martinheywang.model.resources.Ingot.ALUMINIUM_INGOT")
+	@ToWire(clazz = Wire.class, field = "ALUMINIUM_WIRE")
+	@ToPlate(clazz = Plate.class, field = "ALUMINIUM_PLATE")
+	@ToIngot(clazz = Ingot.class, field = "ALUMINIUM_INGOT")
 	ALUMINIUM("Aluminium", Prices.rawPrice(), "/Minerai_De_Aluminium.png"),
 
 	@Buyable
