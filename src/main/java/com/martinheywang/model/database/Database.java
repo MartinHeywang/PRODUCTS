@@ -11,7 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Device;
 
 /**
  * Class that manages connectivity to the Database. See {@link Saver}
@@ -46,10 +46,10 @@ public final class Database {
 							ResourcePersister.getInstance(),
 							TypePersister.getInstance());
 
-			TableUtils.createTableIfNotExists(connection, Pack.class);
-			TableUtils.createTableIfNotExists(connection, DeviceModel.class);
-			TableUtils.createTableIfNotExists(connection, Coordinate.class);
 			TableUtils.createTableIfNotExists(connection, Game.class);
+			TableUtils.createTableIfNotExists(connection, Pack.class);
+			TableUtils.createTableIfNotExists(connection, Device.class);
+			TableUtils.createTableIfNotExists(connection, Coordinate.class);
 		} catch (SQLException e) {
 			System.err.println(
 					"Ohh, something messed up in the initialization with the "

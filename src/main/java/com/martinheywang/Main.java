@@ -1,10 +1,9 @@
 package com.martinheywang;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import com.martinheywang.model.Game;
-import com.martinheywang.model.database.Database;
+import com.martinheywang.model.mechanics.GameManager;
 import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Ingot;
 import com.martinheywang.model.resources.Ore;
@@ -57,24 +56,14 @@ public final class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		try {
-			stage = primaryStage;
-			stage.setTitle("PRODUCTS.");
-			stage.getIcons().add(
-					new Image(getClass()
-							.getResourceAsStream("/images/Icone.png")));
+		stage = primaryStage;
+		stage.setTitle("PRODUCTS.");
+		stage.getIcons().add(
+				new Image(getClass()
+						.getResourceAsStream("/images/Icone.png")));
 
-			if (Database.createDao(Game.class).queryForAll().size() == 0)
-				initAccueil();
-			else {
-				initAccueil2();
-			}
-		} catch (SQLException e) {
-			System.err.println(
-					"Oh ! There is a mistake ! The games can't be loaded... "
-							+ "Here is the full error message :\n");
-			e.printStackTrace();
-		}
+		initAccueil();
+
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent e) {
@@ -166,21 +155,10 @@ public final class Main extends Application {
 
 			GameController controller = loader.getController();
 			controller.setMainApp(this);
-			controller.load(game);
 
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent event) {
-					try {
-						controller.saveGame();
-					} catch (SQLException e) {
-						System.out.println(e.getLocalizedMessage());
-
-					}
-					System.exit(0);
-				}
-			});
-		} catch (IOException | SQLException e) {
+			GameManager manager = new GameManager(controller, game);
+			manager.start();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

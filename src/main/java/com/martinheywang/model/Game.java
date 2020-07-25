@@ -7,53 +7,81 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.model.database.Database;
-import com.martinheywang.model.database.Deleter;
-import com.martinheywang.model.database.Saver;
-import com.martinheywang.model.devices.DeviceModel;
-import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.level.Level;
+import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.MoneyFormat;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 /**
- * Bean representing a Game.<br>
- * Stored in the database in the <code>games</code> table. It also
- * contains a {@link List} of {@link DeviceModel} that you can get by
- * calling {@link Game#getDevicesModel()}.
- * 
+ * <p>
+ * The Game class represents a Game in PRODUCTS. In contains all the
+ * data about them. This object may be stored in the database.
+ * </p>
+ * <p>
+ * This class is using JavaFX Properties, you can at any time observe
+ * one of them and apply changes in consequence.
+ * </p>
+ * <p>
+ * It's near of a Java Bean:
+ * <ul>
+ * <li>It has a default constructor</li>
+ * <li>It has a getter and setter for <em>almost</em> all properties
+ * and values</li>
+ * </ul>
+ * </p>
+ * <p>
+ * It implements Displayable, that means that you can get at any time
+ * a display (as a {@link javafx.scene.Node}) of it.
+ * </p>
  * 
  * @author Martin Heywang
  */
-@DatabaseTable(tableName = "games")
 public class Game implements Displayable<Game> {
 
-	@DatabaseField(columnName = "id", generatedId = true)
+	/**
+	 * The ID of this game in the database. May be null.
+	 */
 	private Long gameId;
 
-	@DatabaseField
-	private String name;
+	/**
+	 * The accesible name (shown in the UI) of this game
+	 */
+	private StringProperty nameProperty;
 
-	@DatabaseField
-	private String lastSave;
+	/**
+	 * As a Game can be saved in the database, we register the time of the
+	 * last saving session.
+	 */
+	private ObjectProperty<LocalDateTime> lastSaveProperty;
 
-	@DatabaseField(columnName = "money")
-	private BigInteger money;
+	/**
+	 * The money amount that "owns" this Game.
+	 */
+	private ObjectProperty<BigInteger> moneyProperty;
 
-	@DatabaseField
-	private int gridSize;
+	/**
+	 * The grid size of this game.
+	 */
+	private IntegerProperty gridSizeProperty;
 
-	@DatabaseField(columnName = "grow")
-	private BigInteger growPerSecond;
-
-	private List<DeviceModel> devicesModel = new ArrayList<DeviceModel>();
+	/**
+	 * The grow of this game.
+	 */
+	private ObjectProperty<BigInteger> growProperty;
 
 	public Game() {
 	}
@@ -66,34 +94,10 @@ public class Game implements Displayable<Game> {
 	 *                      database
 	 */
 	public Game(String nom) throws SQLException {
-		this.name = nom;
-		this.gridSize = 3;
-		this.money = BigInteger.valueOf(1250);
-		this.growPerSecond = BigInteger.ZERO;
-
-		save();
-	}
-
-	/**
-	 * Saves this object int the database, with all its devices.
-	 * 
-	 * @see Database
-	 * @throws SQLException if the saving process fails.
-	 */
-	public void save() throws SQLException {
-		lastSave = LocalDateTime.now().toString();
-		Saver.saveGame(this);
-	}
-
-	/**
-	 * This method deletes this game and all its devices in the database.
-	 * After invoking this method, all changes won't be saved. This object
-	 * won't be useful.
-	 * 
-	 * @throws SQLException if the deletion process fails.
-	 */
-	public void delete() throws SQLException {
-		Deleter.deleteGame(this);
+		this.nameProperty = new SimpleStringProperty(nom);
+		this.gridSizeProperty = new SimpleIntegerProperty(3);
+		this.moneyProperty = new SimpleObjectProperty<>(new BigInteger("1250"));
+		this.growProperty = new SimpleObjectProperty<>(new BigInteger("0"));
 	}
 
 	/**
@@ -101,82 +105,140 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return a list of all devices of this game
 	 */
-	public List<DeviceModel> getDevicesModel() {
-		return devicesModel;
-	}
-
-	/**
-	 * Refreshes the devices model list.
-	 */
-	public void refreshDevicesModel() {
-		try {
-			devicesModel = Database.createDao(DeviceModel.class).queryBuilder()
-					.where()
-					.eq("game", gameId)
-					.query();
-		} catch (SQLException e) {
-			System.err.println("Couldn't refresh the list : "
-					+ this.toString());
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Adds money to the game.
-	 * 
-	 * @param amount how many
-	 * @throws MoneyException if the amount after the transaction is under
-	 *                        0.
-	 */
-	public void addMoney(BigInteger amount) throws MoneyException {
-		removeMoney(amount.negate());
-	}
-
-	/**
-	 * Removes money to the game
-	 * 
-	 * @param amount how many
-	 * @throws MoneyException if there aren't enough money to remove.
-	 */
-	public void removeMoney(BigInteger amount) throws MoneyException {
-		if (money.compareTo(amount) == -1) {
-			throw new MoneyException();
-		} else {
-			this.money = this.money.subtract(amount);
-		}
-	}
-
-	/**
-	 * Sets the money to the game. Should be used only if you want to
-	 * reset the money. If it is not the case, prefer using
-	 * {@link Game#addMoney(long)} or {@link Game#removeMoney(long)}.
-	 * 
-	 * @param amount the new amount
-	 * @throws MoneyException if the given amoung is less than 0
-	 */
-	public void setMoney(BigInteger amount) throws MoneyException {
-		if (amount.compareTo(new BigInteger("0")) == -1) {
-			throw new MoneyException();
-		} else {
-			this.money = amount;
-		}
-	}
-
-	/**
-	 * Replaces a {@link DeviceModel} in the list of this game.
-	 * 
-	 * @param deviceModel
-	 * @throws MoneyException
-	 */
-	public void setDeviceModel(DeviceModel deviceModel)
-			throws MoneyException {
-		for (int i = 0; i < devicesModel.size(); i++) {
-			if (devicesModel.get(i).getCoordinates()
-					.propertiesEquals(deviceModel.getCoordinates())) {
-				devicesModel.set(i, deviceModel);
-				break;
+	public List<Device> getDevices() {
+		List<Device> devices = new ArrayList<>();
+		// Todo: load available devices
+		for (int x = 0; x < getGridSize(); x++) {
+			for (int y = 0; y < getGridSize(); y++) {
+				devices.add(new Device(BaseTypes.FLOOR, Direction.UP,
+						Level.LEVEL_1, new Coordinate(x, y), this));
 			}
 		}
+		return devices;
+	}
+
+	/**
+	 * May be null.
+	 * 
+	 * @return the id of this object in the database.
+	 */
+	public Long getID() {
+		return gameId;
+	}
+
+	// PROPERTIES GETTER
+
+	/**
+	 * @return the property name of this Game object.
+	 */
+	public StringProperty nameProperty() {
+		return nameProperty;
+	}
+
+	/**
+	 * @return the property lastSave of this Game object.
+	 */
+	public ObjectProperty<LocalDateTime> lastSaveProperty() {
+		return lastSaveProperty;
+	}
+
+	/**
+	 * @return the property money of this Game object.
+	 */
+	public ObjectProperty<BigInteger> moneyProperty() {
+		return moneyProperty;
+	}
+
+	/**
+	 * @return the property gridSize of this Game object.
+	 */
+	public IntegerProperty gridSizeProperty() {
+		return gridSizeProperty;
+	}
+
+	/**
+	 * @return the property grow of this object.
+	 */
+	public ObjectProperty<BigInteger> growProperty() {
+		return growProperty;
+	}
+
+	// GETTERS
+
+	/**
+	 * Returns the accesible name of this Game object.
+	 * 
+	 * @return the name of this game
+	 */
+	public String getName() {
+		return nameProperty.get();
+	}
+
+	/**
+	 * The timing of the last save of this Game object.
+	 * 
+	 * @return the date & time of the last save of this object (as
+	 *         LocalDateTime, also known as JodaTime)
+	 */
+	public LocalDateTime getLastSave() {
+		return lastSaveProperty.get();
+	}
+
+	/**
+	 * Returns how money this game has.
+	 * 
+	 * @return the money amount
+	 */
+	public BigInteger getMoney() {
+		return moneyProperty.get();
+	}
+
+	/**
+	 * Returns the size of the grid.
+	 * 
+	 * @return the grid-size
+	 */
+	public Integer getGridSize() {
+		return gridSizeProperty.get();
+	}
+
+	/**
+	 * Returns how many this game generate each iterations of the game
+	 * loop.
+	 * 
+	 * @return the grow
+	 */
+	public BigInteger getGrow() {
+		return growProperty.get();
+	}
+
+	// SETTERS
+
+	/**
+	 * Sets the new accesible name of this Game object.
+	 * 
+	 * @param newName the new name
+	 */
+	public void setName(String newName) {
+		nameProperty.set(newName);
+	}
+
+	/**
+	 * Sets the new amount of money of this Game object
+	 * 
+	 * @param money the new money-amount
+	 */
+	public void setMoney(BigInteger money) {
+		moneyProperty.set(money);
+	}
+
+	/**
+	 * Sets the grow property
+	 * 
+	 * @param grow the new grow value
+	 */
+	public void setGrow(BigInteger grow) {
+		growProperty.set(grow);
 	}
 
 	@Override
@@ -202,80 +264,5 @@ public class Game implements Displayable<Game> {
 
 		root.setPadding(new Insets(3, 3, 3, 3));
 		return new Displayer<Game>(root, this);
-	}
-
-	/**
-	 * 
-	 * @return the id of this game
-	 */
-	public Long getGameId() {
-		return gameId;
-	}
-
-	/**
-	 * 
-	 * @return the name of the game
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * 
-	 * @return the date of the latest save
-	 */
-	public LocalDateTime getLastSave() {
-		return LocalDateTime.parse(lastSave);
-	}
-
-	/**
-	 * 
-	 * @return how many money the game counts
-	 */
-	public BigInteger getMoney() {
-		return money;
-	}
-
-	/**
-	 * @return how much the money evolved between the last second
-	 */
-	public BigInteger getGrowPerSecond() {
-		return growPerSecond;
-	}
-
-	/**
-	 * 
-	 * @return the grid-size
-	 */
-	public int getGridSize() {
-		return gridSize;
-	}
-
-	/**
-	 * 
-	 * @param newName the new name
-	 */
-	public void setName(String newName) {
-		this.name = newName;
-	}
-
-	/**
-	 * 
-	 * @param lastView a parsable string to LocalDateTime object
-	 */
-	public void setLastSave(LocalDateTime lastView) {
-		this.lastSave = lastView.toString();
-	}
-
-	/**
-	 * 
-	 * @param gridSize the new grid-size
-	 */
-	public void setGridSize(int gridSize) {
-		this.gridSize = gridSize;
-	}
-
-	public void setGrowPerSecond(BigInteger difference) {
-		this.growPerSecond = difference;
 	}
 }

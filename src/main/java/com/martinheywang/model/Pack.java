@@ -4,9 +4,6 @@ import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.resources.Craftable.RemotePack;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
@@ -20,28 +17,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-@DatabaseTable(tableName = "packs")
 public class Pack implements Displayable<Pack> {
 
-	@DatabaseField(columnName = "id", generatedId = true)
 	private Long idPaquet;
 
-	@DatabaseField
 	private Resource resource;
 
-	@DatabaseField
 	private BigInteger quantity;
 
-	@DatabaseField(columnName = "device", foreign = true, foreignColumnName = "id")
-	private DeviceModel model;
-
 	public Pack() {
-	}
-
-	public Pack(Resource resource, BigInteger quantity, DeviceModel model) {
-		this.resource = resource;
-		this.quantity = quantity;
-		this.model = model;
 	}
 
 	public Pack(Resource resource, BigInteger quantity) {
@@ -152,22 +136,6 @@ public class Pack implements Displayable<Pack> {
 	 */
 	public void addQuantity(BigInteger quantity) {
 		this.quantity = this.quantity.add(quantity);
-	}
-
-	/**
-	 * 
-	 * @return the associated-device
-	 */
-	public DeviceModel getDeviceModel() {
-		return model;
-	}
-
-	/**
-	 * 
-	 * @param appareil the device to set
-	 */
-	public void setDeviceModel(DeviceModel model) {
-		this.model = model;
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import com.martinheywang.model.Game;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Home implements Initializable {
@@ -35,8 +34,6 @@ public class Home implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle resources) {
-		button_icon.setImage(
-				new Image(getClass().getResourceAsStream("/icons/add.png")));
 	}
 
 	/**

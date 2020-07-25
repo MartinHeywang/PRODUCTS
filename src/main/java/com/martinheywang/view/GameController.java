@@ -1,48 +1,29 @@
 package com.martinheywang.view;
 
-import java.math.BigInteger;
 import java.net.URL;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import com.martinheywang.Main;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
-import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.direction.Direction;
-import com.martinheywang.model.exceptions.EditException;
-import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
+import com.martinheywang.model.mechanics.GameManager;
 import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.model.types.Type;
+import com.martinheywang.toolbox.ArrayList2D;
 import com.martinheywang.toolbox.MoneyFormat;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.Glow;
-import javafx.scene.image.Image;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -51,20 +32,11 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * <h3>Controller class for <code>Game.fxml</code> file.</h3>
- * <p>
- * The GameController represents a major part of the game. It loads a
- * game and take care of it : sets, adds, removes the money, loads its
- * devices, can build, delete, turn, swap devices. It also handles
- * toasts to inform the player about what's going on (why an action
- * couldn't be performed, for example).
- * </p>
- * <p>
- * This class is called each seconds to edit the money amount, for
- * example. It is why it is very long.
- * </p>
+ * <h3>Controller class for <code>Game.fxml</code> file.</h3> Please
+ * make the difference b/w the GameController and the
+ * {@link GameManager}.</strong>
  * 
- * @author Heywang
+ * @author Martin Heywang
  */
 public class GameController implements Initializable {
 
@@ -120,33 +92,15 @@ public class GameController implements Initializable {
 	@FXML
 	private VBox devicesBuild;
 
-	private static final ObjectProperty<BigInteger> argentProperty = new SimpleObjectProperty<>();
-
 	/**
 	 * Is true if the options sidebar is shown
 	 */
 	private static boolean optionsSidebarShown = true;
 
-	private Thread gameLoopThread;
-	private GameLoop gameLoop;
-	private Game currentGame;
-
-	private static final DataFormat coordinateType = new DataFormat(
-			"coordinate");
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		argentProperty.addListener(new ChangeListener<BigInteger>() {
-			@Override
-			public void changed(
-					ObservableValue<? extends BigInteger> observable,
-					BigInteger oldValue, BigInteger newValue) {
-				Platform.runLater(
-						() -> moneyLabel.setText(MoneyFormat.getSingleton()
-								.format(newValue)));
-			};
-		});
 		grid.setFocusTraversable(true);
+		prepareToolbar();
 	}
 
 	/**
@@ -158,300 +112,27 @@ public class GameController implements Initializable {
 		this.main = main;
 	}
 
-	/**
-	 * Loads a game with all its informations and launch the thread.
-	 * 
-	 * @param gameToLoad the game to load
-	 */
-	public void load(Game gameToLoad) throws SQLException {
-		currentGame = gameToLoad;
-
-		refreshView();
-
-		addOfflineMoney();
-		prepareToolbar();
-
-		scrollpane.setOnDragOver(event -> {
-
-			final double x = event.getX();
-			final double y = event.getY();
-			final double height = scrollpane.getHeight();
-			final double width = scrollpane.getWidth();
-
-			final double variation = 0.004d;
-			final double reactZone = 125d;
-
-			if (x > width - reactZone) {
-				scrollpane.setHvalue(scrollpane.getHvalue() + variation);
-			} else if (x < reactZone) {
-				scrollpane.setHvalue(scrollpane.getHvalue() - variation);
-			} else {
-				scrollpane.setHvalue(scrollpane.getHvalue());
-			}
-
-			if (y > height - reactZone) {
-				scrollpane.setVvalue(scrollpane.getVvalue() + variation);
-			} else if (y < reactZone) {
-				scrollpane.setVvalue(scrollpane.getVvalue() - variation);
-			}
-
-		});
-
-		toast("Bienvenue dans la partie : " + currentGame.getName(),
-				Color.CORNFLOWERBLUE,
-				15d);
-	}
-
-	/**
-	 * Calculates and adds offline money according to the difference
-	 * between the last save and the current time.
-	 */
-	private void addOfflineMoney() {
-		try {
-			final BigInteger grow = currentGame.getGrowPerSecond() == null
-					? currentGame.getGrowPerSecond()
-					: new BigInteger("0");
-			final LocalDateTime lastSave = currentGame.getLastSave();
-			final long offlineTime = lastSave.until(LocalDateTime.now(),
-					ChronoUnit.SECONDS);
-			BigInteger additionnalMoney = grow
-					.multiply(BigInteger.valueOf(offlineTime));
-			additionnalMoney = additionnalMoney.divide(new BigInteger("5"));
-
-			addMoney(additionnalMoney);
-
-			setMoney(new BigInteger("10000"));
-		} catch (MoneyException e) {
-			System.err.print("Couldn't add offline money");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Refreshes the grid
-	 */
-	private void refreshView() {
-
-		Task<Void> task = new Task<Void>() {
-			@Override
-			public Void call() {
-				Platform.runLater(() -> toProcessView());
-				currentGame.refreshDevicesModel();
-				adjustDevicesModel();
-				Platform.runLater(() -> clearGrid());
-
-				/*
-				 * <!> The locations lists all the coords that points a buyer.
-				 * This list must be cleared when loading the game, so that only
-				 * byers of the current game are called.
-				 */
-				Device.buyersLocations.clear();
-
-				addDevices();
-				Platform.runLater(() -> toPlayableView());
-
-				return null;
-			}
-		};
-
-		final Thread refreshing = new Thread(task);
-		task.setOnRunning(event -> stopGameLoop());
-		task.setOnSucceeded(event -> startGameLoop());
-		task.setOnFailed(event -> toast("La vue n'a pas pu être rafraîchie...",
-				Color.DARKRED, 7d));
-		refreshing.start();
-	}
-
-	/**
-	 * Clears the devices from the grid
-	 */
-	private void clearGrid() {
-		grid.getChildren().clear();
-	}
-
-	/**
-	 * Adds the devices from the current game in the grid
-	 */
-	private void addDevices() {
-		List<DeviceModel> devicesModel = currentGame.getDevicesModel();
-
-		progression.progressProperty().set(0.0);
-
-		int progress = 1;
-		try {
-			for (DeviceModel model : devicesModel) {
-				final Device device = new Device(
-						new DeviceModel(model.getCoordinates(), currentGame),
-						this);
-
-				final int x = device.getModel().getCoordinates().getX();
-				final int y = device.getModel().getCoordinates().getY();
-
-				Platform.runLater(() -> grid.add(device, x, y));
-
-				resetDragnDropBehaviour(device);
-
-				/*
-				 * <?> Updating the progress bar
-				 */
-				progress++;
-				progression.progressProperty().set(
-						(double) progress / devicesModel.size());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			toast("Failed to add devices to the grid"
-					+ e.getLocalizedMessage(), Color.DARKRED, 5d);
-		}
-	}
-
-	private void resetDragnDropBehaviour(Device device) {
-		// Eveything below in this method is about drag behaviour of the
-		// device. To make things a little bit clearer, here is a
-		// summary :
-		//
-		// A device can recieve a COPY (for build) transfer mode from
-		// the sidebar.
-		// A device can recieve a MOVE (for move, swap) transfer mode
-		// from another device.
-		// A device can send a MOVE (for delete) transfer mode to the
-		// sidebar
-
-		if (!device.getType().equals(BaseTypes.FLOOR)) {
-			device.setOnDragDetected(event -> {
-				// A device send MOVE
-				// With it, we can found :
-				Dragboard db = device
-						.startDragAndDrop(TransferMode.MOVE);
-
-				ClipboardContent content = new ClipboardContent();
-				// Its coordinate
-				content.put(coordinateType,
-						device.getModel().getCoordinates());
-				// Its image
-				content.putImage(new Image(
-						getClass()
-								.getResourceAsStream(
-										"/images"
-												+ device.getLevel()
-														.getURL()
-												+ device.getType()
-														.getURL())));
-
-				db.setContent(content);
-
-				device.setOpacity(Device.cutOpacity);
-
-				event.consume();
-			});
-		}
-		device.setOnDragEntered(event -> {
-			// A device glows a little bit when drag is over
-			device.setEffect(new Glow(0.4d));
-
-			event.consume();
-		});
-		device.setOnDragExited(event -> {
-			// On drag exit, obviously remove the effect
-			device.setEffect(new Glow(0d));
-		});
-		device.setOnDragDropped(event -> {
-
-			// A device recieves both COPY and MOVE
-			Dragboard db = event.getDragboard();
-			boolean success = false;
-
-			// If it's COPY, let's build a new one
-			if (db.getTransferModes().contains(TransferMode.COPY)) {
-				if (db.hasString()) {
-
-					final Type type = Type.valueOf(db.getString());
-
-					try {
-						this.build(type, device.getModel().getCoordinates(),
-								false);
-					} catch (MoneyException e) {
-						toast("Vous n'avez pas assez d'argent !",
-								Color.DARKORANGE, 3d);
-						e.printStackTrace();
-					} catch (EditException e) {
-						toast("L'appareil n'a pas été construit.",
-								Color.DARKRED, 5d);
-						e.printStackTrace();
-					}
-
-					success = true;
+	public void loadGame(ArrayList2D<Device> devices, Game game) {
+		// LOAD DEVICES
+		for (int x = 0; x < devices.size(); x++) {
+			for (int y = 0; y < devices.size(); y++) {
+				Device device = devices.get(x, y);
+				// If a Device doesn't exists, create a new FLOOR
+				if (device == null) {
+					device = new Device(BaseTypes.FLOOR, Direction.UP,
+							Level.LEVEL_1, new Coordinate(x, y), game);
 				}
-
-			}
-			// If it's MOVE, ... let's move it!
-			else if (db.getTransferModes()
-					.contains(TransferMode.MOVE)) {
-				if (db.hasContent(coordinateType)) {
-					Coordinate other = (Coordinate) db
-							.getContent(coordinateType);
-					if (!other.propertiesEquals(
-							device.getModel().getCoordinates())) {
-						this.swap(device.getModel().getCoordinates(),
-								other);
-					}
-				}
-			}
-
-			event.setDropCompleted(success);
-
-			event.consume();
-		});
-		device.setOnDragDone(event -> {
-			final Dragboard db = event.getDragboard();
-			if (db.hasContent(coordinateType)) {
-				findDevice((Coordinate) db.getContent(coordinateType))
-						.setOpacity(Device.defaultOpacity);
-
-			}
-		});
-		device.setOnDragOver(event -> {
-			event.acceptTransferModes(
-					TransferMode.COPY_OR_MOVE);
-		});
-	}
-
-	/**
-	 * Adjust the devices in the devices model's list. Fill what is needed
-	 * to match the grid-size.
-	 */
-	private void adjustDevicesModel() {
-
-		final int size = currentGame.getGridSize();
-		final List<DeviceModel> devicesModel = currentGame.getDevicesModel();
-
-		int progress = 0;
-		if (devicesModel.size() < Math.pow(size, 2)) {
-			try {
-				for (int x = 0; x < size; x++) {
-					for (int y = 0; y < size; y++) {
-						if (findModel(new Coordinate(x, y)) == null) {
-							final DeviceModel model = new DeviceModel(
-									new Coordinate(x, y),
-									currentGame);
-							devicesModel.add(model);
-						}
-
-						/*
-						 * <?> Updating the progress bar
-						 */
-						progress++;
-						progression.progressProperty().set(
-								progress / Math.pow(size, 2));
-					}
-				}
-				currentGame.save();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				toast("Failed to add devices model in the database",
-						Color.DARKRED, 5d);
+				grid.add(new DeviceView(device), x, y);
 			}
 		}
+
+		toPlayableView();
+
+		// LOAD GAME DATA
+		game.moneyProperty().addListener((observable, oldValue, newValue) -> {
+			moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
+		});
+		moneyLabel.setText(game.getMoney().toString());
 	}
 
 	/**
@@ -493,71 +174,6 @@ public class GameController implements Initializable {
 		fadeIn.playFromStart();
 		moneyLabel.setVisible(true);
 		progression.setVisible(false);
-		refreshMoney();
-	}
-
-	/**
-	 * Stops properly the game loop
-	 * 
-	 * @see GameLoop
-	 */
-	public void stopGameLoop() {
-		try {
-			if (gameLoopThread != null) {
-				gameLoop.terminate();
-				gameLoopThread.join();
-			}
-		} catch (InterruptedException e) {
-		}
-	}
-
-	/**
-	 * Starts the game loop properly
-	 * 
-	 * @see GameLoop
-	 */
-	public void startGameLoop() {
-		gameLoop = new GameLoop();
-		gameLoopThread = new Thread(gameLoop);
-		gameLoopThread.start();
-	}
-
-	/**
-	 * This method closes the game and set up the stage on the home scene,
-	 * where we can chose which game we want to load.
-	 * 
-	 * @see Main#initAccueil2()
-	 */
-	@FXML
-	public void returnToHome() throws SQLException {
-		stopGameLoop();
-		currentGame.save();
-		main.initAccueil2();
-	}
-
-	@FXML
-	public void research() {
-		// Todo : research frame
-		refreshView();
-	}
-
-	@FXML
-	public void upgradeGrid() {
-		try {
-			ResourceBundle bundle = ResourceBundle
-					.getBundle("com.martinheywang.model.bundles.GrilleUpdate");
-
-			final Integer newSize = currentGame.getGridSize() + 1;
-			final String bundleValue = bundle.getString(newSize.toString());
-
-			removeMoney(new BigInteger(bundleValue));
-
-			currentGame.setGridSize(newSize);
-			refreshView();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	/**
@@ -602,203 +218,10 @@ public class GameController implements Initializable {
 					display.addHoverEffect();
 					display.setFocusTraversable(true);
 
-					display.setOnDragDetected(event -> {
-						Dragboard db = display
-								.startDragAndDrop(TransferMode.COPY);
-
-						ClipboardContent content = new ClipboardContent();
-						content.putString(display.getSubject().toString());
-						content.putImage(new Image(
-								getClass()
-										.getResourceAsStream(
-												"/images"
-														+ Level.LEVEL_1.getURL()
-														+ display.getSubject()
-																.getURL())));
-
-						db.setContent(content);
-
-						event.consume();
-					});
-
-					options.setOnDragOver(event -> {
-						event.acceptTransferModes(TransferMode.MOVE);
-					});
-					options.setOnDragDropped(event -> {
-						final Dragboard db = event.getDragboard();
-						if (db.getTransferModes().contains(TransferMode.MOVE)) {
-							if (db.hasContent(coordinateType)) {
-								try {
-									this.delete(
-											(Coordinate) db
-													.getContent(coordinateType),
-											false);
-								} catch (MoneyException e) {
-									e.printStackTrace();
-								} catch (EditException e) {
-									toast("L'appareil n'a pas été supprimé correctement !",
-											Color.DARKRED, 5d);
-									e.printStackTrace();
-								}
-							}
-						}
-					});
-
 					devicesBuild.getChildren().add(display);
 				}
 			}
 		});
-	}
-
-	/**
-	 * Build a device of the given Type at the given Coordinate.
-	 * 
-	 * @param type       the type of the device to build
-	 * @param coords     the coordinate where to build the device
-	 * @param ignoreCost if the cost of the operation should be ignored
-	 * @throws MoneyException if there isn't enough money (only if
-	 *                        ignoreCost is set to false)
-	 * @throws EditException  if an error occurs during the operation
-	 */
-	public void build(Type type, Coordinate coords, boolean ignoreCost)
-			throws MoneyException, EditException {
-
-		try {
-			final Device device = findDevice(coords);
-
-			// Throwing possible exceptions before doing anything
-			if (!device.getModel().getType().equals(BaseTypes.FLOOR)) {
-				throw new EditException(
-						"A device can only be built on a floor.");
-			}
-			if (type.equals(BaseTypes.FLOOR)) {
-				throw new EditException(
-						"A floor cannot be build. Use the delete method instead.");
-			}
-			if (!coords
-					.isInGrid(currentGame.getGridSize())) {
-				throw new EditException(
-						"The given coordinate is out of the grid.");
-			}
-
-			if (!ignoreCost) {
-				removeMoney(type.getPrices().getLevel1Build());
-			}
-
-			setData(device, type, Level.LEVEL_1, Direction.UP);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Delete the device founded at the given coords.
-	 * 
-	 * @param coords     the coords of the device to destroy
-	 * @param ignoreGain if the gain should be ignored
-	 * @throws MoneyException (only if ignoreGain is false) if an error
-	 *                        with the money occurs
-	 * @throws EditException  if the action couldn't not be performed
-	 */
-	public void delete(Coordinate coords, boolean ignoreGain)
-			throws MoneyException, EditException {
-
-		final Device device = findDevice(coords);
-
-		if (!coords
-				.isInGrid(currentGame.getGridSize())) {
-			throw new EditException(
-					"The given coordinate is out of the grid.");
-		}
-		if (device.getModel().getType().equals(BaseTypes.FLOOR)) {
-			throw new EditException("A floor can not be destroyed.");
-		}
-
-		if (!ignoreGain) {
-			addMoney(device.getDeletePrice());
-		}
-
-		setData(device, BaseTypes.FLOOR, Level.LEVEL_1, Direction.UP);
-	}
-
-	public void turn(Coordinate coords) throws EditException {
-		// Todo : turn method
-	}
-
-	public void upgrade(Coordinate coords, boolean ignoreCost)
-			throws MoneyException, EditException {
-		// Todo : upgrade method
-	}
-
-	/**
-	 * Swaps the devices at the given coordinates.
-	 * 
-	 * @param first  the coordinate of the first device
-	 * @param second the coordinate of the second device
-	 * @throws EditException if an error occurs while swaping
-	 */
-	public void swap(Coordinate first, Coordinate second) {
-		final Device firstDevice = findDevice(first);
-		final Device secondDevice = findDevice(second);
-
-		final Type firstType = firstDevice.getModel().getType();
-		final Level firstLevel = firstDevice.getModel().getLevel();
-		final Direction firstDirection = firstDevice.getModel().getDirection();
-
-		final Type secondType = secondDevice.getModel().getType();
-		final Level secondLevel = secondDevice.getModel().getLevel();
-		final Direction secondDirection = secondDevice.getModel()
-				.getDirection();
-
-		setData(firstDevice, secondType, secondLevel, secondDirection);
-		setData(secondDevice, firstType, firstLevel, firstDirection);
-
-	}
-
-	private void setData(Device device, Type type, Level level,
-			Direction direction) {
-		device.setData(type, level, direction);
-		resetDragnDropBehaviour(device);
-	}
-
-	/**
-	 * Gets the cell content of the grid at the given coordinates.
-	 * 
-	 * @param location the coords
-	 * @return the node at the given coords
-	 */
-	public Device findDevice(Coordinate location) {
-		final int x = location.getX();
-		final int y = location.getY();
-
-		for (Node node : grid.getChildren()) {
-			if (GridPane.getColumnIndex(node) == x
-					&& GridPane.getRowIndex(node) == y) {
-				if (node instanceof Device) {
-					return (Device) node;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Finds in the devices' model list a device with the given x and y
-	 * coordinates. If none is found, returns null.
-	 * 
-	 * @param location
-	 * @return a deviceModel
-	 */
-	public DeviceModel findModel(Coordinate location) {
-		final List<DeviceModel> models = currentGame.getDevicesModel();
-
-		for (DeviceModel model : models) {
-			if (model.getCoordinates().propertiesEquals(location)) {
-				return model;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -808,6 +231,7 @@ public class GameController implements Initializable {
 	 * plugin).
 	 * <ul>
 	 * <li>INFO : javafx.scene.paint.Color.CORNFLOWERBLUE</li>
+	 * <li>WARNING : javafx.scene.paint.Color.DARKORANGE</li>
 	 * <li>ERROR : javafx.scene.paint.Color.DARKRED</li>
 	 * </ul>
 	 * But if you want to use your own color, make sure that it isn't too
@@ -868,118 +292,6 @@ public class GameController implements Initializable {
 				animation.playFromStart();
 			}
 		});
-
-	}
-
-	private void calculateDifference(BigInteger oldValue, BigInteger newValue) {
-		if (oldValue != null) {
-			final BigInteger difference = newValue.subtract(oldValue);
-			currentGame.setGrowPerSecond(difference);
-		}
-	}
-
-	/**
-	 * Adds money to the game
-	 * 
-	 * @param amount how many
-	 */
-	public void addMoney(BigInteger amount) throws MoneyException {
-		currentGame.addMoney(amount);
-		refreshMoney();
-	}
-
-	/**
-	 * Removes money to the game
-	 * 
-	 * @param amount how many
-	 * @throws MoneyException if there aren't enough money
-	 */
-	public void removeMoney(BigInteger amount) throws MoneyException {
-		currentGame.removeMoney(amount);
-		refreshMoney();
-	}
-
-	/**
-	 * Sets the money amount to the value given as parameter.
-	 * 
-	 * @param amount the value
-	 */
-	public void setMoney(BigInteger amount) throws MoneyException {
-		currentGame.setMoney(amount);
-		refreshMoney();
-	}
-
-	/**
-	 * Refreshes the amount money displayed by the label and update the
-	 * associated property.
-	 */
-	private void refreshMoney() {
-		argentProperty.set(getMoney());
-
-	}
-
-	/**
-	 * 
-	 * @return the money
-	 */
-	public int getGridSize() {
-		return currentGame.getGridSize();
-	}
-
-	/**
-	 * 
-	 * @return the amount of money of the game
-	 */
-	public BigInteger getMoney() {
-		return currentGame.getMoney();
-	}
-
-	/**
-	 * Saves the game
-	 * 
-	 * @throws SQLException if an error occurs when saving the game
-	 */
-	public void saveGame() throws SQLException {
-		currentGame.save();
-	}
-
-	class GameLoop implements Runnable {
-
-		private volatile boolean running = true;
-
-		@Override
-		public void run() {
-			try {
-				while (running) {
-					Thread.sleep(1000);
-					refreshMoney();
-					final BigInteger moneyBefore = currentGame.getMoney();
-					for (int i = 0; i < Device.buyersLocations.size(); i++) {
-						try {
-							findDevice(Device.buyersLocations.get(i))
-									.action(new Pack());
-							moneyLabel.setTextFill(Color.WHITE);
-						} catch (MoneyException e) {
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									moneyLabel.setTextFill(Color.DARKRED);
-								}
-							});
-
-						}
-						final BigInteger moneyAfter = currentGame.getMoney();
-						calculateDifference(moneyBefore, moneyAfter);
-					}
-				}
-			} catch (IllegalArgumentException | InterruptedException e) {
-				running = false;
-			}
-		}
-
-		public void terminate() {
-			this.running = false;
-		}
 
 	}
 
