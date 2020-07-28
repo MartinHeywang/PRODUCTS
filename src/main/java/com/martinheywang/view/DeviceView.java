@@ -91,7 +91,7 @@ public final class DeviceView extends ImageView {
 	 * the registered device.
 	 */
 	public void refresh() {
-		this.imageProperty().bind(device.getView());
+		this.setImage(device.getView());
 		this.setRotate(device.getDirection().getRotate());
 		this.setOpacity(defaultOpacityValue);
 

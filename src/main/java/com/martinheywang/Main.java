@@ -2,7 +2,14 @@ package com.martinheywang;
 
 import java.io.IOException;
 
+import com.martinheywang.model.ClassToID;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.devices.Buyer;
+import com.martinheywang.model.devices.Conveyor;
+import com.martinheywang.model.devices.Floor;
+import com.martinheywang.model.devices.LeftConveyor;
+import com.martinheywang.model.devices.RightConveyor;
+import com.martinheywang.model.devices.Seller;
 import com.martinheywang.model.mechanics.GameManager;
 import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Ingot;
@@ -50,6 +57,13 @@ public final class Main extends Application {
 		Resource.register(Product.class);
 
 		BaseTypes.values();
+
+		ClassToID.register(Buyer.class);
+		ClassToID.register(Floor.class);
+		ClassToID.register(Seller.class);
+		ClassToID.register(Conveyor.class);
+		ClassToID.register(RightConveyor.class);
+		ClassToID.register(LeftConveyor.class);
 
 		launch(args);
 	}

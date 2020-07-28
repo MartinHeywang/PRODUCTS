@@ -6,14 +6,14 @@ import java.util.List;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.resources.Resource;
+import com.martinheywang.model.templates.Template.PointerTypes;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public abstract class Transform extends Behaviour {
+public abstract class Transform extends AbstractBehaviour {
 
 	public Transform(Device device, GameController controller) {
 		super(device, controller);

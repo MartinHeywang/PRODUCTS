@@ -6,21 +6,25 @@ import java.util.List;
 
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
-import com.martinheywang.model.types.Type;
+import com.martinheywang.model.templates.Template;
+import com.martinheywang.model.templates.TemplateModel;
+import com.martinheywang.model.types.info.PricesModule;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
 
 /**
  * @author Martin Heywang
  */
-public final class Device {
+public abstract class Device {
 
 	/**
 	 * The buyers locations references the location on the grid of all the
@@ -28,13 +32,12 @@ public final class Device {
 	 */
 	public static List<Coordinate> buyersLocations = new ArrayList<>();
 
-	private GameManager gameManager;
+	// The model is the persistent data of the device
+	protected final DeviceModel model;
 
-	private final ObjectProperty<Type> typeProperty;
-	private final ObjectProperty<Direction> directionProperty;
-	private final ObjectProperty<Level> levelProperty;
-	private final ObjectProperty<Coordinate> positionProperty;
-	private final ObjectProperty<Game> gameProperty;
+	// The next is created each time we load the game
+	protected GameManager gameManager;
+	protected Template template;
 
 	private BooleanProperty activeProperty = new SimpleBooleanProperty(false);
 
@@ -47,19 +50,68 @@ public final class Device {
 	 * @param position  the position
 	 * @param game      the game
 	 */
-	public Device(Type type, Direction direction, Level level,
-			Coordinate position, Game game) {
-
-		this.typeProperty = new SimpleObjectProperty<>(type);
-		this.directionProperty = new SimpleObjectProperty<>(direction);
-		this.levelProperty = new SimpleObjectProperty<>(level);
-		this.positionProperty = new SimpleObjectProperty<>(position);
-		this.gameProperty = new SimpleObjectProperty<>(game);
+	Device(DeviceModel model) {
+		this.model = model;
 	}
 
+	/**
+	 * Defines the GameManager that this Device object will give to its
+	 * behaviour to perform actions.
+	 * 
+	 * @param gameManager
+	 */
 	public void manageWith(GameManager gameManager) {
 		this.gameManager = gameManager;
 	}
+
+	public abstract void act(Pack resources) throws MoneyException;
+
+	/**
+	 * Returns the accesible name (shown in the UI) of this device.
+	 * 
+	 * @return the name
+	 */
+	public abstract String getAccesibleName();
+
+	/**
+	 * Returns the description of this device (shown in the UI).
+	 * 
+	 * @return the description
+	 */
+	public abstract String getDescription();
+
+	/**
+	 * Returns a Prices modules that defines the prices for each state of
+	 * this device type.
+	 * 
+	 * @return the prices
+	 */
+	public abstract PricesModule getPrices();
+
+	/**
+	 * Returns as a BigInteger the cost of this device when it performs it
+	 * actions properly.
+	 * 
+	 * @return the action cost
+	 */
+	public abstract BigInteger getActionCost();
+
+	/**
+	 * Returns the template mode used by this device.
+	 * 
+	 * @return the template model
+	 */
+	public abstract TemplateModel getTemplateModel();
+
+	/**
+	 * Returns a <code>javafx.scene.image.Image</code> that corresponds to
+	 * a view of this device.
+	 * 
+	 * @return the view
+	 */
+	public abstract Image getView();
+
+	public abstract boolean isBuildable();
 
 	/**
 	 * Returns the valid delete price key for this device.
@@ -67,7 +119,7 @@ public final class Device {
 	 * @return a string
 	 */
 	private String getDeletePriceKey() {
-		return this.levelProperty.get().toString().toLowerCase() + "_delete";
+		return this.levelProperty().get().toString().toLowerCase() + "_delete";
 	}
 
 	/**
@@ -76,7 +128,7 @@ public final class Device {
 	 * @return a string
 	 */
 	private String getUpgradePriceKey() {
-		return this.levelProperty.get().getNext().toString().toLowerCase()
+		return this.levelProperty().get().getNext().toString().toLowerCase()
 				+ "_build";
 	}
 
@@ -87,7 +139,7 @@ public final class Device {
 	 */
 	public BigInteger getDeletePrice() {
 		final String key = getDeletePriceKey();
-		return this.typeProperty.get().getPrices().getPriceFromKey(key);
+		return this.getPrices().getPriceFromKey(key);
 	}
 
 	/**
@@ -97,58 +149,37 @@ public final class Device {
 	 */
 	public BigInteger getUpgradePrice() {
 		final String key = getUpgradePriceKey();
-		return this.typeProperty.get().getPrices().getPriceFromKey(key);
-	}
-
-	/**
-	 * Generates a {@link Image} of this Device and returns it.
-	 * 
-	 * @return a view of this Device
-	 */
-	public ObjectProperty<Image> getView() {
-		// Get the image from the type provider class
-		return new SimpleObjectProperty<Image>(
-				new Image(typeProperty.get().getClass()
-						.getResourceAsStream("/images" +
-								levelProperty.get().getURL()
-								+ typeProperty.get().getURL())));
+		return this.getPrices().getPriceFromKey(key);
 	}
 
 	// PROPERTIES GETTERs
 
 	/**
-	 * @return the type property
-	 */
-	public ObjectProperty<Type> typeProperty() {
-		return typeProperty;
-	}
-
-	/**
 	 * @return the direction property
 	 */
 	public ObjectProperty<Direction> directionProperty() {
-		return directionProperty;
+		return model.directionProperty();
 	}
 
 	/**
 	 * @return the level property
 	 */
 	public ObjectProperty<Level> levelProperty() {
-		return levelProperty;
+		return model.levelProperty();
 	}
 
 	/**
 	 * @return the position property
 	 */
-	public ObjectProperty<Coordinate> positionProperty() {
-		return positionProperty;
+	public ReadOnlyObjectProperty<Coordinate> positionProperty() {
+		return model.positionProperty();
 	}
 
 	/**
 	 * @return the game property
 	 */
-	public ObjectProperty<Game> gameProperty() {
-		return gameProperty;
+	public ReadOnlyObjectProperty<Game> gameProperty() {
+		return model.gameProperty();
 	}
 
 	/**
@@ -162,18 +193,10 @@ public final class Device {
 
 	/**
 	 * 
-	 * @return the type of this Device object.
-	 */
-	public Type getType() {
-		return typeProperty.get();
-	}
-
-	/**
-	 * 
 	 * @return the direction of this Device object.
 	 */
 	public Direction getDirection() {
-		return directionProperty.get();
+		return model.getDirection();
 	}
 
 	/**
@@ -181,7 +204,7 @@ public final class Device {
 	 * @return the level of this Device object.
 	 */
 	public Level getLevel() {
-		return levelProperty.get();
+		return model.getLevel();
 	}
 
 	/**
@@ -189,7 +212,7 @@ public final class Device {
 	 * @return the position of this Device object.
 	 */
 	public Coordinate getPosition() {
-		return positionProperty.get();
+		return model.getPosition();
 	}
 
 	/**
@@ -197,7 +220,7 @@ public final class Device {
 	 * @return the game of this Device object.
 	 */
 	public Game getGame() {
-		return gameProperty.get();
+		return model.getGame();
 	}
 
 	/**
@@ -210,38 +233,17 @@ public final class Device {
 	// SETTERs
 
 	/**
-	 * @param newType the new type
-	 */
-	public void setType(Type newType) {
-		typeProperty.set(newType);
-	}
-
-	/**
 	 * @param newDirection the new direction
 	 */
 	public void setDirection(Direction newDirection) {
-		directionProperty.set(newDirection);
+		model.setDirection(newDirection);
 	}
 
 	/**
 	 * @param newLevel the new level
 	 */
 	public void setLevel(Level newLevel) {
-		levelProperty.set(newLevel);
-	}
-
-	/**
-	 * @param newPosition the new position
-	 */
-	public void setPosition(Coordinate newPosition) {
-		positionProperty.set(newPosition);
-	}
-
-	/**
-	 * @param newGame the new game
-	 */
-	public void setGame(Game newGame) {
-		gameProperty.set(newGame);
+		model.setLevel(newLevel);
 	}
 
 	/**

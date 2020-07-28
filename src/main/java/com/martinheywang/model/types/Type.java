@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.pf4j.ExtensionPoint;
 
-import com.martinheywang.model.behaviours.Behaviour;
+import com.martinheywang.model.behaviours.AbstractBehaviour;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Template.TemplateModel;
+import com.martinheywang.model.templates.TemplateModel;
 import com.martinheywang.model.types.info.PricesModule;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
@@ -73,7 +73,7 @@ public interface Type extends Displayable<Type>, ExtensionPoint {
 	 * 
 	 * @return
 	 */
-	public Class<? extends Behaviour> getBehaviourClass();
+	public Class<? extends AbstractBehaviour> getBehaviourClass();
 
 	/**
 	 * Returns the set of args that will be given to the behaviour class

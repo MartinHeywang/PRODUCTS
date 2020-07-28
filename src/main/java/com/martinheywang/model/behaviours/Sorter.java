@@ -9,7 +9,7 @@ import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public class Sorter extends Behaviour {
+public class Sorter extends AbstractBehaviour {
 
 	public Sorter(Device device, GameController controller) {
 		super(device, controller);

@@ -9,7 +9,7 @@ import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public final class Floor extends Behaviour {
+public final class Floor extends AbstractBehaviour {
 
 	public Floor(Device device, GameController controller) {
 		super(device, controller);

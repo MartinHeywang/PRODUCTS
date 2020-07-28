@@ -7,10 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.level.Level;
-import com.martinheywang.model.types.BaseTypes;
 import com.martinheywang.toolbox.MoneyFormat;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
@@ -105,16 +105,17 @@ public class Game implements Displayable<Game> {
 	 * 
 	 * @return a list of all devices of this game
 	 */
-	public List<Device> getDevices() {
-		List<Device> devices = new ArrayList<>();
+	public List<DeviceModel> getDevicesModel() {
+		List<DeviceModel> devicesModel = new ArrayList<>();
+
 		// Todo: load available devices
 		for (int x = 0; x < getGridSize(); x++) {
 			for (int y = 0; y < getGridSize(); y++) {
-				devices.add(new Device(BaseTypes.FLOOR, Direction.UP,
-						Level.LEVEL_1, new Coordinate(x, y), this));
+				devicesModel.add(new DeviceModel(Floor.class, Level.LEVEL_1,
+						Direction.UP, this, new Coordinate(x, y)));
 			}
 		}
-		return devices;
+		return devicesModel;
 	}
 
 	/**

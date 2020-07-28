@@ -1,11 +1,13 @@
 package com.martinheywang.model.mechanics;
 
+import java.math.BigInteger;
 import java.util.Collection;
 
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.types.BaseTypes;
+import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.paint.Color;
@@ -41,7 +43,7 @@ public final class GameManager {
 		this.game = game;
 
 		// DEVICE MANAGER
-		this.deviceManager = new DeviceManager(game.getDevices(), this);
+		this.deviceManager = new DeviceManager(game.getDevicesModel(), this);
 		Collection<Device> devices = deviceManager.getDevices().toCollection();
 		for (Device device : devices) {
 			// Assign the current game manager to all devices
@@ -57,6 +59,48 @@ public final class GameManager {
 		// GAME LOOP STUFF
 		gameLoop = new GameLoop();
 		gameThread = new Thread(gameLoop);
+	}
+
+	/**
+	 * Performs an action at the given coordinate
+	 * 
+	 * @param from      the coordinate of the device requesting the action
+	 * @param to        the coordinate of the requested device
+	 * @param resources the resources to pass to the requested device.
+	 */
+	public void performAction(Coordinate from, Coordinate to, Pack resources) {
+		try {
+			deviceManager.getDevice(to).act(resources);
+		} catch (MoneyException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the amount of money currently available in the game.
+	 * 
+	 * @return
+	 */
+	public BigInteger getMoney() {
+		return game.getMoney();
+	}
+
+	/**
+	 * Adds money to the game
+	 * 
+	 * @param value the amount to add
+	 */
+	public void addMoney(BigInteger value) {
+		game.setMoney(game.getMoney().add(value));
+	}
+
+	/**
+	 * Removes money to the game
+	 * 
+	 * @param value the amount to remove
+	 */
+	public void removeMoney(BigInteger value) {
+		game.setMoney(game.getMoney().subtract(value));
 	}
 
 	/**
@@ -134,10 +178,7 @@ public final class GameManager {
 					Device buyer = deviceManager.getDevices().get(pos.getX(),
 							pos.getY());
 
-					// Check if the type is a buyer, as expected
-					if (buyer.getType().equals(BaseTypes.BUYER)) {
-						// Todo: active device
-					}
+					// Todo : active buyer
 				}
 			} while (autoMode);
 		}

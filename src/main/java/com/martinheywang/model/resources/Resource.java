@@ -187,6 +187,15 @@ public interface Resource extends Displayable<Resource> {
 		}
 	}
 
+	public default Field getField() {
+		try {
+			return this.getClass().getField(toString());
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public default String toText() {
 		return this.getClass().toString().substring(6) + "." + toString();
 	}

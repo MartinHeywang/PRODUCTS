@@ -9,15 +9,15 @@ import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.resources.DefaultResource;
 import com.martinheywang.model.resources.Resource;
+import com.martinheywang.model.templates.Template.PointerTypes;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public class Constructor extends Behaviour {
+public class Constructor extends AbstractBehaviour {
 
 	public static List<Resource> acceptedResources = new ArrayList<Resource>();
 

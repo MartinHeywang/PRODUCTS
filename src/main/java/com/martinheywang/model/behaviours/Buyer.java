@@ -9,12 +9,13 @@ import java.util.List;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
-import com.martinheywang.model.resources.DefaultResource;
+import com.martinheywang.model.mechanics.GameManager;
+import com.martinheywang.model.resources.Buyable;
+import com.martinheywang.model.resources.Ore;
 import com.martinheywang.model.resources.Resource;
+import com.martinheywang.model.templates.Template.PointerTypes;
 import com.martinheywang.view.Displayer;
-import com.martinheywang.view.GameController;
 import com.martinheywang.view.components.Carousel;
 import com.martinheywang.view.components.Carousel.CarouselEvent;
 
@@ -24,17 +25,18 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 /**
+ * The Buyer is behaviour that buys the resources and send them to
+ * next Device in the assembly line.
+ * 
  * @author Martin Heywang
- *
  */
-public class Buyer extends Behaviour {
+public final class Buyer extends AbstractBehaviour {
 
 	/**
 	 * This {@link List} defines which Resource are accepted by this
 	 * device and which are not. It has a set of default, but you can add
-	 * and remove some by calling
-	 * {@link Buyer#addAcceptedResource(Resource)} or
-	 * {@link Buyer#removeAcceptedResource(Resource)}.
+	 * and remove some by calling {@link Buyer#addAcceptedResource(Pack)}
+	 * or {@link Buyer#removeAcceptedResource(Pack)}.
 	 * 
 	 * @see Resource
 	 */
@@ -42,18 +44,13 @@ public class Buyer extends Behaviour {
 
 	private Pack distributedResource;
 
-	public Buyer(Device device, GameController controller) {
-		super(device, controller);
-
-		distributedResource = new Pack(DefaultResource.NONE,
-				new BigInteger("0"),
-				device.getModel());
+	public Buyer(Device device, GameManager gameManager) {
+		super(device, gameManager);
 
 		try {
 			loadDistributedResource();
 		} catch (SQLException e) {
-			System.err.println(e.getLocalizedMessage());
-
+			e.printStackTrace();
 		}
 	}
 
@@ -64,48 +61,57 @@ public class Buyer extends Behaviour {
 	 * @throws SQLException if an error with the database occurs.
 	 */
 	private void loadDistributedResource() throws SQLException {
-		// Todo : load resource
+		// Todo : load distributed resource
+		distributedResource = new Pack(Ore.IRON, new BigInteger("1"));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void action(Pack resATraiter)
+	public void act(Pack resATraiter)
 			throws MoneyException {
-
-		// distributedResource.setQuantity(0);
-		//
-		// for (int niveau = 0; niveau < this.level.getValue(); niveau++) {
-		//
-		// if (controller.getMoney()
-		// .compareTo(BigInteger
-		// .valueOf(5 + Device.getElectricity())) == -1)
-		// throw new MoneyException();
-		// else {
-		// if (!distributedResource.getResource()
-		// .equals(BaseResources.NONE)) {
-		// distributedResource.addQuantity(1);
-		// device.activate();
-		// controller.removeMoney(
-		// BigInteger.valueOf(5 + Device.getElectricity()));
-		// controller.findDevice(pointer).action(distributedResource);
-		// }
-		// }
-		// }
-
 		try {
-			final Coordinate exit = template.getPointersFor(PointerTypes.EXIT)
-					.get(0);
-
-			if (!exit.isInGrid(controller.getGridSize())) {
+			// Check if the resource is valid one (if the resource is buyable).
+			if (!distributedResource.getResource()
+					.hasAnnotation(Buyable.class)) {
 				return;
 			}
+			/*
+			 * <?> What the hell is that ?? If we are here, the distributed
+			 * resource has already been checked (the resource is buyable). The
+			 * line below fetches the cost of this resource using the same
+			 * annotation.
+			 */
+			final BigInteger resourceCost = new BigInteger(
+					distributedResource.getResource()
+							.getField().getAnnotation(Buyable.class).price());
 
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("A buyer must have at least one exit.");
-			e.printStackTrace();
+			// Here we check if we actually have enough money using the
+			// compareTo method
+			if (gameManager.getMoney()
+					.compareTo(resourceCost.add(getActionCost())) == -1) {
+				// We don't have enough money (:sad-guy:)
+				throw new MoneyException();
+			}
+
+			final Coordinate output = this.template
+					.getPointersFor(PointerTypes.ENTRY).get(0);
+
+			// Call the next device.
+			gameManager.performAction(getPosition(), output,
+					distributedResource);
+
+		} catch (IndexOutOfBoundsException e) {
+			System.err.println("The Device at " + getPosition()
+					+ " has no valid exit, but was asking for one. Skipping.");
+			return;
 		}
-
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Node> getWidgets() {
 
@@ -152,7 +158,6 @@ public class Buyer extends Behaviour {
 	public void setDistributedResource(Pack pack) {
 		if (acceptedResources.contains(pack.getResource())) {
 			this.distributedResource.setResource(pack.getResource());
-
 			this.distributedResource.setQuantity(pack.getQuantity());
 		}
 

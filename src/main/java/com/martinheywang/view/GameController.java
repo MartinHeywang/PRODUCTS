@@ -7,6 +7,8 @@ import com.martinheywang.Main;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
@@ -119,8 +121,10 @@ public class GameController implements Initializable {
 				Device device = devices.get(x, y);
 				// If a Device doesn't exists, create a new FLOOR
 				if (device == null) {
-					device = new Device(BaseTypes.FLOOR, Direction.UP,
-							Level.LEVEL_1, new Coordinate(x, y), game);
+					device = new DeviceModel(Floor.class, Level.LEVEL_1,
+							Direction.UP,
+							game, new Coordinate(x, y))
+									.instantiate();
 				}
 				grid.add(new DeviceView(device), x, y);
 			}

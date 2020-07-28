@@ -11,7 +11,7 @@ import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public class Seller extends Behaviour {
+public class Seller extends AbstractBehaviour {
 
 	public Seller(Device device, GameController controller) {
 		super(device, controller);

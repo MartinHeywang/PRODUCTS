@@ -6,14 +6,14 @@ import java.util.List;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.Template.PointerTypes;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
+import com.martinheywang.model.templates.Template.PointerTypes;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.Node;
 
-public class Conveyor extends Behaviour {
+public class Conveyor extends AbstractBehaviour {
 
 	private Level level;
 	private GameController controller;

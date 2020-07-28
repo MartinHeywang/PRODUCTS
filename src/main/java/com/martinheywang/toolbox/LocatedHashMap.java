@@ -83,4 +83,11 @@ public class LocatedHashMap<K, V> {
 	public int size() {
 		return map.size();
 	}
+
+	/**
+	 * Empties the map and delete all the keys and all the values.
+	 */
+	public void clearAll() {
+		map.clear();
+	}
 }
