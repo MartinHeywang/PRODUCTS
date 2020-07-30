@@ -1,13 +1,16 @@
 package com.martinheywang.model.mechanics;
 
 import java.math.BigInteger;
-import java.util.Collection;
 
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Floor;
+import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.exceptions.MoneyException;
+import com.martinheywang.model.level.Level;
 import com.martinheywang.view.GameController;
 
 import javafx.scene.paint.Color;
@@ -44,11 +47,6 @@ public final class GameManager {
 
 		// DEVICE MANAGER
 		this.deviceManager = new DeviceManager(game.getDevicesModel(), this);
-		Collection<Device> devices = deviceManager.getDevices().toCollection();
-		for (Device device : devices) {
-			// Assign the current game manager to all devices
-			device.manageWith(this);
-		}
 
 		// GAME CONTROLLER -> the scene controller (view updates)
 		this.gameController = gameController;
@@ -76,13 +74,61 @@ public final class GameManager {
 		}
 	}
 
+	public void performReplacement(DeviceModel model) {
+		final Coordinate position = model.getPosition();
+		deviceManager.replace(model.getType(), model.getLevel(),
+				model.getDirection(), position);
+		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
+	public void build(Class<? extends Device> clazz, Coordinate position) {
+		deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
+		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
+	public void delete(Coordinate position) {
+		deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP,
+				position);
+		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
+	public void turn(Coordinate position) {
+		final Direction newDirection = deviceManager.getDevice(position)
+				.getDirection().getNext();
+
+		// Replace with the same device but with the new direction
+		deviceManager.replace(deviceManager.getDevice(position).getClass(),
+				deviceManager.getDevice(position).getLevel(), newDirection,
+				position);
+		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
+	public void upgrade(Coordinate position) {
+		final Level newLevel = deviceManager.getDevice(position).getLevel()
+				.getNext();
+
+		// Replace with the same device but with the new level
+		deviceManager.replace(deviceManager.getDevice(position).getClass(),
+				newLevel, deviceManager.getDevice(position).getDirection(),
+				position);
+		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
 	/**
 	 * Returns the amount of money currently available in the game.
 	 * 
-	 * @return
+	 * @return the amount of money
 	 */
 	public BigInteger getMoney() {
 		return game.getMoney();
+	}
+
+	/**
+	 * 
+	 * @return the managed game
+	 */
+	public Game getGame() {
+		return game;
 	}
 
 	/**

@@ -1,17 +1,22 @@
 package com.martinheywang.model.devices;
 
-import java.math.BigInteger;
-
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.devices.annotations.AccessibleName;
+import com.martinheywang.model.devices.annotations.ActionCost;
+import com.martinheywang.model.devices.annotations.Buildable;
+import com.martinheywang.model.devices.annotations.DefaultTemplate;
+import com.martinheywang.model.devices.annotations.Description;
+import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.templates.Template.PointerTypes;
-import com.martinheywang.model.templates.TemplateCreator;
-import com.martinheywang.model.templates.TemplateModel;
-import com.martinheywang.model.types.info.PricesModule;
 
-import javafx.scene.image.Image;
-
+@AccessibleName("Convoyeur")
+@Description("Le convoyeur transporte les ressources d'u point A à un point B")
+@Prices(build = "100", upgradeTo2 = "5000", upgradeTo3 = "100000", destroyAt1 = "100", destroyAt2 = "5000", destroyAt3 = "100000")
+@DefaultTemplate(top = PointerTypes.ENTRY, bottom = PointerTypes.EXIT)
+@Buildable
+@ActionCost("5")
 public class Conveyor extends Device {
 
 	public Conveyor(DeviceModel model) {
@@ -19,7 +24,7 @@ public class Conveyor extends Device {
 	}
 
 	@Override
-	public void act(Pack resources) throws MoneyException {
+	public final void act(Pack resources) throws MoneyException {
 		if (gameManager.getMoney()
 				.compareTo(getActionCost()) == -1) {
 			// We don't have enough money (:sad-guy:)
@@ -34,46 +39,6 @@ public class Conveyor extends Device {
 
 		gameManager.performAction(getPosition(), output,
 				resources);
-	}
-
-	@Override
-	public String getAccesibleName() {
-		return "Convoyeur";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Le convoyeur transporte les resources d'un point à l'autre";
-	}
-
-	@Override
-	public PricesModule getPrices() {
-		return new PricesModule("200", "5000", "100000", "200", "5000",
-				"100000");
-	}
-
-	@Override
-	public BigInteger getActionCost() {
-		return new BigInteger("5");
-	}
-
-	@Override
-	public TemplateModel getTemplateModel() {
-		return TemplateCreator.getSingleton()
-				.setTop(PointerTypes.ENTRY)
-				.setBottom(PointerTypes.EXIT)
-				.getModel();
-	}
-
-	@Override
-	public Image getView() {
-		return new Image(getClass().getResourceAsStream(
-				"/images" + getLevel().getURL() + "CONVEYOR.png"));
-	}
-
-	@Override
-	public boolean isBuildable() {
-		return true;
 	}
 
 }

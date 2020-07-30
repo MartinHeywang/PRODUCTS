@@ -1,12 +1,17 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.DeviceModel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.util.Duration;
 
 /**
@@ -29,6 +34,9 @@ public final class DeviceView extends ImageView {
 	private static final double activeOpacityValue = .9d;
 	private static final double defaultGlowAmount = .0d;
 	private static final double hoverGlowAmount = .3d;
+
+	private static final DataFormat deviceModelFormat = new DataFormat(
+			"deviceModel");
 
 	/**
 	 * The Device used to build this view.
@@ -84,6 +92,61 @@ public final class DeviceView extends ImageView {
 
 		// ON CLICK
 		// Todo DeviceView on click behaviour
+		this.setOnMouseClicked(event -> {
+			// Turn on right click
+			if (event.isSecondaryButtonDown())
+				device.turn();
+		});
+
+		// ON DRAG
+		this.setOnDragDetected(event -> {
+			Dragboard db = this.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+			ClipboardContent content = new ClipboardContent();
+
+			content.put(deviceModelFormat, device.getModel());
+			content.putImage(getImage());
+
+			db.setContent(content);
+
+		});
+		this.setOnDragOver(event -> {
+			event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+		});
+		this.setOnDragEntered(event -> {
+			/* the drag-and-drop gesture entered the target */
+			/* show to the user that it is an actual gesture target */
+			this.setEffect(new Glow(hoverGlowAmount));
+
+			event.consume();
+		});
+		this.setOnDragExited(event -> {
+			/* the drag-and-drop gesture entered the target */
+			/* show to the user that it is an actual gesture target */
+			this.setEffect(new Glow(defaultGlowAmount));
+
+			event.consume();
+		});
+		this.setOnDragDropped(event -> {
+			/* data dropped */
+			/* if there is a string data on dragboard, read it and use it */
+			Dragboard db = event.getDragboard();
+			boolean success = false;
+			if (db.hasContent(deviceModelFormat)) {
+				success = true;
+				final DeviceModel model = (DeviceModel) db
+						.getContent(deviceModelFormat);
+				device.setType(model.getType());
+
+			}
+
+			/*
+			 * let the source know whether the string was successfully
+			 * transferred and used
+			 */
+			event.setDropCompleted(success);
+
+			event.consume();
+		});
 	}
 
 	/**

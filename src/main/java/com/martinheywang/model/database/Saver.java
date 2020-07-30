@@ -51,7 +51,7 @@ public final class Saver {
 			throws SQLException {
 		final Dao<DeviceModel, ?> dao = Database.createDao(DeviceModel.class);
 		dao.createOrUpdate(model);
-		saveCoordinate(model.getCoordinates());
+		saveCoordinate(model.getPosition());
 
 		if (cascadeActivated) {
 			final Game associatedGame = model.getGame();
@@ -92,11 +92,6 @@ public final class Saver {
 	public final static void savePack(Pack pack) throws SQLException {
 		final Dao<Pack, ?> dao = Database.createDao(Pack.class);
 		dao.createOrUpdate(pack);
-
-		if (cascadeActivated) {
-			final Game associatedGame = pack.getDeviceModel().getGame();
-			saveGame(associatedGame);
-		}
 	}
 
 	/**

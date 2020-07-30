@@ -22,7 +22,7 @@
    <children>
       <AnchorPane>
          <children>
-            <ScrollPane pannable="true" fx:id="scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+            <ScrollPane fx:id="scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                <content>
                   <GridPane fx:id="grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>

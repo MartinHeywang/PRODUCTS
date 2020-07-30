@@ -43,8 +43,7 @@ public final class Database {
 
 			DataPersisterManager
 					.registerDataPersisters(
-							ResourcePersister.getInstance(),
-							TypePersister.getInstance());
+							ResourcePersister.getInstance());
 
 			TableUtils.createTableIfNotExists(connection, Game.class);
 			TableUtils.createTableIfNotExists(connection, Pack.class);

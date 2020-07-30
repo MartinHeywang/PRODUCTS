@@ -4,16 +4,20 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.martinheywang.model.ClassToID;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.devices.annotations.AccessibleName;
+import com.martinheywang.model.devices.annotations.ActionCost;
+import com.martinheywang.model.devices.annotations.DefaultTemplate;
+import com.martinheywang.model.devices.annotations.Description;
+import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
 import com.martinheywang.model.templates.Template;
-import com.martinheywang.model.templates.TemplateModel;
-import com.martinheywang.model.types.info.PricesModule;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -24,6 +28,11 @@ import javafx.scene.image.Image;
 /**
  * @author Martin Heywang
  */
+@AccessibleName
+@Description
+@Prices(build = "0", upgradeTo2 = "0", upgradeTo3 = "0", destroyAt1 = "0", destroyAt2 = "0", destroyAt3 = "0")
+@DefaultTemplate
+@ActionCost
 public abstract class Device {
 
 	/**
@@ -31,6 +40,7 @@ public abstract class Device {
 	 * buyers of the current game.
 	 */
 	public static List<Coordinate> buyersLocations = new ArrayList<>();
+	public static List<Class<? extends Device>> subclasses = new ArrayList<>();
 
 	// The model is the persistent data of the device
 	protected final DeviceModel model;
@@ -64,55 +74,53 @@ public abstract class Device {
 		this.gameManager = gameManager;
 	}
 
+	/**
+	 * Do whatever the device is meant to do when it is called by the
+	 * previous device in the assembly line. In most cases, you should
+	 * call the next device to keep the idea of an assembly line.
+	 * 
+	 * @param resources the resource given by the previous device
+	 * @throws MoneyException whenever the game doesn't have enough money
+	 *                        (don't forget to check that)
+	 */
 	public abstract void act(Pack resources) throws MoneyException;
 
 	/**
-	 * Returns the accesible name (shown in the UI) of this device.
-	 * 
-	 * @return the name
-	 */
-	public abstract String getAccesibleName();
-
-	/**
-	 * Returns the description of this device (shown in the UI).
-	 * 
-	 * @return the description
-	 */
-	public abstract String getDescription();
-
-	/**
-	 * Returns a Prices modules that defines the prices for each state of
-	 * this device type.
-	 * 
-	 * @return the prices
-	 */
-	public abstract PricesModule getPrices();
-
-	/**
-	 * Returns as a BigInteger the cost of this device when it performs it
-	 * actions properly.
+	 * Parses the value of the @ActionCost annotation into a BigInteger,
+	 * or return 5 if such an annotation isn't present.
 	 * 
 	 * @return the action cost
 	 */
-	public abstract BigInteger getActionCost();
+	protected BigInteger getActionCost() {
+		if (this.getClass().isAnnotationPresent(ActionCost.class)) {
+			return new BigInteger(
+					getClass().getAnnotation(ActionCost.class).value());
+		}
+		return new BigInteger("5");
+	}
 
-	/**
-	 * Returns the template mode used by this device.
-	 * 
-	 * @return the template model
+	protected PricesModule getPrices() {
+		if (this.getClass().isAnnotationPresent(Prices.class)) {
+			Prices annotation = getClass().getAnnotation(Prices.class);
+			return new PricesModule(annotation.build(),
+					annotation.upgradeTo2(), annotation.upgradeTo3(),
+					annotation.destroyAt1(), annotation.destroyAt2(),
+					annotation.destroyAt3());
+		}
+		return new PricesModule("0", "0", "0", "0", "0", "0");
+	}
+
+	public Image getView() {
+		final String url = "/images/devices_level_1/"
+				+ getClass().getSimpleName().toUpperCase()
+				+ ".png";
+		return new Image(url);
+	}
+
+	/*
+	 * The following methods (about keys) creates and returns kays to find
+	 * the appropriate prices in the #getPrices().
 	 */
-	public abstract TemplateModel getTemplateModel();
-
-	/**
-	 * Returns a <code>javafx.scene.image.Image</code> that corresponds to
-	 * a view of this device.
-	 * 
-	 * @return the view
-	 */
-	public abstract Image getView();
-
-	public abstract boolean isBuildable();
-
 	/**
 	 * Returns the valid delete price key for this device.
 	 * 
@@ -193,6 +201,14 @@ public abstract class Device {
 
 	/**
 	 * 
+	 * @return the model (persistent data)
+	 */
+	public DeviceModel getModel() {
+		return model;
+	}
+
+	/**
+	 * 
 	 * @return the direction of this Device object.
 	 */
 	public Direction getDirection() {
@@ -232,18 +248,22 @@ public abstract class Device {
 
 	// SETTERs
 
-	/**
-	 * @param newDirection the new direction
-	 */
-	public void setDirection(Direction newDirection) {
-		model.setDirection(newDirection);
+	public void setType(Class<? extends Device> clazz) {
+		gameManager.build(clazz, getPosition());
 	}
 
 	/**
-	 * @param newLevel the new level
+	 * Turns the device in the next direction
 	 */
-	public void setLevel(Level newLevel) {
-		model.setLevel(newLevel);
+	public void turn() {
+		gameManager.turn(getPosition());
+	}
+
+	/**
+	 * Upgrades the device to next level, if one exists
+	 */
+	public void upgrade() {
+		gameManager.upgrade(getPosition());
 	}
 
 	/**
@@ -253,6 +273,13 @@ public abstract class Device {
 	 */
 	public void setActive(boolean active) {
 		activeProperty.set(active);
+	}
+
+	public static void registerType(Class<? extends Device> clazz) {
+		if (!subclasses.contains(clazz)) {
+			subclasses.add(clazz);
+			ClassToID.register(clazz);
+		}
 	}
 
 }

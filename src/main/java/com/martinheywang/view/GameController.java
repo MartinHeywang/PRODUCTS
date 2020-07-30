@@ -9,11 +9,11 @@ import com.martinheywang.model.Game;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
+import com.martinheywang.model.devices.annotations.AccessibleName;
+import com.martinheywang.model.devices.annotations.Buildable;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
-import com.martinheywang.model.types.BaseTypes;
-import com.martinheywang.model.types.Type;
 import com.martinheywang.toolbox.ArrayList2D;
 import com.martinheywang.toolbox.MoneyFormat;
 
@@ -23,9 +23,12 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -139,6 +142,34 @@ public class GameController implements Initializable {
 		moneyLabel.setText(game.getMoney().toString());
 	}
 
+	public void replaceDevice(Device device) {
+		final int x = device.getPosition().getX();
+		final int y = device.getPosition().getY();
+
+		grid.add(new DeviceView(device), x, y);
+
+		grid.getChildren().remove(this.findDeviceView(x, y));
+	}
+
+	/**
+	 * Iterrates over the grid's children to find a DeviceView matching
+	 * the given x and y position. If none is found, returns null.
+	 * 
+	 * @param x the x pos of the requested device view
+	 * @param y the y pos of the requested device view
+	 * @return the device view at the given position, if found.
+	 */
+	private DeviceView findDeviceView(int x, int y) {
+		for (Node node : grid.getChildrenUnmodifiable()) {
+			if (node instanceof DeviceView) {
+				if (GridPane.getColumnIndex(node) == x
+						&& GridPane.getRowIndex(node) == y)
+					return (DeviceView) node;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Hides the grid with a nice opacity transition.<br>
 	 * Should be executed on the JavaFx Application Thread (using
@@ -215,15 +246,36 @@ public class GameController implements Initializable {
 	 */
 	private void prepareToolbar() {
 		Platform.runLater(() -> {
-			for (Type type : Type.getReferences()) {
-				if (!type.equals(BaseTypes.FLOOR)) {
-					Displayer<Type> display = type.getDisplayer();
-					display.getStyleClass().add("selectable");
-					display.addHoverEffect();
-					display.setFocusTraversable(true);
+			for (Class<? extends Device> clazz : Device.subclasses) {
+				if (clazz.isAnnotationPresent(Buildable.class)) {
 
-					devicesBuild.getChildren().add(display);
+					final HBox deviceUI = new HBox();
+					/*
+					 * The image of the device must be found in the resource
+					 * folder, then in
+					 * images/devices_level_1/<class_name_to_upper_case>.png
+					 */
+					final String url = clazz
+							.getResource("/images/devices_level_1/"
+									+ clazz.getSimpleName().toUpperCase()
+									+ ".png")
+							.toExternalForm();
+					final ImageView view = new ImageView(url);
+					view.setFitWidth(40d);
+					view.setFitHeight(40d);
+
+					// All subclasses of Device has this annotation, don't need
+					// to test this.
+					final Label label = new Label(
+							clazz.getAnnotation(AccessibleName.class).value());
+
+					deviceUI.setSpacing(10d);
+					deviceUI.getChildren().addAll(view, label);
+					deviceUI.setAlignment(Pos.CENTER_LEFT);
+
+					devicesBuild.getChildren().add(deviceUI);
 				}
+				devicesBuild.setSpacing(5d);
 			}
 		});
 	}

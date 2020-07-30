@@ -1,5 +1,7 @@
 package com.martinheywang.model.devices;
 
+import java.io.Serializable;
+
 import com.martinheywang.model.ClassToID;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
@@ -18,7 +20,14 @@ import javafx.beans.property.StringProperty;
  * 
  * @author Heywang
  */
-public class DeviceModel {
+public class DeviceModel implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2570229030947566969L;
+
+	private Long id;
 
 	private StringProperty classIdProperty;
 	private ObjectProperty<Level> levelProperty;
@@ -92,12 +101,19 @@ public class DeviceModel {
 
 	// GETTERs
 
+	public Long getID() {
+		return id;
+	}
+
 	/**
 	 * 
 	 * @return the type of this Device object.
 	 */
-	public Class<?> getType() {
-		return ClassToID.IDToClass(classIdProperty.get());
+	public Class<? extends Device> getType() {
+		@SuppressWarnings("unchecked")
+		Class<? extends Device> clazz = (Class<? extends Device>) ClassToID
+				.IDToClass(classIdProperty.get());
+		return clazz;
 	}
 
 	/**

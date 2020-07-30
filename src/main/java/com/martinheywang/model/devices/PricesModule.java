@@ -1,4 +1,4 @@
-package com.martinheywang.model.types.info;
+package com.martinheywang.model.devices;
 
 import java.math.BigInteger;
 import java.util.HashMap;

@@ -6,16 +6,23 @@ import java.util.List;
 
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.devices.annotations.AccessibleName;
+import com.martinheywang.model.devices.annotations.ActionCost;
+import com.martinheywang.model.devices.annotations.Buildable;
+import com.martinheywang.model.devices.annotations.DefaultTemplate;
+import com.martinheywang.model.devices.annotations.Description;
+import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.resources.Buyable;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.model.templates.Template.PointerTypes;
-import com.martinheywang.model.templates.TemplateCreator;
-import com.martinheywang.model.templates.TemplateModel;
-import com.martinheywang.model.types.info.PricesModule;
 
-import javafx.scene.image.Image;
-
+@Buildable
+@ActionCost("5")
+@AccessibleName("Acheteur")
+@Description("Il achète les ressources et les envoit au prochain appareil.")
+@DefaultTemplate(bottom = PointerTypes.EXIT)
+@Prices(build = "500", destroyAt1 = "450", destroyAt2 = "9000", destroyAt3 = "140000", upgradeTo2 = "10000", upgradeTo3 = "150000")
 public final class Buyer extends Device {
 
 	private Pack distributedResource;
@@ -68,45 +75,6 @@ public final class Buyer extends Device {
 
 		gameManager.performAction(getPosition(), output,
 				distributedResource);
-	}
-
-	@Override
-	public String getAccesibleName() {
-		return "Acheteur";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Achète les resources de bases. Se trouve généralement au début des lignes d'assemblage";
-	}
-
-	@Override
-	public PricesModule getPrices() {
-		return new PricesModule("500", "10000", "150000", "400", "9500",
-				"140000");
-	}
-
-	@Override
-	public TemplateModel getTemplateModel() {
-		return TemplateCreator.getSingleton()
-				.setBottom(PointerTypes.EXIT)
-				.getModel();
-	}
-
-	@Override
-	public Image getView() {
-		return new Image(getClass().getResourceAsStream(
-				"/images" + getLevel().getURL() + "BUYER.png"));
-	}
-
-	@Override
-	public BigInteger getActionCost() {
-		return new BigInteger("5");
-	}
-
-	@Override
-	public boolean isBuildable() {
-		return true;
 	}
 
 	/**

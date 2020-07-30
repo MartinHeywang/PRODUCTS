@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.martinheywang.model.behaviours.Buyer;
-import com.martinheywang.model.behaviours.Furnace;
-import com.martinheywang.model.behaviours.Press;
-import com.martinheywang.model.behaviours.WireDrawer;
+import com.martinheywang.model.devices.Buyer;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
@@ -214,16 +211,6 @@ public interface Resource extends Displayable<Resource> {
 
 					if (field.isAnnotationPresent(Buyable.class)) {
 						Buyer.addAcceptedResource((Resource) field.get(null));
-					}
-					if (field.isAnnotationPresent(ToWire.class)) {
-						WireDrawer.addAcceptedResource(
-								(Resource) field.get(null));
-					}
-					if (field.isAnnotationPresent(ToPlate.class)) {
-						Press.addAcceptedResource((Resource) field.get(null));
-					}
-					if (field.isAnnotationPresent(ToIngot.class)) {
-						Furnace.addAcceptedResource((Resource) field.get(null));
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
