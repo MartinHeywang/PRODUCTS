@@ -130,8 +130,8 @@ public abstract class Device {
 		return new Image(getClass().getResourceAsStream(url));
 	}
 
-	/* The next in the class are edits. There are two types of them : the
-	 * external edits and the internal edits.
+	/* The next thing in the class are edits. There are two types of them
+	 * : the external edits and the internal edits.
 	 * 
 	 * The external edits are generally replacements, like build are
 	 * destroy, that requires the GameManager to perform the action.
@@ -169,6 +169,16 @@ public abstract class Device {
 			gameManager.toast("Vous n'avez pas assez d'argent !",
 					Color.ORANGERED, 4d);
 		}
+	}
+
+	public void destroy() {
+		// Error checking
+		if (this.getClass().equals(Floor.class)) {
+			/* A floor cannot be destroyed */
+			return;
+		}
+
+		gameManager.destroy(getPosition(), getLevel());
 	}
 
 	/* The following methods (about keys) creates and returns keys to find
@@ -299,20 +309,6 @@ public abstract class Device {
 	}
 
 	// SETTERs
-
-	/**
-	 * Turns the device in the next direction
-	 */
-	public void turn() {
-		gameManager.turn(getPosition());
-	}
-
-	/**
-	 * Upgrades the device to next level, if one exists
-	 */
-	public void upgrade() {
-		gameManager.upgrade(getPosition());
-	}
 
 	/**
 	 * Sets the value of the property isActive

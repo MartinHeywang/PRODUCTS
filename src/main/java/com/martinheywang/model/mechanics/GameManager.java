@@ -6,7 +6,6 @@ import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.direction.Direction;
@@ -51,6 +50,7 @@ public final class GameManager {
 
 		// GAME CONTROLLER -> the scene controller (view updates)
 		this.gameController = gameController;
+		this.gameController.setGameManager(this);
 		this.gameController.toast("Bienvenue !",
 				Color.DODGERBLUE, 10d);
 		this.gameController.loadGame(this.deviceManager.getDevices(), game);
@@ -75,13 +75,13 @@ public final class GameManager {
 		}
 	}
 
-	public void performReplacement(DeviceModel model) {
-		final Coordinate position = model.getPosition();
-		deviceManager.replace(model.getType(), model.getLevel(),
-				model.getDirection(), position);
-		gameController.replaceDevice(deviceManager.getDevice(position));
-	}
-
+	/**
+	 * Builds a device of the given type at the given position.
+	 * 
+	 * @param clazz    the type of the device to build
+	 * @param position where
+	 * @throws MoneyException if we don't have enough money
+	 */
 	public void build(Class<? extends Device> clazz, Coordinate position)
 			throws MoneyException {
 		final BigInteger actionPrice = new BigInteger(
@@ -96,30 +96,41 @@ public final class GameManager {
 		gameController.replaceDevice(deviceManager.getDevice(position));
 	}
 
-	public void delete(Coordinate position) {
+	/**
+	 * Destroys the Device at the given coordinate and replaces it by a
+	 * floor.
+	 * 
+	 * @param position where
+	 * @param level    the level of the device to destroy - used to
+	 *                 determine the gain
+	 */
+	public void destroy(Coordinate position, Level level) {
+		Class<? extends Device> oldClass = deviceManager.getDevice(position)
+				.getClass();
+		if (oldClass.equals(Floor.class))
+			return;
+
+		BigInteger actionGain = new BigInteger("0");
+		switch (level) {
+		case LEVEL_1:
+			actionGain = new BigInteger(
+					oldClass.getAnnotation(Prices.class).destroyAt1());
+			break;
+		case LEVEL_2:
+			actionGain = new BigInteger(
+					oldClass.getAnnotation(Prices.class).destroyAt2());
+			break;
+		case LEVEL_3:
+			actionGain = new BigInteger(
+					oldClass.getAnnotation(Prices.class).destroyAt3());
+			break;
+
+		}
+
+		game.setMoney(game.getMoney().add(actionGain));
+
+		// Update model and view
 		deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP,
-				position);
-		gameController.replaceDevice(deviceManager.getDevice(position));
-	}
-
-	public void turn(Coordinate position) {
-		final Direction newDirection = deviceManager.getDevice(position)
-				.getDirection().getNext();
-
-		// Replace with the same device but with the new direction
-		deviceManager.replace(deviceManager.getDevice(position).getClass(),
-				deviceManager.getDevice(position).getLevel(), newDirection,
-				position);
-		gameController.replaceDevice(deviceManager.getDevice(position));
-	}
-
-	public void upgrade(Coordinate position) {
-		final Level newLevel = deviceManager.getDevice(position).getLevel()
-				.getNext();
-
-		// Replace with the same device but with the new level
-		deviceManager.replace(deviceManager.getDevice(position).getClass(),
-				newLevel, deviceManager.getDevice(position).getDirection(),
 				position);
 		gameController.replaceDevice(deviceManager.getDevice(position));
 	}

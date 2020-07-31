@@ -36,6 +36,8 @@ public final class DeviceView extends ImageView {
 
 	static final DataFormat classFormat = new DataFormat(
 			"class");
+	static final DataFormat coordinateFormat = new DataFormat("coordinate");
+	static final DataFormat levelFormat = new DataFormat("level");
 
 	/**
 	 * The Device used to build this view.
@@ -98,6 +100,8 @@ public final class DeviceView extends ImageView {
 			ClipboardContent content = new ClipboardContent();
 
 			content.put(classFormat, device.getClass());
+			content.put(coordinateFormat, device.getPosition());
+			content.put(levelFormat, device.getLevel());
 			content.putImage(getImage());
 
 			db.setContent(content);
@@ -129,6 +133,7 @@ public final class DeviceView extends ImageView {
 					final Class<? extends Device> type = (Class<? extends Device>) db
 							.getContent(classFormat);
 					device.build(type);
+					event.setDropCompleted(true);
 				}
 			}
 			if (event.getTransferMode().equals(TransferMode.MOVE)) {

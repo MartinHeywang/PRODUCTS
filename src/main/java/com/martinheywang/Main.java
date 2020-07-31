@@ -45,9 +45,8 @@ public final class Main extends Application {
 	public static void main(String[] args) {
 		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
 
-		/*
-		 * <?> Registering resources means making the game able to use them.
-		 */
+		/* <?> Registering resources means making the game able to use
+		 * them. */
 		Resource.register(DefaultResource.class);
 		Resource.register(Ore.class);
 		Resource.register(Plate.class);
@@ -165,7 +164,6 @@ public final class Main extends Application {
 			stage.setMinHeight(600d);
 
 			GameController controller = loader.getController();
-			controller.setMainApp(this);
 
 			GameManager manager = new GameManager(controller, game);
 			manager.start();

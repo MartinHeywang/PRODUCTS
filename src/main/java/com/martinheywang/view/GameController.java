@@ -3,7 +3,6 @@ package com.martinheywang.view;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.martinheywang.Main;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.devices.Device;
@@ -53,7 +52,7 @@ public class GameController implements Initializable {
 	 * Instance of Main used to changed the view for example (return to
 	 * home...)
 	 */
-	private Main main;
+	private GameManager gameManager;
 
 	@FXML
 	private ScrollPane scrollpane;
@@ -112,13 +111,8 @@ public class GameController implements Initializable {
 		prepareToolbar();
 	}
 
-	/**
-	 * This method sets which instance of main should be used.
-	 * 
-	 * @param main the instance of main
-	 */
-	public void setMainApp(Main main) {
-		this.main = main;
+	public void setGameManager(GameManager gM) {
+		this.gameManager = gM;
 	}
 
 	public void loadGame(ArrayList2D<Device> devices, Game game) {
@@ -277,6 +271,7 @@ public class GameController implements Initializable {
 					deviceUI.setAlignment(Pos.CENTER_LEFT);
 					deviceUI.setPadding(new Insets(2d, 5d, 2d, 5d));
 
+					// DRAG BEHAVIOUR
 					deviceUI.setOnDragDetected(event -> {
 						final Dragboard db = deviceUI
 								.startDragAndDrop(TransferMode.COPY);
@@ -295,6 +290,25 @@ public class GameController implements Initializable {
 					devicesBuild.getChildren().add(deviceUI);
 				}
 				devicesBuild.setSpacing(5d);
+
+				options.setOnDragOver(event -> {
+					event.acceptTransferModes(TransferMode.MOVE);
+				});
+				options.setOnDragDropped(event -> {
+					if (event.getTransferMode().equals(TransferMode.MOVE)) {
+						final Dragboard db = event.getDragboard();
+
+						if (db.hasContent(DeviceView.coordinateFormat)
+								&& db.hasContent(DeviceView.levelFormat)) {
+							final Coordinate coord = (Coordinate) db
+									.getContent(DeviceView.coordinateFormat);
+							final Level level = (Level) db
+									.getContent(DeviceView.levelFormat);
+							this.gameManager.destroy(coord, level);
+							event.setDropCompleted(true);
+						}
+					}
+				});
 			}
 		});
 	}
