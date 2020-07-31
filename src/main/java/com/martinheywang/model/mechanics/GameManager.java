@@ -8,6 +8,7 @@ import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
+import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
@@ -81,7 +82,16 @@ public final class GameManager {
 		gameController.replaceDevice(deviceManager.getDevice(position));
 	}
 
-	public void build(Class<? extends Device> clazz, Coordinate position) {
+	public void build(Class<? extends Device> clazz, Coordinate position)
+			throws MoneyException {
+		final BigInteger actionPrice = new BigInteger(
+				clazz.getAnnotation(Prices.class).build());
+
+		if (game.getMoney().compareTo(actionPrice) == -1) {
+			throw new MoneyException("L'appareil n'a pas pu être construit");
+		}
+		game.setMoney(game.getMoney().subtract(actionPrice));
+
 		deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
 		gameController.replaceDevice(deviceManager.getDevice(position));
 	}
@@ -150,6 +160,17 @@ public final class GameManager {
 	}
 
 	/**
+	 * Displays a toast in the top right corner of the game scene.
+	 * 
+	 * @param text       the text to display
+	 * @param background the background color of the toast (in seconds)
+	 * @param seconds    the duration of the toast
+	 */
+	public void toast(String text, Color background, double seconds) {
+		gameController.toast(text, background, seconds);
+	}
+
+	/**
 	 * Starts properly the game loop in auto mode, which means that it
 	 * won't end until you stop it calling {@link #stop()}.
 	 * 
@@ -174,8 +195,7 @@ public final class GameManager {
 	 * <code>
 	 * gameManager.start();
 	 * gameManager.stop();
-	 * </code>
-	 * </pre>
+	 * </code> </pre>
 	 * 
 	 * where 'gameManager' is the current instance of the gameManager.
 	 * </p>

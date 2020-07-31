@@ -45,7 +45,7 @@
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>
                            <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #005B07;" stylesheets="@Box.css">
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #005B07;">
                                  <children>
                                     <VBox>
                                        <padding>
@@ -148,6 +148,10 @@
                                  <padding>
                                     <Insets left="20.0" right="20.0" top="10.0" />
                                  </padding>
+                                 <stylesheets>
+                                    <URL value="@Box.css" />
+                                    <URL value="@Device.css" />
+                                 </stylesheets>
                               </VBox>
                            </content>
                            <stylesheets>
@@ -162,7 +166,7 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="42.0">
+            <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" spacing="5.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="42.0">
                <stylesheets>
                   <URL value="@Box.css" />
                   <URL value="@Label.css" />

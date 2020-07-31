@@ -23,12 +23,16 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -139,7 +143,7 @@ public class GameController implements Initializable {
 		game.moneyProperty().addListener((observable, oldValue, newValue) -> {
 			moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
 		});
-		moneyLabel.setText(game.getMoney().toString());
+		moneyLabel.setText(game.getMoney().toString() + " €");
 	}
 
 	public void replaceDevice(Device device) {
@@ -250,11 +254,9 @@ public class GameController implements Initializable {
 				if (clazz.isAnnotationPresent(Buildable.class)) {
 
 					final HBox deviceUI = new HBox();
-					/*
-					 * The image of the device must be found in the resource
+					/* The image of the device must be found in the resource
 					 * folder, then in
-					 * images/devices_level_1/<class_name_to_upper_case>.png
-					 */
+					 * images/devices_level_1/<class_name_to_upper_case>.png */
 					final String url = clazz
 							.getResource("/images/devices_level_1/"
 									+ clazz.getSimpleName().toUpperCase()
@@ -268,10 +270,27 @@ public class GameController implements Initializable {
 					// to test this.
 					final Label label = new Label(
 							clazz.getAnnotation(AccessibleName.class).value());
+					label.setWrapText(true);
 
 					deviceUI.setSpacing(10d);
 					deviceUI.getChildren().addAll(view, label);
 					deviceUI.setAlignment(Pos.CENTER_LEFT);
+					deviceUI.setPadding(new Insets(2d, 5d, 2d, 5d));
+
+					deviceUI.setOnDragDetected(event -> {
+						final Dragboard db = deviceUI
+								.startDragAndDrop(TransferMode.COPY);
+						final ClipboardContent content = new ClipboardContent();
+
+						content.put(DeviceView.classFormat, clazz);
+						content.putImage(view.getImage());
+
+						db.setContent(content);
+
+						event.consume();
+					});
+
+					deviceUI.getStyleClass().add("device-build-displayer");
 
 					devicesBuild.getChildren().add(deviceUI);
 				}

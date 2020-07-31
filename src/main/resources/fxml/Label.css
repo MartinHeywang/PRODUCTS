@@ -45,7 +45,7 @@ Label.toast{
 	-fx-font-weight: bold;
 	-fx-text-fill: white;
 	-fx-wrap-text: true;
-	-fx-alignment: top-right;
+	-fx-alignment: top-left;
 	
 	-fx-opacity: 0.9;
 	

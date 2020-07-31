@@ -10,10 +10,12 @@ import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.annotations.AccessibleName;
 import com.martinheywang.model.devices.annotations.ActionCost;
+import com.martinheywang.model.devices.annotations.Buildable;
 import com.martinheywang.model.devices.annotations.DefaultTemplate;
 import com.martinheywang.model.devices.annotations.Description;
 import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.direction.Direction;
+import com.martinheywang.model.exceptions.EditException;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
@@ -24,6 +26,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 /**
  * @author Martin Heywang
@@ -99,28 +102,77 @@ public abstract class Device {
 		return new BigInteger("5");
 	}
 
+	/**
+	 * Returns a prices modules that get you the information you need
+	 * about the prices of this device type.
+	 * 
+	 * @return a prices modules
+	 */
 	protected PricesModule getPrices() {
 		if (this.getClass().isAnnotationPresent(Prices.class)) {
 			Prices annotation = getClass().getAnnotation(Prices.class);
-			return new PricesModule(annotation.build(),
-					annotation.upgradeTo2(), annotation.upgradeTo3(),
+			return new PricesModule(annotation.build(), annotation.upgradeTo2(),
+					annotation.upgradeTo3(),
 					annotation.destroyAt1(), annotation.destroyAt2(),
 					annotation.destroyAt3());
 		}
 		return new PricesModule("0", "0", "0", "0", "0", "0");
 	}
 
+	/**
+	 * Returns the view used by the device view.
+	 * 
+	 * @return the view
+	 */
 	public Image getView() {
-		final String url = "/images/devices_level_1/"
-				+ getClass().getSimpleName().toUpperCase()
-				+ ".png";
-		return new Image(url);
+		final String url = "/images" + getLevel().getURL()
+				+ getClass().getSimpleName().toUpperCase() + ".png";
+		return new Image(getClass().getResourceAsStream(url));
 	}
 
-	/*
-	 * The following methods (about keys) creates and returns kays to find
-	 * the appropriate prices in the #getPrices().
+	/* The next in the class are edits. There are two types of them : the
+	 * external edits and the internal edits.
+	 * 
+	 * The external edits are generally replacements, like build are
+	 * destroy, that requires the GameManager to perform the action.
+	 * 
+	 * The internal edits edits the level or the direction, and don't
+	 * requires a call to the GameManager. */
+
+	// EXTERNAL EDITS
+
+	/**
+	 * Builds the given type on this device (replaces it), if all the
+	 * condition are valid.
+	 * 
+	 * @param type the class of the type to build
+	 * @throws EditException if we are not allowed to do something
 	 */
+	public void build(Class<? extends Device> type) {
+		// Error checking
+		if (!type.isAnnotationPresent(Buildable.class))
+			/* If the type isn't buildable (as floors). */
+			return;
+		if (!this.getClass().equals(Floor.class)) {
+			/* <?> Floor are normal devices, and it is the only type that can
+			 * receive build. Here we must check if we are effectively trying to
+			 * build something on a floor, and throw an exception if not. */
+			gameManager.toast("Vous ne pouvez construire que sur des sols.",
+					Color.DARKORANGE, 4d);
+			return;
+		}
+
+		// Call the build method
+		try {
+			gameManager.build(type, getPosition());
+		} catch (MoneyException e) {
+			gameManager.toast("Vous n'avez pas assez d'argent !",
+					Color.ORANGERED, 4d);
+		}
+	}
+
+	/* The following methods (about keys) creates and returns keys to find
+	 * the appropriate prices in the #getPrices(). */
 	/**
 	 * Returns the valid delete price key for this device.
 	 * 
@@ -247,10 +299,6 @@ public abstract class Device {
 	}
 
 	// SETTERs
-
-	public void setType(Class<? extends Device> clazz) {
-		gameManager.build(clazz, getPosition());
-	}
 
 	/**
 	 * Turns the device in the next direction

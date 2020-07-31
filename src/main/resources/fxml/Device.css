@@ -1,0 +1,12 @@
+/*
+ * This stylesheet applies to all the Device stuff : displayers, 
+ * pop-ups, device view...
+*/
+
+.device-build-displayer{
+	-fx-background-color: #005B07;
+}
+.device-build-displayer:hover {
+	-fx-background-color: #007208;
+	-fx-cursor: hand;
+}

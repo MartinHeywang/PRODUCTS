@@ -1,7 +1,6 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.devices.Device;
-import com.martinheywang.model.devices.DeviceModel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -35,8 +34,8 @@ public final class DeviceView extends ImageView {
 	private static final double defaultGlowAmount = .0d;
 	private static final double hoverGlowAmount = .3d;
 
-	private static final DataFormat deviceModelFormat = new DataFormat(
-			"deviceModel");
+	static final DataFormat classFormat = new DataFormat(
+			"class");
 
 	/**
 	 * The Device used to build this view.
@@ -92,18 +91,13 @@ public final class DeviceView extends ImageView {
 
 		// ON CLICK
 		// Todo DeviceView on click behaviour
-		this.setOnMouseClicked(event -> {
-			// Turn on right click
-			if (event.isSecondaryButtonDown())
-				device.turn();
-		});
 
 		// ON DRAG
 		this.setOnDragDetected(event -> {
-			Dragboard db = this.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+			Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
 			ClipboardContent content = new ClipboardContent();
 
-			content.put(deviceModelFormat, device.getModel());
+			content.put(classFormat, device.getClass());
 			content.putImage(getImage());
 
 			db.setContent(content);
@@ -127,25 +121,19 @@ public final class DeviceView extends ImageView {
 			event.consume();
 		});
 		this.setOnDragDropped(event -> {
-			/* data dropped */
-			/* if there is a string data on dragboard, read it and use it */
-			Dragboard db = event.getDragboard();
-			boolean success = false;
-			if (db.hasContent(deviceModelFormat)) {
-				success = true;
-				final DeviceModel model = (DeviceModel) db
-						.getContent(deviceModelFormat);
-				device.setType(model.getType());
+			final Dragboard db = event.getDragboard();
 
+			if (event.getTransferMode().equals(TransferMode.COPY)) {
+				if (db.hasContent(classFormat)) {
+					@SuppressWarnings("unchecked")
+					final Class<? extends Device> type = (Class<? extends Device>) db
+							.getContent(classFormat);
+					device.build(type);
+				}
 			}
-
-			/*
-			 * let the source know whether the string was successfully
-			 * transferred and used
-			 */
-			event.setDropCompleted(success);
-
-			event.consume();
+			if (event.getTransferMode().equals(TransferMode.MOVE)) {
+				// Todo : move devices
+			}
 		});
 	}
 
