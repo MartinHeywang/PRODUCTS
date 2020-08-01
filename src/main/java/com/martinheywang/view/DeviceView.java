@@ -1,6 +1,7 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.exceptions.EditException;
 
 import javafx.animation.KeyFrame;
@@ -59,12 +60,14 @@ public final class DeviceView extends ImageView {
 		this.setRotate(device.getDirection().getRotate());
 
 		// ON HOVER
-		this.setOnMouseEntered(event -> {
-			this.setEffect(new Glow(hoverGlowAmount));
-		});
-		this.setOnMouseExited(event -> {
-			this.setEffect(new Glow(defaultGlowAmount));
-		});
+		if (!device.getClass().equals(Floor.class)) {
+			this.setOnMouseEntered(event -> {
+				this.setEffect(new Glow(hoverGlowAmount));
+			});
+			this.setOnMouseExited(event -> {
+				this.setEffect(new Glow(defaultGlowAmount));
+			});
+		}
 
 		// ON ACTIVE (when the Device just act)
 		this.device.activeProperty().addListener(
@@ -95,35 +98,39 @@ public final class DeviceView extends ImageView {
 				});
 
 		// ON CLICK
-		this.setOnMouseClicked(event -> {
-			if (event.getButton() == MouseButton.SECONDARY) {
-				// Right click = turn.
-				device.turn();
+		if (!device.getClass().equals(Floor.class))
+			this.setOnMouseClicked(event -> {
+				if (event.getButton() == MouseButton.SECONDARY) {
+					// Right click = turn.
+					device.turn();
 
-			} else if (event.getClickCount() >= 2) {
-				// Double click = upgrade
+				} else if (event.getClickCount() >= 2) {
+					// Double click = upgrade
 
-				try {
-					device.upgrade();
-				} catch (EditException e) {
-					e.printStackTrace();
+					try {
+						device.upgrade();
+					} catch (EditException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
 
 		// ON DRAG
-		this.setOnDragDetected(event -> {
-			Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
-			ClipboardContent content = new ClipboardContent();
+		if (!device.getClass().equals(Floor.class)) {
+			this.setOnDragDetected(event -> {
+				Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
+				ClipboardContent content = new ClipboardContent();
 
-			content.put(classFormat, device.getClass());
-			content.put(coordinateFormat, device.getPosition());
-			content.put(levelFormat, device.getLevel());
-			content.putImage(getImage());
+				content.put(classFormat, device.getClass());
+				content.put(coordinateFormat, device.getPosition());
+				content.put(levelFormat, device.getLevel());
+				content.putImage(getImage());
 
-			db.setContent(content);
+				db.setContent(content);
 
-		});
+			});
+
+		}
 		this.setOnDragOver(event -> {
 			event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 		});
