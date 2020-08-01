@@ -93,7 +93,7 @@ public final class GameManager {
 		game.setMoney(game.getMoney().subtract(actionPrice));
 
 		deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
-		gameController.replaceDevice(deviceManager.getDevice(position));
+		refreshViewAt(position);
 	}
 
 	/**
@@ -132,6 +132,15 @@ public final class GameManager {
 		// Update model and view
 		deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP,
 				position);
+		refreshViewAt(position);
+	}
+
+	/**
+	 * Refreshes the view of the device at the given coords.
+	 * 
+	 * @param position where
+	 */
+	public void refreshViewAt(Coordinate position) {
 		gameController.replaceDevice(deviceManager.getDevice(position));
 	}
 
@@ -157,8 +166,8 @@ public final class GameManager {
 	 * 
 	 * @param value the amount to add
 	 */
-	public void addMoney(BigInteger value) {
-		game.setMoney(game.getMoney().add(value));
+	public void addMoney(BigInteger value) throws MoneyException {
+		removeMoney(value.negate());
 	}
 
 	/**
@@ -166,7 +175,10 @@ public final class GameManager {
 	 * 
 	 * @param value the amount to remove
 	 */
-	public void removeMoney(BigInteger value) {
+	public void removeMoney(BigInteger value) throws MoneyException {
+		if (getMoney().compareTo(value) == -1)
+			throw new MoneyException();
+
 		game.setMoney(game.getMoney().subtract(value));
 	}
 

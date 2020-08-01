@@ -1,6 +1,7 @@
 package com.martinheywang.view;
 
 import com.martinheywang.model.devices.Device;
+import com.martinheywang.model.exceptions.EditException;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.util.Duration;
 
@@ -52,8 +54,9 @@ public final class DeviceView extends ImageView {
 	public DeviceView(Device device) {
 		this.device = device;
 
-		// Refreshes to avoid duplicating code
-		refresh();
+		this.imageProperty().bind(device.getView());
+		this.setOpacity(defaultOpacityValue);
+		this.setRotate(device.getDirection().getRotate());
 
 		// ON HOVER
 		this.setOnMouseEntered(event -> {
@@ -92,7 +95,21 @@ public final class DeviceView extends ImageView {
 				});
 
 		// ON CLICK
-		// Todo DeviceView on click behaviour
+		this.setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.SECONDARY) {
+				// Right click = turn.
+				device.turn();
+
+			} else if (event.getClickCount() >= 2) {
+				// Double click = upgrade
+
+				try {
+					device.upgrade();
+				} catch (EditException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		// ON DRAG
 		this.setOnDragDetected(event -> {
@@ -140,17 +157,6 @@ public final class DeviceView extends ImageView {
 				// Todo : move devices
 			}
 		});
-	}
-
-	/**
-	 * Refreshes this view by retrieving the eventually modified values of
-	 * the registered device.
-	 */
-	public void refresh() {
-		this.setImage(device.getView());
-		this.setRotate(device.getDirection().getRotate());
-		this.setOpacity(defaultOpacityValue);
-
 	}
 
 }

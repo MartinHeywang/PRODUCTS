@@ -25,6 +25,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -54,6 +55,9 @@ public abstract class Device {
 
 	private BooleanProperty activeProperty = new SimpleBooleanProperty(false);
 
+	/* The view is updated on upgrade and on turn */
+	private ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
+
 	/**
 	 * Creates a new Device.
 	 * 
@@ -65,6 +69,13 @@ public abstract class Device {
 	 */
 	Device(DeviceModel model) {
 		this.model = model;
+
+		refreshView();
+	}
+
+	private void refreshView() {
+		imageProperty.set(new Image(
+				getClass().getResourceAsStream(getURL())));
 	}
 
 	/**
@@ -124,22 +135,14 @@ public abstract class Device {
 	 * 
 	 * @return the view
 	 */
-	public Image getView() {
-		final String url = "/images" + getLevel().getURL()
-				+ getClass().getSimpleName().toUpperCase() + ".png";
-		return new Image(getClass().getResourceAsStream(url));
+	public ObjectProperty<Image> getView() {
+		return imageProperty;
 	}
 
-	/* The next thing in the class are edits. There are two types of them
-	 * : the external edits and the internal edits.
-	 * 
-	 * The external edits are generally replacements, like build are
-	 * destroy, that requires the GameManager to perform the action.
-	 * 
-	 * The internal edits edits the level or the direction, and don't
-	 * requires a call to the GameManager. */
-
-	// EXTERNAL EDITS
+	public String getURL() {
+		return "/images" + getLevel().getURL()
+				+ getClass().getSimpleName().toLowerCase() + ".png";
+	}
 
 	/**
 	 * Builds the given type on this device (replaces it), if all the
@@ -171,6 +174,10 @@ public abstract class Device {
 		}
 	}
 
+	/**
+	 * Destroys the device and replace it with a floor, on which we can
+	 * once again build a Device.
+	 */
 	public void destroy() {
 		// Error checking
 		if (this.getClass().equals(Floor.class)) {
@@ -179,6 +186,39 @@ public abstract class Device {
 		}
 
 		gameManager.destroy(getPosition(), getLevel());
+	}
+
+	/**
+	 * Turns the device properly.
+	 */
+	public void turn() {
+		this.model.setDirection(this.model.getDirection().getNext());
+
+		gameManager.refreshViewAt(getPosition());
+	}
+
+	/**
+	 * Upgrades the device properly.
+	 */
+	public void upgrade() throws EditException {
+		if (this.getClass().equals(Floor.class))
+			throw new EditException();
+
+		final BigInteger actionCost = this.getUpgradePrice();
+
+		try {
+			gameManager.removeMoney(actionCost);
+		} catch (MoneyException e) {
+			gameManager.toast(
+					"Vous n'avez pas assez d'argent! (" + actionCost
+							+ " € demandés)",
+					Color.ORANGERED, 4d);
+			return;
+		}
+
+		this.model.setLevel(this.model.getLevel().getNext());
+		refreshView();
+
 	}
 
 	/* The following methods (about keys) creates and returns keys to find
