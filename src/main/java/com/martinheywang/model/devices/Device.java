@@ -23,7 +23,6 @@ import com.martinheywang.model.templates.Template;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
@@ -221,6 +220,21 @@ public abstract class Device {
 
 	}
 
+	/**
+	 * <p>
+	 * Swaps the device with the next device that call this method.
+	 * </p>
+	 * <p>
+	 * Register the device coords as 'want to swap' in the game manager
+	 * and performs the action
+	 * </p>
+	 * 
+	 * @see GameManager#swap(Coordinate)
+	 */
+	public void swap() {
+		gameManager.swap(getPosition());
+	}
+
 	/* The following methods (about keys) creates and returns keys to find
 	 * the appropriate prices in the #getPrices(). */
 	/**
@@ -229,7 +243,7 @@ public abstract class Device {
 	 * @return a string
 	 */
 	private String getDeletePriceKey() {
-		return this.levelProperty().get().toString().toLowerCase() + "_delete";
+		return this.getLevel().toString().toLowerCase() + "_delete";
 	}
 
 	/**
@@ -238,7 +252,7 @@ public abstract class Device {
 	 * @return a string
 	 */
 	private String getUpgradePriceKey() {
-		return this.levelProperty().get().getNext().toString().toLowerCase()
+		return this.getLevel().getNext().toString().toLowerCase()
 				+ "_build";
 	}
 
@@ -260,43 +274,6 @@ public abstract class Device {
 	public BigInteger getUpgradePrice() {
 		final String key = getUpgradePriceKey();
 		return this.getPrices().getPriceFromKey(key);
-	}
-
-	// PROPERTIES GETTERs
-
-	/**
-	 * @return the direction property
-	 */
-	public ObjectProperty<Direction> directionProperty() {
-		return model.directionProperty();
-	}
-
-	/**
-	 * @return the level property
-	 */
-	public ObjectProperty<Level> levelProperty() {
-		return model.levelProperty();
-	}
-
-	/**
-	 * @return the position property
-	 */
-	public ReadOnlyObjectProperty<Coordinate> positionProperty() {
-		return model.positionProperty();
-	}
-
-	/**
-	 * @return the game property
-	 */
-	public ReadOnlyObjectProperty<Game> gameProperty() {
-		return model.gameProperty();
-	}
-
-	/**
-	 * @return the active property
-	 */
-	public BooleanProperty activeProperty() {
-		return activeProperty;
 	}
 
 	// GETTERs
@@ -346,6 +323,14 @@ public abstract class Device {
 	 */
 	public boolean isActive() {
 		return activeProperty.get();
+	}
+
+	/**
+	 * 
+	 * @return the active property
+	 */
+	public BooleanProperty activeProperty() {
+		return activeProperty;
 	}
 
 	// SETTERs

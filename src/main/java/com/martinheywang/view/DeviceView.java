@@ -132,17 +132,17 @@ public final class DeviceView extends ImageView {
 			/* show to the user that it is an actual gesture target */
 			this.setEffect(new Glow(hoverGlowAmount));
 
-			event.consume();
 		});
 		this.setOnDragExited(event -> {
 			/* the drag-and-drop gesture entered the target */
 			/* show to the user that it is an actual gesture target */
 			this.setEffect(new Glow(defaultGlowAmount));
 
-			event.consume();
 		});
 		this.setOnDragDropped(event -> {
 			final Dragboard db = event.getDragboard();
+
+			boolean success = false;
 
 			if (event.getTransferMode().equals(TransferMode.COPY)) {
 				if (db.hasContent(classFormat)) {
@@ -150,11 +150,29 @@ public final class DeviceView extends ImageView {
 					final Class<? extends Device> type = (Class<? extends Device>) db
 							.getContent(classFormat);
 					device.build(type);
-					event.setDropCompleted(true);
+					success = true;
 				}
+			} else if (event.getTransferMode().equals(TransferMode.MOVE)) {
+				device.swap();
+				success = true;
 			}
-			if (event.getTransferMode().equals(TransferMode.MOVE)) {
-				// Todo : move devices
+
+			event.setDropCompleted(success);
+
+			event.consume();
+		});
+		this.setOnDragDone(event -> {
+			// If the other target was a DeviceView
+			try {
+				if (event.getTarget().getClass().equals(DeviceView.class)) {
+					if (event.getTransferMode().equals(TransferMode.MOVE)) {
+						device.swap();
+					}
+				}
+			} catch (NullPointerException e) {
+				/* If an error occurs during the drag'n drop gesture, the event
+				 * is not properly set, that means that the properties are not
+				 * accesible and throws this error */
 			}
 		});
 	}

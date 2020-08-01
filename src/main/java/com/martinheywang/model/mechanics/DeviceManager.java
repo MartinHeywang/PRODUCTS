@@ -50,6 +50,11 @@ public final class DeviceManager {
 		return devices.get(to.getX(), to.getY());
 	}
 
+	public void setDevice(Device device, Coordinate to) {
+		devices.set(device, to.getX(), to.getY());
+		device.getModel().setPosition(to);
+	}
+
 	public void replace(Class<? extends Device> clazz, Level level,
 			Direction direction, Coordinate position) {
 		// Create the new device

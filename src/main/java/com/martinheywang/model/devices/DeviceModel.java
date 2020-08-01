@@ -2,21 +2,25 @@ package com.martinheywang.model.devices;
 
 import java.io.Serializable;
 
-import com.martinheywang.model.ClassToID;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.level.Level;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 /**
+ * <p>
  * The DeviceModel class is a persistable class that stores all the
  * data about a Device.
+ * </p>
+ * <p>
+ * This class is able to instantiate a device from all its fields. To
+ * do a such thing, call the {@link #instantiate()} method.
+ * </p>
+ * <p>
+ * This way should be the only one, because you could break the game
+ * and create a Device from a DeviceModel that register a different
+ * class. (:sad:)
+ * </p>
  * 
  * @author Heywang
  */
@@ -29,30 +33,34 @@ public class DeviceModel implements Serializable {
 
 	private Long id;
 
-	private StringProperty classIdProperty;
-	private ObjectProperty<Level> levelProperty;
-	private ObjectProperty<Direction> directionProperty;
-	private ReadOnlyObjectProperty<Game> gameProperty;
-	private ReadOnlyObjectProperty<Coordinate> positionProperty;
+	private Class<? extends Device> clazz;
+	private Level level;
+	private Direction direction;
+	private Game game;
+	private Coordinate position;
 
 	public DeviceModel() {
 	}
 
+	/**
+	 * @param clazz     the class of the device
+	 * @param level     the level
+	 * @param direction the direction
+	 * @param game      the game
+	 * @param position  the position
+	 */
 	public DeviceModel(Class<? extends Device> clazz, Level level,
 			Direction direction, Game game, Coordinate position) {
-		classIdProperty = new SimpleStringProperty(ClassToID.classToID(clazz));
-		levelProperty = new SimpleObjectProperty<>(level);
-		directionProperty = new SimpleObjectProperty<>(direction);
-		gameProperty = new SimpleObjectProperty<>(game);
-		positionProperty = new SimpleObjectProperty<>(position);
+		this.clazz = clazz;
+		this.level = level;
+		this.direction = direction;
+		this.game = game;
+		this.position = position;
 	}
 
 	public Device instantiate() {
 		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Device> clazz = (Class<? extends Device>) ClassToID
-					.IDToClass(classIdProperty.get());
-			final Device device = clazz
+			final Device device = this.clazz
 					.getConstructor(DeviceModel.class)
 					.newInstance(this);
 			return device;
@@ -60,43 +68,6 @@ public class DeviceModel implements Serializable {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	// PROPERTIES GETTERs
-
-	/**
-	 * @return the type property
-	 */
-	public StringProperty classIdProperty() {
-		return classIdProperty;
-	}
-
-	/**
-	 * @return the direction property
-	 */
-	public ObjectProperty<Direction> directionProperty() {
-		return directionProperty;
-	}
-
-	/**
-	 * @return the level property
-	 */
-	public ObjectProperty<Level> levelProperty() {
-		return levelProperty;
-	}
-
-	/**
-	 * @return the position property
-	 */
-	public ReadOnlyObjectProperty<Coordinate> positionProperty() {
-		return positionProperty;
-	}
-
-	/**
-	 * @return the game property
-	 */
-	public ReadOnlyObjectProperty<Game> gameProperty() {
-		return gameProperty;
 	}
 
 	// GETTERs
@@ -110,9 +81,6 @@ public class DeviceModel implements Serializable {
 	 * @return the type of this Device object.
 	 */
 	public Class<? extends Device> getType() {
-		@SuppressWarnings("unchecked")
-		Class<? extends Device> clazz = (Class<? extends Device>) ClassToID
-				.IDToClass(classIdProperty.get());
 		return clazz;
 	}
 
@@ -121,7 +89,7 @@ public class DeviceModel implements Serializable {
 	 * @return the direction of this Device object.
 	 */
 	public Direction getDirection() {
-		return directionProperty.get();
+		return direction;
 	}
 
 	/**
@@ -129,7 +97,7 @@ public class DeviceModel implements Serializable {
 	 * @return the level of this Device object.
 	 */
 	public Level getLevel() {
-		return levelProperty.get();
+		return level;
 	}
 
 	/**
@@ -137,7 +105,7 @@ public class DeviceModel implements Serializable {
 	 * @return the position of this Device object.
 	 */
 	public Coordinate getPosition() {
-		return positionProperty.get();
+		return position;
 	}
 
 	/**
@@ -145,7 +113,7 @@ public class DeviceModel implements Serializable {
 	 * @return the game of this Device object.
 	 */
 	public Game getGame() {
-		return gameProperty.get();
+		return game;
 	}
 
 	// SETTERs
@@ -154,21 +122,37 @@ public class DeviceModel implements Serializable {
 	 * @param newType the new type
 	 */
 	public void setType(Class<? extends Device> clazz) {
-		classIdProperty.set(ClassToID.classToID(clazz));
+		this.clazz = clazz;
 	}
 
 	/**
 	 * @param newDirection the new direction
 	 */
 	public void setDirection(Direction newDirection) {
-		directionProperty.set(newDirection);
+		this.direction = newDirection;
 	}
 
 	/**
 	 * @param newLevel the new level
 	 */
 	public void setLevel(Level newLevel) {
-		levelProperty.set(newLevel);
+		this.level = newLevel;
+	}
+
+	/**
+	 * 
+	 * @param game the new game
+	 */
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+	/**
+	 * 
+	 * @param position the new position
+	 */
+	public void setPosition(Coordinate position) {
+		this.position = position;
 	}
 
 }

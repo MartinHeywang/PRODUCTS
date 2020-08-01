@@ -34,6 +34,8 @@ public final class GameManager {
 	private final Thread gameThread;
 	private final GameLoop gameLoop;
 
+	private Coordinate toMove;
+
 	/**
 	 * Builds a new GameManager and launches the game loop in auto mode.
 	 * 
@@ -142,6 +144,36 @@ public final class GameManager {
 	 */
 	public void refreshViewAt(Coordinate position) {
 		gameController.replaceDevice(deviceManager.getDevice(position));
+	}
+
+	/**
+	 * Swaps two devices. Registers the given coordinate if none was given
+	 * before, or performs the swap if one was already there.
+	 * 
+	 * @param position where
+	 */
+	public void swap(Coordinate position) {
+		if (toMove == null) {
+			toMove = position;
+			return;
+		} else {
+			/* Perform swap (b/w toMove and position) */
+
+			// Get the devices
+			final Device first = deviceManager.getDevice(toMove);
+			final Device second = deviceManager.getDevice(position);
+
+			// Swap the coords of the devices
+			deviceManager.setDevice(first, position);
+			deviceManager.setDevice(second, toMove);
+
+			// Update the view
+			refreshViewAt(toMove);
+			refreshViewAt(position);
+
+			// Reset toMove
+			toMove = null;
+		}
 	}
 
 	/**
