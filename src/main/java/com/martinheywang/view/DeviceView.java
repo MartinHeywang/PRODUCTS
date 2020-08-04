@@ -45,7 +45,7 @@ public final class DeviceView extends ImageView {
 	/**
 	 * The Device used to build this view.
 	 */
-	private Device device;
+	private final Device device;
 
 	/**
 	 * Builds a new DeviceView.
@@ -98,7 +98,7 @@ public final class DeviceView extends ImageView {
 				});
 
 		// ON CLICK
-		if (!device.getClass().equals(Floor.class))
+		if (!device.getClass().equals(Floor.class)) {
 			this.setOnMouseClicked(event -> {
 				if (event.getButton() == MouseButton.SECONDARY) {
 					// Right click = turn.
@@ -109,22 +109,26 @@ public final class DeviceView extends ImageView {
 
 					try {
 						device.upgrade();
-					} catch (EditException e) {
+					} catch (final EditException e) {
 						e.printStackTrace();
 					}
 				}
 			});
+		}
 
 		// ON DRAG
 		if (!device.getClass().equals(Floor.class)) {
 			this.setOnDragDetected(event -> {
-				Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
-				ClipboardContent content = new ClipboardContent();
+				/*
+				 * I used MOVE to delete devices. I use link to destroy devices, and COPY to
+				 * build devices.
+				 */
+				final Dragboard db = this.startDragAndDrop(TransferMode.MOVE, TransferMode.LINK);
+				final ClipboardContent content = new ClipboardContent();
 
-				content.put(classFormat, device.getClass());
 				content.put(coordinateFormat, device.getPosition());
 				content.put(levelFormat, device.getLevel());
-				content.putImage(getImage());
+				content.putImage(this.getImage());
 
 				db.setContent(content);
 
@@ -132,7 +136,7 @@ public final class DeviceView extends ImageView {
 
 		}
 		this.setOnDragOver(event -> {
-			event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+			event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
 		});
 		this.setOnDragEntered(event -> {
 			/* the drag-and-drop gesture entered the target */
@@ -155,11 +159,11 @@ public final class DeviceView extends ImageView {
 				if (db.hasContent(classFormat)) {
 					@SuppressWarnings("unchecked")
 					final Class<? extends Device> type = (Class<? extends Device>) db
-							.getContent(classFormat);
+					.getContent(classFormat);
 					device.build(type);
 					success = true;
 				}
-			} else if (event.getTransferMode().equals(TransferMode.MOVE)) {
+			} else if (event.getTransferMode().equals(TransferMode.LINK)) {
 				device.swap();
 				success = true;
 			}
@@ -172,11 +176,11 @@ public final class DeviceView extends ImageView {
 			// If the other target was a DeviceView
 			try {
 				if (event.getTarget().getClass().equals(DeviceView.class)) {
-					if (event.getTransferMode().equals(TransferMode.MOVE)) {
+					if (event.getTransferMode().equals(TransferMode.LINK)) { // Quick review : LINK to swap devices
 						device.swap();
 					}
 				}
-			} catch (NullPointerException e) {
+			} catch (final NullPointerException e) {
 				/* If an error occurs during the drag'n drop gesture, the event
 				 * is not properly set, that means that the properties are not
 				 * accesible and throws this error */

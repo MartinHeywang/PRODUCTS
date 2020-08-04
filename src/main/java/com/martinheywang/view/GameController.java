@@ -49,6 +49,11 @@ import javafx.util.Duration;
 public class GameController implements Initializable {
 
 	/**
+	 * Is true if the options sidebar is shown
+	 */
+	private static boolean optionsSidebarShown = true;
+
+	/**
 	 * Instance of Main used to changed the view for example (return to
 	 * home...)
 	 */
@@ -62,12 +67,12 @@ public class GameController implements Initializable {
 	 */
 	@FXML
 	private GridPane grid;
-
 	/**
 	 * The label showing the money
 	 */
 	@FXML
 	private Label moneyLabel;
+
 	/**
 	 * The Progress Bar showing the progress on long treatment.
 	 */
@@ -101,18 +106,29 @@ public class GameController implements Initializable {
 	private VBox devicesBuild;
 
 	/**
-	 * Is true if the options sidebar is shown
+	 * Iterrates over the grid's children to find a DeviceView matching
+	 * the given x and y position. If none is found, returns null.
+	 * 
+	 * @param x the x pos of the requested device view
+	 * @param y the y pos of the requested device view
+	 * @return the device view at the given position, if found.
 	 */
-	private static boolean optionsSidebarShown = true;
+	private DeviceView findDeviceView(int x, int y) {
+		for (final Node node : this.grid.getChildrenUnmodifiable()) {
+			if (node instanceof DeviceView) {
+				if (GridPane.getColumnIndex(node) == x
+						&& GridPane.getRowIndex(node) == y) {
+					return (DeviceView) node;
+				}
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		grid.setFocusTraversable(true);
-		prepareToolbar();
-	}
-
-	public void setGameManager(GameManager gM) {
-		this.gameManager = gM;
+		this.grid.setFocusTraversable(true);
+		this.prepareToolbar();
 	}
 
 	public void loadGame(ArrayList2D<Device> devices, Game game) {
@@ -127,116 +143,17 @@ public class GameController implements Initializable {
 							game, new Coordinate(x, y))
 									.instantiate();
 				}
-				grid.add(new DeviceView(device), x, y);
+				this.grid.add(new DeviceView(device), x, y);
 			}
 		}
 
-		toPlayableView();
+		this.toPlayableView();
 
 		// LOAD GAME DATA
 		game.moneyProperty().addListener((observable, oldValue, newValue) -> {
-			moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
+			this.moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
 		});
-		moneyLabel.setText(game.getMoney().toString() + " €");
-	}
-
-	public void replaceDevice(Device device) {
-		final int x = device.getPosition().getX();
-		final int y = device.getPosition().getY();
-
-		grid.add(new DeviceView(device), x, y);
-
-		grid.getChildren().remove(this.findDeviceView(x, y));
-	}
-
-	/**
-	 * Iterrates over the grid's children to find a DeviceView matching
-	 * the given x and y position. If none is found, returns null.
-	 * 
-	 * @param x the x pos of the requested device view
-	 * @param y the y pos of the requested device view
-	 * @return the device view at the given position, if found.
-	 */
-	private DeviceView findDeviceView(int x, int y) {
-		for (Node node : grid.getChildrenUnmodifiable()) {
-			if (node instanceof DeviceView) {
-				if (GridPane.getColumnIndex(node) == x
-						&& GridPane.getRowIndex(node) == y)
-					return (DeviceView) node;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Hides the grid with a nice opacity transition.<br>
-	 * Should be executed on the JavaFx Application Thread (using
-	 * {@link Platform#runLater(Runnable)}.
-	 */
-	private void toProcessView() {
-		Timeline fadeOut = new Timeline();
-		fadeOut.getKeyFrames().addAll(
-				new KeyFrame(Duration.millis(0d),
-						new KeyValue(grid.opacityProperty(), 1d)),
-				new KeyFrame(Duration.millis(250d),
-						new KeyValue(grid.opacityProperty(), 0d)));
-		fadeOut.playFromStart();
-		grid.setVisible(false);
-		moneyLabel.setVisible(false);
-		progression.setVisible(true);
-		progression.setProgress(0.0);
-	}
-
-	/**
-	 * Shows the grid with a nice opacity transition.<br>
-	 * Should be executed on the JavaFx Application Thread (using
-	 * {@link Platform#runLater(Runnable)}.
-	 */
-	private void toPlayableView() {
-		grid.setVisible(true);
-		Timeline fadeIn = new Timeline();
-		fadeIn.getKeyFrames().addAll(
-				new KeyFrame(Duration.millis(0d),
-						new KeyValue(
-								grid.opacityProperty(),
-								0d)),
-				new KeyFrame(Duration.millis(250d),
-						new KeyValue(
-								grid.opacityProperty(),
-								1d)));
-		fadeIn.playFromStart();
-		moneyLabel.setVisible(true);
-		progression.setVisible(false);
-	}
-
-	/**
-	 * Shows / Hide the options sidebar according ot its actual poisition
-	 */
-	@FXML
-	private void showOrHideSidebar() {
-		final Timeline transition = new Timeline();
-		if (!optionsSidebarShown) {
-			transition.getKeyFrames().addAll(
-					new KeyFrame(Duration.ZERO,
-							new KeyValue(sidebarsContainer.translateXProperty(),
-									240d)),
-					new KeyFrame(Duration.millis(250),
-							new KeyValue(sidebarsContainer.translateXProperty(),
-									0d)));
-			transition.playFromStart();
-
-		} else {
-			transition.getKeyFrames().addAll(
-					new KeyFrame(Duration.ZERO,
-							new KeyValue(sidebarsContainer.translateXProperty(),
-									0d)),
-					new KeyFrame(Duration.millis(250),
-							new KeyValue(sidebarsContainer.translateXProperty(),
-									240d)));
-			transition.playFromStart();
-		}
-
-		optionsSidebarShown = !optionsSidebarShown;
+		this.moneyLabel.setText(game.getMoney().toString() + " €");
 	}
 
 	/**
@@ -244,7 +161,7 @@ public class GameController implements Initializable {
 	 */
 	private void prepareToolbar() {
 		Platform.runLater(() -> {
-			for (Class<? extends Device> clazz : Device.subclasses) {
+			for (final Class<? extends Device> clazz : Device.subclasses) {
 				if (clazz.isAnnotationPresent(Buildable.class)) {
 
 					final HBox deviceUI = new HBox();
@@ -287,30 +204,76 @@ public class GameController implements Initializable {
 
 					deviceUI.getStyleClass().add("device-build-displayer");
 
-					devicesBuild.getChildren().add(deviceUI);
+					this.devicesBuild.getChildren().add(deviceUI);
 				}
-				devicesBuild.setSpacing(5d);
+				this.devicesBuild.setSpacing(5d);
 
-				options.setOnDragOver(event -> {
+				this.options.setOnDragOver(event -> {
 					event.acceptTransferModes(TransferMode.MOVE);
 				});
-				options.setOnDragDropped(event -> {
+				this.options.setOnDragDropped(event -> {
 					if (event.getTransferMode().equals(TransferMode.MOVE)) {
 						final Dragboard db = event.getDragboard();
 
 						if (db.hasContent(DeviceView.coordinateFormat)
 								&& db.hasContent(DeviceView.levelFormat)) {
+							
 							final Coordinate coord = (Coordinate) db
 									.getContent(DeviceView.coordinateFormat);
 							final Level level = (Level) db
 									.getContent(DeviceView.levelFormat);
+							
 							this.gameManager.destroy(coord, level);
+							
 							event.setDropCompleted(true);
 						}
 					}
 				});
 			}
 		});
+	}
+
+	public void replaceDevice(Device device) {
+		final int x = device.getPosition().getX();
+		final int y = device.getPosition().getY();
+
+		this.grid.add(new DeviceView(device), x, y);
+
+		this.grid.getChildren().remove(this.findDeviceView(x, y));
+	}
+
+	public void setGameManager(GameManager gM) {
+		this.gameManager = gM;
+	}
+
+	/**
+	 * Shows / Hide the options sidebar according ot its actual poisition
+	 */
+	@FXML
+	private void showOrHideSidebar() {
+		final Timeline transition = new Timeline();
+		if (!optionsSidebarShown) {
+			transition.getKeyFrames().addAll(
+					new KeyFrame(Duration.ZERO,
+							new KeyValue(this.sidebarsContainer.translateXProperty(),
+									240d)),
+					new KeyFrame(Duration.millis(250),
+							new KeyValue(this.sidebarsContainer.translateXProperty(),
+									0d)));
+			transition.playFromStart();
+
+		} else {
+			transition.getKeyFrames().addAll(
+					new KeyFrame(Duration.ZERO,
+							new KeyValue(this.sidebarsContainer.translateXProperty(),
+									0d)),
+					new KeyFrame(Duration.millis(250),
+							new KeyValue(this.sidebarsContainer.translateXProperty(),
+									240d)));
+			transition.playFromStart();
+		}
+
+		optionsSidebarShown = !optionsSidebarShown;
 	}
 
 	/**
@@ -339,7 +302,7 @@ public class GameController implements Initializable {
 			public void run() {
 				final Label toast = new Label(text);
 				toast.getStyleClass().addAll("toast", "bold", "h6");
-				toasts.getChildren().add(toast);
+				GameController.this.toasts.getChildren().add(toast);
 
 				toast.setStyle(
 						"-fx-background-color: "
@@ -377,11 +340,52 @@ public class GameController implements Initializable {
 								new KeyValue(toast.opacityProperty(), 0.0)));
 
 				animation.setOnFinished(
-						(arg0) -> toasts.getChildren().remove(toast));
+						(arg0) -> GameController.this.toasts.getChildren().remove(toast));
 				animation.playFromStart();
 			}
 		});
 
+	}
+
+	/**
+	 * Shows the grid with a nice opacity transition.<br>
+	 * Should be executed on the JavaFx Application Thread (using
+	 * {@link Platform#runLater(Runnable)}.
+	 */
+	private void toPlayableView() {
+		this.grid.setVisible(true);
+		final Timeline fadeIn = new Timeline();
+		fadeIn.getKeyFrames().addAll(
+				new KeyFrame(Duration.millis(0d),
+						new KeyValue(
+								this.grid.opacityProperty(),
+								0d)),
+				new KeyFrame(Duration.millis(250d),
+						new KeyValue(
+								this.grid.opacityProperty(),
+								1d)));
+		fadeIn.playFromStart();
+		this.moneyLabel.setVisible(true);
+		this.progression.setVisible(false);
+	}
+
+	/**
+	 * Hides the grid with a nice opacity transition.<br>
+	 * Should be executed on the JavaFx Application Thread (using
+	 * {@link Platform#runLater(Runnable)}.
+	 */
+	private void toProcessView() {
+		final Timeline fadeOut = new Timeline();
+		fadeOut.getKeyFrames().addAll(
+				new KeyFrame(Duration.millis(0d),
+						new KeyValue(this.grid.opacityProperty(), 1d)),
+				new KeyFrame(Duration.millis(250d),
+						new KeyValue(this.grid.opacityProperty(), 0d)));
+		fadeOut.playFromStart();
+		this.grid.setVisible(false);
+		this.moneyLabel.setVisible(false);
+		this.progression.setVisible(true);
+		this.progression.setProgress(0.0);
 	}
 
 }

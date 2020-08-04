@@ -27,11 +27,44 @@ import javafx.scene.paint.Color;
  */
 public final class GameManager {
 
+	/**
+	 * The GameLoop is what is done by the second thread in background of
+	 * the game. It calls the registered buyers to call them to action.
+	 * 
+	 * @see GameManager#start()
+	 * @see GameManager#step()
+	 * @see GameManager#stop()
+	 * 
+	 * @author Martin Heywang
+	 */
+	class GameLoop implements Runnable {
+
+		private volatile boolean autoMode = true;
+
+		@Override
+		public void run() {
+			do {
+				for (int i = 0; i < Device.buyersLocations.size(); i++) {
+
+					final Coordinate pos = Device.buyersLocations.get(i);
+					final Device buyer = GameManager.this.deviceManager.getDevices().get(pos.getX(),
+							pos.getY());
+
+					// Todo : active buyer
+				}
+			} while (this.autoMode);
+		}
+
+		public void setAutoMode(boolean mode) {
+			this.autoMode = mode;
+		}
+	}
 	private final GameController gameController;
 	private final Game game;
-	private final DeviceManager deviceManager;
 
+	private final DeviceManager deviceManager;
 	private final Thread gameThread;
+
 	private final GameLoop gameLoop;
 
 	private Coordinate toMove;
@@ -58,23 +91,17 @@ public final class GameManager {
 		this.gameController.loadGame(this.deviceManager.getDevices(), game);
 
 		// GAME LOOP STUFF
-		gameLoop = new GameLoop();
-		gameThread = new Thread(gameLoop);
+		this.gameLoop = new GameLoop();
+		this.gameThread = new Thread(this.gameLoop);
 	}
 
 	/**
-	 * Performs an action at the given coordinate
+	 * Adds money to the game
 	 * 
-	 * @param from      the coordinate of the device requesting the action
-	 * @param to        the coordinate of the requested device
-	 * @param resources the resources to pass to the requested device.
+	 * @param value the amount to add
 	 */
-	public void performAction(Coordinate from, Coordinate to, Pack resources) {
-		try {
-			deviceManager.getDevice(to).act(resources);
-		} catch (MoneyException e) {
-			e.printStackTrace();
-		}
+	public void addMoney(BigInteger value) throws MoneyException {
+		this.removeMoney(value.negate());
 	}
 
 	/**
@@ -89,13 +116,13 @@ public final class GameManager {
 		final BigInteger actionPrice = new BigInteger(
 				clazz.getAnnotation(Prices.class).build());
 
-		if (game.getMoney().compareTo(actionPrice) == -1) {
+		if (this.game.getMoney().compareTo(actionPrice) == -1) {
 			throw new MoneyException("L'appareil n'a pas pu être construit");
 		}
-		game.setMoney(game.getMoney().subtract(actionPrice));
+		this.game.setMoney(this.game.getMoney().subtract(actionPrice));
 
-		deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
-		refreshViewAt(position);
+		this.deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
+		this.refreshViewAt(position);
 	}
 
 	/**
@@ -107,10 +134,11 @@ public final class GameManager {
 	 *                 determine the gain
 	 */
 	public void destroy(Coordinate position, Level level) {
-		Class<? extends Device> oldClass = deviceManager.getDevice(position)
+		final Class<? extends Device> oldClass = this.deviceManager.getDevice(position)
 				.getClass();
-		if (oldClass.equals(Floor.class))
+		if (oldClass.equals(Floor.class)) {
 			return;
+		}
 
 		BigInteger actionGain = new BigInteger("0");
 		switch (level) {
@@ -129,51 +157,20 @@ public final class GameManager {
 
 		}
 
-		game.setMoney(game.getMoney().add(actionGain));
+		this.game.setMoney(this.game.getMoney().add(actionGain));
 
 		// Update model and view
-		deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP,
+		this.deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP,
 				position);
-		refreshViewAt(position);
+		this.refreshViewAt(position);
 	}
 
 	/**
-	 * Refreshes the view of the device at the given coords.
 	 * 
-	 * @param position where
+	 * @return the managed game
 	 */
-	public void refreshViewAt(Coordinate position) {
-		gameController.replaceDevice(deviceManager.getDevice(position));
-	}
-
-	/**
-	 * Swaps two devices. Registers the given coordinate if none was given
-	 * before, or performs the swap if one was already there.
-	 * 
-	 * @param position where
-	 */
-	public void swap(Coordinate position) {
-		if (toMove == null) {
-			toMove = position;
-			return;
-		} else {
-			/* Perform swap (b/w toMove and position) */
-
-			// Get the devices
-			final Device first = deviceManager.getDevice(toMove);
-			final Device second = deviceManager.getDevice(position);
-
-			// Swap the coords of the devices
-			deviceManager.setDevice(first, position);
-			deviceManager.setDevice(second, toMove);
-
-			// Update the view
-			refreshViewAt(toMove);
-			refreshViewAt(position);
-
-			// Reset toMove
-			toMove = null;
-		}
+	public Game getGame() {
+		return this.game;
 	}
 
 	/**
@@ -182,24 +179,31 @@ public final class GameManager {
 	 * @return the amount of money
 	 */
 	public BigInteger getMoney() {
-		return game.getMoney();
+		return this.game.getMoney();
 	}
 
 	/**
+	 * Performs an action at the given coordinate
 	 * 
-	 * @return the managed game
+	 * @param from      the coordinate of the device requesting the action
+	 * @param to        the coordinate of the requested device
+	 * @param resources the resources to pass to the requested device.
 	 */
-	public Game getGame() {
-		return game;
+	public void performAction(Coordinate from, Coordinate to, Pack resources) {
+		try {
+			this.deviceManager.getDevice(to).act(resources);
+		} catch (final MoneyException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * Adds money to the game
+	 * Refreshes the view of the device at the given coords.
 	 * 
-	 * @param value the amount to add
+	 * @param position where
 	 */
-	public void addMoney(BigInteger value) throws MoneyException {
-		removeMoney(value.negate());
+	public void refreshViewAt(Coordinate position) {
+		this.gameController.replaceDevice(this.deviceManager.getDevice(position));
 	}
 
 	/**
@@ -208,21 +212,11 @@ public final class GameManager {
 	 * @param value the amount to remove
 	 */
 	public void removeMoney(BigInteger value) throws MoneyException {
-		if (getMoney().compareTo(value) == -1)
+		if (this.getMoney().compareTo(value) == -1) {
 			throw new MoneyException();
+		}
 
-		game.setMoney(game.getMoney().subtract(value));
-	}
-
-	/**
-	 * Displays a toast in the top right corner of the game scene.
-	 * 
-	 * @param text       the text to display
-	 * @param background the background color of the toast (in seconds)
-	 * @param seconds    the duration of the toast
-	 */
-	public void toast(String text, Color background, double seconds) {
-		gameController.toast(text, background, seconds);
+		this.game.setMoney(this.game.getMoney().subtract(value));
 	}
 
 	/**
@@ -234,8 +228,8 @@ public final class GameManager {
 	 * @see GameLoop
 	 */
 	public void start() {
-		gameLoop.setAutoMode(true);
-		gameThread.start();
+		this.gameLoop.setAutoMode(true);
+		this.gameThread.start();
 	}
 
 	/**
@@ -260,8 +254,8 @@ public final class GameManager {
 	 * @see GameLoop
 	 */
 	public void step() {
-		gameLoop.setAutoMode(false);
-		gameThread.start();
+		this.gameLoop.setAutoMode(false);
+		this.gameThread.start();
 	}
 
 	/**
@@ -273,39 +267,54 @@ public final class GameManager {
 	 * @see GameLoop
 	 */
 	public void stop() {
-		gameLoop.setAutoMode(false);
+		this.gameLoop.setAutoMode(false);
 	}
 
 	/**
-	 * The GameLoop is what is done by the second thread in background of
-	 * the game. It calls the registered buyers to call them to action.
+	 * Swaps two devices. Registers the given coordinate if none was given
+	 * before, or performs the swap if one was already there.
 	 * 
-	 * @see GameManager#start()
-	 * @see GameManager#step()
-	 * @see GameManager#stop()
-	 * 
-	 * @author Martin Heywang
+	 * @param position where
 	 */
-	class GameLoop implements Runnable {
+	public void swap(Coordinate position) {
+		if (this.toMove == null) {
+			this.toMove = position;
 
-		private volatile boolean autoMode = true;
+			System.out.println("Registering: [" + position + "] for swap.");
+			return;
+		} else {
+			/* Perform swap (b/w toMove and position) */
 
-		@Override
-		public void run() {
-			do {
-				for (int i = 0; i < Device.buyersLocations.size(); i++) {
+			// Get the devices
+			final Device first = this.deviceManager.getDevice(this.toMove);
+			final Device second = this.deviceManager.getDevice(position);
 
-					Coordinate pos = Device.buyersLocations.get(i);
-					Device buyer = deviceManager.getDevices().get(pos.getX(),
-							pos.getY());
+			System.out.println("Swaping b/w: ["+this.toMove+ "] and ["+position+"].");
+			System.out.println("At [" + this.toMove + "]" + " lived a " + first.getClass().getSimpleName());
+			System.out.println("At [" + position + "]" + " lived a " + second.getClass().getSimpleName());
+			System.out.println("--------------------------------------------------");
 
-					// Todo : active buyer
-				}
-			} while (autoMode);
+			// Swap the coords of the devices
+			this.deviceManager.setDevice(first, position);
+			this.deviceManager.setDevice(second, this.toMove);
+
+			// Update the view
+			this.refreshViewAt(this.toMove);
+			this.refreshViewAt(position);
+
+			// Reset toMove
+			this.toMove = null;
 		}
+	}
 
-		public void setAutoMode(boolean mode) {
-			this.autoMode = mode;
-		}
+	/**
+	 * Displays a toast in the top right corner of the game scene.
+	 * 
+	 * @param text       the text to display
+	 * @param background the background color of the toast (in seconds)
+	 * @param seconds    the duration of the toast
+	 */
+	public void toast(String text, Color background, double seconds) {
+		this.gameController.toast(text, background, seconds);
 	}
 }
