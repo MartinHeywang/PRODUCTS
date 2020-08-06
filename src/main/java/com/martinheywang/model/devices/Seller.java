@@ -18,13 +18,17 @@ import com.martinheywang.model.templates.Template.PointerTypes;
 @Prices(build = "500", upgradeTo2 = "10000", upgradeTo3 = "150000", destroyAt1 = "450", destroyAt2 = "9000", destroyAt3 = "140000")
 public final class Seller extends Device {
 
-	public Seller(DeviceModel model) {
-		super(model);
-	}
+    public Seller(DeviceModel model) {
+	super(model);
+    }
 
-	@Override
-	public void act(Pack packs) throws MoneyException {
-		this.gameManager.addMoney(packs.getResource().getPrice());
-	}
+    @Override
+    public void act(Pack packs) throws MoneyException {
+
+	this.gameManager.addMoney(packs.getResource().getPrice());
+	// Todo: improve the pulsing effect of the seller
+	this.setActive(true);
+	this.setActive(false);
+    }
 
 }

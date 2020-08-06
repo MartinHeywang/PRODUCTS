@@ -25,20 +25,21 @@ public class Conveyor extends Device {
 
 	@Override
 	public final void act(Pack resources) throws MoneyException {
-		if (gameManager.getMoney()
-				.compareTo(getActionCost()) == -1) {
+		if (this.gameManager.getMoney()
+				.compareTo(this.getActionCost()) == -1) {
 			// We don't have enough money (:sad-guy:)
 			throw new MoneyException();
 		}
 
 		final Coordinate output = this.template
-				.getPointersFor(PointerTypes.ENTRY).get(0);
+				.getPointersFor(PointerTypes.EXIT).get(0);
 
-		// Remove action cost
-		gameManager.removeMoney(getActionCost());
+		if (this.gameManager.connectionExists(this.getPosition(), output)) {
+			// Remove action cost
+			this.gameManager.removeMoney(this.getActionCost());
 
-		gameManager.performAction(getPosition(), output,
-				resources);
+			this.gameManager.performAction(this.getPosition(), output, resources);
+		}
 	}
 
 }

@@ -7,10 +7,26 @@ import com.martinheywang.toolbox.LocatedHashMap;
 
 public class Template {
 
+	// A little enum who distinct the different pointers type
+	public enum PointerTypes {
+		/**
+		 * Neither entry or exit
+		 */
+		NONE,
+		/**
+		 * Only exit
+		 */
+		EXIT,
+		/**
+		 * Only entry
+		 */
+		ENTRY;
+	}
+
 	// This array represents the type of each the side
 	// The first is top, the second is left, the third is bottom (like
 	// padding and margin in CSS)
-	private LocatedHashMap<PointerTypes, Coordinate> pointers = new LocatedHashMap<>();
+	private final LocatedHashMap<PointerTypes, Coordinate> pointers = new LocatedHashMap<>();
 
 	/**
 	 * Creates a new Template with an array of PointerTypes.
@@ -38,7 +54,7 @@ public class Template {
 	 * @return the pointers
 	 */
 	public LocatedHashMap<PointerTypes, Coordinate> getPointers() {
-		return pointers;
+		return this.pointers;
 	}
 
 	/**
@@ -49,28 +65,13 @@ public class Template {
 	 * @return a list of pointers
 	 */
 	public ArrayList<Coordinate> getPointersFor(PointerTypes type) {
-		return pointers.get(type);
+		return this.pointers.get(type);
 	}
 
-	// A little enum who distinct the different pointers type
-	public enum PointerTypes {
-		/**
-		 * Neither entry or exit
-		 */
-		NONE,
-		/**
-		 * Only exit
-		 */
-		EXIT,
-		/**
-		 * Only entry
-		 */
-		ENTRY,
-		/**
-		 * Both entry and exit
-		 */
-		BOTH; // The const enum BOTH is not really useful, but I added it in
-				// case that someone will add a feature that uses it.
+	@Override
+	public String toString() {
+		return "NONE:" + this.getPointersFor(PointerTypes.NONE) + "\n" + "ENTRY:"
+				+ this.getPointersFor(PointerTypes.ENTRY) + "\n" + "EXIT:" + this.getPointersFor(PointerTypes.EXIT);
 	}
 
 }

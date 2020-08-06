@@ -141,7 +141,7 @@ public class GameController implements Initializable {
 					device = new DeviceModel(Floor.class, Level.LEVEL_1,
 							Direction.UP,
 							game, new Coordinate(x, y))
-									.instantiate();
+							.instantiate();
 				}
 				this.grid.add(new DeviceView(device), x, y);
 			}
@@ -151,7 +151,10 @@ public class GameController implements Initializable {
 
 		// LOAD GAME DATA
 		game.moneyProperty().addListener((observable, oldValue, newValue) -> {
-			this.moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
+			// In the Javafx application thread, of course
+			Platform.runLater(() -> {
+				this.moneyLabel.setText(MoneyFormat.getSingleton().format(newValue));
+			});
 		});
 		this.moneyLabel.setText(game.getMoney().toString() + " €");
 	}
@@ -217,14 +220,14 @@ public class GameController implements Initializable {
 
 						if (db.hasContent(DeviceView.coordinateFormat)
 								&& db.hasContent(DeviceView.levelFormat)) {
-							
+
 							final Coordinate coord = (Coordinate) db
 									.getContent(DeviceView.coordinateFormat);
 							final Level level = (Level) db
 									.getContent(DeviceView.levelFormat);
-							
+
 							this.gameManager.destroy(coord, level);
-							
+
 							event.setDropCompleted(true);
 						}
 					}
