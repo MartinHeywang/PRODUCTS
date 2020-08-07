@@ -17,6 +17,7 @@ import com.martinheywang.model.level.Level;
 import com.martinheywang.model.mechanics.GameManager;
 import com.martinheywang.toolbox.ArrayList2D;
 import com.martinheywang.toolbox.MoneyFormat;
+import com.martinheywang.view.components.ZoomableScrollPane;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -29,7 +30,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -62,12 +63,13 @@ public class GameController implements Initializable {
     private GameManager gameManager;
 
     @FXML
-    private ScrollPane scrollpane;
+    private AnchorPane main;
+
+    private ZoomableScrollPane scrollpane;
 
     /**
      * The main grid with all the devices
      */
-    @FXML
     private GridPane grid;
     /**
      * The label showing the money
@@ -109,7 +111,20 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-	this.grid.setFocusTraversable(true);
+	grid = new GridPane();
+	scrollpane = new ZoomableScrollPane(grid);
+	this.main.getChildren().add(0, scrollpane);
+	AnchorPane.setTopAnchor(scrollpane, 35d);
+	AnchorPane.setRightAnchor(scrollpane, 0d);
+	AnchorPane.setBottomAnchor(scrollpane, 0d);
+	AnchorPane.setLeftAnchor(scrollpane, 3d);
+
+	scrollpane.setFitToHeight(false);
+	scrollpane.setFitToWidth(false);
+	scrollpane.setVbarPolicy(ScrollBarPolicy.NEVER);
+	scrollpane.setHbarPolicy(ScrollBarPolicy.NEVER);
+
+	this.scrollpane.setFocusTraversable(true);
 	this.prepareToolbar();
     }
 

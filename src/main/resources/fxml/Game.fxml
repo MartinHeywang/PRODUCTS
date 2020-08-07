@@ -20,13 +20,8 @@
 <StackPane prefHeight="600.0" prefWidth="900.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.view.GameController">
    <!-- The root -->
    <children>
-      <AnchorPane>
+      <AnchorPane fx:id="main">
          <children>
-            <ScrollPane fx:id="scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
-               <content>
-                  <GridPane fx:id="grid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-               </content>
-            </ScrollPane>
             <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label fx:id="moneyLabel" alignment="CENTER" prefHeight="30.0" style="-fx-border-color: eee;" styleClass="h5" stylesheets="@Label.css" text="Chargement en cours..." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
