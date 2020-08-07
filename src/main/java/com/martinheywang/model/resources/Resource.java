@@ -95,11 +95,11 @@ public interface Resource extends Displayable<Resource> {
 	@Override
 	public default Displayer<Resource> getDisplayer() {
 
-		VBox root = new VBox();
+		final VBox root = new VBox();
 		root.setAlignment(Pos.CENTER_LEFT);
 		root.setPadding(new Insets(3));
 
-		Label nom = new Label();
+		final Label nom = new Label();
 		nom.setAlignment(Pos.TOP_CENTER);
 		nom.setText(this.getName());
 		if (nom.getText().length() > 15)
@@ -107,14 +107,12 @@ public interface Resource extends Displayable<Resource> {
 		nom.setPrefHeight(20d);
 		root.getChildren().add(nom);
 
-		ImageView image = new ImageView();
-		System.out.println(this.getURL());
-		System.out.println(this.getClass());
+		final ImageView image = new ImageView();
 		image.setImage(
 				new Image(this.getClass().getResourceAsStream(this.getURL())));
 		root.getChildren().add(image);
 
-		Label infos = new Label();
+		final Label infos = new Label();
 		infos.setAlignment(Pos.TOP_CENTER);
 		infos.setText(
 				String.valueOf(NumberFormat.getInstance(Locale.getDefault())
@@ -150,16 +148,16 @@ public interface Resource extends Displayable<Resource> {
 								+ "but is not registered in the references.");
 			}
 			return res;
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		} catch (final NoSuchFieldException e) {
 			System.err.println(
 					"The requested field has not been found (requested: "
 							+ field + " in " + clazz.getCanonicalName() + ")");
 			e.printStackTrace();
-		} catch (SecurityException e) {
+		} catch (final SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -204,7 +202,7 @@ public interface Resource extends Displayable<Resource> {
 			return;
 		}
 
-		for (Field field : clazz.getFields()) {
+		for (final Field field : clazz.getFields()) {
 			try {
 				if (Resource.class.isAssignableFrom(field.getType())) {
 					addReferences((Resource) field.get(null));
@@ -227,7 +225,7 @@ public interface Resource extends Displayable<Resource> {
 	 * @param resource the resource to add
 	 */
 	public static void addReferences(Resource... resource) {
-		for (Resource res : resource) {
+		for (final Resource res : resource) {
 			references.add(res);
 		}
 	}
@@ -238,7 +236,7 @@ public interface Resource extends Displayable<Resource> {
 	 * @param resource the resource to remove
 	 */
 	public static void removeReferences(Resource... resource) {
-		for (Resource res : resource) {
+		for (final Resource res : resource) {
 			references.remove(res);
 		}
 	}

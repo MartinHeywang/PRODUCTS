@@ -1,5 +1,8 @@
 package com.martinheywang.model.devices;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.devices.annotations.AccessibleName;
 import com.martinheywang.model.devices.annotations.ActionCost;
@@ -9,6 +12,8 @@ import com.martinheywang.model.devices.annotations.Description;
 import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.templates.Template.PointerTypes;
+
+import javafx.scene.Node;
 
 @AccessibleName("Vendeur")
 @Description("Le vendeur vend toutes les ressources qui lui parvient.")
@@ -29,6 +34,11 @@ public final class Seller extends Device {
 	// Todo: improve the pulsing effect of the seller
 	this.setActive(true);
 	this.setActive(false);
+    }
+
+    @Override
+    public List<Node> getWidgets() {
+	return Arrays.asList();
     }
 
 }

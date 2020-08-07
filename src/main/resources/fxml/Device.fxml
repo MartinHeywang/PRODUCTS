@@ -53,7 +53,7 @@
                   <DropShadow />
                </effect>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" pannable="true" stylesheets="@ScrollPane.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" stylesheets="@ScrollPane.css" vbarPolicy="NEVER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
                <padding>
                   <Insets bottom="10.0" left="70.0" right="70.0" top="10.0" />
                </padding>
@@ -74,13 +74,14 @@
                            <content>
                               <VBox fx:id="actions" prefHeight="200.0" prefWidth="100.0" styleClass="selection-box">
                                  <children>
-                                    <HBox fx:id="upgradeBox" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#upgrade" VBox.vgrow="NEVER">
+                                    <HBox fx:id="upgradeBox" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#upgrade" styleClass="button" VBox.vgrow="NEVER">
                                        <children>
                                           <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                              <children>
                                                 <Label styleClass="h4" text="Améliorer" />
                                                 <Label fx:id="upgradePrice" styleClass="h6" text=" - 10 000 €" />
                                                 <Label styleClass="h6" text="Efficacité ×2" />
+                                                <Label text="Conseil de pro ! Améliorer les appareils d'un double clic !" wrapText="true" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -99,7 +100,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </HBox>
-                                    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#turn" VBox.vgrow="NEVER">
+                                    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#turn" styleClass="button" VBox.vgrow="NEVER">
                                        <children>
                                           <ImageView fx:id="turnedView" fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
                                              <HBox.margin>
@@ -114,7 +115,7 @@
                                                 <Label styleClass="h4" text="Tourner" />
                                                 <Label styleClass="h6" text="Gratuit" />
                                                 <Label styleClass="h6" text="Tourner l'appreil de 90°" />
-                                                <Label text="Conseil de pro : tourner un appareil peut se faire d'un clic-droit !" wrapText="true" />
+                                                <Label text="Conseil de pro ! Tourner un appareil peut se faire d'un clic-droit !" wrapText="true" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -125,7 +126,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </HBox>
-                                    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#delete" VBox.vgrow="NEVER">
+                                    <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="110.0" onMouseClicked="#destroy" styleClass="button" VBox.vgrow="NEVER">
                                        <children>
                                           <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                              <children>
@@ -154,6 +155,7 @@
                                  <stylesheets>
                                     <URL value="@Box.css" />
                                     <URL value="@Label.css" />
+                                    <URL value="@Buttons.css" />
                                  </stylesheets>
                               </VBox>
                            </content>

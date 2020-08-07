@@ -53,7 +53,7 @@
                                        </padding>
                                        <children>
                                           <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h4" text="Construction" />
-                                          <TitledPane animated="true" collapsible="false" text="Construire">
+                                          <TitledPane animated="true" text="Construire">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
@@ -67,30 +67,6 @@
                                              <content>
                                                 <VBox fx:id="devicesBuild" styleClass="selection-box" />
                                              </content>
-                                          </TitledPane>
-                                          <TitledPane animated="false" collapsible="false" expanded="false" layoutX="10.0" layoutY="52.0" text="Améliorer">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/upgrade.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </TitledPane>
-                                          <TitledPane animated="false" collapsible="false" expanded="false" layoutX="10.0" layoutY="95.0" text="Détruire">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/delete.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
                                           </TitledPane>
                                        </children>
                                        <stylesheets>

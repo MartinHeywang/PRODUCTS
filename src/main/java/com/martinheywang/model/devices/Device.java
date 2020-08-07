@@ -25,6 +25,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -45,12 +46,6 @@ public abstract class Device {
      */
     public static List<Device> autoActiveDevices = new ArrayList<>();
     public static List<Class<? extends Device>> subclasses = new ArrayList<>();
-
-    public static void registerType(Class<? extends Device> clazz) {
-	if (!subclasses.contains(clazz)) {
-	    subclasses.add(clazz);
-	}
-    }
 
     // The model is the persistent data of the device
     protected final DeviceModel model;
@@ -82,6 +77,16 @@ public abstract class Device {
     }
 
     /**
+     * Defines the GameManager that this Device object will give to its
+     * behaviour to perform actions.
+     * 
+     * @param gameManager
+     */
+    public void manageWith(GameManager gameManager) {
+	this.gameManager = gameManager;
+    }
+
+    /**
      * <p>
      * Do whatever the device is meant to do when it is called by the previous
      * device in the assembly line. In most cases, you should call the next device
@@ -101,11 +106,152 @@ public abstract class Device {
     public abstract void act(Pack resources) throws MoneyException;
 
     /**
-     * 
-     * @return the active property
+     * Generates the template of the device
      */
-    public BooleanProperty activeProperty() {
-	return this.activeProperty;
+    public void generateTemplate() {
+	final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
+	this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
+		.setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
+		.create(this.getPosition(), this.getDirection());
+    }
+
+
+    private void refreshView() {
+	this.imageProperty.set(new Image(
+		this.getClass().getResourceAsStream(this.getURL())));
+    }
+
+    public Template getTemplate() {
+	return this.template;
+    }
+
+    /**
+     * Parses the value of the @ActionCost annotation into a BigInteger,
+     * or return 5 if such an annotation isn't present.
+     * 
+     * @return the action cost
+     */
+    protected BigInteger getActionCost() {
+	if (this.getClass().isAnnotationPresent(ActionCost.class)) {
+	    return new BigInteger(
+		    this.getClass().getAnnotation(ActionCost.class).value());
+	}
+	return new BigInteger("5");
+    }
+
+    /**
+     * Returns a prices modules that get you the information you need
+     * about the prices of this device type.
+     * 
+     * @return a prices modules
+     */
+    protected PricesModule getPrices() {
+	if (this.getClass().isAnnotationPresent(Prices.class)) {
+	    final Prices annotation = this.getClass().getAnnotation(Prices.class);
+	    return new PricesModule(annotation.build(), annotation.upgradeTo2(),
+		    annotation.upgradeTo3(),
+		    annotation.destroyAt1(), annotation.destroyAt2(),
+		    annotation.destroyAt3());
+	}
+	return new PricesModule("0", "0", "0", "0", "0", "0");
+    }
+
+    public abstract List<Node> getWidgets();
+
+    public String getURL() {
+	return "/images" + this.getLevel().getURL()
+		+ this.getClass().getSimpleName().toLowerCase() + ".png";
+    }
+
+    /**
+     * 
+     * @return the model (persistent data)
+     */
+    public DeviceModel getModel() {
+	return this.model;
+    }
+
+    /**
+     * 
+     * @return the level of this Device object.
+     */
+    public Level getLevel() {
+	return this.model.getLevel();
+    }
+
+    /**
+     * 
+     * @return the game of this Device object.
+     */
+    public Game getGame() {
+	return this.model.getGame();
+    }
+
+    /**
+     * 
+     * @return the direction of this Device object.
+     */
+    public Direction getDirection() {
+	return this.model.getDirection();
+    }
+
+    /**
+     * 
+     * @return the position of this Device object.
+     */
+    public Coordinate getPosition() {
+	return this.model.getPosition();
+    }
+
+
+    /**
+     * Returns the view used by the device view.
+     * 
+     * @return the view
+     */
+    public ObjectProperty<Image> getView() {
+	return this.imageProperty;
+    }
+
+    /**
+     * Returns the price (or gain) of deleting this device.
+     * 
+     * @return a price as a BigInteger
+     */
+    public BigInteger getDeletePrice() {
+	final String key = this.getDeletePriceKey();
+	return this.getPrices().getPriceFromKey(key);
+    }
+
+    /**
+     * Returns the price of upgrading this device.
+     * 
+     * @return a price as a BigInteger
+     */
+    public BigInteger getUpgradePrice() {
+	final String key = this.getUpgradePriceKey();
+	return this.getPrices().getPriceFromKey(key);
+    }
+
+    /* The following methods (about keys) creates and returns keys to find
+     * the appropriate prices in the #getPrices(). */
+    /**
+     * Returns the valid delete price key for this device.
+     * 
+     * @return a string
+     */
+    private String getDeletePriceKey() {
+	return this.getLevel().toString().toLowerCase() + "_delete";
+    }
+
+    /**
+     * Returns the valid upgarde price key for this device.
+     * 
+     * @return a string
+     */
+    private String getUpgradePriceKey() {
+	return this.getLevel().getNext().toString().toLowerCase()
+		+ "_build";
     }
 
     /**
@@ -115,11 +261,11 @@ public abstract class Device {
      * @param type the class of the type to build
      * @throws EditException if we are not allowed to do something
      */
-    public void build(Class<? extends Device> type) {
+    public void build(Class<? extends Device> type) throws EditException {
 	// Error checking
 	if (!type.isAnnotationPresent(Buildable.class)) {
 	    /* If the type isn't buildable (as floors). */
-	    return;
+	    throw new EditException("The given type isn't buildable.");
 	}
 	if (!this.getClass().equals(Floor.class)) {
 	    /* <?> Floor are normal devices, and it is the only type that can
@@ -140,14 +286,16 @@ public abstract class Device {
     }
 
     /**
-     * Destroys the device and replace it with a floor, on which we can
-     * once again build a Device.
+     * Destroys the device and replace it with a floor, on which we can once again
+     * build a Device.
+     * 
+     * @throws EditException
      */
-    public void destroy() {
+    public void destroy() throws EditException {
 	// Error checking
 	if (this.getClass().equals(Floor.class)) {
 	    /* A floor cannot be destroyed */
-	    return;
+	    throw new EditException("A floor cannot be destroyed.");
 	}
 
 	try {
@@ -155,179 +303,6 @@ public abstract class Device {
 	} catch (final MoneyException e) {
 	    e.printStackTrace();
 	}
-    }
-
-    /**
-     * Generates the template of the device
-     */
-    public void generateTemplate() {
-	final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
-	this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
-		.setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
-		.create(this.getPosition(), this.getDirection());
-    }
-
-    /**
-     * Parses the value of the @ActionCost annotation into a BigInteger,
-     * or return 5 if such an annotation isn't present.
-     * 
-     * @return the action cost
-     */
-    protected BigInteger getActionCost() {
-	if (this.getClass().isAnnotationPresent(ActionCost.class)) {
-	    return new BigInteger(
-		    this.getClass().getAnnotation(ActionCost.class).value());
-	}
-	return new BigInteger("5");
-    }
-
-    /**
-     * Returns the price (or gain) of deleting this device.
-     * 
-     * @return a price as a BigInteger
-     */
-    public BigInteger getDeletePrice() {
-	final String key = this.getDeletePriceKey();
-	return this.getPrices().getPriceFromKey(key);
-    }
-
-    /* The following methods (about keys) creates and returns keys to find
-     * the appropriate prices in the #getPrices(). */
-    /**
-     * Returns the valid delete price key for this device.
-     * 
-     * @return a string
-     */
-    private String getDeletePriceKey() {
-	return this.getLevel().toString().toLowerCase() + "_delete";
-    }
-
-    /**
-     * 
-     * @return the direction of this Device object.
-     */
-    public Direction getDirection() {
-	return this.model.getDirection();
-    }
-
-    /**
-     * 
-     * @return the game of this Device object.
-     */
-    public Game getGame() {
-	return this.model.getGame();
-    }
-
-    /**
-     * 
-     * @return the level of this Device object.
-     */
-    public Level getLevel() {
-	return this.model.getLevel();
-    }
-
-    /**
-     * 
-     * @return the model (persistent data)
-     */
-    public DeviceModel getModel() {
-	return this.model;
-    }
-
-    /**
-     * 
-     * @return the position of this Device object.
-     */
-    public Coordinate getPosition() {
-	return this.model.getPosition();
-    }
-
-    /**
-     * Returns a prices modules that get you the information you need
-     * about the prices of this device type.
-     * 
-     * @return a prices modules
-     */
-    protected PricesModule getPrices() {
-	if (this.getClass().isAnnotationPresent(Prices.class)) {
-	    final Prices annotation = this.getClass().getAnnotation(Prices.class);
-	    return new PricesModule(annotation.build(), annotation.upgradeTo2(),
-		    annotation.upgradeTo3(),
-		    annotation.destroyAt1(), annotation.destroyAt2(),
-		    annotation.destroyAt3());
-	}
-	return new PricesModule("0", "0", "0", "0", "0", "0");
-    }
-
-    public Template getTemplate() {
-	return this.template;
-    }
-
-    /**
-     * Returns the price of upgrading this device.
-     * 
-     * @return a price as a BigInteger
-     */
-    public BigInteger getUpgradePrice() {
-	final String key = this.getUpgradePriceKey();
-	return this.getPrices().getPriceFromKey(key);
-    }
-
-    /**
-     * Returns the valid upgarde price key for this device.
-     * 
-     * @return a string
-     */
-    private String getUpgradePriceKey() {
-	return this.getLevel().getNext().toString().toLowerCase()
-		+ "_build";
-    }
-
-    // GETTERs
-
-    public String getURL() {
-	return "/images" + this.getLevel().getURL()
-		+ this.getClass().getSimpleName().toLowerCase() + ".png";
-    }
-
-    /**
-     * Returns the view used by the device view.
-     * 
-     * @return the view
-     */
-    public ObjectProperty<Image> getView() {
-	return this.imageProperty;
-    }
-
-    /**
-     * @return the value of the active property
-     */
-    public boolean isActive() {
-	return this.activeProperty.get();
-    }
-
-    /**
-     * Defines the GameManager that this Device object will give to its
-     * behaviour to perform actions.
-     * 
-     * @param gameManager
-     */
-    public void manageWith(GameManager gameManager) {
-	this.gameManager = gameManager;
-    }
-
-    private void refreshView() {
-	this.imageProperty.set(new Image(
-		this.getClass().getResourceAsStream(this.getURL())));
-    }
-
-    /**
-     * Sets the value of the property isActive
-     * 
-     * @param active the new active value
-     */
-    public void setActive(boolean active) {
-	this.activeProperty.set(active);
     }
 
     /**
@@ -344,8 +319,6 @@ public abstract class Device {
     public void swap() {
 	this.gameManager.swap(this.getPosition());
     }
-
-    // SETTERs
 
     /**
      * Turns the device properly.
@@ -381,6 +354,36 @@ public abstract class Device {
 	this.model.setLevel(this.model.getLevel().getNext());
 	this.refreshView();
 
+    }
+
+    /**
+     * 
+     * @return the active property
+     */
+    public BooleanProperty activeProperty() {
+	return this.activeProperty;
+    }
+
+    /**
+     * @return the value of the active property
+     */
+    public boolean isActive() {
+	return this.activeProperty.get();
+    }
+
+    /**
+     * Sets the value of the property isActive
+     * 
+     * @param active the new active value
+     */
+    public void setActive(boolean active) {
+	this.activeProperty.set(active);
+    }
+
+    public static void registerType(Class<? extends Device> clazz) {
+	if (!subclasses.contains(clazz)) {
+	    subclasses.add(clazz);
+	}
     }
 
 }

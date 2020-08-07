@@ -1,12 +1,18 @@
 package com.martinheywang.view;
 
+import java.io.IOException;
+
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.exceptions.EditException;
+import com.martinheywang.toolbox.Tools;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -114,7 +120,22 @@ public final class DeviceView extends ImageView {
 	// ON CLICK
 	if (!device.getClass().equals(Floor.class)) {
 	    this.setOnMouseClicked(event -> {
-		if (event.getButton() == MouseButton.SECONDARY) {
+		if (event.getButton() == MouseButton.PRIMARY) {
+		    try {
+			final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
+
+			final Dialog<Void> dialog = new Dialog<>();
+			final DialogPane root = loader.load();
+			dialog.setDialogPane(root);
+
+			final DeviceController controller = loader.getController();
+			controller.setContent(device);
+
+			dialog.show();
+		    } catch (final IOException e) {
+			e.printStackTrace();
+		    }
+		} else if (event.getButton() == MouseButton.SECONDARY) {
 		    // Right click = turn.
 		    device.turn();
 
@@ -174,7 +195,11 @@ public final class DeviceView extends ImageView {
 		    @SuppressWarnings("unchecked")
 		    final Class<? extends Device> type = (Class<? extends Device>) db
 		    .getContent(classFormat);
-		    device.build(type);
+		    try {
+			device.build(type);
+		    } catch (final EditException e) {
+			e.printStackTrace();
+		    }
 		    success = true;
 		}
 	    } else if (event.getTransferMode().equals(TransferMode.LINK)) {
