@@ -1,10 +1,14 @@
 package com.martinheywang.model.mechanics;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.martinheywang.model.Coordinate;
+import com.martinheywang.model.Game;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
+import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.model.templates.Template;
@@ -37,12 +41,25 @@ public final class DeviceManager {
      * @param devicesModel the models of the devices
      * @param gameManager  the current game manager
      */
-    public DeviceManager(Collection<DeviceModel> devicesModel, GameManager gameManager) {
+    public DeviceManager(Collection<DeviceModel> devicesModel, GameManager gameManager, Game game) {
 	this.gameManager = gameManager;
+
 	for (final DeviceModel deviceModel : devicesModel) {
 	    final Device device = deviceModel.instantiate();
 	    this.devices.add(device, deviceModel.getPosition().getX(), deviceModel.getPosition().getY());
 	    device.manageWith(gameManager);
+	}
+
+	final int gridSize = gameManager.getGridSize();
+	for (int x = 0; x < gridSize; x++) {
+	    for (int y = 0; y < gridSize; y++) {
+		if (this.devices.get(x, y) == null) {
+		    final Device device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game,
+			    new Coordinate(x, y)).instantiate();
+		    this.devices.add(device, x, y);
+		    device.manageWith(gameManager);
+		}
+	    }
 	}
     }
 
@@ -100,6 +117,16 @@ public final class DeviceManager {
 	return this.devices;
     }
 
+    public Collection<DeviceModel> getModels() {
+	final List<DeviceModel> models = new ArrayList<>();
+
+	for (final Device device : devices.toCollection()) {
+	    models.add(device.getModel());
+	}
+
+	return models;
+    }
+
     /**
      * Replaces the device at the given coordinate with a new Device using all the
      * information and the game that this DeviceManager was initiliazed with.
@@ -110,8 +137,10 @@ public final class DeviceManager {
      * @param position  the position (where to replace)
      */
     public void replace(Class<? extends Device> clazz, Level level, Direction direction, Coordinate position) {
+	final Game game = getDevice(new Coordinate(0, 0)).getGame();
+
 	// Create the new device
-	final Device newDevice = new DeviceModel(clazz, level, direction, this.gameManager.getGame(), position)
+	final Device newDevice = new DeviceModel(clazz, level, direction, game, position)
 		.instantiate();
 	newDevice.manageWith(this.gameManager);
 

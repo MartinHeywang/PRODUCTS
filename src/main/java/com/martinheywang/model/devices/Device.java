@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.martinheywang.model.ClassToID;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
@@ -50,7 +49,6 @@ public abstract class Device {
     public static void registerType(Class<? extends Device> clazz) {
 	if (!subclasses.contains(clazz)) {
 	    subclasses.add(clazz);
-	    ClassToID.register(clazz);
 	}
     }
 
@@ -152,7 +150,11 @@ public abstract class Device {
 	    return;
 	}
 
-	this.gameManager.destroy(this.getPosition(), this.getLevel());
+	try {
+	    this.gameManager.destroy(this.getPosition(), this.getLevel());
+	} catch (final MoneyException e) {
+	    e.printStackTrace();
+	}
     }
 
     /**

@@ -13,36 +13,37 @@ import javafx.scene.image.ImageView;
 
 public class Home implements Initializable {
 
-	@FXML
-	TextField field;
-	@FXML
-	ImageView button_icon;
+    @FXML
+    TextField field;
+    @FXML
+    ImageView button_icon;
 
-	Main main;
+    Main main;
 
-	@FXML
-	public void create() {
-		if (!field.getText().isEmpty()) {
-			try {
-				Game game = new Game(field.getText());
-				main.initGame(game);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+    @FXML
+    public void create() {
+	if (!field.getText().isEmpty()) {
+	    try {
+		final Game game = new Game(field.getText());
+		game.save();
+		main.initGame(game);
+	    } catch (final Exception e) {
+		e.printStackTrace();
+	    }
 	}
+    }
 
-	@Override
-	public void initialize(URL url, ResourceBundle resources) {
-	}
+    @Override
+    public void initialize(URL url, ResourceBundle resources) {
+    }
 
-	/**
-	 * Sets the object main and initialize the data in the widgets.
-	 * 
-	 * @param main the object to set
-	 */
-	public void setMainApp(Main main) {
-		this.main = main;
-	}
+    /**
+     * Sets the object main and initialize the data in the widgets.
+     * 
+     * @param main the object to set
+     */
+    public void setMainApp(Main main) {
+	this.main = main;
+    }
 
 }

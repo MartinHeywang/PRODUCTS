@@ -4,23 +4,16 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.DeviceModel;
-import com.martinheywang.model.devices.Floor;
-import com.martinheywang.model.direction.Direction;
-import com.martinheywang.model.level.Level;
 import com.martinheywang.toolbox.MoneyFormat;
 import com.martinheywang.view.Displayable;
 import com.martinheywang.view.Displayer;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -50,220 +43,209 @@ import javafx.scene.layout.BorderPane;
  * 
  * @author Martin Heywang
  */
+@DatabaseTable(tableName = "game")
 public class Game implements Displayable<Game> {
 
-	/**
-	 * The ID of this game in the database. May be null.
-	 */
-	private Long gameId;
+    /**
+     * The ID of this game in the database. May be null.
+     */
+    @DatabaseField(columnName = "id", generatedId = true)
+    private Long id;
 
-	/**
-	 * The accesible name (shown in the UI) of this game
-	 */
-	private StringProperty nameProperty;
+    /**
+     * The accesible name (shown in the UI) of this game
+     */
+    @DatabaseField
+    private String name;
 
-	/**
-	 * As a Game can be saved in the database, we register the time of the
-	 * last saving session.
-	 */
-	private ObjectProperty<LocalDateTime> lastSaveProperty;
+    /**
+     * As a Game can be saved in the database, we register the time of the
+     * last saving session.
+     */
+    @DatabaseField
+    private String lastSave;
 
-	/**
-	 * The money amount that "owns" this Game.
-	 */
-	private ObjectProperty<BigInteger> moneyProperty;
+    /**
+     * The money amount that "owns" this Game.
+     */
+    @DatabaseField
+    private BigInteger money;
 
-	/**
-	 * The grid size of this game.
-	 */
-	private IntegerProperty gridSizeProperty;
+    /**
+     * The grid size of this game.
+     */
+    @DatabaseField
+    private Integer gridSize;
 
-	/**
-	 * The grow of this game.
-	 */
-	private ObjectProperty<BigInteger> growProperty;
+    /**
+     * The grow of this game.
+     */
+    @DatabaseField
+    private BigInteger grow;
 
-	public Game() {
+    public Game() {
+    }
+
+    /**
+     * Creates a new <i>game</i>. Saves it directly in the database.
+     * 
+     * @param nom the name of the new game
+     * @throws SQLException if this object can't be registered in the
+     *                      database
+     */
+    public Game(String name) throws SQLException {
+	this.name = name;
+	this.gridSize = 3;
+	this.money = new BigInteger("1250");
+	this.grow = new BigInteger("0");
+    }
+
+    /**
+     * Saves the game and all its models.
+     * 
+     * @return true, if the saving process succedeed, else false
+     */
+    public boolean save() {
+	try {
+	    lastSave = LocalDateTime.now().toString();
+	    Database.createDao(Game.class).createOrUpdate(this);
+	} catch (final SQLException e) {
+	    e.printStackTrace();
+	    return false;
 	}
+	return true;
+    }
 
-	/**
-	 * Creates a new <i>game</i>. Saves it directly in the database.
-	 * 
-	 * @param nom the name of the new game
-	 * @throws SQLException if this object can't be registered in the
-	 *                      database
-	 */
-	public Game(String nom) throws SQLException {
-		this.nameProperty = new SimpleStringProperty(nom);
-		this.gridSizeProperty = new SimpleIntegerProperty(3);
-		this.moneyProperty = new SimpleObjectProperty<>(new BigInteger("1250"));
-		this.growProperty = new SimpleObjectProperty<>(new BigInteger("0"));
-	}
 
-	/**
-	 * Refreshes the list of devices model and return it then.
-	 * 
-	 * @return a list of all devices of this game
-	 */
-	public List<DeviceModel> getDevicesModel() {
-		List<DeviceModel> devicesModel = new ArrayList<>();
+    /**
+     * Refreshes the list of devices model and return it then.
+     * 
+     * @return a list of all devices of this game
+     * @throws SQLException if the devices couldn't be loaded
+     */
+    public List<DeviceModel> loadDevicesModel() throws SQLException {
+	final List<DeviceModel> devicesModel = Database.createDao(DeviceModel.class).queryBuilder().where()
+		.eq("game_id", this.id).query();
 
-		// Todo: load available devices
-		for (int x = 0; x < getGridSize(); x++) {
-			for (int y = 0; y < getGridSize(); y++) {
-				devicesModel.add(new DeviceModel(Floor.class, Level.LEVEL_1,
-						Direction.UP, this, new Coordinate(x, y)));
-			}
-		}
-		return devicesModel;
-	}
+	return devicesModel;
+    }
 
-	/**
-	 * May be null.
-	 * 
-	 * @return the id of this object in the database.
-	 */
-	public Long getID() {
-		return gameId;
-	}
+    @Override
+    public Displayer<Game> getDisplayer() {
+	final BorderPane root = new BorderPane();
 
-	// PROPERTIES GETTER
+	final Label nom = new Label();
+	nom.setUnderline(true);
+	nom.setAlignment(Pos.TOP_CENTER);
+	nom.setText(this.getName());
+	nom.setWrapText(true);
+	root.setTop(nom);
 
-	/**
-	 * @return the property name of this Game object.
-	 */
-	public StringProperty nameProperty() {
-		return nameProperty;
-	}
+	final DateTimeFormatter formatter = DateTimeFormatter
+		.ofPattern("dd/MM/yyyy HH:mm");
 
-	/**
-	 * @return the property lastSave of this Game object.
-	 */
-	public ObjectProperty<LocalDateTime> lastSaveProperty() {
-		return lastSaveProperty;
-	}
+	final Label infos = new Label();
+	infos.setText(
+		"Dernière sauvegarde : " + this.getLastSave().format(formatter)
+		+ "\nArgent en compte : "
+		+ MoneyFormat.getSingleton().format(this.getMoney()));
+	root.setLeft(infos);
 
-	/**
-	 * @return the property money of this Game object.
-	 */
-	public ObjectProperty<BigInteger> moneyProperty() {
-		return moneyProperty;
-	}
+	root.setPadding(new Insets(3, 3, 3, 3));
+	return new Displayer<Game>(root, this);
+    }
 
-	/**
-	 * @return the property gridSize of this Game object.
-	 */
-	public IntegerProperty gridSizeProperty() {
-		return gridSizeProperty;
-	}
 
-	/**
-	 * @return the property grow of this object.
-	 */
-	public ObjectProperty<BigInteger> growProperty() {
-		return growProperty;
-	}
 
-	// GETTERS
+    // PROPERTIES GETTER
 
-	/**
-	 * Returns the accesible name of this Game object.
-	 * 
-	 * @return the name of this game
-	 */
-	public String getName() {
-		return nameProperty.get();
-	}
+    /**
+     * May be null.
+     * 
+     * @return the id of this object in the database.
+     */
+    public Long getID() {
+	return this.id;
+    }
 
-	/**
-	 * The timing of the last save of this Game object.
-	 * 
-	 * @return the date & time of the last save of this object (as
-	 *         LocalDateTime, also known as JodaTime)
-	 */
-	public LocalDateTime getLastSave() {
-		return lastSaveProperty.get();
-	}
+    /**
+     * Returns the accesible name of this Game object.
+     * 
+     * @return the name of this game
+     */
+    public String getName() {
+	return this.name;
+    }
 
-	/**
-	 * Returns how money this game has.
-	 * 
-	 * @return the money amount
-	 */
-	public BigInteger getMoney() {
-		return moneyProperty.get();
-	}
+    /**
+     * Returns the size of the grid.
+     * 
+     * @return the grid-size
+     */
+    public Integer getGridSize() {
+	return this.gridSize;
+    }
 
-	/**
-	 * Returns the size of the grid.
-	 * 
-	 * @return the grid-size
-	 */
-	public Integer getGridSize() {
-		return gridSizeProperty.get();
-	}
+    /**
+     * Returns how money this game has.
+     * 
+     * @return the money amount
+     */
+    public BigInteger getMoney() {
+	return this.money;
+    }
 
-	/**
-	 * Returns how many this game generate each iterations of the game
-	 * loop.
-	 * 
-	 * @return the grow
-	 */
-	public BigInteger getGrow() {
-		return growProperty.get();
-	}
+    // PROPERTIES GETTER
 
-	// SETTERS
+    /**
+     * Returns how many this game generate each iterations of the game
+     * loop.
+     * 
+     * @return the grow
+     */
+    public BigInteger getGrow() {
+	return this.grow;
+    }
 
-	/**
-	 * Sets the new accesible name of this Game object.
-	 * 
-	 * @param newName the new name
-	 */
-	public void setName(String newName) {
-		nameProperty.set(newName);
-	}
+    /**
+     * The timing of the last save of this Game object.
+     * 
+     * @return the date & time of the last save of this object (as
+     *         LocalDateTime, also known as JodaTime)
+     */
+    public LocalDateTime getLastSave() {
+	return LocalDateTime.parse(this.lastSave);
+    }
 
-	/**
-	 * Sets the new amount of money of this Game object
-	 * 
-	 * @param money the new money-amount
-	 */
-	public void setMoney(BigInteger money) {
-		moneyProperty.set(money);
-	}
+    /**
+     * Sets the new accesible name of this Game object.
+     * 
+     * @param newName the new name
+     */
+    public void setName(String name) {
+	this.name = name;
+    }
 
-	/**
-	 * Sets the grow property
-	 * 
-	 * @param grow the new grow value
-	 */
-	public void setGrow(BigInteger grow) {
-		growProperty.set(grow);
-	}
+    /**
+     * Sets the new amount of money of this Game object
+     * 
+     * @param money the new money-amount
+     */
+    public void setMoney(BigInteger money) {
+	this.money = money;
+    }
 
-	@Override
-	public Displayer<Game> getDisplayer() {
-		BorderPane root = new BorderPane();
+    /**
+     * Sets the grow property
+     * 
+     * @param grow the new grow value
+     */
+    public void setGrow(BigInteger grow) {
+	this.grow = grow;
+    }
 
-		Label nom = new Label();
-		nom.setUnderline(true);
-		nom.setAlignment(Pos.TOP_CENTER);
-		nom.setText(this.getName());
-		nom.setWrapText(true);
-		root.setTop(nom);
-
-		final DateTimeFormatter formatter = DateTimeFormatter
-				.ofPattern("dd/MM/yyyy HH:mm");
-
-		Label infos = new Label();
-		infos.setText(
-				"Dernière sauvegarde : " + this.getLastSave().format(formatter)
-						+ "\nArgent en compte : "
-						+ MoneyFormat.getSingleton().format(this.getMoney()));
-		root.setLeft(infos);
-
-		root.setPadding(new Insets(3, 3, 3, 3));
-		return new Displayer<Game>(root, this);
-	}
+    @Override
+    public String toString() {
+	return "{" + name + ", " + money + "€ }";
+    }
 }
