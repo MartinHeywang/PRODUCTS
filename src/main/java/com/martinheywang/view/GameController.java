@@ -11,6 +11,7 @@ import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
 import com.martinheywang.model.devices.annotations.AccessibleName;
 import com.martinheywang.model.devices.annotations.Buildable;
+import com.martinheywang.model.devices.annotations.Prices;
 import com.martinheywang.model.direction.Direction;
 import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
@@ -43,9 +44,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * <h3>Controller class for <code>Game.fxml</code> file.</h3> Please
- * make the difference b/w the GameController and the
- * {@link GameManager}.</strong>
+ * <h3>Controller class for <code>Game.fxml</code> file.</h3> Please make the
+ * difference b/w the GameController and the {@link GameManager}.</strong>
  * 
  * @author Martin Heywang
  */
@@ -57,8 +57,7 @@ public class GameController implements Initializable {
     private static boolean optionsSidebarShown = true;
 
     /**
-     * Instance of Main used to changed the view for example (return to
-     * home...)
+     * Instance of Main used to changed the view for example (return to home...)
      */
     private GameManager gameManager;
 
@@ -137,9 +136,7 @@ public class GameController implements Initializable {
 		Device device = devices.get(x, y);
 		// If a Device doesn't exists, create a new FLOOR
 		if (device == null) {
-		    device = new DeviceModel(Floor.class, Level.LEVEL_1,
-			    Direction.UP,
-			    game, new Coordinate(x, y))
+		    device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game, new Coordinate(x, y))
 			    .instantiate();
 		}
 		this.grid.add(new DeviceView(device), x, y);
@@ -221,8 +218,8 @@ public class GameController implements Initializable {
     }
 
     /**
-     * Iterrates over the grid's children to find a DeviceView matching
-     * the given x and y position. If none is found, returns null.
+     * Iterrates over the grid's children to find a DeviceView matching the given x
+     * and y position. If none is found, returns null.
      * 
      * @param x the x pos of the requested device view
      * @param y the y pos of the requested device view
@@ -231,8 +228,7 @@ public class GameController implements Initializable {
     private DeviceView findDeviceView(int x, int y) {
 	for (final Node node : this.grid.getChildrenUnmodifiable()) {
 	    if (node instanceof DeviceView) {
-		if (GridPane.getColumnIndex(node) == x
-			&& GridPane.getRowIndex(node) == y) {
+		if (GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y) {
 		    return (DeviceView) node;
 		}
 	    }
@@ -249,13 +245,12 @@ public class GameController implements Initializable {
 		if (clazz.isAnnotationPresent(Buildable.class)) {
 
 		    final HBox deviceUI = new HBox();
-		    /* The image of the device must be found in the resource
-		     * folder, then in
-		     * images/devices_level_1/<class_name_to_upper_case>.png */
+		    /*
+		     * The image of the device must be found in the resource folder, then in
+		     * images/devices_level_1/<class_name_to_upper_case>.png
+		     */
 		    final String url = clazz
-			    .getResource("/images/devices_level_1/"
-				    + clazz.getSimpleName().toUpperCase()
-				    + ".png")
+			    .getResource("/images/devices_level_1/" + clazz.getSimpleName().toUpperCase() + ".png")
 			    .toExternalForm();
 		    final ImageView view = new ImageView(url);
 		    view.setFitWidth(40d);
@@ -263,8 +258,8 @@ public class GameController implements Initializable {
 
 		    // All subclasses of Device has this annotation, don't need
 		    // to test this.
-		    final Label label = new Label(
-			    clazz.getAnnotation(AccessibleName.class).value());
+		    final String str = clazz.getAnnotation(AccessibleName.class).value();
+		    final Label label = new Label(str);
 		    label.setWrapText(true);
 
 		    deviceUI.setSpacing(10d);
@@ -272,10 +267,18 @@ public class GameController implements Initializable {
 		    deviceUI.setAlignment(Pos.CENTER_LEFT);
 		    deviceUI.setPadding(new Insets(2d, 5d, 2d, 5d));
 
+		    final BigInteger price = new BigInteger(clazz.getAnnotation(Prices.class).build());
+
+		    deviceUI.setOnMouseEntered(event -> {
+			label.setText(MoneyFormat.getSingleton().format(price));
+		    });
+		    deviceUI.setOnMouseExited(event -> {
+			label.setText(str);
+		    });
+
 		    // DRAG BEHAVIOUR
 		    deviceUI.setOnDragDetected(event -> {
-			final Dragboard db = deviceUI
-				.startDragAndDrop(TransferMode.COPY);
+			final Dragboard db = deviceUI.startDragAndDrop(TransferMode.COPY);
 			final ClipboardContent content = new ClipboardContent();
 
 			content.put(DeviceView.classFormat, clazz);
@@ -299,13 +302,10 @@ public class GameController implements Initializable {
 		    if (event.getTransferMode().equals(TransferMode.MOVE)) {
 			final Dragboard db = event.getDragboard();
 
-			if (db.hasContent(DeviceView.coordinateFormat)
-				&& db.hasContent(DeviceView.levelFormat)) {
+			if (db.hasContent(DeviceView.coordinateFormat) && db.hasContent(DeviceView.levelFormat)) {
 
-			    final Coordinate coord = (Coordinate) db
-				    .getContent(DeviceView.coordinateFormat);
-			    final Level level = (Level) db
-				    .getContent(DeviceView.levelFormat);
+			    final Coordinate coord = (Coordinate) db.getContent(DeviceView.coordinateFormat);
+			    final Level level = (Level) db.getContent(DeviceView.levelFormat);
 
 			    try {
 				this.gameManager.destroy(coord, level);
@@ -329,22 +329,15 @@ public class GameController implements Initializable {
 	final Timeline transition = new Timeline();
 	if (!optionsSidebarShown) {
 	    transition.getKeyFrames().addAll(
-		    new KeyFrame(Duration.ZERO,
-			    new KeyValue(this.sidebarsContainer.translateXProperty(),
-				    240d)),
-		    new KeyFrame(Duration.millis(250),
-			    new KeyValue(this.sidebarsContainer.translateXProperty(),
-				    0d)));
+		    new KeyFrame(Duration.ZERO, new KeyValue(this.sidebarsContainer.translateXProperty(), 240d)),
+		    new KeyFrame(Duration.millis(250), new KeyValue(this.sidebarsContainer.translateXProperty(), 0d)));
 	    transition.playFromStart();
 
 	} else {
 	    transition.getKeyFrames().addAll(
-		    new KeyFrame(Duration.ZERO,
-			    new KeyValue(this.sidebarsContainer.translateXProperty(),
-				    0d)),
+		    new KeyFrame(Duration.ZERO, new KeyValue(this.sidebarsContainer.translateXProperty(), 0d)),
 		    new KeyFrame(Duration.millis(250),
-			    new KeyValue(this.sidebarsContainer.translateXProperty(),
-				    240d)));
+			    new KeyValue(this.sidebarsContainer.translateXProperty(), 240d)));
 	    transition.playFromStart();
 	}
 
@@ -359,15 +352,8 @@ public class GameController implements Initializable {
     private void toPlayableView() {
 	this.grid.setVisible(true);
 	final Timeline fadeIn = new Timeline();
-	fadeIn.getKeyFrames().addAll(
-		new KeyFrame(Duration.millis(0d),
-			new KeyValue(
-				this.grid.opacityProperty(),
-				0d)),
-		new KeyFrame(Duration.millis(250d),
-			new KeyValue(
-				this.grid.opacityProperty(),
-				1d)));
+	fadeIn.getKeyFrames().addAll(new KeyFrame(Duration.millis(0d), new KeyValue(this.grid.opacityProperty(), 0d)),
+		new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 1d)));
 	fadeIn.playFromStart();
 	this.moneyLabel.setVisible(true);
 	this.progression.setVisible(false);
@@ -380,11 +366,8 @@ public class GameController implements Initializable {
      */
     private void toProcessView() {
 	final Timeline fadeOut = new Timeline();
-	fadeOut.getKeyFrames().addAll(
-		new KeyFrame(Duration.millis(0d),
-			new KeyValue(this.grid.opacityProperty(), 1d)),
-		new KeyFrame(Duration.millis(250d),
-			new KeyValue(this.grid.opacityProperty(), 0d)));
+	fadeOut.getKeyFrames().addAll(new KeyFrame(Duration.millis(0d), new KeyValue(this.grid.opacityProperty(), 1d)),
+		new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 0d)));
 	fadeOut.playFromStart();
 	this.grid.setVisible(false);
 	this.moneyLabel.setVisible(false);
