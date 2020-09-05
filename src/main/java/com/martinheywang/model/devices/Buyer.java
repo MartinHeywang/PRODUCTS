@@ -1,12 +1,14 @@
 package com.martinheywang.model.devices;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.annotations.AccessibleName;
 import com.martinheywang.model.devices.annotations.ActionCost;
 import com.martinheywang.model.devices.annotations.Buildable;
@@ -56,8 +58,7 @@ public final class Buyer extends Device {
 	// Buyers auto-activates
 	Device.autoActiveDevices.add(this);
 
-	// Todo: fetch the distributed pack
-	this.distributedResource = new Pack(DefaultResource.NONE, new BigInteger("1"));
+	distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, model);
     }
 
     @Override
@@ -136,6 +137,13 @@ public final class Buyer extends Device {
      */
     public void setDistributedResource(Resource res) {
 	distributedResource.setResource(res);
+
+	try {
+	    // Updates the distributed resource
+	    Database.createDao(Pack.class).createOrUpdate(distributedResource);
+	} catch (final SQLException e) {
+	    e.printStackTrace();
+	}
     }
 
     /**

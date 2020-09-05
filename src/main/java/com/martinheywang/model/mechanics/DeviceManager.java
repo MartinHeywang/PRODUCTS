@@ -1,11 +1,15 @@
 package com.martinheywang.model.mechanics;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
@@ -31,6 +35,12 @@ public final class DeviceManager {
     private final ArrayList2D<Device> devices = new ArrayList2D<>();
 
     /**
+     * A copy of the field 'devices', except that it doesn't updates whenever a
+     * change is made to the first one. Used for database purposes.
+     */
+    private final ArrayList2D<Device> lockedDevices = new ArrayList2D<>();
+
+    /**
      * The current game manager
      */
     private final GameManager gameManager;
@@ -47,6 +57,7 @@ public final class DeviceManager {
 	for (final DeviceModel deviceModel : devicesModel) {
 	    final Device device = deviceModel.instantiate();
 	    this.devices.add(device, deviceModel.getPosition().getX(), deviceModel.getPosition().getY());
+	    this.lockedDevices.add(device, deviceModel.getPosition().getX(), deviceModel.getPosition().getY());
 	    device.manageWith(gameManager);
 	}
 
@@ -57,6 +68,7 @@ public final class DeviceManager {
 		    final Device device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game,
 			    new Coordinate(x, y)).instantiate();
 		    this.devices.add(device, x, y);
+		    this.lockedDevices.add(device, x, y);
 		    device.manageWith(gameManager);
 		}
 	    }
@@ -117,7 +129,7 @@ public final class DeviceManager {
 	return this.devices;
     }
 
-    public Collection<DeviceModel> getModels() {
+    public List<DeviceModel> getModels() {
 	final List<DeviceModel> models = new ArrayList<>();
 
 	for (final Device device : devices.toCollection()) {
@@ -157,6 +169,109 @@ public final class DeviceManager {
     public void setDevice(Device device, Coordinate to) {
 	this.devices.set(device, to.getX(), to.getY());
 	device.getModel().setPosition(to);
+    }
+
+    /**
+     * Saves the devices
+     * 
+     * @throws SQLException
+     */
+    //    public void save() throws SQLException {
+    //	final Dao<DeviceModel, Long> dao = Database.createDao(DeviceModel.class);
+    //
+    //	// Some devices are saved in the same time as another and don't need to be saved
+    //	// a second time
+    //	// Here are their coordinates
+    //	final List<Coordinate> done = new ArrayList<>();
+    //
+    //	for (int x = 0; x < devices.size(); x++) {
+    //	    for (int y = 0; y < devices.size(); y++) {
+    //		for (final Coordinate coord : done) {
+    //		    if (coord.propertiesEquals(new Coordinate(x, y)))
+    //			break;
+    //		}
+    //
+    //		// These values are the base of this loop
+    //		// And represents the models at the current position in the loop (x and y)
+    //		final DeviceModel old = unmodifiableDevices.get(x, y).getModel();
+    //		final DeviceModel current = devices.get(x, y).getModel();
+    //
+    //		// If the current device at x and y position is the same
+    //		if (current.propertiesEquals(old)) {
+    //		    // Create if not exists (if we save this game for the first time, there no
+    //		    // devices associated to it at this time)
+    //		    dao.createIfNotExists(current);
+    //		    continue;
+    //		}
+    //
+    //		if (old.getID() == null && current.getID() == null) {
+    //		    dao.createIfNotExists(current);
+    //		    continue;
+    //		}
+    //
+    //		// Check if id didn't changed
+    //		if (old.getID() == current.getID() && old.getID() != null) {
+    //		    dao.update(current);
+    //		    continue;
+    //		}
+    //
+    //		// If the new id is null
+    //		// It means that we created a new model and that's why he hasn't got an id yet
+    //		// So a device was built/destroyed at this coordinate
+    //		if (current.getID() == null) {
+    //		    dao.delete(old);
+    //		    dao.create(current);
+    //		    continue;
+    //		}
+    //		// Else id isn't null
+    //		// So the current device was swaped from another position
+    //		dao.delete(old);
+    //		dao.delete(current);
+    //
+    //		final Long oldID = old.getID();
+    //		old.setID(current.getID());
+    //		current.setID(oldID);
+    //
+    //		dao.create(current);
+    //
+    //		done.add(old.getPosition());
+    //	    }
+    //	}
+    //    }
+
+    /**
+     * Saves the devices in the database using the same id as before.
+     * 
+     * @throws SQLException if an error occurs with the database
+     */
+    public void save() throws SQLException {
+
+	final Dao<DeviceModel, Long> dao = Database.createDao(DeviceModel.class);
+
+	/*
+	 * Attempt 1:
+	 * 
+	 * Delete all old devices of the game. Set the same id as before on the current
+	 * devices. Persist all the devices
+	 */
+
+	final DeleteBuilder<DeviceModel, Long> deleter = dao.deleteBuilder();
+	deleter.where().eq("game_id", gameManager.getGameID());
+	deleter.delete();
+
+	for (int x = 0; x < devices.size(); x++) {
+	    for (int y = 0; y < devices.size(); y++) {
+		final DeviceModel old = lockedDevices.get(x, y).getModel();
+		final DeviceModel current = devices.get(x, y).getModel();
+
+		// Create an id for the model (it is based on the id of the game, and the id of
+		// the coordinate)
+		final Long id = gameManager.getGameID() * 10_000 + current.getPosition().getIdCoordonnees();
+
+		current.setID(id);
+		dao.create(current);
+	    }
+	}
     }
 
 }

@@ -160,7 +160,7 @@ public abstract class Device {
 
     public String getURL() {
 	return "/images" + this.getLevel().getURL()
-		+ this.getClass().getSimpleName().toLowerCase() + ".png";
+		+ this.getClass().getSimpleName().toUpperCase() + ".png";
     }
 
     /**

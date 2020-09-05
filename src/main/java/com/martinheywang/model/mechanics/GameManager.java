@@ -4,11 +4,9 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
-import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
@@ -18,6 +16,10 @@ import com.martinheywang.model.exceptions.MoneyException;
 import com.martinheywang.model.level.Level;
 import com.martinheywang.view.GameController;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 
 /**
@@ -245,13 +247,53 @@ public final class GameManager {
     }
 
     public void save() throws SQLException {
-	this.game.save();
+	final Alert info = new Alert(AlertType.INFORMATION);
 
-	final DeleteBuilder<DeviceModel, Long> deleteQuery = Database.createDao(DeviceModel.class).deleteBuilder();
-	deleteQuery.where().eq("game_id", game.getID());
-	deleteQuery.delete();
+	final Task<Void> saving = new Task<Void>() {
+	    @Override
+	    public Void call() {
+		try {
+		    game.save();
+		    deviceManager.save();
+		} catch (final SQLException e) {
+		    e.printStackTrace();
+		    Platform.runLater(() -> {
+			info.close();
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Oups...");
+			alert.setHeaderText("Une erreur est survenue lors de la sauvegarde de la partie.");
+			alert.setContentText(e.getMessage());
+			alert.showAndWait();
+		    });
+		}
+		return null;
+	    }
+	};
+	info.setTitle("Sauvegarde en cours");
+	info.setHeaderText("La sauvegarde de la partie est en cours.");
+	info.setContentText("Merci de ne pas fermer le jeu ni d'éteindre votre PC.");
 
-	Database.createDao(DeviceModel.class).create(deviceManager.getModels());
+	try {
+	    final Thread thread = new Thread(saving);
+	    info.show();
+	    thread.run();
+	    thread.join();
+	    info.close();
+	} catch (final InterruptedException e) {
+	    // Something went user
+	    // User may have turned off the computer
+	    // But obviously we can't open a dialog
+	    e.printStackTrace();
+	}
+
+    }
+
+    /**
+     * 
+     * @return the id of the managed game
+     */
+    public Long getGameID() {
+	return game.getID();
     }
 
     /**

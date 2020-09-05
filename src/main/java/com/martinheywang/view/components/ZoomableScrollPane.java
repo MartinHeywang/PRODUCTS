@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
  * @author Daniel Hári
  */
 public class ZoomableScrollPane extends ScrollPane {
-    private double scaleValue = 0.7;
+    private double scaleValue = 1d;
     private final double zoomIntensity = 0.02;
     private final Node target;
     private final Node zoomNode;
@@ -26,9 +26,10 @@ public class ZoomableScrollPane extends ScrollPane {
 	this.zoomNode = new Group(target);
 	setContent(outerNode(zoomNode));
 
-	setPannable(true);
-	setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	// Todo: re-activate the pannable thing
+	// setPannable(true);
+	setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // and reset bars to never shown
+	setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 	setFitToHeight(true); //center
 	setFitToWidth(true); //center
 

@@ -31,7 +31,7 @@ import com.martinheywang.model.level.Level;
 @DatabaseTable
 public class DeviceModel {
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(id = true)
     private Long id;
 
     @DatabaseField(columnName = "class", persisterClass = SerializableType.class)
@@ -136,6 +136,9 @@ public class DeviceModel {
 
     // SETTERs
 
+    public void setID(Long id) {
+	this.id = id;
+    }
     /**
      * @param newType the new type
      */
@@ -175,7 +178,21 @@ public class DeviceModel {
 
     @Override
     public String toString() {
-	return "{" + clazz.getSimpleName() + ", " + level + ", " + direction + ", " + game + ", " + position + ", ";
+	return "{" + clazz.getSimpleName() + ", " + level + ", " + direction + ", " + game + ", " + position + "}";
+    }
+
+    /**
+     * Returns true if the values in the fields (except the id) are the same in this
+     * DeviceModel object and the given one.
+     * 
+     * @param other the DeviceModel to compare
+     * @return true if the properties of the compared models are the same
+     */
+    public boolean propertiesEquals(DeviceModel other) {
+	if (this.clazz == other.clazz && this.direction == other.direction && this.level == other.level
+		&& this.game == other.game && this.position.propertiesEquals(other.position))
+	    return true;
+	return false;
     }
 
 }

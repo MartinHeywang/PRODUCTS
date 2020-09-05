@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.resources.Craftable.RemotePack;
 import com.martinheywang.model.resources.Resource;
 import com.martinheywang.view.Displayable;
@@ -31,12 +32,21 @@ public class Pack implements Displayable<Pack> {
     @DatabaseField
     private BigInteger quantity;
 
+    @DatabaseField(columnName = "model", foreign = true, foreignColumnName = "id")
+    private DeviceModel model;
+
     public Pack() {
     }
 
     public Pack(Resource resource, BigInteger quantity) {
 	this.resource = resource;
 	this.quantity = quantity;
+    }
+
+    public Pack(Resource resource, BigInteger quantity, DeviceModel model) {
+	this.resource = resource;
+	this.quantity = quantity;
+	this.model = model;
     }
 
     @Override
@@ -140,6 +150,14 @@ public class Pack implements Displayable<Pack> {
      */
     public void addQuantity(BigInteger quantity) {
 	this.quantity = this.quantity.add(quantity);
+    }
+
+    public DeviceModel getModel() {
+	return model;
+    }
+
+    public void setModel(DeviceModel model) {
+	this.model = model;
     }
 
     @Override
