@@ -2,6 +2,7 @@ package com.martinheywang.model.devices;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.table.DatabaseTable;
@@ -65,12 +66,15 @@ public class DeviceModel {
 
 	// Get the position from the database and compare it if it already exists.
 	try {
+	    final Dao<Coordinate, Long> dao = Database.createDao(Coordinate.class);
 	    // 'X' and 'Y' columns are marked as a unique combo
-	    this.position = Database.createDao(Coordinate.class).queryBuilder().where().eq("x", position.getX()).and()
+	    this.position = dao.queryBuilder().where().eq("x", position.getX()).and()
 		    .eq("y", position.getY()).queryForFirst();
 	    // But in case it doesn't exists, assign the one given as arg.
-	    if (this.position == null)
+	    if (this.position == null) {
 		this.position = position;
+		dao.create(position);
+	    }
 	} catch (final SQLException e) {
 	    e.printStackTrace();
 	}
@@ -92,6 +96,10 @@ public class DeviceModel {
 
     public Long getID() {
 	return id;
+    }
+
+    public Long generateID() {
+	return this.game.getID() * 10_000 + this.position.getID();
     }
 
     /**

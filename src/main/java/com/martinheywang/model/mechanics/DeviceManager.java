@@ -261,14 +261,9 @@ public final class DeviceManager {
 
 	for (int x = 0; x < devices.size(); x++) {
 	    for (int y = 0; y < devices.size(); y++) {
-		final DeviceModel old = lockedDevices.get(x, y).getModel();
 		final DeviceModel current = devices.get(x, y).getModel();
 
-		// Create an id for the model (it is based on the id of the game, and the id of
-		// the coordinate)
-		final Long id = gameManager.getGameID() * 10_000 + current.getPosition().getIdCoordonnees();
-
-		current.setID(id);
+		current.setID(current.generateID());
 		dao.create(current);
 	    }
 	}

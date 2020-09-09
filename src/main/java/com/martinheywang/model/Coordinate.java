@@ -36,7 +36,7 @@ public class Coordinate implements Serializable {
 	this.y = y;
     }
 
-    public Long getIdCoordonnees() {
+    public Long getID() {
 	return this.idCoordonnees;
     }
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
@@ -50,7 +51,7 @@ public final class Buyer extends Device {
      */
     private static final List<Resource> acceptedResources = new ArrayList<>();
 
-    private final Pack distributedResource;
+    private Pack distributedResource;
 
     public Buyer(DeviceModel model) {
 	super(model);
@@ -58,7 +59,27 @@ public final class Buyer extends Device {
 	// Buyers auto-activates
 	Device.autoActiveDevices.add(this);
 
-	distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, model);
+	loadDistributedResource();
+    }
+
+    /**
+     * Loads the distributed resource when the device is created
+     */
+    private void loadDistributedResource() {
+	try {
+	    final Dao<Pack, Long> dao = Database.createDao(Pack.class);
+
+	    final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
+	    distributedResource = fetched;
+	} catch (final SQLException e) {
+	    // An error with the database occured
+	    // contains any elements
+	    distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
+	    e.printStackTrace();
+	} catch (final IndexOutOfBoundsException e) {
+	    // The fetched list doesn't contain any elements
+	    distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
+	}
     }
 
     @Override
