@@ -1,6 +1,8 @@
 package com.martinheywang.toolbox;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Singleton used to format big amount of money.
@@ -9,70 +11,45 @@ import java.math.BigInteger;
  */
 public final class MoneyFormat {
 
-	private static final MoneyFormat instance = new MoneyFormat();
+    private static final MoneyFormat instance = new MoneyFormat();
 
-	private MoneyFormat() {
+    private final String[] suffixes = { "€", "K", "M", "T", "aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj",
+	    "kk", "ll" };
+
+    private MoneyFormat() {
+    }
+
+    public final String format(BigInteger value) {
+
+	// As a string
+	String stringValue = value.toString();
+	// Packets are groups of three numbers
+	final List<String> packets = new ArrayList<>();
+
+	// Create packets
+	for (int i = stringValue.length(); 0 < i; i -= 3) {
+	    if (i <= 3) {
+		packets.add(0, stringValue);
+		break;
+	    }
+	    packets.add(0, stringValue.substring(i - 3));
+	    stringValue = stringValue.substring(0, i - 3);
 	}
 
-	public final String format(BigInteger value) {
-		final StringBuilder builder = new StringBuilder();
-
-		/*
-		 * <?> The rule to apply depends on the length of the String
-		 * (thousands, millions, ...)
-		 */
-		switch (value.toString().length()) {
-		case 4:
-		case 5:
-		case 6:
-			divideAndAppend(builder, value, BigInteger.TEN.pow(3), "K");
-			break;
-		case 7:
-		case 8:
-		case 9:
-			divideAndAppend(builder, value, BigInteger.TEN.pow(6), "M");
-			break;
-		case 10:
-		case 11:
-		case 12:
-			divideAndAppend(builder, value, BigInteger.TEN.pow(9), "Md");
-			break;
-		default:
-			// Default
-			builder.append(value.toString());
-			builder.append(" €");
-			break;
-		}
-
-		return builder.toString();
+	// Create the number according to its length
+	final StringBuilder sb = new StringBuilder();
+	if (packets.size() > 1) {
+	    sb.append(packets.get(0));
+	    sb.append(".");
+	    sb.append(packets.get(1).substring(0, 2));
+	    sb.append(suffixes[packets.size()]);
+	} else {
+	    return packets.get(0) + "€";
 	}
+	return sb.toString();
+    }
 
-	/**
-	 * Formats the given BigInteger by dividing his value and appending
-	 * the corresponding suffix.
-	 * 
-	 * @param sb      the builder to append the formatted string
-	 * @param value   the value to format
-	 * @param divider by how many the value should be divided
-	 * @param suffix  the suffix to append after the value.
-	 */
-	private void divideAndAppend(StringBuilder sb, BigInteger value,
-			BigInteger divider,
-			String suffix) {
-		final BigInteger[] n = value.divideAndRemainder(divider);
-		final String integer = n[0].toString();
-
-		sb.append(integer);
-
-		if (!n[1].toString().equals("0")) {
-			sb.append(".");
-			sb.append(n[1].toString());
-		}
-
-		sb.append(suffix);
-	}
-
-	public static final MoneyFormat getSingleton() {
-		return instance;
-	}
+    public static final MoneyFormat getSingleton() {
+	return instance;
+    }
 }
