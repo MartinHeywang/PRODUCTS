@@ -69,8 +69,18 @@ public final class Buyer extends Device {
 	try {
 	    final Dao<Pack, Long> dao = Database.createDao(Pack.class);
 
+	    // If the id is null (when just created), the id is null so it can't have a
+	    // associated pack already
+	    if (model.getID() == null)
+		/*
+		 * Here this exception is practical because it sets the packs without printing
+		 * out the message
+		 */
+		throw new IndexOutOfBoundsException();
+
 	    final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
 	    distributedResource = fetched;
+
 	} catch (final SQLException e) {
 	    // An error with the database occured
 	    // contains any elements

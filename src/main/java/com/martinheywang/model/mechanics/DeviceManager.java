@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
+import com.martinheywang.model.Pack;
 import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
@@ -246,7 +247,8 @@ public final class DeviceManager {
      */
     public void save() throws SQLException {
 
-	final Dao<DeviceModel, Long> dao = Database.createDao(DeviceModel.class);
+	final Dao<DeviceModel, Long> modelDao = Database.createDao(DeviceModel.class);
+	final Dao<Pack, Long> packDao = Database.createDao(Pack.class);
 
 	/*
 	 * Attempt 1:
@@ -255,18 +257,32 @@ public final class DeviceManager {
 	 * devices. Persist all the devices
 	 */
 
-	final DeleteBuilder<DeviceModel, Long> deleter = dao.deleteBuilder();
+	final DeleteBuilder<DeviceModel, Long> deleter = modelDao.deleteBuilder();
 	deleter.where().eq("game_id", gameManager.getGameID());
 	deleter.delete();
 
 	for (int x = 0; x < devices.size(); x++) {
 	    for (int y = 0; y < devices.size(); y++) {
+		final DeviceModel old = lockedDevices.get(x, y).getModel();
 		final DeviceModel current = devices.get(x, y).getModel();
 
-		current.setID(current.generateID());
-		dao.create(current);
+		final Long id = current.generateID();
+		current.setID(id);
+
+		modelDao.create(current);
+
 	    }
 	}
+
+	final List<Pack> packs = packDao.queryForAll();
+
+	for (final Pack pack : packs) {
+	    packDao.delete(pack);
+	    packDao.create(pack);
+	    System.out.println(pack);
+	    System.out.println(pack.getModel().getID() + " --- " + pack.getModel());
+	}
+
     }
 
 }

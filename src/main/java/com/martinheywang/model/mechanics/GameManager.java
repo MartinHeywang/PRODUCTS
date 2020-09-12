@@ -4,9 +4,11 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.model.Coordinate;
 import com.martinheywang.model.Game;
 import com.martinheywang.model.Pack;
+import com.martinheywang.model.database.Database;
 import com.martinheywang.model.devices.Device;
 import com.martinheywang.model.devices.DeviceModel;
 import com.martinheywang.model.devices.Floor;
@@ -145,6 +147,14 @@ public final class GameManager {
 
 	// If it was an auto active device, remove it.
 	Device.autoActiveDevices.remove(device);
+
+	try {
+	    final DeleteBuilder<Pack, Long> deleter = Database.createDao(Pack.class).deleteBuilder();
+	    deleter.where().eq("model", device.getModel().getID());
+	    deleter.delete();
+	} catch (final SQLException e) {
+	    e.printStackTrace();
+	}
 
 	// Update model and view
 	this.deviceManager.replace(Floor.class, Level.LEVEL_1, Direction.UP, position);

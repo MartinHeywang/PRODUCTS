@@ -171,7 +171,7 @@ public final class DeviceView extends ImageView {
 
 	}
 	this.setOnDragOver(event -> {
-	    event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
+	    event.acceptTransferModes(TransferMode.COPY);
 	});
 	this.setOnDragEntered(event -> {
 	    /* the drag-and-drop gesture entered the target */
@@ -202,29 +202,28 @@ public final class DeviceView extends ImageView {
 		    }
 		    success = true;
 		}
-	    } else if (event.getTransferMode().equals(TransferMode.LINK)) {
-		device.swap();
-		success = true;
 	    }
+	    /*
+	     * R. I. P. The swap function has been removed from the drag behaviour.
+	     * Fortunately it will be re-implemented later, when a brand new system will
+	     * come.
+	     */
 
 	    event.setDropCompleted(success);
 
 	    event.consume();
 	});
-	this.setOnDragDone(event -> {
-	    // If the other target was a DeviceView
-	    try {
-		if (event.getTarget().getClass().equals(DeviceView.class)) {
-		    if (event.getTransferMode().equals(TransferMode.LINK)) { // Quick review : LINK to swap devices
-			device.swap();
-		    }
-		}
-	    } catch (final NullPointerException e) {
-		/* If an error occurs during the drag'n drop gesture, the event
-		 * is not properly set, that means that the properties are not
-		 * accesible and throws this error */
-	    }
-	});
+
+	/*
+	 * this.setOnDragDone(event -> { // If the other target was a DeviceView try {
+	 * if (event.getTarget().getClass().equals(DeviceView.class)) { if
+	 * (event.getTransferMode().equals(TransferMode.LINK)) { // Quick review : LINK
+	 * to swap devices device.swap(); } } } catch (final NullPointerException e) {
+	 * /* If an error occurs during the drag'n drop gesture, the event is not
+	 * properly set, that means that the properties are not accesible and throws
+	 * this error } });
+	 */
+
     }
 
 }
