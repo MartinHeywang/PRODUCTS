@@ -42,7 +42,7 @@ public final class MoneyFormat {
 	    sb.append(packets.get(0));
 	    sb.append(".");
 	    sb.append(packets.get(1).substring(0, 2));
-	    sb.append(suffixes[packets.size()]);
+	    sb.append(suffixes[packets.size() - 1]);
 	} else {
 	    return packets.get(0) + "€";
 	}

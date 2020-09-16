@@ -153,8 +153,9 @@ public final class DeviceManager {
 	final Game game = getDevice(new Coordinate(0, 0)).getGame();
 
 	// Create the new device
-	final Device newDevice = new DeviceModel(clazz, level, direction, game, position)
-		.instantiate();
+	final DeviceModel newModel = new DeviceModel(clazz, level, direction, game, position);
+	newModel.setID(newModel.generateID());
+	final Device newDevice = newModel.instantiate();
 	newDevice.manageWith(this.gameManager);
 
 	// And replace it at the given coords
@@ -279,8 +280,6 @@ public final class DeviceManager {
 	for (final Pack pack : packs) {
 	    packDao.delete(pack);
 	    packDao.create(pack);
-	    System.out.println(pack);
-	    System.out.println(pack.getModel().getID() + " --- " + pack.getModel());
 	}
 
     }
