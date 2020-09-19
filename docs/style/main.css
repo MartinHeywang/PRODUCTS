@@ -1,0 +1,66 @@
+body {
+  background: url(../images/Floor.svg);
+  background-color: #333;
+  background-blend-mode: multiply;
+  background-position: -46px -23px;
+  background-size: 96px;
+  text-align: center;
+  padding-top: 5em;
+}
+
+.about__text {
+  max-width: 100ch;
+  margin: auto;
+}
+
+.download-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 90%;
+  margin: auto;
+}
+
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+h2 {
+  margin: 2% 0;
+}
+
+a.button {
+  display: block;
+  width: 90%;
+  max-width: 350px;
+  color: #eee;
+  border: 3px solid white;
+  padding: 1% 4%;
+  margin: 1.5% 0;
+  font-weight: 500;
+}
+
+a.button:hover {
+  background: #eee;
+  color: #333;
+}
+/*# sourceMappingURL=main.css.map */
