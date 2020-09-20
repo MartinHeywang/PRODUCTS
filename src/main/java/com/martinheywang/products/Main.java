@@ -9,9 +9,12 @@ import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Conveyor;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.Floor;
+import com.martinheywang.products.model.devices.Furnace;
 import com.martinheywang.products.model.devices.LeftConveyor;
+import com.martinheywang.products.model.devices.Press;
 import com.martinheywang.products.model.devices.RightConveyor;
 import com.martinheywang.products.model.devices.Seller;
+import com.martinheywang.products.model.devices.WireDrawer;
 import com.martinheywang.products.model.mechanics.GameManager;
 import com.martinheywang.products.model.resources.DefaultResource;
 import com.martinheywang.products.model.resources.Ingot;
@@ -215,6 +218,9 @@ public final class Main extends Application {
 	Device.registerType(Conveyor.class);
 	Device.registerType(RightConveyor.class);
 	Device.registerType(LeftConveyor.class);
+	Device.registerType(Furnace.class);
+	Device.registerType(Press.class);
+	Device.registerType(WireDrawer.class);
 
 	launch(args);
     }
