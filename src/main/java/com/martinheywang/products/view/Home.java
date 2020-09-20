@@ -15,8 +15,6 @@ public class Home implements Initializable {
 
     @FXML
     TextField field;
-    @FXML
-    ImageView button_icon;
 
     Main main;
 

@@ -34,6 +34,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -50,7 +51,7 @@ public final class Main extends Application {
     public void start(Stage primaryStage) {
 	stage = primaryStage;
 	stage.setTitle("PRODUCTS.");
-	stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icone.png")));
+	stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icon.png")));
 
 	try {
 	    // If at least one game is already registered
@@ -90,7 +91,8 @@ public final class Main extends Application {
 	    final Parent root = loader.load();
 	    this.changeSceneTo(root);
 
-	    stage.setResizable(false);
+		stage.setResizable(false);
+		stage.initStyle(StageStyle.UNDECORATED);
 
 	    final Home controller = loader.getController();
 	    controller.setMainApp(this);
