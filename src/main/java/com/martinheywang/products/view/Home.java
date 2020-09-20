@@ -9,14 +9,11 @@ import com.martinheywang.products.model.Game;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 
 public class Home implements Initializable {
 
     @FXML
     TextField field;
-    @FXML
-    ImageView button_icon;
 
     Main main;
 

@@ -9,9 +9,12 @@ import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Conveyor;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.Floor;
+import com.martinheywang.products.model.devices.Furnace;
 import com.martinheywang.products.model.devices.LeftConveyor;
+import com.martinheywang.products.model.devices.Press;
 import com.martinheywang.products.model.devices.RightConveyor;
 import com.martinheywang.products.model.devices.Seller;
+import com.martinheywang.products.model.devices.WireDrawer;
 import com.martinheywang.products.model.mechanics.GameManager;
 import com.martinheywang.products.model.resources.DefaultResource;
 import com.martinheywang.products.model.resources.Ingot;
@@ -34,6 +37,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -50,7 +54,7 @@ public final class Main extends Application {
     public void start(Stage primaryStage) {
 	stage = primaryStage;
 	stage.setTitle("PRODUCTS.");
-	stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icone.png")));
+	stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icon.png")));
 
 	try {
 	    // If at least one game is already registered
@@ -90,7 +94,8 @@ public final class Main extends Application {
 	    final Parent root = loader.load();
 	    this.changeSceneTo(root);
 
-	    stage.setResizable(false);
+		stage.setResizable(false);
+		stage.initStyle(StageStyle.UNDECORATED);
 
 	    final Home controller = loader.getController();
 	    controller.setMainApp(this);
@@ -213,6 +218,9 @@ public final class Main extends Application {
 	Device.registerType(Conveyor.class);
 	Device.registerType(RightConveyor.class);
 	Device.registerType(LeftConveyor.class);
+	Device.registerType(Furnace.class);
+	Device.registerType(Press.class);
+	Device.registerType(WireDrawer.class);
 
 	launch(args);
     }
