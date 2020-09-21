@@ -1,54 +1,38 @@
-<img src="src/main/resources/images/Logo.png" alt="logo"/>
+# Enrichissez-vous dans PRODUCTS. !
 
-# PRODUCTS.
-PRODUCTS. is a management game where you build assembly lines to become wealthy. Coming soon !
+This README is in French, because the game itself isn't translated yet. But as soon as the product will be available in other languages, this file will be translated too.
 
-## Presentation
-PRODUCTS. is a desktop only game (available soon on Windows, Linux, probably Mac OSX) where you build assembly lines to become richer and richer. Then, you'll create more assembly lines to earn even more money and unlock new content to make the game not boring at all !
+![Logo du jeu](./src/main/resources/images/Icon.png)
 
-## Contributions
-I'm actually too young to accept donations... But don't worry:
-If you wanna contribute to the game, once it's open, you will able to create your own images, and devices that you can create easily with the API.
-If you don't know how to code (or in other languages) : don't worry, ideas are always welcome.
+## Qu'est-ce que PRODUCTS. ?
 
-There are two ways of sending me ideas:
-1. Open an issue with the appropriate label,
-2. or Send me an email at 'martin.heywang1@gmail.com' (if you want some privation or don't have a github account).
+PRODUCTS. est le nouveau jeu de gestion ! Gère ta propre usine, fabrique tes produits, construit des lignes d'assemblages, et bien plus encore ... !
 
+Plus d'informations sur le [site internet](martinheywang.github.io/PRODUCTS).
 
-But pay attention to : 
-<li>a plugin must be free,</li>
-<li>it can be yours or you can distribute it to anyone,</li>
-<li>it musn't add pubs (I don't want you to make a profit of it),</li>
-<li>it may be small as it can be large</li>
-<li>a plugin just adds features to the game, but has limitations.</li>
-<li>if a new version is released, it not work anymore. An adaptation will be required.</li>
+## Vous avez dit "Télécharger" ?
 
-But if you don't have any ideas, or anything like that... be one of the first stargazers (star, watch, fork...) ! 
-I would really appreciate those things ! No. REALLY ! That helps me understand who has seen this.
+Vous pouvez télécharger ce jeu en version bêta actuellement soit sur le site internet, soit dans la partie 'releases' de ce dépôt.
 
+- [Site internet](martinheywang.github.io/PRODUCTS)
+- [Releases](https://github.com/MartinHeywang/PRODUCTS/releases)
 
-## Details
-Using the Java programming language with JavaFX. I am also using [PF4J][1] as a plugin system and [ORMLite][2] to manage the database.
-I've been inspired by the mobile game [Assembly line][3].
-I used [Pixilart][4] to make most of the images.
+## Qui-suis-je ?
 
-## Future
-I've already a lot of ideas to make this game even better :
-Here are some:
-1. Create an *intelligent* loader that auto-detects assembly lines,
-2. Add devices (splitters, sorters, ...)
-3. Add a soundtrack (may need help for this...)
-4. ...
-	
-I will create a website (probably using Github Pages) to make more docs about the game. I think that if you're currently reading, if you're on Github, you can only be a devloper... It would be much more accessible to make a website.
+Le mystérieux créateur de ce jeu devrait se présenter, quand même. C'est ce que je vais faire dans cette partie.
 
-## About the creator
-Hi! Nice to meet you!
-My name is Martin Heywang and I'm too young too write how old I am in public. I live in France. (shortest description ever)
-If you wanna know more about me, I'll create a discord server to chat about the game.
+Je m'appelle Martin HEYWANG, je suis encore dans un lycée en France. J'apprends la programmation tout seul depuis 2 ans, j'ai développé des compétences principalement en Java, mais j'ai essayé le trio HTML/CSS/JS, pratiqué une sorte de C++ sur des cartes Arduino, testé React sur des sites internet.
 
-[1]: https://github.com/pf4j/pf4j
-[2]: https://github.com/j256/ormlite-core
-[3]: https://play.google.com/store/apps/details?id=com.olympus.assemblyline
-[4]: https://pixilart.com/draw
+### Ne partez pas comme ça !
+Laisser une étoile (un like) et regardez ce projet évoluer en cliquant sur le bouton en haut à droite ! Cela m'aide beacoup à me motiver et à continuer. Cela est essentiel pour la survie de ce projet.
+
+### Références
+
+Ceci sont des libraires que j'ai utilisé pour créer le jeu. Il n'y a aucune obligation de citer, mais je préfère en parler tout de même.
+
+- ORMLite : pour la base de donnée [(ormlite-core)](https://github.com/j256/ormlite-jdbc)
+- Pixilart : pour les images [(Pixilart)](https://pixilart.com/draw)
+- Figma : pour d'autres images et icônes [(figma)](https://figma.com)
+
+- Maven : pour les *builds*
+- Git : évidemment (*source version control*)

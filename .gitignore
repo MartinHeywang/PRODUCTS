@@ -2,8 +2,9 @@
 bin/
 target/
 
-# This file and some other git stuff
+# Settings
 .settings/
+.vscode/
 
 # The database that changes constantly
 Products.db
