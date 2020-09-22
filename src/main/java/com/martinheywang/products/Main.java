@@ -95,7 +95,6 @@ public final class Main extends Application {
 	    this.changeSceneTo(root);
 
 		stage.setResizable(false);
-		stage.initStyle(StageStyle.UNDECORATED);
 
 	    final Home controller = loader.getController();
 	    controller.setMainApp(this);
@@ -120,7 +119,7 @@ public final class Main extends Application {
 	    final Parent root = loader.load();
 	    this.changeSceneTo(root);
 
-	    stage.setResizable(true);
+		stage.setResizable(true);
 	    stage.setMaxWidth(700d);
 	    stage.setMaxHeight(600d);
 	    stage.setMinWidth(500d);
@@ -154,7 +153,6 @@ public final class Main extends Application {
 	    this.changeSceneTo(root);
 
 		stage.setResizable(true);
-		stage.initStyle(StageStyle.DECORATED);
 	    stage.setMaxWidth(Double.MAX_VALUE);
 	    stage.setMaxHeight(Double.MAX_VALUE);
 	    stage.setMinWidth(550d);

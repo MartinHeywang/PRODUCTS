@@ -1,0 +1,8 @@
+.option {
+    -fx-background-color: #2C2C2C;
+}
+
+.option:hover{
+    -fx-background-color: #0A890A;
+    -fx-cursor: hand;
+}
