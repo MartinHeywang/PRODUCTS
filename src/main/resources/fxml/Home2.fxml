@@ -35,7 +35,7 @@
             <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
       </Separator>
-      <Label prefWidth="220.0" text="Content de te revoir, boss !" wrapText="true">
+      <Label fx:id="lead" prefWidth="220.0" text="Content de te revoir, boss !" wrapText="true" VBox.vgrow="SOMETIMES">
          <font>
             <Font size="24.0" />
          </font>

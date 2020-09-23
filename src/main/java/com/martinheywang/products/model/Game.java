@@ -17,28 +17,29 @@ import com.martinheywang.products.view.Displayer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 
 /**
  * <p>
- * The Game class represents a Game in PRODUCTS. In contains all the
- * data about them. This object may be stored in the database.
+ * The Game class represents a Game in PRODUCTS. In contains all the data about
+ * them. This object may be stored in the database.
  * </p>
  * <p>
- * This class is using JavaFX Properties, you can at any time observe
- * one of them and apply changes in consequence.
+ * This class is using JavaFX Properties, you can at any time observe one of
+ * them and apply changes in consequence.
  * </p>
  * <p>
  * It's near of a Java Bean:
  * <ul>
  * <li>It has a default constructor</li>
- * <li>It has a getter and setter for <em>almost</em> all properties
- * and values</li>
+ * <li>It has a getter and setter for <em>almost</em> all properties and
+ * values</li>
  * </ul>
  * </p>
  * <p>
- * It implements Displayable, that means that you can get at any time
- * a display (as a {@link javafx.scene.Node}) of it.
+ * It implements Displayable, that means that you can get at any time a display
+ * (as a {@link javafx.scene.Node}) of it.
  * </p>
  * 
  * @author Martin Heywang
@@ -59,8 +60,8 @@ public class Game implements Displayable<Game> {
     private String name;
 
     /**
-     * As a Game can be saved in the database, we register the time of the
-     * last saving session.
+     * As a Game can be saved in the database, we register the time of the last
+     * saving session.
      */
     @DatabaseField
     private String lastSave;
@@ -90,14 +91,13 @@ public class Game implements Displayable<Game> {
      * Creates a new <i>game</i>. Saves it directly in the database.
      * 
      * @param nom the name of the new game
-     * @throws SQLException if this object can't be registered in the
-     *                      database
+     * @throws SQLException if this object can't be registered in the database
      */
     public Game(String name) throws SQLException {
-	this.name = name;
-	this.gridSize = 3;
-	this.money = new BigInteger("1250");
-	this.grow = new BigInteger("0");
+        this.name = name;
+        this.gridSize = 3;
+        this.money = new BigInteger("1250");
+        this.grow = new BigInteger("0");
     }
 
     /**
@@ -106,16 +106,15 @@ public class Game implements Displayable<Game> {
      * @return true, if the saving process succedeed, else false
      */
     public boolean save() {
-	try {
-	    lastSave = LocalDateTime.now().toString();
-	    Database.createDao(Game.class).createOrUpdate(this);
-	} catch (final SQLException e) {
-	    e.printStackTrace();
-	    return false;
-	}
-	return true;
+        try {
+            lastSave = LocalDateTime.now().toString();
+            Database.createDao(Game.class).createOrUpdate(this);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
-
 
     /**
      * Refreshes the list of devices model and return it then.
@@ -124,38 +123,36 @@ public class Game implements Displayable<Game> {
      * @throws SQLException if the devices couldn't be loaded
      */
     public List<DeviceModel> loadDevicesModel() throws SQLException {
-	final List<DeviceModel> devicesModel = Database.createDao(DeviceModel.class).queryBuilder().where()
-		.eq("game_id", this.id).query();
+        final List<DeviceModel> devicesModel = Database.createDao(DeviceModel.class).queryBuilder().where()
+                .eq("game_id", this.id).query();
 
-	return devicesModel;
+        return devicesModel;
     }
 
     @Override
     public Displayer<Game> getDisplayer() {
-	final BorderPane root = new BorderPane();
+        final VBox root = new VBox();
 
-	final Label nom = new Label();
-	nom.setUnderline(true);
-	nom.setAlignment(Pos.TOP_CENTER);
-	nom.setText(this.getName());
-	nom.setWrapText(true);
-	root.setTop(nom);
+        final Label nom = new Label();
+        nom.setUnderline(true);
+        nom.setAlignment(Pos.TOP_CENTER);
+        nom.setText(this.getName());
+        nom.setWrapText(true);
+        
 
-	final DateTimeFormatter formatter = DateTimeFormatter
-		.ofPattern("dd/MM/yyyy HH:mm");
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-	final Label infos = new Label();
-	infos.setText(
-		"Dernière sauvegarde : " + this.getLastSave().format(formatter)
-		+ "\nArgent en compte : "
-		+ MoneyFormat.getSingleton().format(this.getMoney()));
-	root.setLeft(infos);
+        final Label money = new Label();
+        money.setText("Argent en compte: " + MoneyFormat.getSingleton().format(this.getMoney()));
 
-	root.setPadding(new Insets(3, 3, 3, 3));
-	return new Displayer<Game>(root, this);
+        final Label save = new Label();
+        save.setText("Dernière sauvegarde: " + this.getLastSave().format(formatter));
+
+        root.getChildren().addAll(nom, money, save);
+
+        root.setPadding(new Insets(5));
+        return new Displayer<Game>(root, this);
     }
-
-
 
     // PROPERTIES GETTER
 
@@ -165,7 +162,7 @@ public class Game implements Displayable<Game> {
      * @return the id of this object in the database.
      */
     public Long getID() {
-	return this.id;
+        return this.id;
     }
 
     /**
@@ -174,7 +171,7 @@ public class Game implements Displayable<Game> {
      * @return the name of this game
      */
     public String getName() {
-	return this.name;
+        return this.name;
     }
 
     /**
@@ -183,7 +180,7 @@ public class Game implements Displayable<Game> {
      * @return the grid-size
      */
     public Integer getGridSize() {
-	return this.gridSize;
+        return this.gridSize;
     }
 
     /**
@@ -192,29 +189,28 @@ public class Game implements Displayable<Game> {
      * @return the money amount
      */
     public BigInteger getMoney() {
-	return this.money;
+        return this.money;
     }
 
     // PROPERTIES GETTER
 
     /**
-     * Returns how many this game generate each iterations of the game
-     * loop.
+     * Returns how many this game generate each iterations of the game loop.
      * 
      * @return the grow
      */
     public BigInteger getGrow() {
-	return this.grow;
+        return this.grow;
     }
 
     /**
      * The timing of the last save of this Game object.
      * 
-     * @return the date & time of the last save of this object (as
-     *         LocalDateTime, also known as JodaTime)
+     * @return the date & time of the last save of this object (as LocalDateTime,
+     *         also known as JodaTime)
      */
     public LocalDateTime getLastSave() {
-	return LocalDateTime.parse(this.lastSave);
+        return LocalDateTime.parse(this.lastSave);
     }
 
     /**
@@ -223,7 +219,7 @@ public class Game implements Displayable<Game> {
      * @param newName the new name
      */
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     /**
@@ -232,7 +228,7 @@ public class Game implements Displayable<Game> {
      * @param money the new money-amount
      */
     public void setMoney(BigInteger money) {
-	this.money = money;
+        this.money = money;
     }
 
     /**
@@ -241,11 +237,11 @@ public class Game implements Displayable<Game> {
      * @param grow the new grow value
      */
     public void setGrow(BigInteger grow) {
-	this.grow = grow;
+        this.grow = grow;
     }
 
     @Override
     public String toString() {
-	return "{" + name + ", " + money + "€ }";
+        return "{" + name + ", " + money + "€ }";
     }
 }

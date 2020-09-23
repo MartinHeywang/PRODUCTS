@@ -6,3 +6,11 @@
     -fx-background-color: #0A890A;
     -fx-cursor: hand;
 }
+
+.game-open *{
+    -fx-background-color: transparent;
+}
+
+.game-open:hover{
+    -fx-background-color: #2C2C2C;
+}
