@@ -6,7 +6,7 @@
 	<!-- Basic informations about the app -->
 	<groupId>com.martinheywang</groupId>
 	<artifactId>Products</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 

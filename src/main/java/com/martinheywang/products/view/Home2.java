@@ -2,6 +2,7 @@ package com.martinheywang.products.view;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -82,7 +83,7 @@ public class Home2 implements Initializable {
 
 		try {
 			final List<Game> games = Database.createDao(Game.class).queryForAll();
-			// Todo: Sort list
+			games.sort(Comparator.comparing(Game::getLastSave).reversed());
 			for (final Game game : games) {
 				final Displayer<Game> display = game.getDisplayer();
 				display.setOnMouseClicked(event -> main.initGame(game));

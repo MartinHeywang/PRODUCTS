@@ -6,17 +6,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="600.0" prefWidth="900.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.products.view.GameController">
+<StackPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.products.view.GameController">
    <!-- The root -->
    <children>
       <AnchorPane fx:id="main">
@@ -34,110 +31,53 @@
                <children>
                   <AnchorPane fx:id="options" minWidth="250.0" onMouseClicked="#showOrHideSidebar" style="-fx-background-color: #00500A;">
                      <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutX="10.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutX="10.0" prefWidth="240.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <cursor>
                               <Cursor fx:constant="DEFAULT" />
                            </cursor>
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #005B07;">
-                                 <children>
-                                    <VBox>
-                                       <padding>
-                                          <Insets top="10.0" />
-                                       </padding>
-                                       <children>
-                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h4" text="Construction" />
-                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Glissez ... puis déposer !" />
-                                          <TitledPane animated="true" text="Construire">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/construction.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                             <content>
-                                                <VBox fx:id="devicesBuild" styleClass="selection-box" />
-                                             </content>
-                                          </TitledPane>
-                                       </children>
-                                       <stylesheets>
-                                          <URL value="@Label.css" />
-                                          <URL value="@TitledPane.css" />
-                                       </stylesheets>
-                                    </VBox>
-                                    <Separator prefWidth="200.0" />
-                                    <VBox>
-                                       <children>
-                                          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="h4" text="Options" />
-                                          <TitledPane expanded="false" text="Recherche">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/research.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                             <content>
-                                                <Label text="À venir !" />
-                                             </content>
-                                          </TitledPane>
-                                          <TitledPane expanded="false" layoutX="10.0" layoutY="42.0" text="Grille">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/grid_update.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                             <content>
-                                                <Label text="À venir !" />
-                                             </content>
-                                          </TitledPane>
-                                          <TitledPane expanded="false" layoutX="10.0" layoutY="84.0" text="Modificateurs">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                             <graphic>
-                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/icons/add.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                             <content>
-                                                <Label text="À venir !" />
-                                             </content>
-                                          </TitledPane>
-                                       </children>
-                                       <stylesheets>
-                                          <URL value="@Label.css" />
-                                          <URL value="@TitledPane.css" />
-                                       </stylesheets>
-                                    </VBox>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" right="20.0" top="10.0" />
-                                 </padding>
-                                 <stylesheets>
-                                    <URL value="@Box.css" />
-                                    <URL value="@Device.css" />
-                                 </stylesheets>
-                              </VBox>
-                           </content>
                            <stylesheets>
                               <URL value="@ScrollPane.css" />
                               <URL value="@Box.css" />
                            </stylesheets>
+                           <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #00650a;">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <children>
+                                    <TitledPane animated="false" text="Tutoriel">
+                                       <content>
+                                          <VBox minHeight="450.0" spacing="4.0">
+                                             <children>
+                                                <Label text="Le but de ce jeu est de s'enrichir un maximum. Construisez-des lignes d'assemblages les plus rentables possibles !" wrapText="true" />
+                                                <Label text="Vous trouverez ci-dessous un petit tutoriel pour bien débuter :" wrapText="true" />
+                                                <Label text="Construisez votre première appareil en effectuant un glisser-déposer depuis la liste de construction. Vous la trouverez en-dessous de ce menu." wrapText="true" />
+                                                <Label text="Tout appareil a un prix, celui-ci est indiqué quand vous survolez un appareil dans la liste de construction." wrapText="true" />
+                                                <Label text="Dans un premier temps, construisez un Acheteur et un Vendeur. Connectez-les !" wrapText="true" />
+                                                <Label text="Cliquez sur l'Acheteur et choissisez une ressoure à distribuer à l'aide des flèches. C'est tout !" wrapText="true" />
+                                                <Label text="Vous pourrez replier ce menu en cliquant sur &quot;Tutoriel&quot; en haut." wrapText="true" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font>
+                                    </TitledPane>
+                                    <TitledPane animated="false" layoutX="15.0" layoutY="15.0" text="Construction">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font>
+                                       <content>
+                                          <VBox fx:id="devicesBuild" prefHeight="200.0" prefWidth="100.0" />
+                                       </content>
+                                    </TitledPane>
+                                 </children>
+                                 <stylesheets>
+                                    <URL value="@Label.css" />
+                                    <URL value="@TitledPane.css" />
+                                 </stylesheets>
+                              </VBox>
+                           </content>
                         </ScrollPane>
                      </children>
                      <cursor>
@@ -157,4 +97,8 @@
             </VBox>
          </children></AnchorPane>
    </children>
+   <stylesheets>
+      <URL value="@General.css" />
+      <URL value="@Game.css" />
+   </stylesheets>
 </StackPane>

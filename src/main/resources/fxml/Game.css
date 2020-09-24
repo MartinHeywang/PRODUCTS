@@ -1,0 +1,7 @@
+.device-build-optn{
+    -fx-background-color: transparent;
+}
+.device-build-optn:hover{
+    -fx-background-color: #00890A;
+    -fx-cursor: hand;
+}

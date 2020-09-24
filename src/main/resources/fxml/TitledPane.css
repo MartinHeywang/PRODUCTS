@@ -12,5 +12,6 @@ TitledPane > *.content {
 }
 
 TitledPane.hidden-arrow .arrow-button{
-	-fx-opacity: 0.0;
+	-fx-opacity: 100;
+	-fx-background-color: white;
 }

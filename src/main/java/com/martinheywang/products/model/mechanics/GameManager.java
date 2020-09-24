@@ -72,7 +72,8 @@ public final class GameManager {
 	// GAME CONTROLLER -> the scene controller (view updates)
 	this.gameController = gameController;
 	this.gameController.setGameManager(this);
-	this.gameController.toast("Bienvenue !", Color.DODGERBLUE, 10d);
+	this.toast("Bienvenue !", Color.DODGERBLUE, 10d);
+	this.toast("Conseil:\nLisez le tutoriel sur la droite !", Color.DODGERBLUE, 10d);
 	this.gameController.loadGame(this.deviceManager.getDevices(), game);
 
 	// GAME LOOP STUFF
