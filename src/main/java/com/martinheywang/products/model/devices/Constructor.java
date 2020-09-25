@@ -49,13 +49,11 @@ public final class Constructor extends Device {
 
         product = new Pack(DefaultResource.NONE, BigInteger.ZERO);
         setProduct(Product.CIRCUIT);
-        System.out.println(extractedRecipe);
     }
 
     @Override
     public void act(final Pack resource) throws MoneyException {
         addResources(resource);
-        System.out.println(availableResources);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
 

@@ -1,16 +1,14 @@
 ## Bogues
 
-1. Quand l'utilisateur entre un nom de partie trop long, l'écran d'accueil s'étire en largeur jusqu'à la max-width. Si il est encore trop long, le titre se wrap et le contenu restant déborde de la zone et n'est donc plus affiché.
+1. Update la recette du produit quand on change le produit dans la fenêtre du constructeur.
+
+1. La recette du grill ne s'affiche pas correctement.
 
 > Ces bugs seront corrigés d'ici peu !
 
 ## Toujours en attente...
 
 1. L'ajout de nouveaux appareils, notamment:
-    1. Four
-    1. Presse
-    1. Presse à fil
-    1. Constructeurs
     1. Trieurs
     1. Splitters
     1. Regroupeurs

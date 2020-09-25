@@ -130,6 +130,8 @@ public class GameController implements Initializable {
 	public void loadGame(ArrayList2D<Device> devices, Game game) {
 		this.toProcessView();
 
+		this.grid.getChildren().clear();
+
 		// LOAD DEVICES
 		for (int x = 0; x < devices.size(); x++) {
 			for (int y = 0; y < devices.size(); y++) {
@@ -189,17 +191,18 @@ public class GameController implements Initializable {
 					(int) (background.getGreen() * 255), (int) (background.getBlue() * 255)) + ";");
 
 			final Timeline animation = new Timeline();
+			final double movementTime = 0.8d;
 			animation.getKeyFrames().addAll(
 					// Come in 1 second
 					new KeyFrame(Duration.ZERO, new KeyValue(toast.translateXProperty(), -160.0)),
 					new KeyFrame(Duration.ZERO, new KeyValue(toast.opacityProperty(), 0.0)),
 
-					new KeyFrame(Duration.seconds(1), new KeyValue(toast.translateXProperty(), 0.0)),
-					new KeyFrame(Duration.seconds(1), new KeyValue(toast.opacityProperty(), 1.0)),
+					new KeyFrame(Duration.seconds(movementTime), new KeyValue(toast.translateXProperty(), 0.0)),
+					new KeyFrame(Duration.seconds(movementTime), new KeyValue(toast.opacityProperty(), 1.0)),
 
 					// And stay during the given duration
-					new KeyFrame(Duration.seconds(duration - 1), new KeyValue(toast.translateXProperty(), 0.0)),
-					new KeyFrame(Duration.seconds(duration - 1), new KeyValue(toast.opacityProperty(), 1.0)),
+					new KeyFrame(Duration.seconds(duration - movementTime), new KeyValue(toast.translateXProperty(), 0.0)),
+					new KeyFrame(Duration.seconds(duration - movementTime), new KeyValue(toast.opacityProperty(), 1.0)),
 
 					// Leave in one second
 					new KeyFrame(Duration.seconds(duration), new KeyValue(toast.translateXProperty(), -160.0)),
@@ -343,6 +346,11 @@ public class GameController implements Initializable {
 		}
 
 		optionsSidebarShown = !optionsSidebarShown;
+	}
+
+	@FXML
+	private void upgradeGrid(){
+		gameManager.upgradeGrid();
 	}
 
 	/**

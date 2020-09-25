@@ -243,4 +243,8 @@ public class Game implements Displayable<Game> {
     public String toString() {
         return "{" + name + ", " + money + "€ }";
     }
+
+	public void upgradeGrid() {
+        gridSize++;
+	}
 }

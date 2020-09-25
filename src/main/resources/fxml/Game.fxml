@@ -3,6 +3,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
@@ -69,6 +70,18 @@
                                        </font>
                                        <content>
                                           <VBox fx:id="devicesBuild" prefHeight="200.0" prefWidth="100.0" />
+                                       </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" layoutX="15.0" layoutY="514.0" text="Amélioration">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font>
+                                       <content>
+                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#upgradeGrid" stylesheets="@Buttons.css" text="Agrandir la grille" />
+                                             </children>
+                                          </VBox>
                                        </content>
                                     </TitledPane>
                                  </children>
