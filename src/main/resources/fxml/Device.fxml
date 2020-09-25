@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ButtonType?>
-<?import javafx.scene.control.DialogPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.net.URL ?>
+<?import javafx.geometry.Insets ?>
+<?import javafx.scene.control.ButtonType ?>
+<?import javafx.scene.control.DialogPane ?>
+<?import javafx.scene.control.Label ?>
+<?import javafx.scene.control.ScrollPane ?>
+<?import javafx.scene.control.Separator ?>
+<?import javafx.scene.control.TitledPane ?>
+<?import javafx.scene.effect.DropShadow ?>
+<?import javafx.scene.image.Image ?>
+<?import javafx.scene.image.ImageView ?>
+<?import javafx.scene.layout.AnchorPane ?>
+<?import javafx.scene.layout.HBox ?>
+<?import javafx.scene.layout.VBox ?>
+<?import javafx.scene.text.Font ?>
 
 <DialogPane expanded="true" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.products.view.DeviceController">
    <content>
@@ -158,25 +158,6 @@
                                     <URL value="@Buttons.css" />
                                  </stylesheets>
                               </VBox>
-                           </content>
-                        </TitledPane>
-                        <Separator prefWidth="200.0" />
-                        <TitledPane animated="false" collapsible="false" layoutX="10.0" layoutY="10.0" text="Statistiques">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                           <graphic>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/icons/stats.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <content>
-                              <VBox fx:id="stats" alignment="TOP_CENTER" stylesheets="@Box.css">
-                                 <padding>
-                                    <Insets top="50.0" />
-                                 </padding></VBox>
                            </content>
                         </TitledPane>
                      </children>

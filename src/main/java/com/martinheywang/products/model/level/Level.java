@@ -24,11 +24,7 @@ public enum Level {
 	 */
 	public Level getNext() {
 		final int ordinal = this.ordinal();
-		if (Level.values().length <= ordinal + 1) {
-			return Level.LEVEL_3;
-		} else {
-			return Level.values()[ordinal + 1];
-		}
+		return Level.values()[ordinal + 1];
 	}
 
 	public String getURL() {
