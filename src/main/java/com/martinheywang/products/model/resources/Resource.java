@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.martinheywang.products.model.devices.Buyer;
+import com.martinheywang.products.model.devices.Constructor;
 import com.martinheywang.products.view.Displayable;
 import com.martinheywang.products.view.Displayer;
 
@@ -23,27 +24,25 @@ import javafx.scene.text.Font;
 /**
  * 
  * <p>
- * This interface represents a <em>Resource</em> that can be used by
- * all the devices. It extends {@link Displayable}, that does mean
- * that it provides a common displayer for the Resource, that you can
- * override.
+ * This interface represents a <em>Resource</em> that can be used by all the
+ * devices. It extends {@link Displayable}, that does mean that it provides a
+ * common displayer for the Resource, that you can override.
  * </p>
  * <p>
- * It manages also all the Resource in the game, with it List. You can
- * directly found this list by calling
- * {@link Resource#getReferences()}.
+ * It manages also all the Resource in the game, with it List. You can directly
+ * found this list by calling {@link Resource#getReferences()}.
  * </p>
  * <p>
  * You can register an enum type (extending Resource) by calling
  * {@link #register(Class)}.
  * </p>
  * <p>
- * When registering, make sure to add some of the annotations on your
- * fields provided by the API such as {@link Buyable @Buyable},
- * {@link Craftable @Craftable}, or {@link ToWire @ToWire}. This will
- * add the resources automatically (as long as you register the class)
- * according to the annotations. But still, you can do that manually
- * by calling {@link #addReferences(Resource...)}.
+ * When registering, make sure to add some of the annotations on your fields
+ * provided by the API such as {@link Buyable @Buyable},
+ * {@link Craftable @Craftable}, or {@link ToWire @ToWire}. This will add the
+ * resources automatically (as long as you register the class) according to the
+ * annotations. But still, you can do that manually by calling
+ * {@link #addReferences(Resource...)}.
  * </p>
  * <p>
  * By the way, you can also remove references by calling
@@ -77,15 +76,15 @@ public interface Resource extends Displayable<Resource> {
 
     /**
      * <p>
-     * Returns a String representing a relative path to the view
-     * representing this resource.
+     * Returns a String representing a relative path to the view representing this
+     * resource.
      * </p>
      * <p>
      * For example, the following expression :
-     * <code>this.getClass().getResourceAsStream(this.getURL())</code>
-     * must not be null, where the url is the value returned by the
-     * <code>getURL()</code> method, and <code>this.getClass()</code> the
-     * class where the valeu is defined.
+     * <code>this.getClass().getResourceAsStream(this.getURL())</code> must not be
+     * null, where the url is the value returned by the <code>getURL()</code>
+     * method, and <code>this.getClass()</code> the class where the valeu is
+     * defined.
      * </p>
      * 
      * @return the local uri of the image
@@ -95,30 +94,27 @@ public interface Resource extends Displayable<Resource> {
     @Override
     public default Displayer<Resource> getDisplayer() {
 
-	final VBox root = new VBox();
-	root.setAlignment(Pos.CENTER_LEFT);
-	root.setPadding(new Insets(3));
+        final VBox root = new VBox();
+        root.setAlignment(Pos.CENTER_LEFT);
+        root.setPadding(new Insets(3));
 
-	final Label nom = new Label();
-	nom.setAlignment(Pos.TOP_CENTER);
-	nom.setText(this.getName());
-	if (nom.getText().length() > 15)
-	    nom.setFont(new Font(10d));
-	nom.setPrefHeight(20d);
-	root.getChildren().add(nom);
+        final Label nom = new Label();
+        nom.setAlignment(Pos.TOP_CENTER);
+        nom.setText(this.getName());
+        if (nom.getText().length() > 15)
+            nom.setFont(new Font(10d));
+        nom.setPrefHeight(20d);
+        root.getChildren().add(nom);
 
-	final ImageView image = new ImageView();
-	image.setImage(
-		new Image(this.getClass().getResourceAsStream(this.getURL())));
-	root.getChildren().add(image);
+        final ImageView image = new ImageView();
+        image.setImage(new Image(this.getClass().getResourceAsStream(this.getURL())));
+        root.getChildren().add(image);
 
-	final Label infos = new Label();
-	infos.setAlignment(Pos.TOP_CENTER);
-	infos.setText(
-		String.valueOf(NumberFormat.getInstance(Locale.getDefault())
-			.format(this.getPrice())) + " €");
-	root.getChildren().add(infos);
-	return new Displayer<Resource>(root, this);
+        final Label infos = new Label();
+        infos.setAlignment(Pos.TOP_CENTER);
+        infos.setText(String.valueOf(NumberFormat.getInstance(Locale.getDefault()).format(this.getPrice())) + " €");
+        root.getChildren().add(infos);
+        return new Displayer<Resource>(root, this);
     }
 
     /**
@@ -127,7 +123,7 @@ public interface Resource extends Displayable<Resource> {
      * @return a list of resources
      */
     public static List<Resource> getReferences() {
-	return references;
+        return references;
     }
 
     /**
@@ -137,30 +133,26 @@ public interface Resource extends Displayable<Resource> {
      * @param field
      * @return
      */
-    public static Resource valueOf(Class<? extends Resource> clazz,
-	    String field) {
-	try {
-	    final Resource res = (Resource) clazz.getField(field)
-		    .get(null);
-	    if (!references.contains(res)) {
-		System.err.println(
-			"WARNING: The requested resource has been found, "
-				+ "but is not registered in the references.");
-	    }
-	    return res;
-	} catch (final IllegalArgumentException e) {
-	    e.printStackTrace();
-	} catch (final IllegalAccessException e) {
-	    e.printStackTrace();
-	} catch (final NoSuchFieldException e) {
-	    System.err.println(
-		    "The requested field has not been found (requested: "
-			    + field + " in " + clazz.getCanonicalName() + ")");
-	    e.printStackTrace();
-	} catch (final SecurityException e) {
-	    e.printStackTrace();
-	}
-	return null;
+    public static Resource valueOf(Class<? extends Resource> clazz, String field) {
+        try {
+            final Resource res = (Resource) clazz.getField(field).get(null);
+            if (!references.contains(res)) {
+                System.err.println("WARNING: The requested resource has been found, "
+                        + "but is not registered in the references.");
+            }
+            return res;
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (final NoSuchFieldException e) {
+            System.err.println("The requested field has not been found (requested: " + field + " in "
+                    + clazz.getCanonicalName() + ")");
+            e.printStackTrace();
+        } catch (final SecurityException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -179,79 +171,78 @@ public interface Resource extends Displayable<Resource> {
      * @param str a parsable string, containing only the name of the resource.
      */
     public static Resource valueOf(String str) {
-	for (final Resource resource : references) {
-	    if (resource.toString().equals(str))
-		return resource;
-	}
-	System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
-	return DefaultResource.NONE;
+        for (final Resource resource : references) {
+            if (resource.toString().equals(str))
+                return resource;
+        }
+        System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
+        return DefaultResource.NONE;
     }
 
     /**
-     * Returns true if this Resource object owns the given annotation. It
-     * allows you to check if this Resource object is Buyable, for
-     * instance.
+     * Returns true if this Resource object owns the given annotation. It allows you
+     * to check if this Resource object is Buyable, for instance.
      * 
      * @param annotation
      * @return
      */
-    public default boolean hasAnnotation(
-	    Class<? extends Annotation> annotation) {
-	try {
-	    return this.getClass().getField(toString())
-		    .isAnnotationPresent(annotation);
-	} catch (NoSuchFieldException | SecurityException e) {
-	    e.printStackTrace();
-	    return false;
-	}
+    public default boolean hasAnnotation(Class<? extends Annotation> annotation) {
+        try {
+            return this.getClass().getField(toString()).isAnnotationPresent(annotation);
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public default Field getField() {
-	try {
-	    return this.getClass().getField(toString());
-	} catch (NoSuchFieldException | SecurityException e) {
-	    e.printStackTrace();
-	    return null;
-	}
+        try {
+            return this.getClass().getField(toString());
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public default String toText() {
-	return this.getClass().toString().substring(6) + "." + toString();
+        return this.getClass().toString().substring(6) + "." + toString();
     }
 
     public static void register(Class<? extends Resource> clazz) {
-	if (!clazz.isEnum()) {
-	    System.out.println(
-		    "WARNING: Implementations of Resource must be an enum. Skipping.");
-	    return;
-	}
+        if (!clazz.isEnum()) {
+            System.out.println("WARNING: Implementations of Resource must be an enum. Skipping.");
+            return;
+        }
 
-	for (final Field field : clazz.getFields()) {
-	    try {
-		if (Resource.class.isAssignableFrom(field.getType())) {
-		    addReferences((Resource) field.get(null));
+        for (final Field field : clazz.getFields()) {
+            try {
+                if (Resource.class.isAssignableFrom(field.getType())) {
+                    addReferences((Resource) field.get(null));
 
-		    if (field.isAnnotationPresent(Buyable.class)) {
-			Buyer.addAcceptedResource((Resource) field.get(null));
-		    }
-		}
-	    } catch (IllegalArgumentException | IllegalAccessException e) {
-		e.printStackTrace();
-	    }
-	}
+                    if (field.isAnnotationPresent(Buyable.class)) {
+                        Buyer.addAcceptedResource((Resource) field.get(null));
+                    }
+                    if(field.isAnnotationPresent(Craftable.class)){
+                        Constructor.addAcceptedResource((Resource) field.get(null));
+                    }
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
     /**
-     * Register a new Resource in the list of references. This method is
-     * protected against adding twice the same type.
+     * Register a new Resource in the list of references. This method is protected
+     * against adding twice the same type.
      * 
      * @param resource the resource to add
      */
     public static void addReferences(Resource... resource) {
-	for (final Resource res : resource) {
-	    references.add(res);
-	}
+        for (final Resource res : resource) {
+            references.add(res);
+        }
     }
 
     /**
@@ -260,8 +251,8 @@ public interface Resource extends Displayable<Resource> {
      * @param resource the resource to remove
      */
     public static void removeReferences(Resource... resource) {
-	for (final Resource res : resource) {
-	    references.remove(res);
-	}
+        for (final Resource res : resource) {
+            references.remove(res);
+        }
     }
 }
