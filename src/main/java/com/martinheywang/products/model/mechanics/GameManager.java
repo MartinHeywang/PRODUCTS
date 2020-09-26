@@ -305,7 +305,7 @@ public final class GameManager {
 		game.upgradeGrid();
 
 		this.gameController.loadGame(this.deviceManager.getDevices(), game);
-		this.toast("Grille améliorée !", Color.DODGERBLUE, 5d);
+		this.toast("Grille améliorée !", Color.DODGERBLUE, 3d);
 	}
 
 	/**

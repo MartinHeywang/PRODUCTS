@@ -2,6 +2,7 @@ package com.martinheywang.products.view;
 
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import com.martinheywang.products.model.Coordinate;
@@ -74,7 +75,7 @@ public class GameController implements Initializable {
 	 * The label showing the money
 	 */
 	@FXML
-	private Label moneyLabel;
+	private Label moneyLabel, upgradeGridInfo;
 
 	/**
 	 * The Progress Bar showing the progress on long treatment.
@@ -146,6 +147,19 @@ public class GameController implements Initializable {
 		}
 		this.setMoney(game.getMoney());
 
+		// Updating the upgrade grid zone (prices)
+		try {
+			final int currentSize = gameManager.getGridSize();
+			final int nextSize = gameManager.getGridSize() + 1;
+			final ResourceBundle bundle = ResourceBundle
+					.getBundle("com.martinheywang.products.model.bundles.GrilleUpdate");
+			final BigInteger nextCost = new BigInteger(bundle.getString(String.valueOf(nextSize)));
+			upgradeGridInfo.setText("Votre grille actuelle est de " + currentSize + "x" + currentSize + ". Passer à "
+					+ nextSize + "x" + nextSize + " vous coûte " + MoneyFormat.getSingleton().format(nextCost));
+		} catch (MissingResourceException e) {
+			upgradeGridInfo.setText("Vous avez atteint la taille maximale!");
+		}
+
 		this.toPlayableView();
 	}
 
@@ -201,7 +215,8 @@ public class GameController implements Initializable {
 					new KeyFrame(Duration.seconds(movementTime), new KeyValue(toast.opacityProperty(), 1.0)),
 
 					// And stay during the given duration
-					new KeyFrame(Duration.seconds(duration - movementTime), new KeyValue(toast.translateXProperty(), 0.0)),
+					new KeyFrame(Duration.seconds(duration - movementTime),
+							new KeyValue(toast.translateXProperty(), 0.0)),
 					new KeyFrame(Duration.seconds(duration - movementTime), new KeyValue(toast.opacityProperty(), 1.0)),
 
 					// Leave in one second
@@ -349,8 +364,20 @@ public class GameController implements Initializable {
 	}
 
 	@FXML
-	private void upgradeGrid(){
-		gameManager.upgradeGrid();
+	private void upgradeGrid() {
+		final int newSize = gameManager.getGridSize() + 1;
+
+		final ResourceBundle bundle = ResourceBundle.getBundle("com.martinheywang.products.model.bundles.GrilleUpdate");
+		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newSize)));
+		try {
+			gameManager.removeMoney(cost);
+			gameManager.upgradeGrid();
+		} catch (MoneyException e) {
+			gameManager.toast(
+					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
+					Color.DARKORANGE, 4d);
+		}
+
 	}
 
 	/**

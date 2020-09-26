@@ -77,9 +77,11 @@
                                           <Font size="22.0" />
                                        </font>
                                        <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0">
+                                          <VBox minHeight="200.0" spacing="20.0">
                                              <children>
+                                                <Label fx:id="upgradeGridInfo" text="Votre grille actuelle mesure 3x3. Passer à 4x4 vous coûte 10.00K, améliorer ?" wrapText="true" />
                                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#upgradeGrid" stylesheets="@Buttons.css" text="Agrandir la grille" />
+                                                <Label text="Plus de d'améliorations à venir..." wrapText="true" />
                                              </children>
                                           </VBox>
                                        </content>
