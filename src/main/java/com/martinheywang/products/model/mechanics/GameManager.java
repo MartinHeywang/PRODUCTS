@@ -2,7 +2,11 @@ package com.martinheywang.products.model.mechanics;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.products.model.Coordinate;
@@ -47,6 +51,8 @@ public final class GameManager {
 
 	private Coordinate toMove;
 
+	private List<BigInteger> lastsGrow = new ArrayList<>();
+
 	/**
 	 * Builds a new GameManager and launches the game loop in auto mode.
 	 * 
@@ -59,6 +65,7 @@ public final class GameManager {
 
 		// GAME
 		this.game = game;
+		this.gameController = gameController;
 
 		// DEVICE MANAGER
 		Collection<DeviceModel> devicesModels = null;
@@ -69,8 +76,18 @@ public final class GameManager {
 		}
 		this.deviceManager = new DeviceManager(devicesModels, this, game);
 
+		// OFFLINE MONEY
+		try {
+			final LocalDateTime lastSave = this.game.getLastSave();
+			final LocalDateTime now = LocalDateTime.now();
+			final BigInteger grow = this.game.getGrow();
+			final long seconds = ChronoUnit.SECONDS.between(lastSave, now);
+			addMoney(grow.multiply(BigInteger.valueOf(seconds)).divide(BigInteger.valueOf(2)));
+		} catch (MoneyException e) {
+			e.printStackTrace();
+		}
+
 		// GAME CONTROLLER -> the scene controller (view updates)
-		this.gameController = gameController;
 		this.gameController.setGameManager(this);
 		this.toast("Bienvenue !", Color.DODGERBLUE, 10d);
 		this.toast("Conseil:\nLisez le tutoriel sur la droite !", Color.DODGERBLUE, 10d);
@@ -264,6 +281,14 @@ public final class GameManager {
 			@Override
 			public Void call() {
 				try {
+					// Calculate average grow
+					BigInteger average = BigInteger.ZERO;
+					for(BigInteger grow : lastsGrow){
+						average = average.add(grow);
+					}
+					average = average.divide(BigInteger.valueOf(lastsGrow.size()));
+
+					game.setGrow(average);
 					game.save();
 					deviceManager.save();
 				} catch (final SQLException e) {
@@ -299,7 +324,7 @@ public final class GameManager {
 
 	}
 
-	public void upgradeGrid(){
+	public void upgradeGrid() {
 		deviceManager.upgradeGrid();
 		Coordinate.gridSize = deviceManager.getDevices().size();
 		game.upgradeGrid();
@@ -381,10 +406,12 @@ public final class GameManager {
 
 		private volatile boolean autoMode = true;
 
+		private final static int lastsGrowMaxSize = 30;
+
 		@Override
 		public void run() {
 			do {
-				
+				final BigInteger amountBefore = game.getMoney();
 				for (final Device buyer : Device.autoActiveDevices) {
 					try {
 						buyer.act(null);
@@ -392,6 +419,13 @@ public final class GameManager {
 						// We don't have enough money to perform the action
 						// Todo : set the money label fill in the view to red
 					}
+				}
+
+				// Register evolution
+				final BigInteger evolution = game.getMoney().subtract(amountBefore);
+				lastsGrow.add(evolution);
+				if(lastsGrow.size() > lastsGrowMaxSize){
+					lastsGrow.remove(0);
 				}
 
 				// Wait a little bit of course
