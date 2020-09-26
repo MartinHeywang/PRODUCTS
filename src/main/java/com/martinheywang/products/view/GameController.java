@@ -36,6 +36,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -123,6 +124,10 @@ public class GameController implements Initializable {
 		scrollpane.setFitToWidth(false);
 		scrollpane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		scrollpane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scrollpane.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
+                event.consume();
+        });
 
 		this.scrollpane.setFocusTraversable(true);
 		this.prepareToolbar();

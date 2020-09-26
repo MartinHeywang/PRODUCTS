@@ -56,6 +56,7 @@ public final class Main extends Application {
 		stage.setTitle("PRODUCTS.");
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icon.png")));
 
+		
 		try {
 			// If at least one game is already registered
 			if (Database.createDao(Game.class).countOf() == 0) {
@@ -68,12 +69,15 @@ public final class Main extends Application {
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent e) {
 				System.exit(0);
 			}
+		});
+		stage.getScene().setOnKeyPressed(event -> {
+			System.out.println(event.getCharacter());
 		});
 		// Show the main stage
 		stage.show();

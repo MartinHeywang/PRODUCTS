@@ -388,7 +388,6 @@ public final class GameManager {
 				for (final Device buyer : Device.autoActiveDevices) {
 					try {
 						buyer.act(null);
-						System.out.println(buyer);
 					} catch (final MoneyException e) {
 						// We don't have enough money to perform the action
 						// Todo : set the money label fill in the view to red
