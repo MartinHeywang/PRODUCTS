@@ -91,6 +91,10 @@ public final class Constructor extends Device {
      * @return true - if the resources are available
      */
     private boolean checkIngredients() {
+        if (extractedRecipe.isEmpty())
+            // This case should happen only if the resource is either NONE, or not craftable
+            return false;
+
         final List<Resource> tempo = new ArrayList<>();
         for (final Resource resource : extractedRecipe) {
             if (availableResources.contains(resource)) {
@@ -108,6 +112,8 @@ public final class Constructor extends Device {
     @Override
     public List<Node> getWidgets() {
         final Carousel carousel = new Carousel();
+        final RecipeView recipeView = new RecipeView(product.getResource());
+
         Node selection = null;
 
         carousel.addNodes(DefaultResource.NONE.getDisplayer());
@@ -125,13 +131,13 @@ public final class Constructor extends Device {
             @SuppressWarnings("unchecked")
             final Resource resource = ((Displayer<Resource>) event.getNewSelection()).getSubject();
             this.setProduct(resource);
+            recipeView.setDisplayedResource(resource);
         });
 
         final VBox node = new VBox();
         final Label label = new Label("Choissisez une ressource à produire:");
         label.setFont(new Font(10d));
 
-        final RecipeView recipeView = new RecipeView(product.getResource());
         node.getChildren().addAll(label, carousel, recipeView);
 
         return Arrays.asList(node);
@@ -160,11 +166,15 @@ public final class Constructor extends Device {
             Database.createDao(Pack.class).createOrUpdate(product);
 
             extractedRecipe.clear();
-            final Craftable annotation = product.getResource().getClass().getField(product.getResource().toString())
-                    .getAnnotation(Craftable.class);
-            for (final Pack pack : Pack.toPack(annotation.recipe())) {
-                for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i.add(BigInteger.ONE)) {
-                    extractedRecipe.add(pack.getResource());
+            if (!res.equals(DefaultResource.NONE)) {
+
+                final Craftable annotation = product.getResource().getClass().getField(product.getResource().toString())
+                        .getAnnotation(Craftable.class);
+                for (final Pack pack : Pack.toPack(annotation.recipe())) {
+                    for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i
+                            .add(BigInteger.ONE)) {
+                        extractedRecipe.add(pack.getResource());
+                    }
                 }
             }
         } catch (final SQLException | NoSuchFieldException e) {
