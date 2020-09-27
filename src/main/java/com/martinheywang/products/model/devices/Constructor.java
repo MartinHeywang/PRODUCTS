@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.martinheywang.products.model.Coordinate;
 import com.martinheywang.products.model.Pack;
 import com.martinheywang.products.model.database.Database;
@@ -18,7 +19,6 @@ import com.martinheywang.products.model.devices.annotations.Prices;
 import com.martinheywang.products.model.exceptions.MoneyException;
 import com.martinheywang.products.model.resources.Craftable;
 import com.martinheywang.products.model.resources.DefaultResource;
-import com.martinheywang.products.model.resources.Product;
 import com.martinheywang.products.model.resources.Resource;
 import com.martinheywang.products.model.templates.Template.PointerTypes;
 import com.martinheywang.products.view.Displayer;
@@ -42,13 +42,59 @@ public final class Constructor extends Device {
     private final List<Resource> availableResources = new ArrayList<>();
     private final List<Resource> extractedRecipe = new ArrayList<>();
 
-    private final Pack product;
+    private Pack product;
 
     public Constructor(final DeviceModel model) {
         super(model);
 
-        product = new Pack(DefaultResource.NONE, BigInteger.ONE);
-        setProduct(Product.CIRCUIT);
+        loadProduct();
+    }
+
+    private void loadProduct() {
+        try {
+            final Dao<Pack, Long> dao = Database.createDao(Pack.class);
+
+            // If the id is null (when just created), the id is null so it can't have a
+            // associated pack already
+            if (model.getID() == null)
+                /*
+                 * Here this exception is practical because it sets the packs without printing
+                 * out the message
+                 */
+                throw new IndexOutOfBoundsException();
+
+            final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
+            product = fetched;
+
+        } catch (final SQLException e) {
+            // An error with the database occured
+            // contains any elements
+            product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
+            e.printStackTrace();
+        } catch (final IndexOutOfBoundsException e) {
+            // The fetched list doesn't contain any elements
+            product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
+        }
+        generateExtractedRecipe();
+    }
+
+    private void generateExtractedRecipe() {
+        extractedRecipe.clear();
+        try {
+            if (!product.getResource().equals(DefaultResource.NONE)) {
+
+                Craftable annotation = product.getResource().getClass().getField(product.getResource().toString())
+                        .getAnnotation(Craftable.class);
+                for (final Pack pack : Pack.toPack(annotation.recipe())) {
+                    for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i
+                            .add(BigInteger.ONE)) {
+                        extractedRecipe.add(pack.getResource());
+                    }
+                }
+            }
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -164,20 +210,8 @@ public final class Constructor extends Device {
         try {
             // Updates the distributed resource
             Database.createDao(Pack.class).createOrUpdate(product);
-
-            extractedRecipe.clear();
-            if (!res.equals(DefaultResource.NONE)) {
-
-                final Craftable annotation = product.getResource().getClass().getField(product.getResource().toString())
-                        .getAnnotation(Craftable.class);
-                for (final Pack pack : Pack.toPack(annotation.recipe())) {
-                    for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i
-                            .add(BigInteger.ONE)) {
-                        extractedRecipe.add(pack.getResource());
-                    }
-                }
-            }
-        } catch (final SQLException | NoSuchFieldException e) {
+            generateExtractedRecipe();
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
 
