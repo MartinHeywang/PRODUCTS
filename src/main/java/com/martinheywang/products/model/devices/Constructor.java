@@ -47,7 +47,7 @@ public final class Constructor extends Device {
     public Constructor(final DeviceModel model) {
         super(model);
 
-        product = new Pack(DefaultResource.NONE, BigInteger.ZERO);
+        product = new Pack(DefaultResource.NONE, BigInteger.ONE);
         setProduct(Product.CIRCUIT);
     }
 
