@@ -5,8 +5,9 @@
 
 .device-build-displayer{
 	-fx-background-color: #005B07;
+	-fx-border-radius: 3px;
 }
 .device-build-displayer:hover {
-	-fx-background-color: #007208;
+	-fx-background-color: #018E0F;
 	-fx-cursor: hand;
 }

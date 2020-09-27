@@ -20,6 +20,7 @@ import com.martinheywang.products.model.devices.annotations.Prices;
 import com.martinheywang.products.model.direction.Direction;
 import com.martinheywang.products.model.exceptions.MoneyException;
 import com.martinheywang.products.model.level.Level;
+import com.martinheywang.products.toolbox.MoneyFormat;
 import com.martinheywang.products.view.GameController;
 
 import javafx.application.Platform;
@@ -39,7 +40,7 @@ import javafx.scene.paint.Color;
  */
 public final class GameManager {
 
-	private final int gameLoopDelay = 1000;
+	private int gameLoopDelay = 1000;
 	private final GameController gameController;
 
 	private final Game game;
@@ -65,6 +66,7 @@ public final class GameManager {
 
 		// GAME
 		this.game = game;
+		this.gameLoopDelay = game.getDelay();
 		this.gameController = gameController;
 
 		// DEVICE MANAGER
@@ -81,8 +83,18 @@ public final class GameManager {
 			final LocalDateTime lastSave = this.game.getLastSave();
 			final LocalDateTime now = LocalDateTime.now();
 			final BigInteger grow = this.game.getGrow();
-			final long seconds = ChronoUnit.SECONDS.between(lastSave, now);
-			addMoney(grow.multiply(BigInteger.valueOf(seconds)).divide(BigInteger.valueOf(2)));
+			final long millis = ChronoUnit.MILLIS.between(lastSave, now);
+
+			System.out.println(gameLoopDelay);
+
+			/*  Won = grow amount * number of offline iterations
+				Number of offline iterations = offline millis * gameLoopDelay / the divider (here 5) */
+			final BigInteger offlineTotal = grow.multiply(BigInteger.valueOf(millis)).divide(BigInteger.valueOf(5)).divide(BigInteger.valueOf(gameLoopDelay));
+			addMoney(offlineTotal);
+
+			if (!offlineTotal.equals(BigInteger.ZERO))
+				this.toast("Vous avez gagné durant votre absence:\n" + MoneyFormat.getSingleton().format(offlineTotal)
+						+ ".", Color.DODGERBLUE, 20d);
 		} catch (MoneyException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +102,6 @@ public final class GameManager {
 		// GAME CONTROLLER -> the scene controller (view updates)
 		this.gameController.setGameManager(this);
 		this.toast("Bienvenue !", Color.DODGERBLUE, 10d);
-		this.toast("Conseil:\nLisez le tutoriel sur la droite !", Color.DODGERBLUE, 10d);
 		this.gameController.loadGame(this.deviceManager.getDevices(), game);
 
 		// GAME LOOP STUFF
@@ -283,11 +294,12 @@ public final class GameManager {
 				try {
 					// Calculate average grow
 					BigInteger average = BigInteger.ZERO;
-					for(BigInteger grow : lastsGrow){
+					for (BigInteger grow : lastsGrow) {
 						average = average.add(grow);
 					}
 					average = average.divide(BigInteger.valueOf(lastsGrow.size()));
 
+					game.setDelay(gameLoopDelay);
 					game.setGrow(average);
 					game.save();
 					deviceManager.save();
@@ -333,12 +345,21 @@ public final class GameManager {
 		this.toast("Grille améliorée !", Color.DODGERBLUE, 3d);
 	}
 
+	public void decreaseGameLoopDelay() {
+		gameLoopDelay -= 50;
+		this.gameController.loadGame(this.deviceManager.getDevices(), game);
+	}
+
 	/**
 	 * 
 	 * @return the id of the managed game
 	 */
 	public Long getGameID() {
 		return game.getID();
+	}
+
+	public Integer getDelay(){
+		return gameLoopDelay;
 	}
 
 	/**
@@ -424,7 +445,7 @@ public final class GameManager {
 				// Register evolution
 				final BigInteger evolution = game.getMoney().subtract(amountBefore);
 				lastsGrow.add(evolution);
-				if(lastsGrow.size() > lastsGrowMaxSize){
+				if (lastsGrow.size() > lastsGrowMaxSize) {
 					lastsGrow.remove(0);
 				}
 

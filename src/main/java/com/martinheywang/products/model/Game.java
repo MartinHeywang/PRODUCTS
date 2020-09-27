@@ -83,6 +83,9 @@ public class Game implements Displayable<Game> {
     @DatabaseField
     private BigInteger grow;
 
+    @DatabaseField(columnName = "delay")
+    private Integer gameLoopDelay;
+
     public Game() {
     }
 
@@ -97,6 +100,7 @@ public class Game implements Displayable<Game> {
         this.gridSize = 3;
         this.money = new BigInteger("1250");
         this.grow = new BigInteger("0");
+        this.gameLoopDelay = 1000;
     }
 
     /**
@@ -203,6 +207,14 @@ public class Game implements Displayable<Game> {
     }
 
     /**
+     * 
+     * @return the game loop delay
+     */
+    public Integer getDelay(){
+        return gameLoopDelay;
+    }
+
+    /**
      * The timing of the last save of this Game object.
      * 
      * @return the date & time of the last save of this object (as LocalDateTime,
@@ -237,6 +249,15 @@ public class Game implements Displayable<Game> {
      */
     public void setGrow(BigInteger grow) {
         this.grow = grow;
+    }
+
+    /**
+     * Sets the delay property
+     * 
+     * @param delay the new delay value
+     */
+    public void setDelay(int delay) {
+        this.gameLoopDelay = delay;
     }
 
     @Override

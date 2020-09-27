@@ -30,6 +30,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -76,7 +77,7 @@ public class GameController implements Initializable {
 	 * The label showing the money
 	 */
 	@FXML
-	private Label moneyLabel, upgradeGridInfo;
+	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo;
 
 	/**
 	 * The Progress Bar showing the progress on long treatment.
@@ -110,6 +111,9 @@ public class GameController implements Initializable {
 	@FXML
 	private VBox devicesBuild;
 
+	@FXML
+	private Button upgradeGridBtn, upgradeLoopBtn;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		grid = new GridPane();
@@ -125,9 +129,9 @@ public class GameController implements Initializable {
 		scrollpane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		scrollpane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		scrollpane.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
-                event.consume();
-        });
+			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
+				event.consume();
+		});
 
 		this.scrollpane.setFocusTraversable(true);
 		this.prepareToolbar();
@@ -156,13 +160,31 @@ public class GameController implements Initializable {
 		try {
 			final int currentSize = gameManager.getGridSize();
 			final int nextSize = gameManager.getGridSize() + 1;
-			final ResourceBundle bundle = ResourceBundle
+
+			final ResourceBundle gridBundle = ResourceBundle
 					.getBundle("com.martinheywang.products.model.bundles.GrilleUpdate");
-			final BigInteger nextCost = new BigInteger(bundle.getString(String.valueOf(nextSize)));
+
+			final BigInteger nextGridCost = new BigInteger(gridBundle.getString(String.valueOf(nextSize)));
+
 			upgradeGridInfo.setText("Votre grille actuelle est de " + currentSize + "x" + currentSize + ". Passer à "
-					+ nextSize + "x" + nextSize + " vous coûte " + MoneyFormat.getSingleton().format(nextCost));
+					+ nextSize + "x" + nextSize + " vous coûte " + MoneyFormat.getSingleton().format(nextGridCost));
 		} catch (MissingResourceException e) {
-			upgradeGridInfo.setText("Vous avez atteint la taille maximale!");
+			upgradeGridInfo.setText("Vous avez atteint la taille maximale !");
+			upgradeGridBtn.setDisable(true);
+		}
+
+		try {
+
+			final int currentDelay = gameManager.getDelay();
+			final int nextDelay = gameManager.getDelay() - 50;
+			final ResourceBundle loopBundle = ResourceBundle
+					.getBundle("com.martinheywang.products.model.bundles.GameLoopUpdate");
+			final BigInteger nextLoopCost = new BigInteger(loopBundle.getString(String.valueOf(nextDelay)));
+			upgradeLoopInfo.setText("La boucle de jeu se répète toute les " + currentDelay + " millisecondes. Passer à "
+					+ nextDelay + " vous coûte " + MoneyFormat.getSingleton().format(nextLoopCost) + ".");
+		} catch (MissingResourceException e) {
+			upgradeLoopInfo.setText("Vous ne pouvez plus accélérer la boucle de jeu !");
+			upgradeLoopBtn.setDisable(true);
 		}
 
 		this.toPlayableView();
@@ -383,6 +405,24 @@ public class GameController implements Initializable {
 					Color.DARKORANGE, 4d);
 		}
 
+	}
+
+	@FXML
+	private void decreaseGameLoopDelay() {
+		final int newDelay = gameManager.getDelay() - 50;
+
+		final ResourceBundle bundle = ResourceBundle
+				.getBundle("com.martinheywang.products.model.bundles.GameLoopUpdate");
+		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newDelay)));
+
+		try {
+			gameManager.removeMoney(cost);
+			gameManager.decreaseGameLoopDelay();
+		} catch (MoneyException e) {
+			gameManager.toast(
+					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
+					Color.DARKORANGE, 4d);
+		}
 	}
 
 	/**

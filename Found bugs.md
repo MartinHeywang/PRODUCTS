@@ -1,8 +1,6 @@
 ## Bogues
 
-1. Update la recette du produit quand on change le produit dans la fenêtre du constructeur.
-
-1. La recette du grill ne s'affiche pas correctement.
+1. Les schémas demandant des produits eux-même ne fonctionnent peut-être pas !
 
 > Ces bugs seront corrigés d'ici peu !
 
