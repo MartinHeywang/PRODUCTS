@@ -155,6 +155,21 @@ public final class Buyer extends Device {
 		return Arrays.asList(box);
 	}
 
+	@Override
+	public void saveElements(){
+		/* 
+			<?> What is that ? Well here we don't change anything as far as I know, 
+			this is necessary in order to save the pack.
+		*/
+		distributedResource.setModel(model);
+		try {
+			// Updates the distributed resource
+			Database.createDao(Pack.class).createOrUpdate(distributedResource);
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Returns the distributed resource of the buyer.
 	 * 
@@ -173,13 +188,6 @@ public final class Buyer extends Device {
 	 */
 	public void setDistributedResource(Resource res) {
 		distributedResource.setResource(res);
-
-		try {
-			// Updates the distributed resource
-			Database.createDao(Pack.class).createOrUpdate(distributedResource);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**

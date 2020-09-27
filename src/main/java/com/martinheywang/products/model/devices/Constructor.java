@@ -189,8 +189,19 @@ public final class Constructor extends Device {
         return Arrays.asList(node);
     }
 
+    @Override
+    public void saveElements(){
+		product.setModel(model);
+        try {
+			// Updates the product
+			Database.createDao(Pack.class).createOrUpdate(product);
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+    }
+
     /**
-     * Returns the distributed resource of the buyer.
+     * Returns the product of the constructor.
      * 
      * @return the resource
      */
@@ -201,7 +212,7 @@ public final class Constructor extends Device {
     /**
      * Sets a new distributed resource to the device. <strong>Warning: If this
      * resource is not a part of the accepted resources, this method won't warn you
-     * but the buyer will skip its action as it can't distributed it.</strong>
+     * but the constructor will skip its action as it can't distributed it.</strong>
      * 
      * @param res the new resource
      */

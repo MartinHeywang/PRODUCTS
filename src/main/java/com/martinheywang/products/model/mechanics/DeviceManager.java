@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.martinheywang.products.model.Coordinate;
 import com.martinheywang.products.model.Game;
+import com.martinheywang.products.model.Pack;
 import com.martinheywang.products.model.database.Database;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.DeviceModel;
@@ -201,27 +202,26 @@ public final class DeviceManager {
     public void save() throws SQLException {
 
         final Dao<DeviceModel, Long> modelDao = Database.createDao(DeviceModel.class);
+        final Dao<Pack, Long> packDao = Database.createDao(Pack.class);
 
-        /*
-         * Attempt 1:
-         * 
-         * Delete all old devices of the game. Set the same id as before on the current
-         * devices. Persist all the devices
-         */
-
-        final DeleteBuilder<DeviceModel, Long> deleter = modelDao.deleteBuilder();
-
-        deleter.where().eq("game_id", gameManager.getGameID());
-        deleter.delete();
+        // DELETE DEVICE MODELS AND PACKS
+        final List<DeviceModel> models = modelDao.queryForEq("game_id", gameManager.getGameID());
+        for(DeviceModel model : models){
+            modelDao.delete(model);
+            final DeleteBuilder<Pack, Long> packDeleteBuilder = packDao.deleteBuilder();
+            packDeleteBuilder.where().eq("model", model.getID());
+            packDeleteBuilder.delete();
+        }
 
         for (int x = 0; x < devices.size(); x++) {
             for (int y = 0; y < devices.size(); y++) {
-                final DeviceModel current = devices.get(x, y).getModel();
+                final Device current = devices.get(x, y);
 
-                final Long id = current.generateID();
-                current.setID(id);
+                final Long id = current.getModel().generateID();
+                current.getModel().setID(id);
+                current.saveElements();
 
-                modelDao.create(current);
+                modelDao.create(current.getModel());
 
             }
         }

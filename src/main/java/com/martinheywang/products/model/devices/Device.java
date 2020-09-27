@@ -69,21 +69,21 @@ public abstract class Device {
      * @param game      the game
      */
     Device(DeviceModel model) {
-	this.model = model;
+        this.model = model;
 
-	this.generateTemplate();
+        this.generateTemplate();
 
-	this.refreshView();
+        this.refreshView();
     }
 
     /**
-     * Defines the GameManager that this Device object will give to its
-     * behaviour to perform actions.
+     * Defines the GameManager that this Device object will give to its behaviour to
+     * perform actions.
      * 
      * @param gameManager
      */
     public void manageWith(GameManager gameManager) {
-	this.gameManager = gameManager;
+        this.gameManager = gameManager;
     }
 
     /**
@@ -106,61 +106,63 @@ public abstract class Device {
     public abstract void act(Pack resources) throws MoneyException;
 
     /**
-     * Generates the template of the device
+     * This inheritable method does not nothing by default. You don't need everytime
+     * to inherit it. But in case your device uses savable packs, in this method you
+     * should save these packs to make sure they are stored in the database.
      */
-    public void generateTemplate() {
-	final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
-	this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
-		.setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
-		.create(this.getPosition(), this.getDirection());
-    }
-
-
-    private void refreshView() {
-	this.imageProperty.set(new Image(
-		this.getClass().getResourceAsStream(this.getURL())));
-    }
-
-    public Template getTemplate() {
-	return this.template;
+    public void saveElements() {
     }
 
     /**
-     * Parses the value of the @ActionCost annotation into a BigInteger,
-     * or return 5 if such an annotation isn't present.
+     * Generates the template of the device
+     */
+    public void generateTemplate() {
+        final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
+        this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
+                .setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
+                .create(this.getPosition(), this.getDirection());
+    }
+
+    private void refreshView() {
+        this.imageProperty.set(new Image(this.getClass().getResourceAsStream(this.getURL())));
+    }
+
+    public Template getTemplate() {
+        return this.template;
+    }
+
+    /**
+     * Parses the value of the @ActionCost annotation into a BigInteger, or return 5
+     * if such an annotation isn't present.
      * 
      * @return the action cost
      */
     protected BigInteger getActionCost() {
-	if (this.getClass().isAnnotationPresent(ActionCost.class)) {
-	    return new BigInteger(
-		    this.getClass().getAnnotation(ActionCost.class).value());
-	}
-	return new BigInteger("5");
+        if (this.getClass().isAnnotationPresent(ActionCost.class)) {
+            return new BigInteger(this.getClass().getAnnotation(ActionCost.class).value());
+        }
+        return new BigInteger("5");
     }
 
     /**
-     * Returns a prices modules that get you the information you need
-     * about the prices of this device type.
+     * Returns a prices modules that get you the information you need about the
+     * prices of this device type.
      * 
      * @return a prices modules
      */
     protected PricesModule getPrices() {
-	if (this.getClass().isAnnotationPresent(Prices.class)) {
-	    final Prices annotation = this.getClass().getAnnotation(Prices.class);
-	    return new PricesModule(annotation.build(), annotation.upgradeTo2(),
-		    annotation.upgradeTo3(),
-		    annotation.destroyAt1(), annotation.destroyAt2(),
-		    annotation.destroyAt3());
-	}
-	return new PricesModule("0", "0", "0", "0", "0", "0");
+        if (this.getClass().isAnnotationPresent(Prices.class)) {
+            final Prices annotation = this.getClass().getAnnotation(Prices.class);
+            return new PricesModule(annotation.build(), annotation.upgradeTo2(), annotation.upgradeTo3(),
+                    annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
+        }
+        return new PricesModule("0", "0", "0", "0", "0", "0");
     }
 
     public abstract List<Node> getWidgets();
 
     public String getURL() {
-	return "/images" + this.getLevel().getURL()
-		+ this.getClass().getSimpleName().toUpperCase() + ".png";
+        return "/images" + this.getLevel().getURL() + this.getClass().getSimpleName().toUpperCase() + ".png";
     }
 
     /**
@@ -168,7 +170,7 @@ public abstract class Device {
      * @return the model (persistent data)
      */
     public DeviceModel getModel() {
-	return this.model;
+        return this.model;
     }
 
     /**
@@ -176,7 +178,7 @@ public abstract class Device {
      * @return the level of this Device object.
      */
     public Level getLevel() {
-	return this.model.getLevel();
+        return this.model.getLevel();
     }
 
     /**
@@ -184,7 +186,7 @@ public abstract class Device {
      * @return the game of this Device object.
      */
     public Game getGame() {
-	return this.model.getGame();
+        return this.model.getGame();
     }
 
     /**
@@ -192,7 +194,7 @@ public abstract class Device {
      * @return the direction of this Device object.
      */
     public Direction getDirection() {
-	return this.model.getDirection();
+        return this.model.getDirection();
     }
 
     /**
@@ -200,9 +202,8 @@ public abstract class Device {
      * @return the position of this Device object.
      */
     public Coordinate getPosition() {
-	return this.model.getPosition();
+        return this.model.getPosition();
     }
-
 
     /**
      * Returns the view used by the device view.
@@ -210,7 +211,7 @@ public abstract class Device {
      * @return the view
      */
     public ObjectProperty<Image> getView() {
-	return this.imageProperty;
+        return this.imageProperty;
     }
 
     /**
@@ -219,8 +220,8 @@ public abstract class Device {
      * @return a price as a BigInteger
      */
     public BigInteger getDeletePrice() {
-	final String key = this.getDeletePriceKey();
-	return this.getPrices().getPriceFromKey(key);
+        final String key = this.getDeletePriceKey();
+        return this.getPrices().getPriceFromKey(key);
     }
 
     /**
@@ -229,19 +230,21 @@ public abstract class Device {
      * @return a price as a BigInteger
      */
     public BigInteger getUpgradePrice() {
-	final String key = this.getUpgradePriceKey();
-	return this.getPrices().getPriceFromKey(key);
+        final String key = this.getUpgradePriceKey();
+        return this.getPrices().getPriceFromKey(key);
     }
 
-    /* The following methods (about keys) creates and returns keys to find
-     * the appropriate prices in the #getPrices(). */
+    /*
+     * The following methods (about keys) creates and returns keys to find the
+     * appropriate prices in the #getPrices().
+     */
     /**
      * Returns the valid delete price key for this device.
      * 
      * @return a string
      */
     private String getDeletePriceKey() {
-	return this.getLevel().toString().toLowerCase() + "_delete";
+        return this.getLevel().toString().toLowerCase() + "_delete";
     }
 
     /**
@@ -250,39 +253,38 @@ public abstract class Device {
      * @return a string
      */
     private String getUpgradePriceKey() {
-	return this.getLevel().getNext().toString().toLowerCase()
-		+ "_build";
+        return this.getLevel().getNext().toString().toLowerCase() + "_build";
     }
 
     /**
-     * Builds the given type on this device (replaces it), if all the
-     * condition are valid.
+     * Builds the given type on this device (replaces it), if all the condition are
+     * valid.
      * 
      * @param type the class of the type to build
      * @throws EditException if we are not allowed to do something
      */
     public void build(Class<? extends Device> type) throws EditException {
-	// Error checking
-	if (!type.isAnnotationPresent(Buildable.class)) {
-	    /* If the type isn't buildable (as floors). */
-	    throw new EditException("The given type isn't buildable.");
-	}
-	if (!this.getClass().equals(Floor.class)) {
-	    /* <?> Floor are normal devices, and it is the only type that can
-	     * receive build. Here we must check if we are effectively trying to
-	     * build something on a floor, and throw an exception if not. */
-	    this.gameManager.toast("Vous ne pouvez construire que sur des sols.",
-		    Color.DARKORANGE, 4d);
-	    return;
-	}
+        // Error checking
+        if (!type.isAnnotationPresent(Buildable.class)) {
+            /* If the type isn't buildable (as floors). */
+            throw new EditException("The given type isn't buildable.");
+        }
+        if (!this.getClass().equals(Floor.class)) {
+            /*
+             * <?> Floor are normal devices, and it is the only type that can receive build.
+             * Here we must check if we are effectively trying to build something on a
+             * floor, and throw an exception if not.
+             */
+            this.gameManager.toast("Vous ne pouvez construire que sur des sols.", Color.DARKORANGE, 4d);
+            return;
+        }
 
-	// Call the build method
-	try {
-	    this.gameManager.build(type, this.getPosition());
-	} catch (final MoneyException e) {
-	    this.gameManager.toast("Vous n'avez pas assez d'argent !",
-		    Color.ORANGERED, 4d);
-	}
+        // Call the build method
+        try {
+            this.gameManager.build(type, this.getPosition());
+        } catch (final MoneyException e) {
+            this.gameManager.toast("Vous n'avez pas assez d'argent !", Color.ORANGERED, 4d);
+        }
     }
 
     /**
@@ -292,17 +294,17 @@ public abstract class Device {
      * @throws EditException
      */
     public void destroy() throws EditException {
-	// Error checking
-	if (this.getClass().equals(Floor.class)) {
-	    /* A floor cannot be destroyed */
-	    throw new EditException("A floor cannot be destroyed.");
-	}
+        // Error checking
+        if (this.getClass().equals(Floor.class)) {
+            /* A floor cannot be destroyed */
+            throw new EditException("A floor cannot be destroyed.");
+        }
 
-	try {
-	    this.gameManager.destroy(this.getPosition(), this.getLevel());
-	} catch (final MoneyException e) {
-	    e.printStackTrace();
-	}
+        try {
+            this.gameManager.destroy(this.getPosition(), this.getLevel());
+        } catch (final MoneyException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -310,49 +312,47 @@ public abstract class Device {
      * Swaps the device with the next device that call this method.
      * </p>
      * <p>
-     * Register the device coords as 'want to swap' in the game manager
-     * and performs the action
+     * Register the device coords as 'want to swap' in the game manager and performs
+     * the action
      * </p>
      * 
      * @see GameManager#swap(Coordinate)
      */
     public void swap() {
-	this.gameManager.swap(this.getPosition());
+        this.gameManager.swap(this.getPosition());
     }
 
     /**
      * Turns the device properly.
      */
     public void turn() {
-	this.model.setDirection(this.model.getDirection().getNext());
+        this.model.setDirection(this.model.getDirection().getNext());
 
-	this.generateTemplate();
+        this.generateTemplate();
 
-	this.gameManager.refreshViewAt(this.getPosition());
+        this.gameManager.refreshViewAt(this.getPosition());
     }
 
     /**
      * Upgrades the device properly.
      */
     public void upgrade() throws EditException {
-	if (this.getClass().equals(Floor.class)) {
-	    throw new EditException();
-	}
+        if (this.getClass().equals(Floor.class)) {
+            throw new EditException();
+        }
 
-	final BigInteger actionCost = this.getUpgradePrice();
+        final BigInteger actionCost = this.getUpgradePrice();
 
-	try {
-	    this.gameManager.removeMoney(actionCost);
-	} catch (final MoneyException e) {
-	    this.gameManager.toast(
-		    "Vous n'avez pas assez d'argent! (" + actionCost
-		    + " € demandés)",
-		    Color.ORANGERED, 4d);
-	    return;
-	}
+        try {
+            this.gameManager.removeMoney(actionCost);
+        } catch (final MoneyException e) {
+            this.gameManager.toast("Vous n'avez pas assez d'argent! (" + actionCost + " € demandés)", Color.ORANGERED,
+                    4d);
+            return;
+        }
 
-	this.model.setLevel(this.model.getLevel().getNext());
-	this.refreshView();
+        this.model.setLevel(this.model.getLevel().getNext());
+        this.refreshView();
 
     }
 
@@ -361,14 +361,14 @@ public abstract class Device {
      * @return the active property
      */
     public BooleanProperty activeProperty() {
-	return this.activeProperty;
+        return this.activeProperty;
     }
 
     /**
      * @return the value of the active property
      */
     public boolean isActive() {
-	return this.activeProperty.get();
+        return this.activeProperty.get();
     }
 
     /**
@@ -377,13 +377,13 @@ public abstract class Device {
      * @param active the new active value
      */
     public void setActive(boolean active) {
-	this.activeProperty.set(active);
+        this.activeProperty.set(active);
     }
 
     public static void registerType(Class<? extends Device> clazz) {
-	if (!subclasses.contains(clazz)) {
-	    subclasses.add(clazz);
-	}
+        if (!subclasses.contains(clazz)) {
+            subclasses.add(clazz);
+        }
     }
 
 }
