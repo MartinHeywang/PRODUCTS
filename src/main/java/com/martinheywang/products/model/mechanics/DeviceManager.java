@@ -206,7 +206,7 @@ public final class DeviceManager {
 
         // DELETE DEVICE MODELS AND PACKS
         final List<DeviceModel> models = modelDao.queryForEq("game_id", gameManager.getGameID());
-        for(DeviceModel model : models){
+        for (DeviceModel model : models) {
             modelDao.delete(model);
             final DeleteBuilder<Pack, Long> packDeleteBuilder = packDao.deleteBuilder();
             packDeleteBuilder.where().eq("model", model.getID());
@@ -217,12 +217,13 @@ public final class DeviceManager {
             for (int y = 0; y < devices.size(); y++) {
                 final Device current = devices.get(x, y);
 
-                final Long id = current.getModel().generateID();
-                current.getModel().setID(id);
-                current.saveElements();
+                if (!current.getClass().equals(Floor.class)) {
+                    final Long id = current.getModel().generateID();
+                    current.getModel().setID(id);
+                    current.saveElements();
 
-                modelDao.create(current.getModel());
-
+                    modelDao.create(current.getModel());
+                }
             }
         }
 
