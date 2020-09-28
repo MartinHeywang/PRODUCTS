@@ -13,6 +13,7 @@ import com.martinheywang.products.model.Coordinate;
 import com.martinheywang.products.model.Game;
 import com.martinheywang.products.model.Pack;
 import com.martinheywang.products.model.database.Database;
+import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.DeviceModel;
 import com.martinheywang.products.model.devices.Floor;
@@ -40,7 +41,10 @@ import javafx.scene.paint.Color;
  */
 public final class GameManager {
 
-	private int gameLoopDelay = 1000;
+	private int gameLoopDelay;
+
+	private int maxBuyer;
+
 	private final GameController gameController;
 
 	private final Game game;
@@ -67,6 +71,7 @@ public final class GameManager {
 		// GAME
 		this.game = game;
 		this.gameLoopDelay = game.getDelay();
+		this.maxBuyer = game.getMaxBuyer();
 		this.gameController = gameController;
 
 		// DEVICE MANAGER
@@ -87,9 +92,12 @@ public final class GameManager {
 
 			System.out.println(gameLoopDelay);
 
-			/*  Won = grow amount * number of offline iterations
-				Number of offline iterations = offline millis * gameLoopDelay / the divider (here 5) */
-			final BigInteger offlineTotal = grow.multiply(BigInteger.valueOf(millis)).divide(BigInteger.valueOf(5)).divide(BigInteger.valueOf(gameLoopDelay));
+			/*
+			 * Won = grow amount * number of offline iterations Number of offline iterations
+			 * = offline millis * gameLoopDelay / the divider (here 5)
+			 */
+			final BigInteger offlineTotal = grow.multiply(BigInteger.valueOf(millis)).divide(BigInteger.valueOf(5))
+					.divide(BigInteger.valueOf(gameLoopDelay));
 			addMoney(offlineTotal);
 
 			if (!offlineTotal.equals(BigInteger.ZERO))
@@ -132,6 +140,13 @@ public final class GameManager {
 	 * @throws MoneyException if we don't have enough money
 	 */
 	public void build(Class<? extends Device> clazz, Coordinate position) throws MoneyException {
+		if (clazz.equals(Buyer.class)) {
+			if (Device.autoActiveDevices.size() >= maxBuyer) {
+				this.toast("Vous avez atteint la limite maximum d'acheteur !", Color.DARKORANGE, 5d);
+				return;
+			}
+		}
+
 		final BigInteger actionPrice = new BigInteger(clazz.getAnnotation(Prices.class).build());
 
 		if (this.game.getMoney().compareTo(actionPrice) == -1) {
@@ -270,8 +285,25 @@ public final class GameManager {
 		gameController.setMoney(getMoney());
 	}
 
+	/**
+	 * 
+	 * @return the grid-size
+	 */
 	public int getGridSize() {
 		return game.getGridSize();
+	}
+
+	/**
+	 * 
+	 * @return the max buyer
+	 */
+	public int getMaxBuyer() {
+		return maxBuyer;
+	}
+
+	public void addMaxBuyer(){
+		this.maxBuyer += 4;
+		gameController.loadGame(deviceManager.getDevices(), game);
 	}
 
 	/**
@@ -299,6 +331,7 @@ public final class GameManager {
 					}
 					average = average.divide(BigInteger.valueOf(lastsGrow.size()));
 
+					game.setMaxBuyer(maxBuyer);
 					game.setDelay(gameLoopDelay);
 					game.setGrow(average);
 					game.save();
@@ -358,7 +391,7 @@ public final class GameManager {
 		return game.getID();
 	}
 
-	public Integer getDelay(){
+	public Integer getDelay() {
 		return gameLoopDelay;
 	}
 

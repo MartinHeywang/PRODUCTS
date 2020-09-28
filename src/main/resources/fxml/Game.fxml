@@ -78,7 +78,7 @@
                                           <Font size="22.0" />
                                        </font>
                                        <content>
-                                          <VBox minHeight="320.0" spacing="20.0">
+                                          <VBox minHeight="480.0" spacing="20.0">
                                              <children>
                                                 <Label fx:id="upgradeGridInfo" wrapText="true" />
                                                 <Button fx:id="upgradeGridBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#upgradeGrid" stylesheets="@Buttons.css" text="Agrandir la grille" />
@@ -86,7 +86,10 @@
                                                 <Label fx:id="upgradeLoopInfo" wrapText="true" />
                                                 <Button fx:id="upgradeLoopBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#decreaseGameLoopDelay" stylesheets="@Buttons.css" text="Accélérer !" />
                                                 <Separator prefWidth="200.0" />
-                                                <Label text="Plus de d'améliorations à venir..." wrapText="true" />
+                                                <Label fx:id="upgradeBuyerInfo" layoutX="28.0" layoutY="137.0" wrapText="true" />
+                                                <Button fx:id="upgradeBuyerBtn" layoutX="28.0" layoutY="174.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#increaseMaxBuyer" stylesheets="@Buttons.css" text="Augmenter !" />
+                                                <Separator layoutX="28.0" layoutY="223.0" prefWidth="200.0" />
+                                                <Label text="Plus d'améliorations à venir..." wrapText="true" />
                                              </children>
                                           </VBox>
                                        </content>

@@ -83,8 +83,17 @@ public class Game implements Displayable<Game> {
     @DatabaseField
     private BigInteger grow;
 
+    /**
+     * The delay b/w each iterations of the game loop.
+     */
     @DatabaseField(columnName = "delay")
     private Integer gameLoopDelay;
+
+    /**
+     * The maximum buildable buyers.
+     */
+    @DatabaseField
+    private Integer maxBuyer;
 
     public Game() {
     }
@@ -101,6 +110,7 @@ public class Game implements Displayable<Game> {
         this.money = new BigInteger("1250");
         this.grow = new BigInteger("0");
         this.gameLoopDelay = 1000;
+        this.maxBuyer = 4;
     }
 
     /**
@@ -225,6 +235,14 @@ public class Game implements Displayable<Game> {
     }
 
     /**
+     * 
+     * @return the max buyer amount
+     */
+    public Integer getMaxBuyer(){
+        return maxBuyer;
+    }
+
+    /**
      * Sets the new accesible name of this Game object.
      * 
      * @param newName the new name
@@ -258,6 +276,15 @@ public class Game implements Displayable<Game> {
      */
     public void setDelay(int delay) {
         this.gameLoopDelay = delay;
+    }
+
+    /**
+     * Sets the new amount of max buyers.
+     * 
+     * @param newValue the new value
+     */
+    public void setMaxBuyer(int newValue){
+        this.maxBuyer = newValue;
     }
 
     @Override

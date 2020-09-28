@@ -77,7 +77,7 @@ public class GameController implements Initializable {
 	 * The label showing the money
 	 */
 	@FXML
-	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo;
+	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo, upgradeBuyerInfo;
 
 	/**
 	 * The Progress Bar showing the progress on long treatment.
@@ -112,7 +112,7 @@ public class GameController implements Initializable {
 	private VBox devicesBuild;
 
 	@FXML
-	private Button upgradeGridBtn, upgradeLoopBtn;
+	private Button upgradeGridBtn, upgradeLoopBtn, upgradeBuyerBtn;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -185,6 +185,19 @@ public class GameController implements Initializable {
 		} catch (MissingResourceException e) {
 			upgradeLoopInfo.setText("Vous ne pouvez plus accélérer la boucle de jeu !");
 			upgradeLoopBtn.setDisable(true);
+		}
+
+		try {
+			final int currentMax = gameManager.getMaxBuyer();
+			final int nextMax = gameManager.getMaxBuyer() + 4;
+			final ResourceBundle maxBundle = ResourceBundle
+					.getBundle("com.martinheywang.products.model.bundles.MaxBuyerUpdate");
+			final BigInteger nextMaxCost = new BigInteger(maxBundle.getString(String.valueOf(nextMax)));
+			upgradeBuyerInfo.setText("Vous pouvez construire jusqu'à " + currentMax + " Acheteurs. Passer à "
+					+ nextMax + " vous coûte " + MoneyFormat.getSingleton().format(nextMaxCost) + ".");
+		} catch (MissingResourceException e) {
+			upgradeBuyerInfo.setText("Vous ne pouvez augmenter le nombre maximum d'acheteur !");
+			upgradeBuyerBtn.setDisable(true);
 		}
 
 		this.toPlayableView();
@@ -418,6 +431,24 @@ public class GameController implements Initializable {
 		try {
 			gameManager.removeMoney(cost);
 			gameManager.decreaseGameLoopDelay();
+		} catch (MoneyException e) {
+			gameManager.toast(
+					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
+					Color.DARKORANGE, 4d);
+		}
+	}
+
+	@FXML
+	private void increaseMaxBuyer() {
+		final int newMax = gameManager.getMaxBuyer() + 4;
+
+		final ResourceBundle bundle = ResourceBundle
+				.getBundle("com.martinheywang.products.model.bundles.MaxBuyerUpdate");
+		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newMax)));
+
+		try {
+			gameManager.removeMoney(cost);
+			gameManager.addMaxBuyer();
 		} catch (MoneyException e) {
 			gameManager.toast(
 					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
