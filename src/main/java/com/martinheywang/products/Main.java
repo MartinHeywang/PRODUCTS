@@ -12,6 +12,7 @@ import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.Floor;
 import com.martinheywang.products.model.devices.Furnace;
 import com.martinheywang.products.model.devices.LeftConveyor;
+import com.martinheywang.products.model.devices.MultiConveyor;
 import com.martinheywang.products.model.devices.Press;
 import com.martinheywang.products.model.devices.RightConveyor;
 import com.martinheywang.products.model.devices.Seller;
@@ -224,6 +225,7 @@ public final class Main extends Application {
 		Device.registerType(Press.class);
 		Device.registerType(WireDrawer.class);
 		Device.registerType(Constructor.class);
+		Device.registerType(MultiConveyor.class);
 
 		launch(args);
 	}
