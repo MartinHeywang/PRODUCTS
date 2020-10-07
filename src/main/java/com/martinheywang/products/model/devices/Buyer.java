@@ -96,6 +96,7 @@ public final class Buyer extends Device {
 
 	@Override
 	public void act(Pack resource) throws MoneyException {
+		super.act(resource);
 
 		// Check if the resource is valid one (if the resource is buyable).
 		if (!acceptedResources.contains(this.distributedResource.getResource())) {

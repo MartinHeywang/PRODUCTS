@@ -30,6 +30,7 @@ public class Conveyor extends Device {
 
     @Override
     public final void act(Pack resources) throws MoneyException {
+		super.act(resources);
 	if (this.gameManager.getMoney()
 		.compareTo(this.getActionCost()) == -1) {
 	    // We don't have enough money (:sad-guy:)

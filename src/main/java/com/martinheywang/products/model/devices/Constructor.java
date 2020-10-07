@@ -99,6 +99,7 @@ public final class Constructor extends Device {
 
     @Override
     public void act(final Pack resource) throws MoneyException {
+        super.act(resource);
         addResources(resource);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
@@ -190,14 +191,14 @@ public final class Constructor extends Device {
     }
 
     @Override
-    public void saveElements(){
-		product.setModel(model);
+    public void saveElements() {
+        product.setModel(model);
         try {
-			// Updates the product
-			Database.createDao(Pack.class).createOrUpdate(product);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+            // Updates the product
+            Database.createDao(Pack.class).createOrUpdate(product);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

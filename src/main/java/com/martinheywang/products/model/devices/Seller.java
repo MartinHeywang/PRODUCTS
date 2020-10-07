@@ -29,11 +29,11 @@ public final class Seller extends Device {
 
     @Override
     public void act(Pack packs) throws MoneyException {
+        super.act(packs);
 
-	this.gameManager.addMoney(packs.getResource().getPrice());
-	// Todo: improve the pulsing effect of the seller
+        this.gameManager.addMoney(packs.getResource().getPrice());
 	this.setActive(true);
-	this.setActive(false);
+    this.setActive(false);
     }
 
     @Override

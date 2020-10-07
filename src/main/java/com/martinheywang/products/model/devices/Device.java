@@ -1,6 +1,8 @@
 package com.martinheywang.products.model.devices;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.martinheywang.products.model.level.Level;
 import com.martinheywang.products.model.mechanics.GameManager;
 import com.martinheywang.products.model.templates.Template;
 import com.martinheywang.products.model.templates.TemplateCreator;
+import com.martinheywang.products.model.templates.Template.PointerTypes;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -58,6 +61,16 @@ public abstract class Device {
 
     /* The view is updated on upgrade and on turn */
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
+
+    /**
+     * The number of time that this device was used in the current iteration.
+     */
+    protected int currentIterationUse = 1;
+
+    /**
+     * The last time that device was used.
+     */
+    protected LocalDateTime lastUseTime = LocalDateTime.now();
 
     /**
      * Creates a new Device.
@@ -103,7 +116,22 @@ public abstract class Device {
      * @throws MoneyException whenever the game doesn't have enough money (don't
      *                        forget to check that)
      */
-    public abstract void act(Pack resources) throws MoneyException;
+    public void act(Pack resources) throws MoneyException {
+        final LocalDateTime now = LocalDateTime.now();
+        final long between = ChronoUnit.MILLIS.between(lastUseTime, now);
+        if (between < GameManager.gameLoopDelay) {
+            currentIterationUse++;
+
+            // Max use per iterations is the level times the entries count times 2
+            if (currentIterationUse > this.getLevel().getValue() * this.getEntriesCount() * 2
+                    && !this.getClass().equals(Buyer.class)) {
+                return;
+            }
+        } else {
+            currentIterationUse = 1;
+        }
+        lastUseTime = now;
+    }
 
     /**
      * This inheritable method does not nothing by default. You don't need everytime
@@ -157,6 +185,22 @@ public abstract class Device {
                     annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
         }
         return new PricesModule("0", "0", "0", "0", "0", "0");
+    }
+
+    /**
+     * 
+     * @return the number of entries that this device has
+     */
+    public int getEntriesCount() {
+        return this.template.getPointersFor(PointerTypes.ENTRY).size();
+    }
+
+    /**
+     * 
+     * @return the number of exits that this device has.
+     */
+    public int getExitsCount() {
+        return this.template.getPointersFor(PointerTypes.EXIT).size();
     }
 
     public abstract List<Node> getWidgets();

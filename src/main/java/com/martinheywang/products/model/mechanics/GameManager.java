@@ -41,7 +41,7 @@ import javafx.scene.paint.Color;
  */
 public final class GameManager {
 
-	private int gameLoopDelay;
+	public static int gameLoopDelay;
 
 	private int maxBuyer;
 
@@ -70,7 +70,7 @@ public final class GameManager {
 
 		// GAME
 		this.game = game;
-		this.gameLoopDelay = game.getDelay();
+		gameLoopDelay = game.getDelay();
 		this.maxBuyer = game.getMaxBuyer();
 		this.gameController = gameController;
 
@@ -484,7 +484,7 @@ public final class GameManager {
 
 				// Wait a little bit of course
 				try {
-					Thread.sleep(GameManager.this.gameLoopDelay);
+					Thread.sleep(gameLoopDelay);
 				} catch (final InterruptedException e) {
 					// Thread was interrupted
 					e.printStackTrace();
