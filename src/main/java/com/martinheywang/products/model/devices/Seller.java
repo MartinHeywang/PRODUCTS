@@ -24,21 +24,18 @@ import javafx.scene.Node;
 public final class Seller extends Device {
 
     public Seller(DeviceModel model) {
-	super(model);
+        super(model);
     }
 
     @Override
-    public void act(Pack packs) throws MoneyException {
-        super.act(packs);
-
+    public boolean act(Pack packs) throws MoneyException {
         this.gameManager.addMoney(packs.getResource().getPrice());
-	this.setActive(true);
-    this.setActive(false);
+        return true;
     }
 
     @Override
     public List<Node> getWidgets() {
-	return Arrays.asList();
+        return Arrays.asList();
     }
 
 }

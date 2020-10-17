@@ -90,8 +90,6 @@ public final class GameManager {
 			final BigInteger grow = this.game.getGrow();
 			final long millis = ChronoUnit.MILLIS.between(lastSave, now);
 
-			System.out.println(gameLoopDelay);
-
 			/*
 			 * Won = grow amount * number of offline iterations Number of offline iterations
 			 * = offline millis * gameLoopDelay / the divider (here 5)
@@ -118,18 +116,35 @@ public final class GameManager {
 	}
 
 	/**
-	 * Performs an action at the given coordinate
+	 * Performs properly an action of a device. Calls {@link Device#act(Pack)} and
+	 * register some data about the action and the device.
 	 * 
 	 * @param from      the coordinate of the device requesting the action
 	 * @param to        the coordinate of the requested device
 	 * @param resources the resources to pass to the requested device.
 	 */
-	public void performAction(Coordinate from, Coordinate to, Pack resources) {
-		try {
-			this.deviceManager.getDevice(to).act(resources);
-		} catch (final MoneyException e) {
-			e.printStackTrace();
-		}
+	public void performAction(Coordinate from, Coordinate to, Pack resources) throws MoneyException {
+		// The device that will be trigered
+		final Device device = this.deviceManager.getDevice(to);
+
+		if (device.isActReady()) {
+			if (from != null) {
+				this.deviceManager.getDevice(from).getCurrentReport().addGivenPack(to, resources);
+				device.getCurrentReport().addReceivedPack(from, resources);
+			}
+
+			// Even if the action doesn't result in anything, it counts as an action.
+			// What rather doesn't count, is when the device has already got its max action
+			// count.
+			device.getCurrentReport().incrementActCount();
+			// Todo : update the total cost
+
+			if (device.act(resources)) {
+				// Pulse effect
+				device.setActive(true);
+				device.setActive(false);
+			}
+			}
 	}
 
 	/**
@@ -468,7 +483,7 @@ public final class GameManager {
 				final BigInteger amountBefore = game.getMoney();
 				for (final Device buyer : Device.autoActiveDevices) {
 					try {
-						buyer.act(null);
+						performAction(null, buyer.getPosition(), null);
 					} catch (final MoneyException e) {
 						// We don't have enough money to perform the action
 						// Todo : set the money label fill in the view to red

@@ -2,6 +2,7 @@ package com.martinheywang.products.model.devices;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +66,7 @@ public final class Constructor extends Device {
 
             final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
             product = fetched;
+            product.setQuantity(BigInteger.ONE);
 
         } catch (final SQLException e) {
             // An error with the database occured
@@ -98,8 +100,9 @@ public final class Constructor extends Device {
     }
 
     @Override
-    public void act(final Pack resource) throws MoneyException {
-        super.act(resource);
+    public boolean act(final Pack resource) throws MoneyException {
+        report.incrementActCount();
+        report.setLastUseTime(LocalDateTime.now());
         addResources(resource);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
@@ -109,10 +112,11 @@ public final class Constructor extends Device {
                 this.gameManager.removeMoney(this.getActionCost());
 
                 this.gameManager.performAction(this.getPosition(), output, this.product);
-                this.setActive(true);
-                this.setActive(false);
+                return true;
             }
         }
+
+        return false;
     }
 
     /**

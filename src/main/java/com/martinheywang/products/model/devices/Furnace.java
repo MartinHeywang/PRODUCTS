@@ -27,45 +27,44 @@ import javafx.scene.Node;
 @ActionCost("8")
 public class Furnace extends Device {
 
-    public Furnace(DeviceModel model) {
-	super(model);
-    }
-
-    @Override
-    public final void act(Pack resources) throws MoneyException {
-		super.act(resources);
-	if (this.gameManager.getMoney().compareTo(this.getActionCost()) == -1) {
-	    // We don't have enough money (:sad-guy:)
-	    throw new MoneyException();
-	}
-	// If the given pack cannot be smelted
-	if (!resources.getResource().hasAnnotation(ToIngot.class))
-	    return;
-
-	final ToIngot annotation = resources.getResource().getField().getAnnotation(ToIngot.class);
-	Resource transformed;
-	try {
-	    transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
-	} catch (final Exception e) {
-	    e.printStackTrace();
-	    transformed = DefaultResource.NONE;
+	public Furnace(DeviceModel model) {
+		super(model);
 	}
 
-	final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
+	@Override
+	public final boolean act(Pack resources) throws MoneyException {
+		if (this.gameManager.getMoney().compareTo(this.getActionCost()) == -1) {
+			// We don't have enough money (:sad-guy:)
+			throw new MoneyException();
+		}
+		// If the given pack cannot be smelted
+		if (!resources.getResource().hasAnnotation(ToIngot.class))
+			return false;
 
-	if (this.gameManager.connectionExists(this.getPosition(), output)) {
-	    // Remove action cost
-	    this.gameManager.removeMoney(this.getActionCost());
+		final ToIngot annotation = resources.getResource().getField().getAnnotation(ToIngot.class);
+		Resource transformed;
+		try {
+			transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			transformed = DefaultResource.NONE;
+		}
 
-	    this.gameManager.performAction(this.getPosition(), output, new Pack(transformed, resources.getQuantity()));
+		final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
 
-	    this.setActive(true);
-	    this.setActive(false);
+		if (this.gameManager.connectionExists(this.getPosition(), output)) {
+			// Remove action cost
+			this.gameManager.removeMoney(this.getActionCost());
+
+			this.gameManager.performAction(this.getPosition(), output, new Pack(transformed, resources.getQuantity()));
+			return true;
+		}
+
+		return false;
 	}
-    }
 
-    @Override
-    public final List<Node> getWidgets() {
-	return Arrays.asList();
-    }
+	@Override
+	public final List<Node> getWidgets() {
+		return Arrays.asList();
+	}
 }

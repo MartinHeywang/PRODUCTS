@@ -63,14 +63,10 @@ public abstract class Device {
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     /**
-     * The number of time that this device was used in the current iteration.
+     * The IterationReport contains a lot of information about what happens in the
+     * current iteration. A new instance of it is created each iteration.
      */
-    protected int currentIterationUse = 1;
-
-    /**
-     * The last time that device was used.
-     */
-    protected LocalDateTime lastUseTime = LocalDateTime.now();
+    protected IterationReport report = new IterationReport(this);
 
     /**
      * Creates a new Device.
@@ -116,22 +112,7 @@ public abstract class Device {
      * @throws MoneyException whenever the game doesn't have enough money (don't
      *                        forget to check that)
      */
-    public void act(Pack resources) throws MoneyException {
-        final LocalDateTime now = LocalDateTime.now();
-        final long between = ChronoUnit.MILLIS.between(lastUseTime, now);
-        if (between < GameManager.gameLoopDelay) {
-            currentIterationUse++;
-
-            // Max use per iterations is the level times the entries count times 2
-            if (currentIterationUse > this.getLevel().getValue() * this.getEntriesCount() * 2
-                    && !this.getClass().equals(Buyer.class)) {
-                return;
-            }
-        } else {
-            currentIterationUse = 1;
-        }
-        lastUseTime = now;
-    }
+    public abstract boolean act(Pack resources) throws MoneyException;
 
     /**
      * This inheritable method does not nothing by default. You don't need everytime
@@ -153,6 +134,24 @@ public abstract class Device {
 
     private void refreshView() {
         this.imageProperty.set(new Image(this.getClass().getResourceAsStream(this.getURL())));
+    }
+
+    /**
+     * Returns whether this device is ready to act. It checks for example, if the
+     * cooldown is active or not.
+     */
+    public final boolean isActReady() {
+        final LocalDateTime now = LocalDateTime.now();
+        final long between = ChronoUnit.MILLIS.between(report.getLastUseTime(), now);
+
+        if (between < GameManager.gameLoopDelay) {
+            if (report.getActCount() >= report.getMaxActCount() && !this.getClass().equals(Buyer.class)) {
+                return false;
+            }
+        } else {
+            report = new IterationReport(this);
+        }
+        return true;
     }
 
     public Template getTemplate() {
@@ -401,6 +400,15 @@ public abstract class Device {
     }
 
     /**
+     * Returns the current IterationReport.
+     * 
+     * @return the current report.
+     */
+    public IterationReport getCurrentReport() {
+        return report;
+    }
+
+    /**
      * 
      * @return the active property
      */
@@ -429,5 +437,4 @@ public abstract class Device {
             subclasses.add(clazz);
         }
     }
-
 }

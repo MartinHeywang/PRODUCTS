@@ -24,36 +24,32 @@ import javafx.scene.Node;
 @ActionCost("5")
 public class Conveyor extends Device {
 
-    public Conveyor(DeviceModel model) {
-	super(model);
-    }
-
-    @Override
-    public final void act(Pack resources) throws MoneyException {
-		super.act(resources);
-	if (this.gameManager.getMoney()
-		.compareTo(this.getActionCost()) == -1) {
-	    // We don't have enough money (:sad-guy:)
-	    throw new MoneyException();
+	public Conveyor(DeviceModel model) {
+		super(model);
 	}
 
-	final Coordinate output = this.template
-		.getPointersFor(PointerTypes.EXIT).get(0);
+	@Override
+	public final boolean act(Pack resources) throws MoneyException {
+		if (this.gameManager.getMoney().compareTo(this.getActionCost()) == -1) {
+			// We don't have enough money (:sad-guy:)
+			throw new MoneyException();
+		}
 
-	if (this.gameManager.connectionExists(this.getPosition(), output)) {
-	    // Remove action cost
-	    this.gameManager.removeMoney(this.getActionCost());
+		final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
 
-	    this.gameManager.performAction(this.getPosition(), output, resources);
+		if (this.gameManager.connectionExists(this.getPosition(), output)) {
+			// Remove action cost
+			this.gameManager.removeMoney(this.getActionCost());
 
-	    this.setActive(true);
-	    this.setActive(false);
+			this.gameManager.performAction(this.getPosition(), output, resources);
+			return true;
+		}
+		return false;
 	}
-    }
 
-    @Override
-    public List<Node> getWidgets() {
-	return Arrays.asList();
-    }
+	@Override
+	public List<Node> getWidgets() {
+		return Arrays.asList();
+	}
 
 }

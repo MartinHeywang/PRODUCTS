@@ -3,6 +3,7 @@ package com.martinheywang.products.toolbox;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Thank you to Stack Overflow for this class
@@ -82,6 +83,21 @@ public class LocatedHashMap<K, V> {
 	 */
 	public int size() {
 		return map.size();
+	}
+
+	/**
+	 * Returns true if the given key already exists in the table.
+	 */
+	public boolean containsKey(K key) {
+		return map.containsKey(key);
+	}
+
+	/**
+	 * 
+	 * @return all the registered keys
+	 */
+	public Set<K> keySet() {
+		return map.keySet();
 	}
 
 	/**
