@@ -54,7 +54,7 @@ public class Press extends Device {
 
 		if (this.gameManager.connectionExists(this.getPosition(), output)) {
 			// Remove action cost
-			this.gameManager.removeMoney(this.getActionCost());
+			this.gameManager.removeMoney(this.getActionCost(), this);
 
 			this.gameManager.performAction(this.getPosition(), output, new Pack(transformed, resources.getQuantity()));
 			return true;

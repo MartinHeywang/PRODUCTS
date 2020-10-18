@@ -97,7 +97,7 @@ public final class GameManager {
 			 */
 			final BigInteger offlineTotal = grow.multiply(BigInteger.valueOf(millis)).divide(BigInteger.valueOf(5))
 					.divide(BigInteger.valueOf(gameLoopDelay));
-			addMoney(offlineTotal);
+			addMoney(offlineTotal, null);
 
 			if (!offlineTotal.equals(BigInteger.ZERO))
 				this.toast("Vous avez gagné durant votre absence:\n" + MoneyFormat.getSingleton().format(offlineTotal)
@@ -148,6 +148,9 @@ public final class GameManager {
 				device.setActive(true);
 				device.setActive(false);
 			}
+		} else {
+			// The device isn't act ready : it is already overflowed
+			device.getCurrentReport().setOverflowed(true);
 			}
 	}
 
@@ -171,7 +174,7 @@ public final class GameManager {
 		if (this.game.getMoney().compareTo(actionPrice) == -1) {
 			throw new MoneyException("L'appareil n'a pas pu être construit");
 		}
-		removeMoney(actionPrice);
+		removeMoney(actionPrice, null);
 
 		this.deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
 		this.refreshViewAt(position);
@@ -206,7 +209,7 @@ public final class GameManager {
 
 		}
 
-		addMoney(actionGain);
+		addMoney(actionGain, null);
 
 		// If it was an auto active device, remove it.
 		Device.autoActiveDevices.remove(device);
@@ -282,21 +285,29 @@ public final class GameManager {
 	/**
 	 * Adds money to the game
 	 * 
-	 * @param value the amount to add
+	 * @param value  the amount to add
+	 * @param asking the device that asks for adding money. Put null if this demand
+	 *               doesn't come from an action of a device.
 	 */
-	public void addMoney(BigInteger value) throws MoneyException {
+	public void addMoney(BigInteger value, Device asking) throws MoneyException {
 		// Removes the negation of the value (2 times minus equals plus)
-		this.removeMoney(value.negate());
+		this.removeMoney(value.negate(), asking);
 	}
 
 	/**
 	 * Removes money to the game
 	 * 
-	 * @param value the amount to remove
+	 * @param value  the amount to remove
+	 * @param asking the device that asks for removing money. put null if this
+	 *               demand doesn't come from an action of a device.
 	 */
-	public void removeMoney(BigInteger value) throws MoneyException {
+	public void removeMoney(BigInteger value, Device asking) throws MoneyException {
 		if (this.getMoney().compareTo(value) == -1) {
 			throw new MoneyException();
+		}
+
+		if (asking != null) {
+			asking.getCurrentReport().addTotalCost(value);
 		}
 
 		this.game.setMoney(this.game.getMoney().subtract(value));

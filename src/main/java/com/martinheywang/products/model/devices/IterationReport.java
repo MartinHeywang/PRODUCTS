@@ -27,6 +27,12 @@ public final class IterationReport {
     private int actCount;
 
     /**
+     * Vault true if the concerned device is overflowed, in other terms, if the
+     * device has been trying to do its action too many time.
+     */
+    private boolean overflowed;
+
+    /**
      * When this iteration began.
      */
     private LocalDateTime beginTime;
@@ -62,6 +68,7 @@ public final class IterationReport {
      */
     public IterationReport(Device device) {
         this.actCount = 0;
+        this.overflowed = false;
         this.beginTime = LocalDateTime.now();
         this.lastUseTime = LocalDateTime.now();
         this.totalCost = BigInteger.ZERO;
@@ -149,6 +156,13 @@ public final class IterationReport {
     }
 
     /**
+     * Returns whether the concered device is overflowed.
+     */
+    public boolean isOverflowed() {
+        return overflowed;
+    }
+
+    /**
      * The date and time that this device began an action for the last time.
      * 
      * @return the last use time
@@ -179,13 +193,18 @@ public final class IterationReport {
      * was already added with the same source, a merge will happen.
      */
     public void addReceivedPack(Coordinate from, Pack pack) {
-        /*
-         * if (received.containsKey(from)) { final List<Pack> packs =
-         * received.get(from); for (Pack item : packs) { if
-         * (item.getResource().equals(pack.getResource())) {
-         * item.setQuantity(item.getQuantity().add(pack.getQuantity())); return; } } }
-         */
-        received.put(from, pack);
+        // Tries to merge the given to another that may exist
+        for (Coordinate key : received.keySet()) {
+            if (key.propertiesEquals(from)) {
+                for (Pack item : received.get(key)) {
+                    if (item.getResource().equals(pack.getResource())) {
+                        item.addQuantity(pack.getQuantity());
+                        return;
+                    }
+                }
+            }
+        }
+        received.put(from, new Pack(pack.getResource(), pack.getQuantity()));
     }
 
     /**
@@ -193,17 +212,46 @@ public final class IterationReport {
      * the same target, a merge will happen.
      */
     public void addGivenPack(Coordinate to, Pack pack) {
-        /*
-         * if (given.containsKey(to)) { final List<Pack> packs = given.get(to); for
-         * (Pack item : packs) { if (item.getResource().equals(pack.getResource())) {
-         * item.setQuantity(item.getQuantity().add(pack.getQuantity())); return; } } }
-         */
+        // Tries to merge the given to another that may exist
+        for (Coordinate key : given.keySet()) {
+            if (key.propertiesEquals(to)) {
+                for (Pack item : given.get(key)) {
+                    if (item.getResource().equals(pack.getResource())) {
+                        item.addQuantity(pack.getQuantity());
+                        return;
+                    }
+                }
+            }
+        }
         // If such a resource wasn't found yet, just put a clone of it (against pass by
         // reference)
         given.put(to, new Pack(pack.getResource(), pack.getQuantity()));
     }
 
+    /**
+     * Sets the new last use time.
+     * 
+     * @param time the new value
+     */
     public void setLastUseTime(LocalDateTime time) {
         this.lastUseTime = time;
+    }
+
+    /**
+     * Add the given valeu to the total cost
+     * 
+     * @param value the value to add
+     */
+    public void addTotalCost(BigInteger value) {
+        this.totalCost = totalCost.add(value);
+    }
+
+    /**
+     * Sets if the concerned was overflowed this iteration.
+     * 
+     * @param value the new value
+     */
+    public void setOverflowed(boolean value) {
+        this.overflowed = value;
     }
 }

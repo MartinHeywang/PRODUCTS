@@ -2,7 +2,6 @@ package com.martinheywang.products.model.devices;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,10 +103,10 @@ public final class Constructor extends Device {
         addResources(resource);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
+            // Remove action cost
+            this.gameManager.removeMoney(this.getActionCost(), this);
 
             if (this.gameManager.connectionExists(this.getPosition(), output)) {
-                // Remove action cost
-                this.gameManager.removeMoney(this.getActionCost());
 
                 this.gameManager.performAction(this.getPosition(), output, this.product);
                 return true;
