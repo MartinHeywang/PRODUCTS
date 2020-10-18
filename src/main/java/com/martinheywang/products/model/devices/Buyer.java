@@ -115,10 +115,11 @@ public final class Buyer extends Device {
 		final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
 
 		if (this.gameManager.connectionExists(this.getPosition(), output)) {
-			// Remove action cost
-			this.gameManager.removeMoney(this.getActionCost().add(resourceCost), this);
-
-			this.gameManager.performAction(this.getPosition(), output, this.distributedResource);
+			for (int i = 0; i < this.getLevel().getValue(); i++) {
+				// Remove action cost
+				this.gameManager.removeMoney(this.getActionCost().add(resourceCost), this);
+				this.gameManager.performAction(this.getPosition(), output, this.distributedResource);
+			}
 			return true;
 		}
 		return false;
