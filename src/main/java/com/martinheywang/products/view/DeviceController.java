@@ -48,7 +48,9 @@ public final class DeviceController implements Initializable {
 		this.device = data;
 
 		view.setImage(data.getView().get());
-		
+
+		coordinate.setText(data.getPosition().toString());
+
 		refreshTurnedView();
 		refreshUpgradeBox();
 		refreshLiteral();
@@ -67,8 +69,8 @@ public final class DeviceController implements Initializable {
 			widgetsBox.getChildren().addAll(data.getWidgets());
 
 			special.setContent(widgetsBox);
-			special.setCollapsible(false);
-			special.setExpanded(true);
+			special.setAnimated(false);
+			special.setExpanded(false);
 
 			main.getChildren().add(0, special);
 		}
@@ -76,11 +78,13 @@ public final class DeviceController implements Initializable {
 		ImageView icon = new ImageView(new Image(Main.class.getResourceAsStream("/images/icons/info.png")));
 		icon.setFitHeight(30d);
 		icon.setFitWidth(30d);
-		TitledPane iterationContainer = new TitledPane("Informations utiles :", iterationView);
+		TitledPane iterationContainer = new TitledPane("Informations utiles", iterationView);
 		iterationContainer.setFont(new Font(16d));
 		iterationContainer.setGraphic(icon);
+		iterationContainer.setExpanded(false);
+		iterationContainer.setAnimated(false);
 
-		main.getChildren().add(iterationContainer);
+		main.getChildren().addAll(iterationContainer);
 
 	}
 

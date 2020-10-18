@@ -410,7 +410,7 @@ public class GameController implements Initializable {
 		final ResourceBundle bundle = ResourceBundle.getBundle("com.martinheywang.products.model.bundles.GrilleUpdate");
 		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newSize)));
 		try {
-			gameManager.removeMoney(cost);
+			gameManager.removeMoney(cost, null);
 			gameManager.upgradeGrid();
 		} catch (MoneyException e) {
 			gameManager.toast(
@@ -429,7 +429,7 @@ public class GameController implements Initializable {
 		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newDelay)));
 
 		try {
-			gameManager.removeMoney(cost);
+			gameManager.removeMoney(cost, null);
 			gameManager.decreaseGameLoopDelay();
 		} catch (MoneyException e) {
 			gameManager.toast(
@@ -447,7 +447,7 @@ public class GameController implements Initializable {
 		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newMax)));
 
 		try {
-			gameManager.removeMoney(cost);
+			gameManager.removeMoney(cost, null);
 			gameManager.addMaxBuyer();
 		} catch (MoneyException e) {
 			gameManager.toast(

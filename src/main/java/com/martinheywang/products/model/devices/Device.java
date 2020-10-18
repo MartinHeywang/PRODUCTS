@@ -387,7 +387,7 @@ public abstract class Device {
         final BigInteger actionCost = this.getUpgradePrice();
 
         try {
-            this.gameManager.removeMoney(actionCost);
+            this.gameManager.removeMoney(actionCost, null);
         } catch (final MoneyException e) {
             this.gameManager.toast("Vous n'avez pas assez d'argent! (" + actionCost + " € demandés)", Color.ORANGERED,
                     4d);

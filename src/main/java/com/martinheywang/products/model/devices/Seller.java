@@ -29,7 +29,7 @@ public final class Seller extends Device {
 
     @Override
     public boolean act(Pack packs) throws MoneyException {
-        this.gameManager.addMoney(packs.getResource().getPrice());
+        this.gameManager.addMoney(packs.getResource().getPrice(), this);
         return true;
     }
 

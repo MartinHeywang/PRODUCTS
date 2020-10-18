@@ -116,7 +116,7 @@ public final class Buyer extends Device {
 
 		if (this.gameManager.connectionExists(this.getPosition(), output)) {
 			// Remove action cost
-			this.gameManager.removeMoney(this.getActionCost().add(resourceCost));
+			this.gameManager.removeMoney(this.getActionCost().add(resourceCost), this);
 
 			this.gameManager.performAction(this.getPosition(), output, this.distributedResource);
 			return true;
