@@ -101,8 +101,6 @@ public final class Constructor extends Device {
 
     @Override
     public boolean act(final Pack resource) throws MoneyException {
-        report.incrementActCount();
-        report.setLastUseTime(LocalDateTime.now());
         addResources(resource);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);

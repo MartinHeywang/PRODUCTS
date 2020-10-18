@@ -17,6 +17,7 @@ import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.DeviceModel;
 import com.martinheywang.products.model.devices.Floor;
+import com.martinheywang.products.model.devices.IterationReport;
 import com.martinheywang.products.model.devices.annotations.Prices;
 import com.martinheywang.products.model.direction.Direction;
 import com.martinheywang.products.model.exceptions.MoneyException;
@@ -128,15 +129,18 @@ public final class GameManager {
 		final Device device = this.deviceManager.getDevice(to);
 
 		if (device.isActReady()) {
+			final IterationReport report = device.getCurrentReport();
+
 			if (from != null) {
 				this.deviceManager.getDevice(from).getCurrentReport().addGivenPack(to, resources);
-				device.getCurrentReport().addReceivedPack(from, resources);
+				report.addReceivedPack(from, resources);
 			}
 
 			// Even if the action doesn't result in anything, it counts as an action.
 			// What rather doesn't count, is when the device has already got its max action
 			// count.
-			device.getCurrentReport().incrementActCount();
+			report.incrementActCount();
+			report.setLastUseTime(LocalDateTime.now());
 			// Todo : update the total cost
 
 			if (device.act(resources)) {
