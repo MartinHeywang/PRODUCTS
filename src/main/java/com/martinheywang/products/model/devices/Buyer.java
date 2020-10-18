@@ -82,6 +82,7 @@ public final class Buyer extends Device {
 
 			final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
 			distributedResource = fetched;
+			fetched.setQuantity(BigInteger.ONE);
 
 		} catch (final SQLException e) {
 			// An error with the database occured
@@ -95,11 +96,10 @@ public final class Buyer extends Device {
 	}
 
 	@Override
-	public void act(Pack resource) throws MoneyException {
-
+	public boolean act(Pack resource) throws MoneyException {
 		// Check if the resource is valid one (if the resource is buyable).
 		if (!acceptedResources.contains(this.distributedResource.getResource())) {
-			return;
+			return false;
 		}
 
 		// Here we retreive the price of the resource.
@@ -116,12 +116,12 @@ public final class Buyer extends Device {
 
 		if (this.gameManager.connectionExists(this.getPosition(), output)) {
 			// Remove action cost
-			this.gameManager.removeMoney(this.getActionCost().add(resourceCost));
+			this.gameManager.removeMoney(this.getActionCost().add(resourceCost), this);
 
 			this.gameManager.performAction(this.getPosition(), output, this.distributedResource);
-			this.setActive(true);
-			this.setActive(false);
+			return true;
 		}
+		return false;
 	}
 
 	@Override

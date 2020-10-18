@@ -141,7 +141,7 @@ public class Pack implements Displayable<Pack> {
      * @param quantity the quantity to set
      */
     public void setQuantity(BigInteger quantity) {
-	this.quantity = quantity;
+    this.quantity = quantity;
     }
 
     /**

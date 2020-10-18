@@ -65,6 +65,7 @@ public final class Constructor extends Device {
 
             final Pack fetched = dao.queryForEq("model", model.getID()).get(0);
             product = fetched;
+            product.setQuantity(BigInteger.ONE);
 
         } catch (final SQLException e) {
             // An error with the database occured
@@ -98,20 +99,21 @@ public final class Constructor extends Device {
     }
 
     @Override
-    public void act(final Pack resource) throws MoneyException {
+    public boolean act(final Pack resource) throws MoneyException {
         addResources(resource);
         if (checkIngredients()) {
             final Coordinate output = this.template.getPointersFor(PointerTypes.EXIT).get(0);
+            // Remove action cost
+            this.gameManager.removeMoney(this.getActionCost(), this);
 
             if (this.gameManager.connectionExists(this.getPosition(), output)) {
-                // Remove action cost
-                this.gameManager.removeMoney(this.getActionCost());
 
                 this.gameManager.performAction(this.getPosition(), output, this.product);
-                this.setActive(true);
-                this.setActive(false);
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
@@ -190,14 +192,14 @@ public final class Constructor extends Device {
     }
 
     @Override
-    public void saveElements(){
-		product.setModel(model);
+    public void saveElements() {
+        product.setModel(model);
         try {
-			// Updates the product
-			Database.createDao(Pack.class).createOrUpdate(product);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+            // Updates the product
+            Database.createDao(Pack.class).createOrUpdate(product);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

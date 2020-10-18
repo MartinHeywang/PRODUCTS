@@ -60,7 +60,7 @@
                <content>
                   <VBox fx:id="main" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@TitledPane.css">
                      <children>
-                        <TitledPane animated="false" collapsible="false" text="Actions &amp; Options">
+                        <TitledPane animated="false" expanded="false" text="Actions &amp; Options">
                            <font>
                               <Font size="16.0" />
                            </font>

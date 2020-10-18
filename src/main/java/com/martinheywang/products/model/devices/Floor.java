@@ -15,17 +15,18 @@ import javafx.scene.Node;
 public final class Floor extends Device {
 
     public Floor(DeviceModel model) {
-	super(model);
+        super(model);
     }
 
     @Override
-    public void act(Pack resources) throws MoneyException {
-	// It does nothing...
+    public boolean act(Pack resources) throws MoneyException {
+        // It does nothing...
+        return false;
     }
 
     @Override
     public List<Node> getWidgets() {
-	return Arrays.asList();
+        return Arrays.asList();
     }
 
 }

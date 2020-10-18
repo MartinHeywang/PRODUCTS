@@ -17,6 +17,7 @@ import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.DeviceModel;
 import com.martinheywang.products.model.devices.Floor;
+import com.martinheywang.products.model.devices.IterationReport;
 import com.martinheywang.products.model.devices.annotations.Prices;
 import com.martinheywang.products.model.direction.Direction;
 import com.martinheywang.products.model.exceptions.MoneyException;
@@ -41,7 +42,7 @@ import javafx.scene.paint.Color;
  */
 public final class GameManager {
 
-	private int gameLoopDelay;
+	public static int gameLoopDelay;
 
 	private int maxBuyer;
 
@@ -70,7 +71,7 @@ public final class GameManager {
 
 		// GAME
 		this.game = game;
-		this.gameLoopDelay = game.getDelay();
+		gameLoopDelay = game.getDelay();
 		this.maxBuyer = game.getMaxBuyer();
 		this.gameController = gameController;
 
@@ -90,15 +91,13 @@ public final class GameManager {
 			final BigInteger grow = this.game.getGrow();
 			final long millis = ChronoUnit.MILLIS.between(lastSave, now);
 
-			System.out.println(gameLoopDelay);
-
 			/*
 			 * Won = grow amount * number of offline iterations Number of offline iterations
 			 * = offline millis * gameLoopDelay / the divider (here 5)
 			 */
 			final BigInteger offlineTotal = grow.multiply(BigInteger.valueOf(millis)).divide(BigInteger.valueOf(5))
 					.divide(BigInteger.valueOf(gameLoopDelay));
-			addMoney(offlineTotal);
+			addMoney(offlineTotal, null);
 
 			if (!offlineTotal.equals(BigInteger.ZERO))
 				this.toast("Vous avez gagné durant votre absence:\n" + MoneyFormat.getSingleton().format(offlineTotal)
@@ -118,18 +117,41 @@ public final class GameManager {
 	}
 
 	/**
-	 * Performs an action at the given coordinate
+	 * Performs properly an action of a device. Calls {@link Device#act(Pack)} and
+	 * register some data about the action and the device.
 	 * 
 	 * @param from      the coordinate of the device requesting the action
 	 * @param to        the coordinate of the requested device
 	 * @param resources the resources to pass to the requested device.
 	 */
-	public void performAction(Coordinate from, Coordinate to, Pack resources) {
-		try {
-			this.deviceManager.getDevice(to).act(resources);
-		} catch (final MoneyException e) {
-			e.printStackTrace();
-		}
+	public void performAction(Coordinate from, Coordinate to, Pack resources) throws MoneyException {
+		// The device that will be trigered
+		final Device device = this.deviceManager.getDevice(to);
+
+		if (device.isActReady()) {
+			final IterationReport report = device.getCurrentReport();
+
+			if (from != null) {
+				this.deviceManager.getDevice(from).getCurrentReport().addGivenPack(to, resources);
+				report.addReceivedPack(from, resources);
+			}
+
+			// Even if the action doesn't result in anything, it counts as an action.
+			// What rather doesn't count, is when the device has already got its max action
+			// count.
+			report.incrementActCount();
+			report.setLastUseTime(LocalDateTime.now());
+			// Todo : update the total cost
+
+			if (device.act(resources)) {
+				// Pulse effect
+				device.setActive(true);
+				device.setActive(false);
+			}
+		} else {
+			// The device isn't act ready : it is already overflowed
+			device.getCurrentReport().setOverflowed(true);
+			}
 	}
 
 	/**
@@ -152,7 +174,7 @@ public final class GameManager {
 		if (this.game.getMoney().compareTo(actionPrice) == -1) {
 			throw new MoneyException("L'appareil n'a pas pu être construit");
 		}
-		removeMoney(actionPrice);
+		removeMoney(actionPrice, null);
 
 		this.deviceManager.replace(clazz, Level.LEVEL_1, Direction.UP, position);
 		this.refreshViewAt(position);
@@ -187,7 +209,7 @@ public final class GameManager {
 
 		}
 
-		addMoney(actionGain);
+		addMoney(actionGain, null);
 
 		// If it was an auto active device, remove it.
 		Device.autoActiveDevices.remove(device);
@@ -263,21 +285,29 @@ public final class GameManager {
 	/**
 	 * Adds money to the game
 	 * 
-	 * @param value the amount to add
+	 * @param value  the amount to add
+	 * @param asking the device that asks for adding money. Put null if this demand
+	 *               doesn't come from an action of a device.
 	 */
-	public void addMoney(BigInteger value) throws MoneyException {
+	public void addMoney(BigInteger value, Device asking) throws MoneyException {
 		// Removes the negation of the value (2 times minus equals plus)
-		this.removeMoney(value.negate());
+		this.removeMoney(value.negate(), asking);
 	}
 
 	/**
 	 * Removes money to the game
 	 * 
-	 * @param value the amount to remove
+	 * @param value  the amount to remove
+	 * @param asking the device that asks for removing money. put null if this
+	 *               demand doesn't come from an action of a device.
 	 */
-	public void removeMoney(BigInteger value) throws MoneyException {
+	public void removeMoney(BigInteger value, Device asking) throws MoneyException {
 		if (this.getMoney().compareTo(value) == -1) {
 			throw new MoneyException();
+		}
+
+		if (asking != null) {
+			asking.getCurrentReport().addTotalCost(value);
 		}
 
 		this.game.setMoney(this.game.getMoney().subtract(value));
@@ -468,7 +498,7 @@ public final class GameManager {
 				final BigInteger amountBefore = game.getMoney();
 				for (final Device buyer : Device.autoActiveDevices) {
 					try {
-						buyer.act(null);
+						performAction(null, buyer.getPosition(), null);
 					} catch (final MoneyException e) {
 						// We don't have enough money to perform the action
 						// Todo : set the money label fill in the view to red
@@ -484,7 +514,7 @@ public final class GameManager {
 
 				// Wait a little bit of course
 				try {
-					Thread.sleep(GameManager.this.gameLoopDelay);
+					Thread.sleep(gameLoopDelay);
 				} catch (final InterruptedException e) {
 					// Thread was interrupted
 					e.printStackTrace();

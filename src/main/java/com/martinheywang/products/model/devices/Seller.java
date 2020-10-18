@@ -24,21 +24,18 @@ import javafx.scene.Node;
 public final class Seller extends Device {
 
     public Seller(DeviceModel model) {
-	super(model);
+        super(model);
     }
 
     @Override
-    public void act(Pack packs) throws MoneyException {
-
-	this.gameManager.addMoney(packs.getResource().getPrice());
-	// Todo: improve the pulsing effect of the seller
-	this.setActive(true);
-	this.setActive(false);
+    public boolean act(Pack packs) throws MoneyException {
+        this.gameManager.addMoney(packs.getResource().getPrice(), this);
+        return true;
     }
 
     @Override
     public List<Node> getWidgets() {
-	return Arrays.asList();
+        return Arrays.asList();
     }
 
 }

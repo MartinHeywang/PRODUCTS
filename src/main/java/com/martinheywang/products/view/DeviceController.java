@@ -8,6 +8,7 @@ import com.martinheywang.products.model.devices.Device;
 import com.martinheywang.products.model.devices.annotations.AccessibleName;
 import com.martinheywang.products.model.exceptions.EditException;
 import com.martinheywang.products.toolbox.MoneyFormat;
+import com.martinheywang.products.view.components.IterationReportView;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,6 +35,8 @@ public final class DeviceController implements Initializable {
 	@FXML
 	private HBox upgradeBox;
 
+	private IterationReportView iterationView;
+
 	private Device device;
 
 	@Override
@@ -45,7 +48,9 @@ public final class DeviceController implements Initializable {
 		this.device = data;
 
 		view.setImage(data.getView().get());
-		
+
+		coordinate.setText(data.getPosition().toString());
+
 		refreshTurnedView();
 		refreshUpgradeBox();
 		refreshLiteral();
@@ -64,11 +69,23 @@ public final class DeviceController implements Initializable {
 			widgetsBox.getChildren().addAll(data.getWidgets());
 
 			special.setContent(widgetsBox);
-			special.setCollapsible(false);
-			special.setExpanded(true);
+			special.setAnimated(false);
+			special.setExpanded(false);
 
 			main.getChildren().add(0, special);
 		}
+		iterationView = new IterationReportView(device.getCurrentReport());
+		ImageView icon = new ImageView(new Image(Main.class.getResourceAsStream("/images/icons/info.png")));
+		icon.setFitHeight(30d);
+		icon.setFitWidth(30d);
+		TitledPane iterationContainer = new TitledPane("Informations utiles", iterationView);
+		iterationContainer.setFont(new Font(16d));
+		iterationContainer.setGraphic(icon);
+		iterationContainer.setExpanded(false);
+		iterationContainer.setAnimated(false);
+
+		main.getChildren().addAll(iterationContainer);
+
 	}
 
 	@FXML

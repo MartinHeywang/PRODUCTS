@@ -1,6 +1,8 @@
 package com.martinheywang.products.model.devices;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.martinheywang.products.model.level.Level;
 import com.martinheywang.products.model.mechanics.GameManager;
 import com.martinheywang.products.model.templates.Template;
 import com.martinheywang.products.model.templates.TemplateCreator;
+import com.martinheywang.products.model.templates.Template.PointerTypes;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -58,6 +61,12 @@ public abstract class Device {
 
     /* The view is updated on upgrade and on turn */
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
+
+    /**
+     * The IterationReport contains a lot of information about what happens in the
+     * current iteration. A new instance of it is created each iteration.
+     */
+    protected IterationReport report = new IterationReport(this);
 
     /**
      * Creates a new Device.
@@ -103,7 +112,7 @@ public abstract class Device {
      * @throws MoneyException whenever the game doesn't have enough money (don't
      *                        forget to check that)
      */
-    public abstract void act(Pack resources) throws MoneyException;
+    public abstract boolean act(Pack resources) throws MoneyException;
 
     /**
      * This inheritable method does not nothing by default. You don't need everytime
@@ -125,6 +134,24 @@ public abstract class Device {
 
     private void refreshView() {
         this.imageProperty.set(new Image(this.getClass().getResourceAsStream(this.getURL())));
+    }
+
+    /**
+     * Returns whether this device is ready to act. It checks for example, if the
+     * cooldown is active or not.
+     */
+    public final boolean isActReady() {
+        final LocalDateTime now = LocalDateTime.now();
+        final long between = ChronoUnit.MILLIS.between(report.getLastUseTime(), now);
+
+        if (between < GameManager.gameLoopDelay) {
+            if (report.getActCount() >= report.getMaxActCount() && !this.getClass().equals(Buyer.class)) {
+                return false;
+            }
+        } else {
+            report = new IterationReport(this);
+        }
+        return true;
     }
 
     public Template getTemplate() {
@@ -157,6 +184,22 @@ public abstract class Device {
                     annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
         }
         return new PricesModule("0", "0", "0", "0", "0", "0");
+    }
+
+    /**
+     * 
+     * @return the number of entries that this device has
+     */
+    public int getEntriesCount() {
+        return this.template.getPointersFor(PointerTypes.ENTRY).size();
+    }
+
+    /**
+     * 
+     * @return the number of exits that this device has.
+     */
+    public int getExitsCount() {
+        return this.template.getPointersFor(PointerTypes.EXIT).size();
     }
 
     public abstract List<Node> getWidgets();
@@ -344,7 +387,7 @@ public abstract class Device {
         final BigInteger actionCost = this.getUpgradePrice();
 
         try {
-            this.gameManager.removeMoney(actionCost);
+            this.gameManager.removeMoney(actionCost, null);
         } catch (final MoneyException e) {
             this.gameManager.toast("Vous n'avez pas assez d'argent! (" + actionCost + " € demandés)", Color.ORANGERED,
                     4d);
@@ -354,6 +397,15 @@ public abstract class Device {
         this.model.setLevel(this.model.getLevel().getNext());
         this.refreshView();
 
+    }
+
+    /**
+     * Returns the current IterationReport.
+     * 
+     * @return the current report.
+     */
+    public IterationReport getCurrentReport() {
+        return report;
     }
 
     /**
@@ -385,5 +437,4 @@ public abstract class Device {
             subclasses.add(clazz);
         }
     }
-
 }

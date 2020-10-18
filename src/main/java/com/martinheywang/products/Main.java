@@ -77,9 +77,6 @@ public final class Main extends Application {
 				System.exit(0);
 			}
 		});
-		stage.getScene().setOnKeyPressed(event -> {
-			System.out.println(event.getCharacter());
-		});
 		// Show the main stage
 		stage.show();
 	}
