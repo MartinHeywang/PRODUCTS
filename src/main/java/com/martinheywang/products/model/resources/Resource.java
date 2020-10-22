@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.pf4j.ExtensionPoint;
+
 import com.martinheywang.products.model.devices.Buyer;
 import com.martinheywang.products.model.devices.Constructor;
 import com.martinheywang.products.view.Displayable;
@@ -53,7 +55,7 @@ import javafx.scene.text.Font;
  * @author Martin Heywang
  *
  */
-public interface Resource extends Displayable<Resource> {
+public interface Resource extends Displayable<Resource>, ExtensionPoint {
 
     /**
      * All the resources in the game.
@@ -94,27 +96,27 @@ public interface Resource extends Displayable<Resource> {
     @Override
     public default Displayer<Resource> getDisplayer() {
 
-        final VBox root = new VBox();
-        root.setAlignment(Pos.CENTER_LEFT);
-        root.setPadding(new Insets(3));
+	final VBox root = new VBox();
+	root.setAlignment(Pos.CENTER_LEFT);
+	root.setPadding(new Insets(3));
 
-        final Label nom = new Label();
-        nom.setAlignment(Pos.TOP_CENTER);
-        nom.setText(this.getName());
-        if (nom.getText().length() > 15)
-            nom.setFont(new Font(10d));
-        nom.setPrefHeight(20d);
-        root.getChildren().add(nom);
+	final Label nom = new Label();
+	nom.setAlignment(Pos.TOP_CENTER);
+	nom.setText(this.getName());
+	if (nom.getText().length() > 15)
+	    nom.setFont(new Font(10d));
+	nom.setPrefHeight(20d);
+	root.getChildren().add(nom);
 
-        final ImageView image = new ImageView();
-        image.setImage(new Image(this.getClass().getResourceAsStream(this.getURL())));
-        root.getChildren().add(image);
+	final ImageView image = new ImageView();
+	image.setImage(new Image(this.getClass().getResourceAsStream(this.getURL())));
+	root.getChildren().add(image);
 
-        final Label infos = new Label();
-        infos.setAlignment(Pos.TOP_CENTER);
-        infos.setText(String.valueOf(NumberFormat.getInstance(Locale.getDefault()).format(this.getPrice())) + " €");
-        root.getChildren().add(infos);
-        return new Displayer<Resource>(root, this);
+	final Label infos = new Label();
+	infos.setAlignment(Pos.TOP_CENTER);
+	infos.setText(String.valueOf(NumberFormat.getInstance(Locale.getDefault()).format(this.getPrice())) + " €");
+	root.getChildren().add(infos);
+	return new Displayer<Resource>(root, this);
     }
 
     /**
@@ -123,7 +125,7 @@ public interface Resource extends Displayable<Resource> {
      * @return a list of resources
      */
     public static List<Resource> getReferences() {
-        return references;
+	return references;
     }
 
     /**
@@ -134,25 +136,24 @@ public interface Resource extends Displayable<Resource> {
      * @return
      */
     public static Resource valueOf(Class<? extends Resource> clazz, String field) {
-        try {
-            final Resource res = (Resource) clazz.getField(field).get(null);
-            if (!references.contains(res)) {
-                System.err.println("WARNING: The requested resource has been found, "
-                        + "but is not registered in the references.");
-            }
-            return res;
-        } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (final IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (final NoSuchFieldException e) {
-            System.err.println("The requested field has not been found (requested: " + field + " in "
-                    + clazz.getCanonicalName() + ")");
-            e.printStackTrace();
-        } catch (final SecurityException e) {
-            e.printStackTrace();
-        }
-        return null;
+	try {
+	    final Resource res = (Resource) clazz.getField(field).get(null);
+	    if (!references.contains(res))
+		System.err.println("WARNING: The requested resource has been found, "
+			+ "but is not registered in the references.");
+	    return res;
+	} catch (final IllegalArgumentException e) {
+	    e.printStackTrace();
+	} catch (final IllegalAccessException e) {
+	    e.printStackTrace();
+	} catch (final NoSuchFieldException e) {
+	    System.err.println("The requested field has not been found (requested: " + field + " in "
+		    + clazz.getCanonicalName() + ")");
+	    e.printStackTrace();
+	} catch (final SecurityException e) {
+	    e.printStackTrace();
+	}
+	return null;
     }
 
     /**
@@ -171,12 +172,11 @@ public interface Resource extends Displayable<Resource> {
      * @param str a parsable string, containing only the name of the resource.
      */
     public static Resource valueOf(String str) {
-        for (final Resource resource : references) {
-            if (resource.toString().equals(str))
-                return resource;
-        }
-        System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
-        return DefaultResource.NONE;
+	for (final Resource resource : references)
+	    if (resource.toString().equals(str))
+		return resource;
+	System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
+	return DefaultResource.NONE;
     }
 
     /**
@@ -187,49 +187,46 @@ public interface Resource extends Displayable<Resource> {
      * @return
      */
     public default boolean hasAnnotation(Class<? extends Annotation> annotation) {
-        try {
-            return this.getClass().getField(toString()).isAnnotationPresent(annotation);
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-            return false;
-        }
+	try {
+	    return this.getClass().getField(toString()).isAnnotationPresent(annotation);
+	} catch (NoSuchFieldException | SecurityException e) {
+	    e.printStackTrace();
+	    return false;
+	}
     }
 
     public default Field getField() {
-        try {
-            return this.getClass().getField(toString());
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-            return null;
-        }
+	try {
+	    return this.getClass().getField(toString());
+	} catch (NoSuchFieldException | SecurityException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     public default String toText() {
-        return this.getClass().toString().substring(6) + "." + toString();
+	return this.getClass().toString().substring(6) + "." + toString();
     }
 
     public static void register(Class<? extends Resource> clazz) {
-        if (!clazz.isEnum()) {
-            System.out.println("WARNING: Implementations of Resource must be an enum. Skipping.");
-            return;
-        }
+	if (!clazz.isEnum()) {
+	    System.out.println("WARNING: Implementations of Resource must be an enum. Skipping.");
+	    return;
+	}
 
-        for (final Field field : clazz.getFields()) {
-            try {
-                if (Resource.class.isAssignableFrom(field.getType())) {
-                    addReferences((Resource) field.get(null));
+	for (final Field field : clazz.getFields())
+	    try {
+		if (Resource.class.isAssignableFrom(field.getType())) {
+		    addReferences((Resource) field.get(null));
 
-                    if (field.isAnnotationPresent(Buyable.class)) {
-                        Buyer.addAcceptedResource((Resource) field.get(null));
-                    }
-                    if(field.isAnnotationPresent(Craftable.class)){
-                        Constructor.addAcceptedResource((Resource) field.get(null));
-                    }
-                }
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+		    if (field.isAnnotationPresent(Buyable.class))
+			Buyer.addAcceptedResource((Resource) field.get(null));
+		    if(field.isAnnotationPresent(Craftable.class))
+			Constructor.addAcceptedResource((Resource) field.get(null));
+		}
+	    } catch (IllegalArgumentException | IllegalAccessException e) {
+		e.printStackTrace();
+	    }
 
     }
 
@@ -240,9 +237,8 @@ public interface Resource extends Displayable<Resource> {
      * @param resource the resource to add
      */
     public static void addReferences(Resource... resource) {
-        for (final Resource res : resource) {
-            references.add(res);
-        }
+	for (final Resource res : resource)
+	    references.add(res);
     }
 
     /**
@@ -251,8 +247,7 @@ public interface Resource extends Displayable<Resource> {
      * @param resource the resource to remove
      */
     public static void removeReferences(Resource... resource) {
-        for (final Resource res : resource) {
-            references.remove(res);
-        }
+	for (final Resource res : resource)
+	    references.remove(res);
     }
 }

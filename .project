@@ -20,13 +20,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>java</name>
-			<type>2</type>
-			<location>C:/Users/Admin/Documents/Prive/Enfants/Martin/Java/Code/PRODUCTS/src/main/java</location>
-		</link>
-	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1600664390412</id>
