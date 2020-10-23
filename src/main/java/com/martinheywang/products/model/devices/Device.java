@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pf4j.ExtensionPoint;
+
 import com.martinheywang.products.model.Coordinate;
 import com.martinheywang.products.model.Game;
 import com.martinheywang.products.model.Pack;
@@ -21,8 +23,8 @@ import com.martinheywang.products.model.exceptions.MoneyException;
 import com.martinheywang.products.model.level.Level;
 import com.martinheywang.products.model.mechanics.GameManager;
 import com.martinheywang.products.model.templates.Template;
-import com.martinheywang.products.model.templates.TemplateCreator;
 import com.martinheywang.products.model.templates.Template.PointerTypes;
+import com.martinheywang.products.model.templates.TemplateCreator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -40,7 +42,7 @@ import javafx.scene.paint.Color;
 @Prices(build = "0", upgradeTo2 = "0", upgradeTo3 = "0", destroyAt1 = "0", destroyAt2 = "0", destroyAt3 = "0")
 @DefaultTemplate
 @ActionCost
-public abstract class Device {
+public abstract class Device implements ExtensionPoint {
 
     /**
      * This list represents all the Device that auto-activates each iterations of
@@ -77,12 +79,12 @@ public abstract class Device {
      * @param position  the position
      * @param game      the game
      */
-    Device(DeviceModel model) {
-        this.model = model;
+    public Device(DeviceModel model) {
+	this.model = model;
 
-        this.generateTemplate();
+	this.generateTemplate();
 
-        this.refreshView();
+	this.refreshView();
     }
 
     /**
@@ -92,7 +94,7 @@ public abstract class Device {
      * @param gameManager
      */
     public void manageWith(GameManager gameManager) {
-        this.gameManager = gameManager;
+	this.gameManager = gameManager;
     }
 
     /**
@@ -126,14 +128,14 @@ public abstract class Device {
      * Generates the template of the device
      */
     public void generateTemplate() {
-        final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
-        this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
-                .setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
-                .create(this.getPosition(), this.getDirection());
+	final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
+	this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
+		.setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
+		.create(this.getPosition(), this.getDirection());
     }
 
     private void refreshView() {
-        this.imageProperty.set(new Image(this.getClass().getResourceAsStream(this.getURL())));
+	this.imageProperty.set(new Image(this.getClass().getResourceAsStream(this.getURL())));
     }
 
     /**
@@ -141,21 +143,19 @@ public abstract class Device {
      * cooldown is active or not.
      */
     public final boolean isActReady() {
-        final LocalDateTime now = LocalDateTime.now();
-        final long between = ChronoUnit.MILLIS.between(report.getLastUseTime(), now);
+	final LocalDateTime now = LocalDateTime.now();
+	final long between = ChronoUnit.MILLIS.between(this.report.getLastUseTime(), now);
 
-        if (between < GameManager.gameLoopDelay) {
-            if (report.getActCount() >= report.getMaxActCount() && !this.getClass().equals(Buyer.class)) {
-                return false;
-            }
-        } else {
-            report = new IterationReport(this);
-        }
-        return true;
+	if (between < GameManager.gameLoopDelay) {
+	    if (this.report.getActCount() >= this.report.getMaxActCount() && !this.getClass().equals(Buyer.class))
+		return false;
+	} else
+	    this.report = new IterationReport(this);
+	return true;
     }
 
     public Template getTemplate() {
-        return this.template;
+	return this.template;
     }
 
     /**
@@ -165,10 +165,9 @@ public abstract class Device {
      * @return the action cost
      */
     protected BigInteger getActionCost() {
-        if (this.getClass().isAnnotationPresent(ActionCost.class)) {
-            return new BigInteger(this.getClass().getAnnotation(ActionCost.class).value());
-        }
-        return new BigInteger("5");
+	if (this.getClass().isAnnotationPresent(ActionCost.class))
+	    return new BigInteger(this.getClass().getAnnotation(ActionCost.class).value());
+	return new BigInteger("5");
     }
 
     /**
@@ -178,12 +177,12 @@ public abstract class Device {
      * @return a prices modules
      */
     protected PricesModule getPrices() {
-        if (this.getClass().isAnnotationPresent(Prices.class)) {
-            final Prices annotation = this.getClass().getAnnotation(Prices.class);
-            return new PricesModule(annotation.build(), annotation.upgradeTo2(), annotation.upgradeTo3(),
-                    annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
-        }
-        return new PricesModule("0", "0", "0", "0", "0", "0");
+	if (this.getClass().isAnnotationPresent(Prices.class)) {
+	    final Prices annotation = this.getClass().getAnnotation(Prices.class);
+	    return new PricesModule(annotation.build(), annotation.upgradeTo2(), annotation.upgradeTo3(),
+		    annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
+	}
+	return new PricesModule("0", "0", "0", "0", "0", "0");
     }
 
     /**
@@ -191,7 +190,7 @@ public abstract class Device {
      * @return the number of entries that this device has
      */
     public int getEntriesCount() {
-        return this.template.getPointersFor(PointerTypes.ENTRY).size();
+	return this.template.getPointersFor(PointerTypes.ENTRY).size();
     }
 
     /**
@@ -199,13 +198,13 @@ public abstract class Device {
      * @return the number of exits that this device has.
      */
     public int getExitsCount() {
-        return this.template.getPointersFor(PointerTypes.EXIT).size();
+	return this.template.getPointersFor(PointerTypes.EXIT).size();
     }
 
     public abstract List<Node> getWidgets();
 
     public String getURL() {
-        return "/images" + this.getLevel().getURL() + this.getClass().getSimpleName().toUpperCase() + ".png";
+	return "/images" + this.getLevel().getURL() + this.getClass().getSimpleName().toUpperCase() + ".png";
     }
 
     /**
@@ -213,7 +212,7 @@ public abstract class Device {
      * @return the model (persistent data)
      */
     public DeviceModel getModel() {
-        return this.model;
+	return this.model;
     }
 
     /**
@@ -221,7 +220,7 @@ public abstract class Device {
      * @return the level of this Device object.
      */
     public Level getLevel() {
-        return this.model.getLevel();
+	return this.model.getLevel();
     }
 
     /**
@@ -229,7 +228,7 @@ public abstract class Device {
      * @return the game of this Device object.
      */
     public Game getGame() {
-        return this.model.getGame();
+	return this.model.getGame();
     }
 
     /**
@@ -237,7 +236,7 @@ public abstract class Device {
      * @return the direction of this Device object.
      */
     public Direction getDirection() {
-        return this.model.getDirection();
+	return this.model.getDirection();
     }
 
     /**
@@ -245,7 +244,7 @@ public abstract class Device {
      * @return the position of this Device object.
      */
     public Coordinate getPosition() {
-        return this.model.getPosition();
+	return this.model.getPosition();
     }
 
     /**
@@ -254,7 +253,7 @@ public abstract class Device {
      * @return the view
      */
     public ObjectProperty<Image> getView() {
-        return this.imageProperty;
+	return this.imageProperty;
     }
 
     /**
@@ -263,8 +262,8 @@ public abstract class Device {
      * @return a price as a BigInteger
      */
     public BigInteger getDeletePrice() {
-        final String key = this.getDeletePriceKey();
-        return this.getPrices().getPriceFromKey(key);
+	final String key = this.getDeletePriceKey();
+	return this.getPrices().getPriceFromKey(key);
     }
 
     /**
@@ -273,8 +272,8 @@ public abstract class Device {
      * @return a price as a BigInteger
      */
     public BigInteger getUpgradePrice() {
-        final String key = this.getUpgradePriceKey();
-        return this.getPrices().getPriceFromKey(key);
+	final String key = this.getUpgradePriceKey();
+	return this.getPrices().getPriceFromKey(key);
     }
 
     /*
@@ -287,7 +286,7 @@ public abstract class Device {
      * @return a string
      */
     private String getDeletePriceKey() {
-        return this.getLevel().toString().toLowerCase() + "_delete";
+	return this.getLevel().toString().toLowerCase() + "_delete";
     }
 
     /**
@@ -296,7 +295,7 @@ public abstract class Device {
      * @return a string
      */
     private String getUpgradePriceKey() {
-        return this.getLevel().getNext().toString().toLowerCase() + "_build";
+	return this.getLevel().getNext().toString().toLowerCase() + "_build";
     }
 
     /**
@@ -307,27 +306,26 @@ public abstract class Device {
      * @throws EditException if we are not allowed to do something
      */
     public void build(Class<? extends Device> type) throws EditException {
-        // Error checking
-        if (!type.isAnnotationPresent(Buildable.class)) {
-            /* If the type isn't buildable (as floors). */
-            throw new EditException("The given type isn't buildable.");
-        }
-        if (!this.getClass().equals(Floor.class)) {
-            /*
-             * <?> Floor are normal devices, and it is the only type that can receive build.
-             * Here we must check if we are effectively trying to build something on a
-             * floor, and throw an exception if not.
-             */
-            this.gameManager.toast("Vous ne pouvez construire que sur des sols.", Color.DARKORANGE, 4d);
-            return;
-        }
+	// Error checking
+	if (!type.isAnnotationPresent(Buildable.class))
+	    /* If the type isn't buildable (as floors). */
+	    throw new EditException("The given type isn't buildable.");
+	if (!this.getClass().equals(Floor.class)) {
+	    /*
+	     * <?> Floor are normal devices, and it is the only type that can receive build.
+	     * Here we must check if we are effectively trying to build something on a
+	     * floor, and throw an exception if not.
+	     */
+	    this.gameManager.toast("Vous ne pouvez construire que sur des sols.", Color.DARKORANGE, 4d);
+	    return;
+	}
 
-        // Call the build method
-        try {
-            this.gameManager.build(type, this.getPosition());
-        } catch (final MoneyException e) {
-            this.gameManager.toast("Vous n'avez pas assez d'argent !", Color.ORANGERED, 4d);
-        }
+	// Call the build method
+	try {
+	    this.gameManager.build(type, this.getPosition());
+	} catch (final MoneyException e) {
+	    this.gameManager.toast("Vous n'avez pas assez d'argent !", Color.ORANGERED, 4d);
+	}
     }
 
     /**
@@ -337,17 +335,16 @@ public abstract class Device {
      * @throws EditException
      */
     public void destroy() throws EditException {
-        // Error checking
-        if (this.getClass().equals(Floor.class)) {
-            /* A floor cannot be destroyed */
-            throw new EditException("A floor cannot be destroyed.");
-        }
+	// Error checking
+	if (this.getClass().equals(Floor.class))
+	    /* A floor cannot be destroyed */
+	    throw new EditException("A floor cannot be destroyed.");
 
-        try {
-            this.gameManager.destroy(this.getPosition(), this.getLevel());
-        } catch (final MoneyException e) {
-            e.printStackTrace();
-        }
+	try {
+	    this.gameManager.destroy(this.getPosition(), this.getLevel());
+	} catch (final MoneyException e) {
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -362,40 +359,39 @@ public abstract class Device {
      * @see GameManager#swap(Coordinate)
      */
     public void swap() {
-        this.gameManager.swap(this.getPosition());
+	this.gameManager.swap(this.getPosition());
     }
 
     /**
      * Turns the device properly.
      */
     public void turn() {
-        this.model.setDirection(this.model.getDirection().getNext());
+	this.model.setDirection(this.model.getDirection().getNext());
 
-        this.generateTemplate();
+	this.generateTemplate();
 
-        this.gameManager.refreshViewAt(this.getPosition());
+	this.gameManager.refreshViewAt(this.getPosition());
     }
 
     /**
      * Upgrades the device properly.
      */
     public void upgrade() throws EditException {
-        if (this.getClass().equals(Floor.class)) {
-            throw new EditException();
-        }
+	if (this.getClass().equals(Floor.class))
+	    throw new EditException();
 
-        final BigInteger actionCost = this.getUpgradePrice();
+	final BigInteger actionCost = this.getUpgradePrice();
 
-        try {
-            this.gameManager.removeMoney(actionCost, null);
-        } catch (final MoneyException e) {
-            this.gameManager.toast("Vous n'avez pas assez d'argent! (" + actionCost + " € demandés)", Color.ORANGERED,
-                    4d);
-            return;
-        }
+	try {
+	    this.gameManager.removeMoney(actionCost, null);
+	} catch (final MoneyException e) {
+	    this.gameManager.toast("Vous n'avez pas assez d'argent! (" + actionCost + " € demandés)", Color.ORANGERED,
+		    4d);
+	    return;
+	}
 
-        this.model.setLevel(this.model.getLevel().getNext());
-        this.refreshView();
+	this.model.setLevel(this.model.getLevel().getNext());
+	this.refreshView();
 
     }
 
@@ -405,7 +401,7 @@ public abstract class Device {
      * @return the current report.
      */
     public IterationReport getCurrentReport() {
-        return report;
+	return this.report;
     }
 
     /**
@@ -413,14 +409,14 @@ public abstract class Device {
      * @return the active property
      */
     public BooleanProperty activeProperty() {
-        return this.activeProperty;
+	return this.activeProperty;
     }
 
     /**
      * @return the value of the active property
      */
     public boolean isActive() {
-        return this.activeProperty.get();
+	return this.activeProperty.get();
     }
 
     /**
@@ -429,12 +425,11 @@ public abstract class Device {
      * @param active the new active value
      */
     public void setActive(boolean active) {
-        this.activeProperty.set(active);
+	this.activeProperty.set(active);
     }
 
     public static void registerType(Class<? extends Device> clazz) {
-        if (!subclasses.contains(clazz)) {
-            subclasses.add(clazz);
-        }
+	if (!subclasses.contains(clazz))
+	    subclasses.add(clazz);
     }
 }

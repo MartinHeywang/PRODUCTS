@@ -47,13 +47,13 @@ public final class DeviceController implements Initializable {
 	public void setContent(Device data) {
 		this.device = data;
 
-		view.setImage(data.getView().get());
+		this.view.setImage(data.getView().get());
 
-		coordinate.setText(data.getPosition().toString());
+		this.coordinate.setText(data.getPosition().toString());
 
-		refreshTurnedView();
-		refreshUpgradeBox();
-		refreshLiteral();
+		this.refreshTurnedView();
+		this.refreshUpgradeBox();
+		this.refreshLiteral();
 
 		if (data.getWidgets().size() > 0) {
 			final ImageView icon = new ImageView(new Image(Main.class.getResourceAsStream("/images/icons/edit.png")));
@@ -72,27 +72,27 @@ public final class DeviceController implements Initializable {
 			special.setAnimated(false);
 			special.setExpanded(false);
 
-			main.getChildren().add(0, special);
+			this.main.getChildren().add(0, special);
 		}
-		iterationView = new IterationReportView(device.getCurrentReport());
-		ImageView icon = new ImageView(new Image(Main.class.getResourceAsStream("/images/icons/info.png")));
+		this.iterationView = new IterationReportView(this.device.getCurrentReport());
+		final ImageView icon = new ImageView(new Image(Main.class.getResourceAsStream("/images/icons/info.png")));
 		icon.setFitHeight(30d);
 		icon.setFitWidth(30d);
-		TitledPane iterationContainer = new TitledPane("Informations utiles", iterationView);
+		final TitledPane iterationContainer = new TitledPane("Informations utiles", this.iterationView);
 		iterationContainer.setFont(new Font(16d));
 		iterationContainer.setGraphic(icon);
 		iterationContainer.setExpanded(false);
 		iterationContainer.setAnimated(false);
 
-		main.getChildren().addAll(iterationContainer);
+		this.main.getChildren().addAll(iterationContainer);
 
 	}
 
 	@FXML
 	public void upgrade() {
 		try {
-			device.upgrade();
-			refreshUpgradeBox();
+			this.device.upgrade();
+			this.refreshUpgradeBox();
 		} catch (final EditException e) {
 			e.printStackTrace();
 		}
@@ -101,49 +101,49 @@ public final class DeviceController implements Initializable {
 	private void refreshUpgradeBox(){
 		try{
 			final MoneyFormat formatter = MoneyFormat.getSingleton();
-			destroyPrice.setText("+ "+formatter.format(this.device.getDeletePrice()));
-			upgradePrice.setText("- "+formatter.format(this.device.getUpgradePrice()));
+			this.destroyPrice.setText("+ "+formatter.format(this.device.getDeletePrice()));
+			this.upgradePrice.setText("- "+formatter.format(this.device.getUpgradePrice()));
 
 			final String upgradedURL = "/images" + this.device.getLevel().getNext().getURL()
 					+ this.device.getClass().getSimpleName().toUpperCase() + ".png";
-			final Image upgraded = new Image(getClass().getResourceAsStream(upgradedURL));
-			upgradedView.setImage(upgraded);
-			view.setImage(this.device.getView().get());
+			final Image upgraded = new Image(this.getClass().getResourceAsStream(upgradedURL));
+			this.upgradedView.setImage(upgraded);
+			this.view.setImage(this.device.getView().get());
 
-			refreshLiteral();
-		}catch(ArrayIndexOutOfBoundsException e){
+			this.refreshLiteral();
+		}catch(final ArrayIndexOutOfBoundsException e){
 			/* In most cases, this will be caused because of a non-existing devices_level_4 
 				This means that the device is at level max.
 			*/
-			actions.getChildren().remove(upgradeBox);
+			this.actions.getChildren().remove(this.upgradeBox);
 		}
 	}
 
 	private void refreshLiteral(){
 		final String type = this.device.getClass().getAnnotation(AccessibleName.class).value();
-		literal.setText(type + " | " + this.device.getLevel().getLiteral() + " | " + this.device.getDirection().getLiteral());
+		this.literal.setText(type + " | " + this.device.getLevel().getLiteral() + " | " + this.device.getDirection().getLiteral());
 	}
 
 	@FXML
 	public void turn() {
-		device.turn();
-		refreshTurnedView();
+		this.device.turn();
+		this.refreshTurnedView();
 	}
 
 	private void refreshTurnedView(){
-		turnedView.setImage(this.device.getView().get());
-		turnedView.setRotate(this.device.getDirection().getNext().getRotate());
-		refreshLiteral();
+		this.turnedView.setImage(this.device.getView().get());
+		this.turnedView.setRotate(this.device.getDirection().getNext().getRotate());
+		this.refreshLiteral();
 	}
 
 	@FXML
 	public void destroy() {
 		try {
-			device.destroy();
+			this.device.destroy();
 
 			// Close the window
 			// The device doesn't exist anymore
-			final Stage window = (Stage) upgradeBox.getScene().getWindow();
+			final Stage window = (Stage) this.upgradeBox.getScene().getWindow();
 			window.close();
 		} catch (final EditException e) {
 			e.printStackTrace();
