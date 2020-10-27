@@ -6,8 +6,8 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
-import com.martinheywang.products.model.resources.DefaultResource;
-import com.martinheywang.products.model.resources.Resource;
+import com.martinheywang.products.model.resource.DefaultResource;
+import com.martinheywang.products.model.resource.Resource;
 
 public class ResourcePersister extends BaseDataType {
 

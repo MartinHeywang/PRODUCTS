@@ -11,7 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.martinheywang.products.model.Coordinate;
 import com.martinheywang.products.model.Game;
 import com.martinheywang.products.model.Pack;
-import com.martinheywang.products.model.devices.DeviceModel;
+import com.martinheywang.products.model.device.DeviceModel;
 
 /**
  * Class that manages connectivity to the Database. See {@link Saver}

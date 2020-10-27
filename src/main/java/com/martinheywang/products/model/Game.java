@@ -9,7 +9,7 @@ import java.util.List;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.martinheywang.products.model.database.Database;
-import com.martinheywang.products.model.devices.DeviceModel;
+import com.martinheywang.products.model.device.DeviceModel;
 import com.martinheywang.products.toolbox.MoneyFormat;
 import com.martinheywang.products.view.Displayable;
 import com.martinheywang.products.view.Displayer;

@@ -1,0 +1,274 @@
+package com.martinheywang.products.view.component;
+
+import java.io.IOException;
+
+import com.martinheywang.products.controller.GameController;
+import com.martinheywang.products.model.device.Device;
+import com.martinheywang.products.model.device.DeviceModel;
+import com.martinheywang.products.model.device.Floor;
+import com.martinheywang.products.model.exception.EditException;
+import com.martinheywang.products.model.exception.MoneyException;
+import com.martinheywang.products.toolbox.Tools;
+import com.martinheywang.products.view.DeviceMenuView;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
+import javafx.util.Duration;
+
+/**
+ * <p>
+ * The DeviceView class is a final class that extends
+ * <code>javafx.scene.image.ImageView</code>, which represents each square on
+ * the main devices grid.
+ * </p>
+ * <p>
+ * It represents a {@link Device} and shows a different image according to the
+ * view of the device, based on:
+ * <ul>
+ * <li>The type of the device (e.g. buyer, conveyor)</li>
+ * <li>The level of the device (1, 2, or 3 actually)</li>
+ * <li>The direction of the device which defines how rotated this view is</li>
+ * </ul>
+ * </p>
+ * <p>
+ * It auto-updates when either the level or the direction changes, but not when
+ * the type changes, as a brand new device is created. But a new view (of the
+ * new device) is then automatically created.
+ * </p>
+ * <p>
+ * Otherwise, this class reacts to a bunch of events, such as click, or drag.
+ * </p>
+ * 
+ * @author Heywang
+ */
+public final class DeviceView extends ImageView {
+
+    // CONSTANT VALUES
+    private static final double defaultOpacityValue = .7d;
+    private static final double activeOpacityValue = .9d;
+    private static final double defaultGlowAmount = .0d;
+    private static final double hoverGlowAmount = .3d;
+
+    public static final DataFormat classFormat = new DataFormat("class");
+    public static final DataFormat coordinateFormat = new DataFormat("coordinate");
+
+    /**
+     * The Device used to build this view.
+     */
+    private Device device;
+
+    /**
+     * The current game manager (the controller)
+     */
+    private final GameController gameManager;
+
+    /**
+     * Builds a new DeviceView.
+     * 
+     * @param device
+     */
+    public DeviceView(Device device, GameController gameManager) {
+	this.device = device;
+	this.gameManager = gameManager;
+
+	this.hardRefresh();
+    }
+
+    /**
+     * Refreshes this view 'lightly'. It re-generatates the view. Useful in case the
+     * level or the direction changed.
+     */
+    public void lightRefresh() {
+	this.generateView(this.device.getModel());
+    }
+
+    /**
+     * <p>
+     * The hard refresh calls first the light refresh, then refreshes the event
+     * handling behaviour. It is much more heavier than the light refresh, so
+     * consider calling the light refresh when it is sufficient.
+     * </p>
+     * <p>
+     * For example, the hard refresh is useful in case the type of the displayed
+     * device has changed. (It may change the event handling behaviour.)
+     * </p>
+     */
+    public void hardRefresh() {
+	this.lightRefresh();
+	this.refreshEventHandling();
+    }
+
+    /**
+     * Sets the displayed device
+     * 
+     * @param device the new device
+     */
+    public void setDevice(Device device) {
+	this.device = device;
+    }
+
+    /**
+     * Generates and sets this Device view according to the given model.
+     * 
+     * @param model the model to display
+     */
+    private void generateView(DeviceModel model) {
+	final Image image = new Image(model.getType().getResourceAsStream(model.getURL()));
+	this.setImage(image);
+	this.setRotate(model.getDirection().getRotate());
+
+	this.setOpacity(defaultOpacityValue);
+    }
+
+    /**
+     * A pulsed device view means that the device is currently active. It increases
+     * suddenly the opacity and decreases slowly to the normal opacity value.
+     */
+    public void pulse() {
+	final Timeline tl = new Timeline();
+	tl.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, new KeyValue(this.opacityProperty(), defaultOpacityValue)),
+		new KeyFrame(Duration.millis(10), new KeyValue(this.opacityProperty(), activeOpacityValue)),
+		new KeyFrame(Duration.millis(800), new KeyValue(this.opacityProperty(), defaultOpacityValue)));
+	tl.playFromStart();
+    }
+
+    /**
+     * Refreshes the event handling behaviour (drag, click, ...etc.)
+     */
+    private void refreshEventHandling() {
+	// ON HOVER
+	if (!this.device.getClass().equals(Floor.class)) {
+	    this.setOnMouseEntered(event -> {
+		this.setEffect(new Glow(hoverGlowAmount));
+	    });
+	    this.setOnMouseExited(event -> {
+		this.setEffect(new Glow(defaultGlowAmount));
+	    });
+	}
+
+	// ON CLICK
+	if (!this.device.getClass().equals(Floor.class))
+	    this.setOnMouseClicked(event -> {
+		if (event.getClickCount() >= 2)
+		    try {
+			this.gameManager.upgrade(this.device);
+		    } catch (final EditException e) {
+			e.printStackTrace();
+		    }
+		else if (event.getButton() == MouseButton.SECONDARY)
+		    try {
+			this.gameManager.turn(this.device);
+		    } catch (final EditException e) {
+			e.printStackTrace();
+		    }
+		else if (event.getButton() == MouseButton.PRIMARY)
+		    try {
+			final FXMLLoader loader = Tools.prepareFXMLLoader("Device");
+
+			final Dialog<Void> dialog = new Dialog<>();
+			final DialogPane root = loader.load();
+			dialog.setDialogPane(root);
+
+			final DeviceMenuView controller = loader.getController();
+			controller.setContent(this.device, this.gameManager);
+
+			dialog.show();
+		    } catch (final IOException e) {
+			e.printStackTrace();
+		    }
+	    });
+
+	// ON DRAG
+	if (!this.device.getClass().equals(Floor.class))
+	    this.setOnDragDetected(event -> {
+		/*
+		 * I used MOVE to delete devices. I use link to destroy devices, and COPY to
+		 * build devices.
+		 */
+		final Dragboard db = this.startDragAndDrop(TransferMode.MOVE, TransferMode.LINK);
+		final ClipboardContent content = new ClipboardContent();
+
+		content.put(coordinateFormat, this.device.getPosition());
+		content.putImage(this.getImage());
+
+		db.setContent(content);
+
+	    });
+	this.setOnDragOver(event -> {
+	    event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
+	});
+	this.setOnDragEntered(event -> {
+	    /* the drag-and-drop gesture entered the target */
+	    /* show to the user that it is an actual gesture target */
+	    this.setEffect(new Glow(hoverGlowAmount));
+
+	});
+	this.setOnDragExited(event -> {
+	    /* the drag-and-drop gesture entered the target */
+	    /* show to the user that it is an actual gesture target */
+	    this.setEffect(new Glow(defaultGlowAmount));
+
+	});
+	this.setOnDragDropped(event -> {
+	    final Dragboard db = event.getDragboard();
+
+	    boolean success = false;
+
+	    if (event.getTransferMode().equals(TransferMode.COPY)) {
+		if (db.hasContent(classFormat)) {
+		    @SuppressWarnings("unchecked")
+		    final Class<? extends Device> type = (Class<? extends Device>) db.getContent(classFormat);
+		    try {
+			this.gameManager.build(type, this.device.getPosition());
+		    } catch (final MoneyException e) {
+			e.printStackTrace();
+		    } catch (final EditException e) {
+			e.printStackTrace();
+		    }
+		    success = true;
+		}
+	    } else if (event.getTransferMode().equals(TransferMode.LINK)) {
+		try {
+		    this.gameManager.swap(this.device.getPosition());
+		} catch (final EditException e) {
+		    e.printStackTrace();
+		}
+		success = true;
+	    }
+
+	    event.setDropCompleted(success);
+
+	    event.consume();
+	});
+
+	this.setOnDragDone(event -> { // If the other target was a DeviceView
+	    try {
+		if (event.getTarget().getClass().equals(DeviceView.class))
+		    if (event.getTransferMode().equals(TransferMode.LINK))
+			try {
+			    this.gameManager.swap(this.device.getPosition());
+			} catch (final EditException e) {
+			    e.printStackTrace();
+			}
+	    } catch (final NullPointerException e) {
+		/*
+		 * If an error occurs during the drag'n drop gesture, the event is not properly
+		 * set, that means that the properties are not accesible and throws this error
+		 */
+	    }
+
+	});
+    }
+}

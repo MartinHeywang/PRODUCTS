@@ -6,9 +6,9 @@ import java.util.Locale;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.martinheywang.products.model.devices.DeviceModel;
-import com.martinheywang.products.model.resources.Resource;
-import com.martinheywang.products.model.resources.Craftable.RemotePack;
+import com.martinheywang.products.model.device.DeviceModel;
+import com.martinheywang.products.model.resource.Resource;
+import com.martinheywang.products.model.resource.Craftable.RemotePack;
 import com.martinheywang.products.view.Displayable;
 import com.martinheywang.products.view.Displayer;
 

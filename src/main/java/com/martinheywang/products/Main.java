@@ -7,32 +7,32 @@ import java.util.List;
 import org.pf4j.JarPluginManager;
 import org.pf4j.PluginManager;
 
+import com.martinheywang.products.controller.DeviceController;
+import com.martinheywang.products.controller.GameController;
 import com.martinheywang.products.model.Game;
 import com.martinheywang.products.model.database.Database;
-import com.martinheywang.products.model.devices.Buyer;
-import com.martinheywang.products.model.devices.Constructor;
-import com.martinheywang.products.model.devices.Conveyor;
-import com.martinheywang.products.model.devices.Device;
-import com.martinheywang.products.model.devices.Floor;
-import com.martinheywang.products.model.devices.Furnace;
-import com.martinheywang.products.model.devices.LeftConveyor;
-import com.martinheywang.products.model.devices.MultiConveyor;
-import com.martinheywang.products.model.devices.Press;
-import com.martinheywang.products.model.devices.RightConveyor;
-import com.martinheywang.products.model.devices.Seller;
-import com.martinheywang.products.model.devices.WireDrawer;
-import com.martinheywang.products.model.mechanics.GameManager;
-import com.martinheywang.products.model.resources.DefaultResource;
-import com.martinheywang.products.model.resources.Ingot;
-import com.martinheywang.products.model.resources.Ore;
-import com.martinheywang.products.model.resources.Plate;
-import com.martinheywang.products.model.resources.Product;
-import com.martinheywang.products.model.resources.Resource;
-import com.martinheywang.products.model.resources.Wire;
+import com.martinheywang.products.model.device.Buyer;
+import com.martinheywang.products.model.device.Constructor;
+import com.martinheywang.products.model.device.Conveyor;
+import com.martinheywang.products.model.device.Device;
+import com.martinheywang.products.model.device.Furnace;
+import com.martinheywang.products.model.device.LeftConveyor;
+import com.martinheywang.products.model.device.MultiConveyor;
+import com.martinheywang.products.model.device.Press;
+import com.martinheywang.products.model.device.RightConveyor;
+import com.martinheywang.products.model.device.Seller;
+import com.martinheywang.products.model.device.WireDrawer;
+import com.martinheywang.products.model.resource.DefaultResource;
+import com.martinheywang.products.model.resource.Ingot;
+import com.martinheywang.products.model.resource.Ore;
+import com.martinheywang.products.model.resource.Plate;
+import com.martinheywang.products.model.resource.Product;
+import com.martinheywang.products.model.resource.Resource;
+import com.martinheywang.products.model.resource.Wire;
 import com.martinheywang.products.toolbox.Tools;
-import com.martinheywang.products.view.GameController;
-import com.martinheywang.products.view.Home;
-import com.martinheywang.products.view.Home2;
+import com.martinheywang.products.view.GameView;
+import com.martinheywang.products.view.HomeView;
+import com.martinheywang.products.view.HomeView2;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -66,7 +66,7 @@ public final class Main extends Application {
 
 	final List<Class<? extends Device>> devicesClasses = pluginManager.getExtensionClasses(Device.class);
 	for (final Class<? extends Device> greeting : devicesClasses)
-	    Device.registerType(greeting);
+	    DeviceController.registerType(greeting);
 
 	stage = primaryStage;
 	stage.setTitle("PRODUCTS.");
@@ -98,8 +98,8 @@ public final class Main extends Application {
      * Initialize the stage with the view Accueil.fxml, who corresponds to a the
      * first start page (generally when no game can be found on the database).
      * 
-     * @see Home
-     * @see Home#setMainApp(Main)
+     * @see HomeView
+     * @see HomeView#setMainApp(Main)
      */
     public void initAccueil() {
 	try {
@@ -110,7 +110,7 @@ public final class Main extends Application {
 
 	    stage.setResizable(false);
 
-	    final Home controller = loader.getController();
+	    final HomeView controller = loader.getController();
 	    controller.setMainApp(this);
 	} catch (final IOException e) {
 	    e.printStackTrace();
@@ -123,8 +123,8 @@ public final class Main extends Application {
      * registered game or to begin a new game. (when at least one game is
      * registered)
      * 
-     * @see Home2
-     * @see Home2#setMainApp(Main)
+     * @see HomeView2
+     * @see HomeView2#setMainApp(Main)
      */
     public void initAccueil2() {
 	try {
@@ -139,7 +139,7 @@ public final class Main extends Application {
 	    stage.setMinWidth(500d);
 	    stage.setMinHeight(530d);
 
-	    final Home2 controller = loader.getController();
+	    final HomeView2 controller = loader.getController();
 	    controller.setMainApp(this);
 
 	} catch (final IOException e) {
@@ -155,9 +155,9 @@ public final class Main extends Application {
      * 
      * @param game the game to load
      * 
-     * @see GameController
-     * @see GameController#load(Game)
-     * @see GameController#setMainApp(Main)
+     * @see GameView
+     * @see GameView#load(Game)
+     * @see GameView#setMainApp(Main)
      */
     public void initGame(Game game) {
 	try {
@@ -172,9 +172,9 @@ public final class Main extends Application {
 	    stage.setMinWidth(550d);
 	    stage.setMinHeight(600d);
 
-	    final GameController controller = loader.getController();
+	    final GameView controller = loader.getController();
 
-	    final GameManager manager = new GameManager(controller, game);
+	    final GameController manager = new GameController(controller, game);
 	    manager.start();
 
 	    stage.setOnCloseRequest(event -> {
@@ -215,27 +215,23 @@ public final class Main extends Application {
     public static void main(String[] args) {
 	System.setProperty("com.j256.ormlite.logger.level", "ERROR");
 
-	/*
-	 * <?> Registering resources means making the game able to use them.
-	 */
-	Resource.register(DefaultResource.class);
+	DeviceController.registerType(Buyer.class);
+	DeviceController.registerType(Seller.class);
+	DeviceController.registerType(Conveyor.class);
+	DeviceController.registerType(LeftConveyor.class);
+	DeviceController.registerType(RightConveyor.class);
+	DeviceController.registerType(MultiConveyor.class);
+	DeviceController.registerType(Furnace.class);
+	DeviceController.registerType(Press.class);
+	DeviceController.registerType(WireDrawer.class);
+	DeviceController.registerType(Constructor.class);
+
 	Resource.register(Ore.class);
 	Resource.register(Plate.class);
-	Resource.register(Wire.class);
 	Resource.register(Ingot.class);
+	Resource.register(Wire.class);
 	Resource.register(Product.class);
-
-	Device.registerType(Buyer.class);
-	Device.registerType(Floor.class);
-	Device.registerType(Seller.class);
-	Device.registerType(Conveyor.class);
-	Device.registerType(RightConveyor.class);
-	Device.registerType(LeftConveyor.class);
-	Device.registerType(Furnace.class);
-	Device.registerType(Press.class);
-	Device.registerType(WireDrawer.class);
-	Device.registerType(Constructor.class);
-	Device.registerType(MultiConveyor.class);
+	Resource.register(DefaultResource.class);
 
 	launch(args);
     }

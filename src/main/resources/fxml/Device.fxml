@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox ?>
 <?import javafx.scene.text.Font ?>
 
-<DialogPane expanded="true" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.products.view.DeviceController">
+<DialogPane expanded="true" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.martinheywang.products.view.DeviceMenuView">
    <content>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0">
          <children>
