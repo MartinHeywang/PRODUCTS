@@ -2,12 +2,15 @@ $cta-color: rgb(0, 110, 10);
 $cta-hover-color: rgb(0, 130, 15);
 $text-color: #eee;
 
+@font-face{
+    src: url(./products.ttf);
+    font-family: "Products";
+}
+
 body{
-    background: url(../images/Floor.svg);
-    background-color: #333;
-    background-blend-mode: multiply;
-    background-position: -46px -23px;
-    background-size: 96px;
+    background: url(../images/Background.png);
+    background-size: 40px;
+    font-family: "Products";
 
     text-align: center;
 
@@ -43,7 +46,7 @@ a.button{
     width: 90%;
     max-width: 350px;
     color: #eee;
-    border: 3px solid white;
+    background: rgba(10, 255, 10, 0.4);
 
     padding: 1% 4%;
     margin: 1.5% 0;
@@ -51,6 +54,5 @@ a.button{
 }
 
 a.button:hover{
-    background: #eee;
-    color: #333;
+    background: rgba(10, 255, 10, 0.5);
 }
