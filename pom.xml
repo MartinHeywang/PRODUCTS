@@ -4,12 +4,12 @@
 	<!-- Basic informations about the app -->
 	<groupId>io.github.martinheywang</groupId>
 	<artifactId>products</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 
 	<!-- The project -->
-	<name>Products</name>
+	<name>products</name>
 	<description>
   	Products is a game, where you can build devices to become wealthy. Create assembly lines. Build, earn, build... !
   </description>
