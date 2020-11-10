@@ -2,6 +2,12 @@ package io.github.martinheywang.products.model.bundle;
 
 import java.util.ListResourceBundle;
 
+/**
+ * Bundle class that defines the price for upgrading the independent limit count.
+ * It associates the key (the count limit) with the value (the price to go to the key value)
+ * 
+ * @author Martin Heywang
+ */
 public class MaxBuyerUpdate extends ListResourceBundle {
     @Override
     protected Object[][] getContents() {

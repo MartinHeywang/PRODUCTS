@@ -23,6 +23,11 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.model.resource.DefaultResource;
 import javafx.scene.Node;
 
+/**
+ * A press is a {@link io.github.martinheywang.products.api.model.device.Device}
+ * that presses the received resource, - if it's possible -. It it's not, the
+ * action won't be successful and the assembly line will not give suite.
+ */
 @Extension(ordinal = 6)
 @AccessibleName("Presse")
 @Description("Le presse transforme les resources qui lui parviennent en plaques.")
@@ -32,6 +37,11 @@ import javafx.scene.Node;
 @ActionCost("20")
 public class Press extends Device {
 
+	/**
+	 * Creates a new Press.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
 	public Press(DeviceModel model) {
 		super(model);
 	}

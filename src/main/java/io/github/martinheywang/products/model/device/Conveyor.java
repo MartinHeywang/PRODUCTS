@@ -20,6 +20,12 @@ import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import javafx.scene.Node;
 
+/**
+ * A conveyor is a simple
+ * {@link io.github.martinheywang.products.api.model.device.Device} that takes
+ * the resource and give it simply to the next device without changing it in any
+ * form.
+ */
 @Extension(ordinal = 3)
 @AccessibleName("Convoyeur")
 @Description("Le convoyeur transporte les ressources d'u point A à un point B")
@@ -29,26 +35,31 @@ import javafx.scene.Node;
 @ActionCost("5")
 public class Conveyor extends Device {
 
-    public Conveyor(DeviceModel model) {
-	super(model);
-    }
+	/**
+	 * Creates a new Conveyor
+	 * 
+	 * @param model a device model, wherez the type may be null.
+	 */
+	public Conveyor(DeviceModel model) {
+		super(model);
+	}
 
-    @Override
-    public final Action act(Pack resources) throws MoneyException {
-	final Action action = new Action(this, resources);
+	@Override
+	public final Action act(Pack resources) throws MoneyException {
+		final Action action = new Action(this, resources);
 
-	final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
-	action.setOutput(output);
-	action.setGivenPack(resources);
-	action.addCost(this.getActionCost());
-	action.markAsSuccessful();
+		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+		action.setOutput(output);
+		action.setGivenPack(resources);
+		action.addCost(this.getActionCost());
+		action.markAsSuccessful();
 
-	return action;
-    }
+		return action;
+	}
 
-    @Override
-    public List<Node> getWidgets() {
-	return Arrays.asList();
-    }
+	@Override
+	public List<Node> getWidgets() {
+		return Arrays.asList();
+	}
 
 }

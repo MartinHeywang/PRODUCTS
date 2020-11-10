@@ -35,6 +35,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * The buyer is an independent {@link io.github.martinheywang.products.api.model.device.Device} 
+ * that take nothing as entry and buys the resource to distribute it.
+ * 
+ * @author Martin Heywang
+ */
 @Extension(ordinal = 1)
 @Buildable
 @Independent
@@ -64,6 +70,11 @@ public final class Buyer extends Device {
 	private Pack distributedResource;
 	private BigInteger resourceCost;
 
+	/**
+	 * Creates a new buyer with the given model.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
 	public Buyer(DeviceModel model) {
 		super(model);
 

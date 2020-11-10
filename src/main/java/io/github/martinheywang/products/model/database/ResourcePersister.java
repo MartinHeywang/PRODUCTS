@@ -11,6 +11,9 @@ import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.controller.ResourceManager;
 import io.github.martinheywang.products.model.resource.DefaultResource;
 
+/**
+ * Singleton class that allows ORMLite to persist resources.
+ */
 public class ResourcePersister extends BaseDataType {
 
     private static final ResourcePersister instance = new ResourcePersister();
@@ -40,6 +43,11 @@ public class ResourcePersister extends BaseDataType {
 
     }
 
+    /**
+     * Returns the singleton.
+     * 
+     * @return the singleton.
+     */
     public static ResourcePersister getInstance() {
 	return instance;
     }

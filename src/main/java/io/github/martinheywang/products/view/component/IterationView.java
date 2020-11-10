@@ -17,6 +17,11 @@ import javafx.scene.layout.VBox;
  */
 public class IterationView extends VBox {
 
+	/**
+	 * Creates a new IterationView
+	 * 
+	 * @param data the displayed iteration.
+	 */
 	public IterationView(Iteration data) {
 		this.setSpacing(20d);
 		this.getStylesheets().addAll(

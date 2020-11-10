@@ -21,36 +21,96 @@ import io.github.martinheywang.products.api.model.resource.info.Prices;
 @Extension(ordinal = 1)
 public enum Ore implements Resource {
 
+	/**
+     * <p>
+     * Iron
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	@ToWire(clazz = Wire.class, field = "IRON_WIRE")
 	@ToPlate(clazz = Plate.class, field = "PLATE_OF_IRON")
 	@ToIngot(clazz = Ingot.class, field = "IRON_INGOT")
 	IRON("Fer", Prices.rawPrice(), "/Minerai_De_Fer.png"),
 
+	/**
+     * <p>
+     * Gold
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	@ToWire(clazz = Wire.class, field = "GOLD_WIRE")
 	@ToPlate(clazz = Plate.class, field = "PLATE_OF_GOLD")
 	@ToIngot(clazz = Ingot.class, field = "GOLD_INGOT")
 	GOLD("Or", Prices.rawPrice(), "/Minerai_De_Or.png"),
 
+	/**
+     * <p>
+     * Copper
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	@ToWire(clazz = Wire.class, field = "COPPER_WIRE")
 	@ToPlate(clazz = Plate.class, field = "PLATE_OF_COPPER")
 	@ToIngot(clazz = Ingot.class, field = "COPPER_INGOT")
 	COPPER("Cuivre", Prices.rawPrice(), "/Minerai_De_Cuivre.png"),
 
+	/**
+     * <p>
+     * Silver
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	@ToWire(clazz = Wire.class, field = "SILVER_WIRE")
 	@ToPlate(clazz = Plate.class, field = "PLATE_OF_SILVER")
 	@ToIngot(clazz = Ingot.class, field = "SILVER_INGOT")
 	SILVER("Argent", Prices.rawPrice(), "/Minerai_De_Argent.png"),
 
+	/**
+     * <p>
+     * Aluminium
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	@ToWire(clazz = Wire.class, field = "ALUMINIUM_WIRE")
 	@ToPlate(clazz = Plate.class, field = "PLATE_OF_ALUMINIUM")
 	@ToIngot(clazz = Ingot.class, field = "ALUMINIUM_INGOT")
 	ALUMINIUM("Aluminium", Prices.rawPrice(), "/Minerai_De_Aluminium.png"),
 
+	/**
+     * <p>
+     * Diamond
+     * </p>
+     * <p>
+     * Price : default price for raw resources.
+     * </p>
+     * 
+     * @see io.github.martinheywang.products.api.model.resource.info.Prices
+     */
 	@Buyable
 	DIAMOND("Diamant", Prices.rawPrice(), "/Minerai_De_Diamant.png");
 

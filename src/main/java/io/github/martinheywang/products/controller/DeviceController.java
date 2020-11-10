@@ -63,10 +63,8 @@ public final class DeviceController {
 	/**
 	 * Creates a new DeviceManager filled with the given collection of devices
 	 * 
-	 * @param devicesModel
-	 *            the models of the devices
-	 * @param gameManager
-	 *            the current game manager
+	 * @param game the game that this object will be based on to find the devices.
+	 * @throws LoadException if the devices couldn't be loaded
 	 */
 	public DeviceController(Game game) throws LoadException {
 		this.game = game;
@@ -169,6 +167,11 @@ public final class DeviceController {
 		return this.independentDevices;
 	}
 
+	/**
+	 * Adds the given independent device into the list.
+	 * 
+	 * @param device an independent device.
+	 */
 	public void addIndependentDevice(Device device) {
 		if (device.getClass().isAnnotationPresent(Independent.class))
 			return;
@@ -176,6 +179,11 @@ public final class DeviceController {
 		this.independentDevices.add(device);
 	}
 
+	/**
+	 * Remove the given independent device into the list.
+	 * 
+	 * @param device a device.
+	 */
 	public void removeIndependentDevice(Device device) {
 		this.independentDevices.remove(device);
 	}
@@ -255,6 +263,9 @@ public final class DeviceController {
 		device.getModel().setPosition(to);
 	}
 
+	/**
+	 * Refreshes all the iterations from all the devices.
+	 */
 	public void clearIterations() {
 		final Collection<Device> collection = this.devices.toCollection();
 		for (final Device device : collection)
@@ -330,6 +341,9 @@ public final class DeviceController {
 	/**
 	 * Returns whether the given device is ready to act. It checks for example,
 	 * if the cooldown is active or not.
+	 * 
+	 * @param device the device to test
+	 * @return the result of the test, whether it is act-ready.
 	 */
 	public static final boolean isActReady(Device device) {
 		final Iteration iteration = device.getCurrentIteration();

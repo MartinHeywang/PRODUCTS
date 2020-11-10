@@ -2,6 +2,11 @@ package io.github.martinheywang.products.model.bundle;
 
 import java.util.ListResourceBundle;
 
+/**
+ * Bundle class that defines the prices for upgrading the game loop : making it faster.
+ * 
+ * @author Martin Heywang
+ */
 public class GameLoopUpdate extends ListResourceBundle {
 
     @Override

@@ -35,12 +35,12 @@ import javafx.util.Duration;
  * <p>
  * It represents a {@link Device} and shows a different image according to the
  * view of the device, based on:
+ * </p>
  * <ul>
  * <li>The type of the device (e.g. buyer, conveyor)</li>
  * <li>The level of the device (1, 2, or 3 actually)</li>
  * <li>The direction of the device which defines how rotated this view is</li>
  * </ul>
- * </p>
  * <p>
  * This view doesn't refresh automatically. You can call either
  * {@link #lightRefresh()} or {@link #hardRefresh()} to refresh the view,
@@ -51,7 +51,7 @@ import javafx.util.Duration;
  * Otherwise, this class reacts to a bunch of events, such as click, or drag.
  * </p>
  * 
- * @author Heywang
+ * @author Martin Heywang
  */
 public final class DeviceView extends ImageView {
 
@@ -61,7 +61,14 @@ public final class DeviceView extends ImageView {
 	private static final double defaultGlowAmount = .0d;
 	private static final double hoverGlowAmount = .3d;
 
+	/**
+	 * A {@link javafx.scene.input.DataFormat} for class {@link java.lang.Class}
+	 */
 	public static final DataFormat classFormat = new DataFormat("class");
+
+	/**
+	 * A {@link javafx.scene.input.DataFormat} for class {@link io.github.martinheywang.products.api.model.Coordinate}.
+	 */
 	public static final DataFormat coordinateFormat = new DataFormat("coordinate");
 
 	/**
@@ -77,7 +84,8 @@ public final class DeviceView extends ImageView {
 	/**
 	 * Builds a new DeviceView.
 	 * 
-	 * @param device
+	 * @param device the device to display
+	 * @param gameManager the game controller that manages the device.
 	 */
 	public DeviceView(Device device, GameController gameManager) {
 		this.device = device;

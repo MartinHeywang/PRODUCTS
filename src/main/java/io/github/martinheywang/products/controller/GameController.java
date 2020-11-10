@@ -39,10 +39,13 @@ import javafx.scene.paint.Color;
  * 
  * @see GameLoop
  * 
- * @author Heywang
+ * @author Martin Heywang
  */
 public final class GameController {
 
+	/**
+	 * The current delay applied between each iteration of the game loop.
+	 */
 	public static int gameLoopDelay;
 
 	private int maxBuyer;
@@ -120,6 +123,7 @@ public final class GameController {
 	 * @param clazz    the type of the device to build
 	 * @param position where
 	 * @throws MoneyException if we don't have enough money
+	 * @throws EditException if the edit couldn't be performed.
 	 */
 	public void build(Class<? extends Device> clazz, Coordinate position) throws MoneyException, EditException {
 
@@ -183,6 +187,7 @@ public final class GameController {
 	 * or performs the swap if one was already there.
 	 * 
 	 * @param position where
+	 * @throws EditException if the edit couldn't be performed.
 	 */
 	public void swap(Coordinate position) throws EditException {
 		if (this.toMove == null) {
@@ -215,6 +220,7 @@ public final class GameController {
 	 * Upgrades the given device.
 	 * 
 	 * @param device the device to upgrade
+	 * @throws EditException if the edit couldn't be performed.
 	 */
 	public void upgrade(Device device) throws EditException {
 		try {
@@ -235,6 +241,7 @@ public final class GameController {
 	 * Turns the given device.
 	 * 
 	 * @param device the device to turn
+	 * @throws EditException if the edit couldn't be performed.
 	 */
 	public void turn(Device device) throws EditException {
 		device.getModel().setDirection(device.getDirection().getNext());
@@ -292,8 +299,7 @@ public final class GameController {
 	 * Adds money to the game
 	 * 
 	 * @param value  the amount to add
-	 * @param asking the device that asks for adding money. Put null if this demand
-	 *               doesn't come from an action of a device.
+	 * @throws MoneyException if the money reaches 0 or less before the transaction.
 	 */
 	public void addMoney(BigInteger value) throws MoneyException {
 		// Removes the negation of the value (2 times minus equals plus)
@@ -304,12 +310,11 @@ public final class GameController {
 	 * Removes money to the game
 	 * 
 	 * @param value  the amount to remove
-	 * @param asking the device that asks for removing money. put null if this
-	 *               demand doesn't come from an action of a device.
+	 * @throws MoneyException if the money amount reaches 0 or less.
 	 */
 	public void removeMoney(BigInteger value) throws MoneyException {
 		if (this.getMoney().compareTo(value) == -1)
-			throw new MoneyException();
+			throw new MoneyException(this.getMoney(), value);
 
 		this.game.setMoney(this.game.getMoney().subtract(value));
 
@@ -332,6 +337,9 @@ public final class GameController {
 		return this.maxBuyer;
 	}
 
+	/**
+	 * Increase the max buyer value by 4
+	 */
 	public void addMaxBuyer() {
 		this.maxBuyer += 4;
 		this.gameView.loadGame(this.deviceController.getDevices(), this.game);
@@ -348,6 +356,11 @@ public final class GameController {
 		this.gameView.toast(text, background, seconds);
 	}
 
+	/**
+	 * Saves the managed game with its devices and everything.
+	 * 
+	 * @throws SQLException if an error with the database occurs.
+	 */
 	public void save() throws SQLException {
 		final Alert info = new Alert(AlertType.INFORMATION);
 
@@ -400,6 +413,9 @@ public final class GameController {
 
 	}
 
+	/**
+	 * Upgrades the grid, increases its size by 1. (3x3 -> 4x4)
+	 */
 	public void upgradeGrid() {
 		this.deviceController.upgradeGrid();
 		Coordinate.gridSize = this.deviceController.getDevices().size();
@@ -409,6 +425,9 @@ public final class GameController {
 		this.toast("Grille améliorée !", Color.DODGERBLUE, 3d);
 	}
 
+	/**
+	 * Decreases the {@link #gameLoopDelay} by 50 (50 milliseconds)
+	 */
 	public void decreaseGameLoopDelay() {
 		gameLoopDelay -= 50;
 		this.gameView.loadGame(this.deviceController.getDevices(), this.game);
@@ -422,6 +441,9 @@ public final class GameController {
 		return this.game.getID();
 	}
 
+	/**
+	 * @return the {@link #gameLoopDelay} 
+	 */
 	public Integer getDelay() {
 		return gameLoopDelay;
 	}
@@ -444,7 +466,6 @@ public final class GameController {
 	 * Starts the game loop in manual mode, which means that it will stop
 	 * automatically after one iteration.
 	 * </p>
-	 * <p>
 	 * Will result the same as:
 	 * 
 	 * <pre>
@@ -455,7 +476,6 @@ public final class GameController {
 	 * </pre>
 	 * 
 	 * where 'gameManager' is the current instance of the gameManager.
-	 * </p>
 	 * 
 	 * @see #start()
 	 * @see #stop()
@@ -570,6 +590,12 @@ public final class GameController {
 		}
 	}
 
+	/**
+	 * Returns the device founded at the given coordinate.
+	 * 
+	 * @param coord the coordinate
+	 * @return the device
+	 */
 	public Device getDevice(Coordinate coord) {
 		return this.deviceController.getDevice(coord);
 	}

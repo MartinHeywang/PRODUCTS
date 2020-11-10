@@ -31,7 +31,7 @@ import javafx.stage.WindowEvent;
 /**
  * The main class of the application. Launches and sets up everything.
  * 
- * @author Heywang
+ * @author Martin HeywangHeywang
  *
  */
 public final class Main extends Application {
@@ -57,8 +57,7 @@ public final class Main extends Application {
 			System.out.println("| - - - " + deviceClass);
 		}
 
-		System.out.println(
-				"____________________________________________________________________________");
+		System.out.println("____________________________________________________________________________");
 
 		stage = primaryStage;
 		stage.setTitle("PRODUCTS.");
@@ -148,8 +147,7 @@ public final class Main extends Application {
 	 * @param game the game to load
 	 * 
 	 * @see GameMenuView
-	 * @see GameMenuView#load(Game)
-	 * @see GameMenuView#setMainApp(Main)
+	 * @see GameMenuView#loadGame(ArrayList2D, Game)
 	 */
 	public void initGame(Game game) {
 		try {
@@ -204,6 +202,11 @@ public final class Main extends Application {
 		return stage;
 	}
 
+	/**
+	 * The main method of the application.
+	 * 
+	 * @param args the arguments given by the command line
+	 */
 	public static void main(String[] args) {
 		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
 
@@ -211,8 +214,8 @@ public final class Main extends Application {
 	}
 
 	/**
-	 * Prepares a new {@link FXMLoader} with the given string as input. Do not
-	 * specify the extension nor the directory, as long as this file is in a
+	 * Prepares a new {@link javafx.fxml.FXMLLoader} with the given string as input.
+	 * Do not specify the extension nor the directory, as long as this file is in a
 	 * resource directory.<br>
 	 * 
 	 * <pre>

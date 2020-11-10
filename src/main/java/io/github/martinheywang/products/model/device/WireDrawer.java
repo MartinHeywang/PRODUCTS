@@ -23,6 +23,11 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.model.resource.DefaultResource;
 import javafx.scene.Node;
 
+/**
+ * A wire drawer transforms to wire the resource that he receives, - it it's
+ * possible -. If not, the action won't be successful, the assembly line won't
+ * give suite.
+ */
 @Extension(ordinal = 6)
 @AccessibleName("Presse à fil")
 @Description("Le presse à fil fond les resources qui lui parviennent en fils")
@@ -32,6 +37,11 @@ import javafx.scene.Node;
 @ActionCost("20")
 public class WireDrawer extends Device {
 
+	/**
+	 * Creates a new WireDrawer.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
 	public WireDrawer(DeviceModel model) {
 		super(model);
 	}

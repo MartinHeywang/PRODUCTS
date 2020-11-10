@@ -19,6 +19,9 @@ import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import javafx.scene.Node;
 
+/**
+ * The seller is a {@link io.github.martinheywang.products.api.model.device.Device} that sells all the resource that he received.
+ */
 @Extension(ordinal = 2)
 @AccessibleName("Vendeur")
 @Description("Le vendeur vend toutes les ressources qui lui parvient.")
@@ -28,6 +31,11 @@ import javafx.scene.Node;
 @Prices(build = "500", upgradeTo2 = "10000", upgradeTo3 = "150000", destroyAt1 = "450", destroyAt2 = "9000", destroyAt3 = "140000")
 public final class Seller extends Device {
 
+    /**
+	 * Creates a new Seller.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
     public Seller(DeviceModel model) {
 	super(model);
     }

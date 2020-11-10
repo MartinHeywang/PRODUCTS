@@ -14,14 +14,27 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * A GameView is a Java FX {@link javafx.scene.Node} that displays a particular {@link io.github.martinheywang.products.api.model.Game}.
+ */
 public final class GameView extends VBox {
 
+	/**
+	 * Creates a new GameView.
+	 * 
+	 * @param data the displayed game
+	 */
 	public GameView(Game data) {
 		this.setPadding(new Insets(5));
 
 		this.setDisplayed(data);
 	}
 
+	/**
+	 * Sets the displayed game
+	 * 
+	 * @param game the new displayed game
+	 */
 	public void setDisplayed(Game game) {
 		this.getChildren().clear();
 

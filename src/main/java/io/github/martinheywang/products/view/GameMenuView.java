@@ -53,7 +53,7 @@ import javafx.util.Duration;
 
 /**
  * The GameView class is the view controller of the file Game.fxml. It mapps and
- * updates the component as the {@link GameManager} wants.
+ * updates the component as the {@link io.github.martinheywang.products.controller.GameController} wants.
  * 
  * @author Martin Heywang
  */
@@ -142,6 +142,12 @@ public class GameMenuView implements Initializable {
 		this.prepareToolbar();
 	}
 
+	/**
+	 * Loads the given game and the given devices into the view.
+	 * 
+	 * @param devices the devices to load in the grid-view
+	 * @param game the game to load
+	 */
 	public void loadGame(ArrayList2D<Device> devices, Game game) {
 		this.toProcessView();
 
@@ -309,6 +315,11 @@ public class GameMenuView implements Initializable {
 
 	}
 
+	/**
+	 * Updates the money label view.
+	 * 
+	 * @param value the value to update to.
+	 */
 	public void setMoney(BigInteger value) {
 		Platform.runLater(() -> {
 			this.moneyLabel.setText(MoneyFormat.getSingleton().format(value));

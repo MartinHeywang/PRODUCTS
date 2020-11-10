@@ -9,11 +9,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Thanks to
- * {@link https://stackoverflow.com/questions/39827911/javafx-8-scaling-zooming-scrollpane-relative-to-mouse-position
- * this SO question.}
+ * <p>
+ * A scrollable, pannable and zoomable pane in JavaFX.
+ * </p>
+ * <a href=
+ * "https://stackoverflow.com/questions/39827911/javafx-8-scaling-zooming-scrollpane-relative-to-mouse-position">
+ * Thanks to this stack overflow question. </a>
  * 
  * @author Daniel Hári
+ * 
+ * @see javafx.scene.control.ScrollPane
  */
 public class ZoomableScrollPane extends ScrollPane {
 	private double scaleValue = 1d;
@@ -21,6 +26,11 @@ public class ZoomableScrollPane extends ScrollPane {
 	private final Node target;
 	private final Node zoomNode;
 
+	/**
+	 * Creates a new ZoomableScrollPane.
+	 * 
+	 * @param target the content children
+	 */
 	public ZoomableScrollPane(Node target) {
 		super();
 		this.target = target;

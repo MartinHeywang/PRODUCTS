@@ -15,16 +15,15 @@ import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 
 /**
- * Class that manages connectivity to the Database. See {@link Saver}
- * to know more about saving object in the database. This class should
- * be used to save objects in the database, instead of creating a Dao
- * by this class, because Saver respects saving conventions.
- * 
- * @see Saver
- * @see Deleter
+ * <p>
+ * Class that manages connectivity to the database.
+ * </p>
+ * <p>
+ * To create a {@link com.j256.ormlite.dao.Dao} connection to a table, 
+ * use {@link #createDao(Class)} with a persistent class as an argument.
+ * </p>
  * 
  * @author Martin Heywang
- *
  */
 public final class Database {
 
@@ -34,7 +33,7 @@ public final class Database {
     }
 
     /**
-     * Sets everything up to manages database connectivity.
+     * Sets up everything in order.
      * 
      * @throws SQLException
      */
@@ -58,11 +57,13 @@ public final class Database {
     }
 
     /**
-     * Creates an returns a DAO for the given Class.
+     * Creates a fully-functionnal {@link com.j256.ormlite.dao.Dao} 
+     * based on the given <strong>persistent</strong> class.
      * 
-     * @param typeClass the Type of the Dao.
-     * @return a new DAO
-     * @throws SQLException if the DAO couldn't be created.
+     * @param typeClass the persistent class
+     * @param <Type> a persistent class
+     * @return a functionnal dao.
+     * @throws SQLException if an error with the database occured.
      */
     public static <Type> Dao<Type, Long> createDao(Class<Type> typeClass) throws SQLException {
 	if (connection == null)

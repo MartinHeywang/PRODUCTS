@@ -23,6 +23,11 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.model.resource.DefaultResource;
 import javafx.scene.Node;
 
+/**
+ * A furnace smelt the received resources into ingot, - if it's possible -. If
+ * not, the action won't be successful and the assembly line won't continue its
+ * route.
+ */
 @Extension(ordinal = 6)
 @AccessibleName("Four")
 @Description("Le four fond les resources qui lui parviennent en lingots")
@@ -32,6 +37,11 @@ import javafx.scene.Node;
 @ActionCost("20")
 public class Furnace extends Device {
 
+	/**
+	 * Creates a new Furnace.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
 	public Furnace(DeviceModel model) {
 		super(model);
 	}

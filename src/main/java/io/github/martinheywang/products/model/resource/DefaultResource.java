@@ -10,11 +10,14 @@ import io.github.martinheywang.products.api.model.resource.Resource;
  * This enum defines a NONE resource. It actually has no effect to any
  * device.
  * 
- * @author Heywang
+ * @author Martin Heywang
  */
 @Extension
 public enum DefaultResource implements Resource {
 
+    /**
+     * NONE is the default like a null value. It doesn't represents anything. It has no proper value.
+     */
     NONE("None", 0, "/None.png");
 
     private String name;

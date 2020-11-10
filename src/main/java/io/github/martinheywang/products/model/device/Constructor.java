@@ -36,6 +36,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+/**
+ * A constructor is a complex
+ * {@link io.github.martinheywang.products.api.model.device.Device} that takes
+ * multiple entries but one exit, and create valuable products based on
+ * different resources.
+ */
 @Extension(ordinal = 7)
 @Buildable
 @ActionCost("50")
@@ -51,6 +57,11 @@ public final class Constructor extends Device {
 
 	private Pack product;
 
+	/**
+	 * Creates a new Constructor with default values.
+	 * 
+	 * @param model a device model, where the type may be null.
+	 */
 	public Constructor(final DeviceModel model) {
 		super(model);
 
@@ -66,26 +77,23 @@ public final class Constructor extends Device {
 			// associated pack already
 			if (this.model.getID() == null)
 				/*
-				 * Here this exception is practical because it sets the packs
-				 * without printing out the message
+				 * Here this exception is practical because it sets the packs without printing
+				 * out the message
 				 */
 				throw new IndexOutOfBoundsException();
 
-			final Pack fetched = dao.queryForEq("model", this.model.getID())
-					.get(0);
+			final Pack fetched = dao.queryForEq("model", this.model.getID()).get(0);
 			this.product = fetched;
 			this.product.setQuantity(BigInteger.ONE);
 
 		} catch (final SQLException e) {
 			// An error with the database occured
 			// contains any elements
-			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE,
-					this.model);
+			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
 			e.printStackTrace();
 		} catch (final IndexOutOfBoundsException e) {
 			// The fetched list doesn't contain any elements
-			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE,
-					this.model);
+			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
 		}
 		this.generateExtractedRecipe();
 	}
@@ -95,14 +103,11 @@ public final class Constructor extends Device {
 		try {
 			if (!this.product.getResource().equals(DefaultResource.NONE)) {
 
-				final Craftable annotation = this.product.getResource()
-						.getClass()
-						.getField(this.product.getResource().toString())
-						.getAnnotation(Craftable.class);
-				for (final Pack pack : ResourceManager
-						.toPack(annotation.recipe()))
-					for (BigInteger i = BigInteger.ZERO; i.compareTo(pack
-							.getQuantity()) == -1; i = i.add(BigInteger.ONE))
+				final Craftable annotation = this.product.getResource().getClass()
+						.getField(this.product.getResource().toString()).getAnnotation(Craftable.class);
+				for (final Pack pack : ResourceManager.toPack(annotation.recipe()))
+					for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i
+							.add(BigInteger.ONE))
 						this.extractedRecipe.add(pack.getResource());
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
@@ -119,8 +124,7 @@ public final class Constructor extends Device {
 		action.markAsSuccessful();
 
 		if (this.checkIngredients()) {
-			final Coordinate output = this.template
-					.getPointersFor(PointerType.EXIT).get(0);
+			final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
 			action.setOutput(output);
 			action.setGivenPack(this.product);
 		}
@@ -131,13 +135,11 @@ public final class Constructor extends Device {
 	/**
 	 * Unpack the given packs and add it to the availableResources list.
 	 * 
-	 * @param packs
-	 *            the packs to 'unpack'
+	 * @param packs the packs to 'unpack'
 	 */
 	private void addResources(final Pack... packs) {
 		for (final Pack pack : packs)
-			for (BigInteger i = BigInteger.ZERO; i.compareTo(
-					pack.getQuantity()) == -1; i = i.add(BigInteger.ONE))
+			for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i.add(BigInteger.ONE))
 				this.availableResources.add(pack.getResource());
 		for (int i = 0; this.availableResources.size() > 30; i++)
 			this.availableResources.remove(i);
@@ -171,8 +173,7 @@ public final class Constructor extends Device {
 	@Override
 	public List<Node> getWidgets() {
 		final Carousel carousel = new Carousel();
-		final RecipeView recipeView = new RecipeView(
-				this.product.getResource());
+		final RecipeView recipeView = new RecipeView(this.product.getResource());
 
 		Node selection = null;
 
@@ -187,8 +188,7 @@ public final class Constructor extends Device {
 		carousel.setSelection(selection);
 
 		carousel.setOnSelectionChanged(event -> {
-			final Resource resource = ((ResourceView) event.getNewSelection())
-					.getResource();
+			final Resource resource = ((ResourceView) event.getNewSelection()).getResource();
 			this.setProduct(resource);
 			recipeView.setDisplayedResource(resource);
 		});
@@ -224,12 +224,10 @@ public final class Constructor extends Device {
 
 	/**
 	 * Sets a new distributed resource to the device. <strong>Warning: If this
-	 * resource is not a part of the accepted resources, this method won't warn
-	 * you but the constructor will skip its action as it can't distributed
-	 * it.</strong>
+	 * resource is not a part of the accepted resources, this method won't warn you
+	 * but the constructor will skip its action as it can't distributed it.</strong>
 	 * 
-	 * @param res
-	 *            the new resource
+	 * @param res the new resource
 	 */
 	public void setProduct(final Resource res) {
 		this.product.setResource(res);
@@ -244,11 +242,10 @@ public final class Constructor extends Device {
 	}
 
 	/**
-	 * Adds a Resource to the accepted resources. Note that it must be marked
-	 * with the Craftable annotation.
+	 * Adds a Resource to the accepted resources. Note that it must be marked with
+	 * the Craftable annotation.
 	 * 
-	 * @param res
-	 *            the res to add
+	 * @param res the res to add
 	 */
 	public static final void addAcceptedResource(Resource res) {
 		if (res.hasAnnotation(Craftable.class))
@@ -258,8 +255,7 @@ public final class Constructor extends Device {
 	/**
 	 * Removes an accepted resource, if it is in the list
 	 * 
-	 * @param res
-	 *            the res to remove
+	 * @param res the res to remove
 	 */
 	public static final void removeAcceptedResource(Resource res) {
 		acceptedResources.remove(res);

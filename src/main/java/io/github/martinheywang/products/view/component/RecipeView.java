@@ -23,12 +23,16 @@ public class RecipeView extends HBox {
 
 	Resource displayed;
 
+	/**
+	 * Creates a new RecipeView.
+	 * 
+	 * @param displayed the displayed recipe
+	 */
 	public RecipeView(Resource displayed) {
 		this.setMinHeight(175d);
 		this.setAlignment(Pos.CENTER);
 
-		this.getStylesheets().add(
-				Main.class.getResource("/fxml/Label.css").toExternalForm());
+		this.getStylesheets().add(Main.class.getResource("/fxml/Label.css").toExternalForm());
 
 		this.setDisplayedResource(displayed);
 	}
@@ -36,8 +40,7 @@ public class RecipeView extends HBox {
 	/**
 	 * Sets the new displayed resource.
 	 * 
-	 * @param res
-	 *            the new resource
+	 * @param res the new resource
 	 */
 	public void setDisplayedResource(Resource res) {
 		this.displayed = res;
@@ -47,12 +50,10 @@ public class RecipeView extends HBox {
 			try {
 				final Field displayedField = this.displayed.getField();
 
-				final Craftable craftable = displayedField
-						.getAnnotation(Craftable.class);
+				final Craftable craftable = displayedField.getAnnotation(Craftable.class);
 				final RemotePack[] annotationValue = craftable.recipe();
 
-				for (final Pack pack : ResourceManager
-						.toPack(annotationValue)) {
+				for (final Pack pack : ResourceManager.toPack(annotationValue)) {
 					final PackView view = new PackView(pack);
 					RecipeView.setMargin(view, new Insets(0, 10, 0, 10));
 					this.getChildren().add(view);

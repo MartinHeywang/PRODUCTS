@@ -13,6 +13,20 @@ import io.github.martinheywang.products.api.model.resource.Craftable.RemotePack;
 import io.github.martinheywang.products.model.device.Buyer;
 import io.github.martinheywang.products.model.device.Constructor;
 
+/**
+ * <p>
+ * This class manages the resources in the game, loads the resources when
+ * launching the game.
+ * </p>
+ * <p>
+ * It also has a lot of utility methods about resources and packs, such as
+ * {@link #toPack(RemotePack)}.
+ * </p>
+ * <p>
+ * You can easily load a resource enum by calling {@link #register(Class)}, and
+ * manages references individually using {@link #addReferences(Resource...)} and
+ * {@link #removeReferences(Resource...)}.
+ */
 public final class ResourceManager {
 
     /**
@@ -20,54 +34,70 @@ public final class ResourceManager {
      */
     private static final List<Resource> references = new ArrayList<>();
 
+    /**
+     * Can't create a ResourceManager.
+     */
     private ResourceManager() {
     }
 
+    /**
+     * Registers an enum type, extending
+     * {@link io.github.martinheywang.products.api.model.resource.Resource}.
+     * 
+     * @param clazz an enum type implementing
+     *              {@link io.github.martinheywang.products.api.model.resource.Resource}.
+     */
     public static void register(Class<? extends Resource> clazz) {
-	if (!clazz.isEnum()) {
-	    System.out.println("WARNING: Implementations of Resource must be an enum. Skipping.");
-	    return;
-	}
+        if (!clazz.isEnum()) {
+            System.out.println("[WARNING] Class + " + clazz.getCanonicalName() + "isn't an enum.");
+            System.out.println("[WARNING] To register a resource type in the references, those must be an enum.");
+            System.out.println("-------------------------------------------------");
+            return;
+        }
 
-	for (final Field field : clazz.getFields())
-	    try {
-		if (Resource.class.isAssignableFrom(field.getType())) {
-		    addReferences((Resource) field.get(null));
+        for (final Field field : clazz.getFields())
+            try {
+                if (Resource.class.isAssignableFrom(field.getType())) {
+                    addReferences((Resource) field.get(null));
 
-		    if (field.isAnnotationPresent(Buyable.class))
-			Buyer.addAcceptedResource((Resource) field.get(null));
-		    if (field.isAnnotationPresent(Craftable.class))
-			Constructor.addAcceptedResource((Resource) field.get(null));
-		}
-	    } catch (IllegalArgumentException | IllegalAccessException e) {
-		e.printStackTrace();
-	    }
+                    if (field.isAnnotationPresent(Buyable.class))
+                        Buyer.addAcceptedResource((Resource) field.get(null));
+                    if (field.isAnnotationPresent(Craftable.class))
+                        Constructor.addAcceptedResource((Resource) field.get(null));
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
 
     }
 
     /**
-     * Returns the value of the
+     * Performs a 'valueOf()' on the given class using the given field name.
      * 
-     * @param clazz
-     * @param field
-     * @return
+     * @param clazz the class where to search.
+     * @param field the name of the requested field.
+     * @return the founded resource, if one was found.
      */
     public static Resource valueOf(Class<? extends Resource> clazz, String field) {
-	try {
-	    final Resource res = (Resource) clazz.getField(field).get(null);
-	    return res;
-	} catch (final IllegalArgumentException e) {
-	    e.printStackTrace();
-	} catch (final IllegalAccessException e) {
-	    e.printStackTrace();
-	} catch (final NoSuchFieldException e) {
-	    System.err.println("The requested field has not been found (requested: " + field + " in "
-		    + clazz.getCanonicalName() + ")");
-	    e.printStackTrace();
-	} catch (final SecurityException e) {
-	    e.printStackTrace();
-	}
-	return null;
+        try {
+            final Resource res = (Resource) clazz.getField(field).get(null);
+            return res;
+        } catch (final IllegalArgumentException e) {
+            System.out.println("[WARNING] The requested field couldn't not be reached. (name: '" + field + "')");
+            e.printStackTrace();
+        } catch (final IllegalAccessException e) {
+            System.out.println("[WARNING] The requested field couldn't not be reached. (name: '" + field
+                    + "'). It may be private or protected.");
+            e.printStackTrace();
+        } catch (final NoSuchFieldException e) {
+            System.out.println("[WARNING] Field " + field + " in the existing class " + clazz.getCanonicalName()
+                    + " has not been found.");
+            e.printStackTrace();
+        } catch (final Exception e) {
+            System.out.println("[WARNING] The requested field threw :");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -84,23 +114,26 @@ public final class ResourceManager {
      * </p>
      * 
      * @param str a parsable string, containing only the name of the resource.
+     * @return the resource from the parsed string.
      */
     public static Resource valueOf(String str) {
-	for (final Resource resource : references)
-	    if (resource.toString().equals(str))
-		return resource;
-	System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
-	return null;
+        for (final Resource resource : references)
+            if (resource.toString().equals(str))
+                return resource;
+        System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
+        return null;
     }
 
     /**
-     * Transform a RemotePack in a regular pack.
+     * Transform a
+     * {@link io.github.martinheywang.products.api.model.resource.Craftable.RemotePack}
+     * in a regular pack.
      * 
-     * @param pack
-     * @return
+     * @param pack the remote pack to transform.
+     * @return the pack from the remote
      */
     public static Pack toPack(RemotePack pack) {
-	return new Pack(valueOf(pack.clazz(), pack.field()), new BigInteger(pack.quantity()));
+        return new Pack(valueOf(pack.clazz(), pack.field()), new BigInteger(pack.quantity()));
     }
 
     /**
@@ -110,12 +143,12 @@ public final class ResourceManager {
      * @return the regular packs
      */
     public static Pack[] toPack(RemotePack... packs) {
-	final Pack[] realPacks = new Pack[packs.length];
+        final Pack[] realPacks = new Pack[packs.length];
 
-	for (int i = 0; i < packs.length; i++)
-	    realPacks[i] = toPack(packs[i]);
+        for (int i = 0; i < packs.length; i++)
+            realPacks[i] = toPack(packs[i]);
 
-	return realPacks;
+        return realPacks;
     }
 
     /**
@@ -124,7 +157,7 @@ public final class ResourceManager {
      * @return a list of resources
      */
     public static List<Resource> getReferences() {
-	return references;
+        return references;
     }
 
     /**
@@ -134,8 +167,8 @@ public final class ResourceManager {
      * @param resource the resource to add
      */
     public static void addReferences(Resource... resource) {
-	for (final Resource res : resource)
-	    references.add(res);
+        for (final Resource res : resource)
+            references.add(res);
     }
 
     /**
@@ -144,8 +177,8 @@ public final class ResourceManager {
      * @param resource the resource to remove
      */
     public static void removeReferences(Resource... resource) {
-	for (final Resource res : resource)
-	    references.remove(res);
+        for (final Resource res : resource)
+            references.remove(res);
     }
 
 }
