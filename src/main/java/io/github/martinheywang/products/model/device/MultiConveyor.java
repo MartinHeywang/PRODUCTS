@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
@@ -36,7 +36,7 @@ import javafx.scene.Node;
  * 
  * @see io.github.martinheywang.products.api.model.device.Device
  */
-@Extension(ordinal = 5)
+ 
 @AccessibleName("Multi-Convoyeur")
 @Description("Rassemble les ressources de plusieurs entrées en une sortie")
 @Prices(build = "300", upgradeTo2 = "7000", upgradeTo3 = "150000", destroyAt1 = "300", destroyAt2 = "7000", destroyAt3 = "150000")

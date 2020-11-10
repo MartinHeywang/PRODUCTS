@@ -25,10 +25,28 @@ import org.pf4j.PluginManager;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.resource.Resource;
+import io.github.martinheywang.products.api.toolbox.ArrayList2D;
 import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.controller.ResourceManager;
 import io.github.martinheywang.products.model.database.Database;
+import io.github.martinheywang.products.model.device.Buyer;
+import io.github.martinheywang.products.model.device.Constructor;
+import io.github.martinheywang.products.model.device.Conveyor;
+import io.github.martinheywang.products.model.device.Floor;
+import io.github.martinheywang.products.model.device.Furnace;
+import io.github.martinheywang.products.model.device.LeftConveyor;
+import io.github.martinheywang.products.model.device.MultiConveyor;
+import io.github.martinheywang.products.model.device.Press;
+import io.github.martinheywang.products.model.device.RightConveyor;
+import io.github.martinheywang.products.model.device.Seller;
+import io.github.martinheywang.products.model.device.WireDrawer;
+import io.github.martinheywang.products.model.resource.DefaultResource;
+import io.github.martinheywang.products.model.resource.Ingot;
+import io.github.martinheywang.products.model.resource.Ore;
+import io.github.martinheywang.products.model.resource.Plate;
+import io.github.martinheywang.products.model.resource.Product;
+import io.github.martinheywang.products.model.resource.Wire;
 import io.github.martinheywang.products.view.GameMenuView;
 import io.github.martinheywang.products.view.HomeView;
 import io.github.martinheywang.products.view.HomeView2;
@@ -55,25 +73,6 @@ public final class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		// PLUGINS STUFF
-		final PluginManager pluginManager = new JarPluginManager();
-
-		System.out.println("Registering resource enumeration:");
-		final List<Class<? extends Resource>> resourceEnums = pluginManager.getExtensionClasses(Resource.class);
-		for (final Class<? extends Resource> resourceEnum : resourceEnums) {
-			ResourceManager.register(resourceEnum);
-			System.out.println("| - - - " + resourceEnum);
-		}
-
-		System.out.println("Registering device type:");
-		final List<Class<? extends Device>> devicesClasses = pluginManager.getExtensionClasses(Device.class);
-		for (final Class<? extends Device> deviceClass : devicesClasses) {
-			DeviceController.registerType(deviceClass);
-			System.out.println("| - - - " + deviceClass);
-		}
-
-		System.out.println("____________________________________________________________________________");
-
 		stage = primaryStage;
 		stage.setTitle("PRODUCTS.");
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icon.png")));
@@ -224,6 +223,44 @@ public final class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		System.setProperty("com.j256.ormlite.logger.level", "ERROR");
+
+		// Registering resources classes and devices classes
+		// @Extension did not work sometimes
+		final PluginManager pluginManager = new JarPluginManager();
+
+		System.out.println("Registering resource enumeration:");
+		ResourceManager.register(DefaultResource.class);
+		ResourceManager.register(Ore.class);
+		ResourceManager.register(Ingot.class);
+		ResourceManager.register(Plate.class);
+		ResourceManager.register(Wire.class);
+		ResourceManager.register(Product.class);
+
+		final List<Class<? extends Resource>> resourceEnums = pluginManager.getExtensionClasses(Resource.class);
+		for (final Class<? extends Resource> resourceEnum : resourceEnums) {
+			ResourceManager.register(resourceEnum);
+			
+		}
+		
+		System.out.println("Registering device type:");
+		DeviceController.registerType(Floor.class);
+		DeviceController.registerType(Buyer.class);
+		DeviceController.registerType(Seller.class);
+		DeviceController.registerType(Conveyor.class);
+		DeviceController.registerType(LeftConveyor.class);
+		DeviceController.registerType(RightConveyor.class);
+		DeviceController.registerType(MultiConveyor.class);
+		DeviceController.registerType(Furnace.class);
+		DeviceController.registerType(Press.class);
+		DeviceController.registerType(WireDrawer.class);
+		DeviceController.registerType(Constructor.class);
+
+		final List<Class<? extends Device>> devicesClasses = pluginManager.getExtensionClasses(Device.class);
+		for (final Class<? extends Device> deviceClass : devicesClasses) {
+			DeviceController.registerType(deviceClass);
+		}
+
+		System.out.println("____________________________________________________________________________");
 
 		launch(args);
 	}

@@ -17,7 +17,7 @@ package io.github.martinheywang.products.model.resource;
 
 import java.math.BigInteger;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.resource.Buyable;
 import io.github.martinheywang.products.api.model.resource.Resource;
@@ -33,7 +33,7 @@ import io.github.martinheywang.products.api.model.resource.info.Prices;
  * 
  * @author Martin Heywang
  */
-@Extension(ordinal = 1)
+ 
 public enum Ore implements Resource {
 
 	/**

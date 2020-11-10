@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import com.j256.ormlite.dao.Dao;
 
@@ -56,7 +56,7 @@ import javafx.scene.text.Font;
  * 
  * @author Martin Heywang
  */
-@Extension(ordinal = 1)
+ 
 @Buildable
 @Independent
 @ActionCost("10")

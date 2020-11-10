@@ -83,7 +83,7 @@ public final class ResourceManager {
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-
+        System.out.println("| - - - " + clazz.getCanonicalName());
     }
 
     /**

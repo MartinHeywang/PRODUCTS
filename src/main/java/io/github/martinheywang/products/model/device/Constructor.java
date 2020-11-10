@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import com.j256.ormlite.dao.Dao;
 
@@ -57,7 +57,7 @@ import javafx.scene.text.Font;
  * multiple entries but one exit, and create valuable products based on
  * different resources.
  */
-@Extension(ordinal = 7)
+ 
 @Buildable
 @ActionCost("50")
 @AccessibleName("Constructeur")

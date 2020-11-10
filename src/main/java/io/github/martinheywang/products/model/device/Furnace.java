@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
@@ -43,7 +43,7 @@ import javafx.scene.Node;
  * not, the action won't be successful and the assembly line won't continue its
  * route.
  */
-@Extension(ordinal = 6)
+ 
 @AccessibleName("Four")
 @Description("Le four fond les resources qui lui parviennent en lingots")
 @Prices(build = "2000", upgradeTo2 = "15000", upgradeTo3 = "500000", destroyAt1 = "1800", destroyAt2 = "13000", destroyAt3 = "450000")

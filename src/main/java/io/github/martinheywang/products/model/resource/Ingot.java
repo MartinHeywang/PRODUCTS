@@ -17,7 +17,7 @@ package io.github.martinheywang.products.model.resource;
 
 import java.math.BigInteger;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.info.Prices;
@@ -27,7 +27,7 @@ import io.github.martinheywang.products.api.model.resource.info.Prices;
  * 
  * @author Martin Heywang
  */
-@Extension(ordinal = 2)
+ 
 public enum Ingot implements Resource {
 
     /**

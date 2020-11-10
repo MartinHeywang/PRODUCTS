@@ -17,7 +17,7 @@ package io.github.martinheywang.products.model.resource;
 
 import java.math.BigInteger;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.resource.Craftable;
 import io.github.martinheywang.products.api.model.resource.Craftable.RemotePack;
@@ -28,7 +28,7 @@ import io.github.martinheywang.products.api.model.resource.Resource;
  * 
  * @author Martin Heywang
  */
-@Extension(ordinal = 3)
+ 
 public enum Product implements Resource {
 
 	/**

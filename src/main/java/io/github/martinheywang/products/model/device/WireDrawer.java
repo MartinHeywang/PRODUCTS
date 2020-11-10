@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
@@ -43,7 +43,7 @@ import javafx.scene.Node;
  * possible -. If not, the action won't be successful, the assembly line won't
  * give suite.
  */
-@Extension(ordinal = 6)
+ 
 @AccessibleName("Presse à fil")
 @Description("Le presse à fil fond les resources qui lui parviennent en fils")
 @Prices(build = "2000", upgradeTo2 = "15000", upgradeTo3 = "500000", destroyAt1 = "1800", destroyAt2 = "13000", destroyAt3 = "450000")

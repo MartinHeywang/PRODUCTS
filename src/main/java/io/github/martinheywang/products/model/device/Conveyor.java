@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
@@ -41,7 +41,7 @@ import javafx.scene.Node;
  * the resource and give it simply to the next device without changing it in any
  * form.
  */
-@Extension(ordinal = 3)
+ 
 @AccessibleName("Convoyeur")
 @Description("Le convoyeur transporte les ressources d'u point A à un point B")
 @Prices(build = "100", upgradeTo2 = "5000", upgradeTo3 = "100000", destroyAt1 = "100", destroyAt2 = "5000", destroyAt3 = "100000")

@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
@@ -37,7 +37,7 @@ import javafx.scene.Node;
 /**
  * The seller is a {@link io.github.martinheywang.products.api.model.device.Device} that sells all the resource that he received.
  */
-@Extension(ordinal = 2)
+ 
 @AccessibleName("Vendeur")
 @Description("Le vendeur vend toutes les ressources qui lui parvient.")
 @Buildable

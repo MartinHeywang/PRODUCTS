@@ -351,6 +351,7 @@ public final class DeviceController {
 	 */
 	public static void registerType(Class<? extends Device> type) {
 		knownTypes.add(type);
+		System.out.println("| - - - " + type.getCanonicalName());
 	}
 
 	/**

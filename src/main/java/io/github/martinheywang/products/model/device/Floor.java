@@ -18,7 +18,7 @@ package io.github.martinheywang.products.model.device;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pf4j.Extension;
+ 
 
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
@@ -34,7 +34,6 @@ import javafx.scene.Node;
  * that isn't buildable, can't receive resource in any form and won't perform
  * any action.
  */
-@Extension
 @AccessibleName("Sol")
 @ActionCost("0")
 public final class Floor extends Device {
