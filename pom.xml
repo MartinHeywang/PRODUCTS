@@ -94,13 +94,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-controls</artifactId>
-			<version>16-ea+2</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>com.j256.ormlite</groupId>
 			<artifactId>ormlite-jdbc</artifactId>
 			<version>5.1</version>
@@ -126,7 +119,6 @@
 			<groupId>org.pf4j</groupId>
 			<artifactId>pf4j</artifactId>
 			<version>3.4.1</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
