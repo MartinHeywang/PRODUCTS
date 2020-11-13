@@ -1,16 +1,14 @@
-# Heavy folders
-target/
+# Java (Auto-Generated files)
+.classpath
+.factorypath
+.project
 
-# Settings
+# IDE Settings
 .settings/
 .vscode/
 
-# The database that changes constantly
-Products.db
+# Build directory
+target/
 
-Launch fat-jar.bat
-
-.classpath
-.project
-
-pixils/
+# Other
+pixils #(pixilart.com)
