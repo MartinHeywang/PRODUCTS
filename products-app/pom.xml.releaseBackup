@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.martinheywang</groupId>
+        <artifactId>products</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>io.github.martinheywang</groupId>
+    <artifactId>products-app</artifactId>
+    <version>1.1-SNAPSHOT</version>
+
+    <name>PRODUCTS. - APP</name>
+    <description>The actual application.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.martinheywang</groupId>
+            <artifactId>products-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.martinheywang</groupId>
+            <artifactId>products-resource-kit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.martinheywang</groupId>
+            <artifactId>products-device-kit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.martinheywang</groupId>
+            <artifactId>products-view-kit</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- The assembly plugin allows to create fat-jar (containing all dependencies, resources...)-->
+        <plugins>
+            <plugin>
+                <!-- Docs : https://maven.apache.org/plugins/maven-assembly-plugin -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>${mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <!-- Disable resource filtering -->
+        <resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+    </build>
+</project>

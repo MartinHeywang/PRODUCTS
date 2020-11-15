@@ -1,38 +1,32 @@
-# Enrichissez-vous dans PRODUCTS. !
+<p align="center">
+  <a href="https://martinheywang.github.io/PRODUCTS">
+    <img src="https://martinheywang.github.io/PRODUCTS/images/Icon.svg" alt="PRODUCTS. logo" width="150">
+  </a>
+</p>
+<h3 align="center">Enrichissez-vous dans PRODUCTS. !</h3>
 
-This README is in French, because the game itself isn't translated yet. But as soon as the product will be available in other languages, this file will be translated too.
+<p align="center">
+    Prenez le contrôle d'une usine et enrichissez-vous dans ce nouveau de gestion indie !
+  <br>
+  <a href="https://martinheywang.github.io/PRODUCTS"><strong>Site officiel »</strong></a>
+  <br>
+  <br>
+  <a href="https://github.com/MartinHeywang/PRODUCTS/issues/new">Bug ?</a>
+  ·
+    <a href="https://github.com/MartinHeywang/PRODUCTS/issues/new">Idée ?</a>
+  ·
+  <a href="https://discord.gg/dTE3GATey3">Discord »</a>
+</p>
 
-![Logo du jeu](./src/main/resources/images/Icon.png)
 
-## Qu'est-ce que PRODUCTS. ?
+>  Vous êtes sur GitHub, une plateforme utilisée en développement. Si vous cherchez des informations relatives au jeu, et non au code, aux plugins, il est conseillé d'aller sur le [site officiel](https://martinheywang.github.io/PRODUCTS).
 
-PRODUCTS. est le nouveau jeu de gestion ! Gère ta propre usine, fabrique tes produits, construit des lignes d'assemblages, et bien plus encore ... !
+## Table des matières
 
-Plus d'informations sur le [site internet](martinheywang.github.io/PRODUCTS).
+Ce *repository* est formé de plusieurs sous-projets. Vous trouverez ci-dessous les informations générales sur chacun des modules, mais si vous voulez des informatiosn détaillés et précises sur un module en particulier, un *README.md* se trouve à la racine de chacun de ces modules.
 
-## Vous avez dit "Télécharger" ?
-
-Vous pouvez télécharger ce jeu en version bêta actuellement soit sur le site internet, soit dans la partie 'releases' de ce dépôt.
-
-- [Site internet](martinheywang.github.io/PRODUCTS)
-- [Releases](https://github.com/MartinHeywang/PRODUCTS/releases)
-
-## Qui-suis-je ?
-
-Le mystérieux créateur de ce jeu devrait se présenter, quand même. C'est ce que je vais faire dans cette partie.
-
-Je m'appelle Martin HEYWANG, je suis encore dans un lycée en France. J'apprends la programmation tout seul depuis 2 ans, j'ai développé des compétences principalement en Java, mais j'ai essayé le trio HTML/CSS/JS, pratiqué une sorte de C++ sur des cartes Arduino, testé React sur des sites internet.
-
-### Ne partez pas comme ça !
-Laisser une étoile (un like) et regardez ce projet évoluer en cliquant sur le bouton en haut à droite ! Cela m'aide beacoup à me motiver et à continuer. Cela est essentiel pour la survie de ce projet.
-
-### Références
-
-Ceci sont des libraires que j'ai utilisé pour créer le jeu. Il n'y a aucune obligation de citer, mais je préfère en parler tout de même.
-
-- ORMLite : pour la base de donnée [(ormlite-core)](https://github.com/j256/ormlite-jdbc)
-- Pixilart : pour les images [(Pixilart)](https://pixilart.com/draw)
-- Figma : pour d'autres images et icônes [(figma)](https://figma.com)
-
-- Maven : pour les *builds*
-- Git : évidemment (*source version control*)
+-  [products-app](https://github.com/MartinHeywang/PRODUCTS/blob/master/products-app/README.md)
+-  [products-api](https://github.com/MartinHeywang/PRODUCTS/blob/master/products-api/README.md)
+-  [products-resource-kit](https://github.com/MartinHeywang/PRODUCTS/blob/master/products-resource-kit/README.md)
+-  [products-device-kit](https://github.com/MartinHeywang/PRODUCTS/blob/master/products-device-kit/README.md)
+-  [products-view-kit](https://github.com/MartinHeywang/PRODUCTS/blob/master/products-view-kit/README.md)
