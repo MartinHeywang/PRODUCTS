@@ -31,7 +31,7 @@ import javafx.scene.Node;
 
 /**
  * The multi-conveyor is a particular
- * {@link io.github.martinheywang.products.model.device.Conveyor}. It takes
+ * {@link io.github.martinheywang.products.kit.device.Conveyor}. It takes
  * multiple entries, and distribute the received resource to the only one exit.
  * 
  * @see io.github.martinheywang.products.api.model.device.Device

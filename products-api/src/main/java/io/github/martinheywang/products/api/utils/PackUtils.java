@@ -20,7 +20,7 @@ public final class PackUtils {
 
     /**
      * Transform a
-     * {@link io.github.martinheywang.products.api.model.resource.Craftable.AnnotationPack}
+     * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack}
      * in a regular pack.
      * 
      * @param pack the remote pack to transform.
@@ -50,7 +50,7 @@ public final class PackUtils {
      * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack}
      * array to a recipe.
      * 
-     * @param the group of annotation packs
+     * @param group the group of annotation packs
      * @return a new recipe.
      */
     public static Recipe toRecipe(AnnotationPackGroup group) {

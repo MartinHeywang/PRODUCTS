@@ -22,11 +22,10 @@ import java.util.List;
 import io.github.martinheywang.products.api.model.resource.Resource;
 
 /**
- * A recipe is a list of {@link io.github.martinheywang.products.api.model.Pack
- * packs}. It represents the resources needed to create a specific Resource.
- * This object is created when you put the
- * {@link io.github.martinheywang.products.api.model.resource.Craftable}
- * annotation to a Resource field.
+ * A recipe is a list of packs. To define a recipe for a resource, and so make
+ * it craftable, you must put the
+ * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup}
+ * targeting "recipe". The value of the annotation will be used as the recipe.
  */
 public class Recipe {
 
@@ -68,9 +67,13 @@ public class Recipe {
 	}
 
 	/**
-	 * Extract this recipe into a list of {@link io.github.martinheywang.products.api.model.resource.Resource}.
+	 * Extract this recipe into a list of
+	 * {@link io.github.martinheywang.products.api.model.resource.Resource}.
+	 * Extracting the recipe means creating a list of resources (not of packs),
+	 * getting rid of the quantity. For example, the extracted value for a recipe 2
+	 * iron, 1 gold is [iron, iron, gold].
 	 * 
-	 * @return
+	 * @return the extracted recipe
 	 */
 	public List<Resource> extract() {
 		final ArrayList<Resource> list = new ArrayList<>();

@@ -44,7 +44,7 @@ public @interface Tag {
     /**
      * The value
      * 
-     * @return
+     * @return the value of the {@link #property()}
      */
     String value();
 }

@@ -1,17 +1,27 @@
 # Java (Auto-Generated files)
-.classpath
-.factorypath
-.project
+*.classpath
+*.factorypath
+*.project
 
 # IDE Settings
 .settings/
 .vscode/
 
-# Build directory
+# Build directories
 target/
+products-api/target/
+prodicts-app/target/
+products-resource-kit/target/
+products-device-kit/target/
+products-view-kit/target/
+
+# Releases stuff
+*.releaseBackup
+*.versionsBackup
+release.properties
 
 # Database
-Products.db
+*.db
 
 # Other
-pixils #(pixilart.com)
+.pixil

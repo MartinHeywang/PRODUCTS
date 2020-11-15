@@ -43,8 +43,9 @@ public final class ResourceUtils {
     /**
      * Returns the declaring {@link java.lang.reflect.Field} of this resource.
      * Shortcut to <code>resource.getClass().getField(resource.toString())</code>.
-     * May return null if an error occurs during the process.
+     * May return null if an error (e.g. {@link java.lang.SecurityException}) occurs during the process.
      * 
+     * @param resource the resource
      * @return the declaring field of the resource.
      */
     public static Field getField(Resource resource) {

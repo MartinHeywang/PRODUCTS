@@ -20,26 +20,41 @@ import java.math.BigInteger;
 import org.pf4j.ExtensionPoint;
 
 /**
- * 
  * <p>
- * This interface represents a <em>Resource</em> that can be used by all the
- * devices. A Resource is anything that can be used by devices, tranformed into
- * other or used to build others. <strong> Only enums should implement this
- * interface.</strong>
+ * The Resource interface represents a resource in the game. You may call it
+ * material or element.
  * </p>
  * <p>
- * Using the annotations, such as :
+ * The way resources are defined in the game is only in Java enumeration. Those
+ * implements this interface and must give the a non-null value to all 3 of the
+ * fields.
+ * </p>
+ * <p>
+ * Those fields are :
  * </p>
  * <ul>
- * <li>{@link Buyable}</li>
- * <li>{@link ToWire}</li>
- * <li>{@link ToPlate}</li>
- * <li>{@link ToIngot}</li>
- * <li>{@link Craftable}</li>
+ * <li>The name : the name of the resource in the UI. Avoid names longer that 16
+ * characters for display purpose.</li>
+ * <li>The price : the value of this resource when it is selled</li>
+ * <li>The url : the absolute path as a String to the image</li>
  * </ul>
  * <p>
- * You can add additionnal informations about a particular resource. In the
- * GitHub repo you will find a lot of example defining resources.
+ * Those informations are mandatory. But some others aren't : they are gave as
+ * annotations. Two types of resources annotation exists : the tags and the pack
+ * groups.
+ * </p>
+ * <p>
+ * {@link io.github.martinheywang.products.api.model.resource.annotation.Tag}
+ * defines a property and a value, and may also give a target class. Some
+ * devices may be searching for particular property to get a value. The device
+ * provider should say it explicitly if the device has a property, and the
+ * expected value(s).
+ * </p>
+ * <p>
+ * Then comes the pack groups. Those got two fields : the target, also and id
+ * that a device will search, and the actual value : a list of
+ * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack}.
+ * Again, some device may search for a specific id to get the value.
  * </p>
  * 
  * @author Martin Heywang
