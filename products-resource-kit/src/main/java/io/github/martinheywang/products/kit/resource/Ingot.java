@@ -34,8 +34,6 @@ public enum Ingot implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     IRON_INGOT("Lingot de fer", "130", "Iron-Ingot.png"),
 
@@ -46,8 +44,6 @@ public enum Ingot implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     GOLD_INGOT("Lingot d'or", "130", "Gold-Ingot.png"),
 
@@ -58,8 +54,6 @@ public enum Ingot implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     COPPER_INGOT("Lingot de cuivre","130", "Copper-Ingot.png"),
 
@@ -70,8 +64,6 @@ public enum Ingot implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     SILVER_INGOT("Lingot d'argent", "130", "Silver-Ingot.png"),
 
@@ -82,8 +74,6 @@ public enum Ingot implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     ALUMINIUM_INGOT("Lingot d'aluminium", "130", "Aluminium-Ingot.png");
 

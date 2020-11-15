@@ -33,8 +33,6 @@ public enum Wire implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     IRON_WIRE("Fil de fer", "150", "Iron-Wire.png"),
 
@@ -45,8 +43,6 @@ public enum Wire implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     GOLD_WIRE("Fil d'or", "150", "Gold-Wire.png"),
 
@@ -57,8 +53,6 @@ public enum Wire implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     COPPER_WIRE("Fil de cuivre", "150", "Copper-Wire.png"),
 
@@ -69,8 +63,6 @@ public enum Wire implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     SILVER_WIRE("Fil d'argent", "150", "Silver-Wire.png"),
 
@@ -81,8 +73,6 @@ public enum Wire implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
     ALUMINIUM_WIRE("Fil d'aluminium", "150", "Aluminium-Wire.png");
 
