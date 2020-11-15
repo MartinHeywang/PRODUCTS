@@ -15,13 +15,11 @@
 */
 package io.github.martinheywang.products.kit.view.component;
 
-import java.lang.reflect.Field;
-
 import io.github.martinheywang.products.api.model.Pack;
-import io.github.martinheywang.products.api.model.resource.Craftable;
-import io.github.martinheywang.products.api.model.resource.Craftable.RemotePack;
 import io.github.martinheywang.products.api.model.resource.Resource;
+import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup;
 import io.github.martinheywang.products.api.utils.PackUtils;
+import io.github.martinheywang.products.api.utils.ResourceUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -60,20 +58,12 @@ public class RecipeView extends HBox {
 		this.displayed = res;
 
 		this.getChildren().clear();
-		if (this.displayed.getField().isAnnotationPresent(Craftable.class))
-			try {
-				final Field displayedField = this.displayed.getField();
-
-				final Craftable craftable = displayedField.getAnnotation(Craftable.class);
-				final RemotePack[] annotationValue = craftable.recipe();
-
-				for (final Pack pack : PackUtils.toPack(annotationValue)) {
-					final PackView view = new PackView(pack);
-					RecipeView.setMargin(view, new Insets(0, 10, 0, 10));
-					this.getChildren().add(view);
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
+		final AnnotationPackGroup group = ResourceUtils.getGroup(res, "recipe");
+		if (group != null)
+			for (final Pack pack : PackUtils.toPack(group.value())) {
+				final PackView view = new PackView(pack);
+				RecipeView.setMargin(view, new Insets(0, 10, 0, 10));
+				this.getChildren().add(view);
 			}
 		else {
 			final Label unavailable = new Label("Aucun aperçu disponible.");

@@ -20,7 +20,6 @@ import java.math.BigInteger;
  
 
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.model.resource.info.Prices;
 
 /**
  * This enum defines all the Plate available by default in the game.
@@ -37,10 +36,8 @@ public enum Plate implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    IRON_PLATE("Plaque de fer", Prices.transformedPrice(), "Iron-Plate.png"),
+    IRON_PLATE("Plaque de fer", "150", "Iron-Plate.png"),
 
     /**
      * <p>
@@ -49,10 +46,8 @@ public enum Plate implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    GOLD_PLATE("Plaque d'or", Prices.transformedPrice(), "Gold-Plate.png"),
+    GOLD_PLATE("Plaque d'or", "150", "Gold-Plate.png"),
 
     /**
      * <p>
@@ -61,10 +56,8 @@ public enum Plate implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    COPPER_PLATE("Plaque de cuivre", Prices.transformedPrice(), "Copper-Plate.png"),
+    COPPER_PLATE("Plaque de cuivre", "150", "Copper-Plate.png"),
 
     /**
      * <p>
@@ -73,10 +66,8 @@ public enum Plate implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    SILVER_PLATE("Plaque d'argent", Prices.transformedPrice(), "Silver-Plate.png"),
+    SILVER_PLATE("Plaque d'argent", "150", "Silver-Plate.png"),
     
     /**
      * <p>
@@ -85,19 +76,17 @@ public enum Plate implements Resource {
      * <p>
      * Price : default price for transformed resources.
      * </p>
-     * 
-     * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    ALUMINIUM_PLATE("Plaque d'aluminium", Prices.transformedPrice(), "Aluminium-Plate.png");
+    ALUMINIUM_PLATE("Plaque d'aluminium", "150", "Aluminium-Plate.png");
 
     private String name;
     private BigInteger price;
     private String url;
 
-    Plate(String name, BigInteger price, String url) {
+    Plate(String name, String price, String file) {
         this.name = name;
-        this.price = price;
-        this.url = Plate.class.getResource("/images/resources/Plate/").toExternalForm();
+        this.price = new BigInteger(price);
+        this.url = Plate.class.getResource("/images/resources/Plate/"+file).toExternalForm();
     }
 
     @Override

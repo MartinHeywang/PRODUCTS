@@ -16,7 +16,7 @@ public class ViewUtils {
     /**
      * Prepares and returns an {@link javafx.fxml.FXMLLoader} from the given file.
      * 
-     * @param the url to the .fxml file that this FXMLLoader will be able to load.
+     * @param url the url to the .fxml file that this FXMLLoader will be able to load.
      * @return a functionnal FXMLoader
      */
     public static FXMLLoader prepareFXMLLoader(URL url){

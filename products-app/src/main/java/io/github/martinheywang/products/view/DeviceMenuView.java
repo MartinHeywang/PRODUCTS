@@ -89,9 +89,6 @@ public final class DeviceMenuView implements Initializable {
 		this.device = data;
 		this.gameManager = gameManager;
 
-		System.out.println(data.getURL());
-		System.out.println(data.getUpgradedURL());
-
 		this.view.setImage(new Image(data.getModel().getType().getResourceAsStream(data.getURL())));
 
 		this.coordinate.setText(data.getPosition().toString());
@@ -152,7 +149,6 @@ public final class DeviceMenuView implements Initializable {
 			this.destroyPrice.setText("+ " + formatter.format(this.device.getDeletePrice()));
 			this.upgradePrice.setText("- " + formatter.format(this.device.getUpgradePrice()));
 
-			System.out.println(this.device.getModel().getType());
 			this.view.setImage(new Image(this.device.getModel().getType().getResourceAsStream(this.device.getURL())));
 			this.upgradedView.setImage(
 					new Image(this.device.getModel().getType().getResourceAsStream(this.device.getUpgradedURL())));

@@ -53,7 +53,6 @@ public enum DefaultResource implements Resource {
 
     @Override
     public String getURL() {
-        System.out.println(url);
         return this.url;
     }
 }
