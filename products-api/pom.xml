@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>io.github.martinheywang</groupId>
 		<artifactId>products</artifactId>
-		<version>1.1-SNAPSHOT</version>
+		<version>1.1</version>
 	</parent>
 
 	<groupId>io.github.martinheywang</groupId>
 	<artifactId>products-api</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<name>PRODUCTS. - API</name>
 	<description>The API of PRODUCTS.</description>
