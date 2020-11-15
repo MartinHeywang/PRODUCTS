@@ -18,7 +18,6 @@ package io.github.martinheywang.products.kit.resource;
 import java.math.BigInteger;
 
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.model.resource.info.Prices;
 
 /**
  * This enum defines all the wire that are available by default in the game.
@@ -37,7 +36,7 @@ public enum Wire implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    IRON_WIRE("Fil de fer", Prices.transformedPrice(), "Iron-Wire.png"),
+    IRON_WIRE("Fil de fer", "150", "Iron-Wire.png"),
 
     /**
      * <p>
@@ -49,7 +48,7 @@ public enum Wire implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    GOLD_WIRE("Fil d'or", Prices.transformedPrice(), "Gold-Wire.png"),
+    GOLD_WIRE("Fil d'or", "150", "Gold-Wire.png"),
 
     /**
      * <p>
@@ -61,7 +60,7 @@ public enum Wire implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    COPPER_WIRE("Fil de cuivre", Prices.transformedPrice(), "Copper-Wire.png"),
+    COPPER_WIRE("Fil de cuivre", "150", "Copper-Wire.png"),
 
     /**
      * <p>
@@ -73,7 +72,7 @@ public enum Wire implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    SILVER_WIRE("Fil d'argent", Prices.transformedPrice(), "Silver-Wire.png"),
+    SILVER_WIRE("Fil d'argent", "150", "Silver-Wire.png"),
 
     /**
      * <p>
@@ -85,15 +84,15 @@ public enum Wire implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    ALUMINIUM_WIRE("Fil d'aluminium", Prices.transformedPrice(), "Aluminium-Wire.png");
+    ALUMINIUM_WIRE("Fil d'aluminium", "150", "Aluminium-Wire.png");
 
     private String name;
     private BigInteger price;
     private String url;
 
-    Wire(String name, BigInteger price, String file) {
+    Wire(String name, String price, String file) {
         this.name = name;
-        this.price = price;
+        this.price = new BigInteger(price);
         this.url = Wire.class.getResource("/images/resources/Wire/"+file).toExternalForm();
     }
 

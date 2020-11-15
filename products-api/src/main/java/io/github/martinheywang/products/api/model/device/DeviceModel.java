@@ -209,7 +209,6 @@ public class DeviceModel {
      */
     public String getURL() {
         final String url = "/images" + this.getLevel().getURL() + this.getType().getSimpleName().toUpperCase() + ".png";
-        System.out.println(url);
 	    return url;
     }
 
@@ -221,7 +220,6 @@ public class DeviceModel {
      */
     public String getUpgradedURL() {
         final String url = "/images" + this.getLevel().getNext().getURL() + this.getType().getSimpleName().toUpperCase() + ".png";
-        System.out.println(url);
         return url;
     }
 

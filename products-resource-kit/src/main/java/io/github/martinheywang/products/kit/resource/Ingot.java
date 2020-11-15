@@ -17,10 +17,7 @@ package io.github.martinheywang.products.kit.resource;
 
 import java.math.BigInteger;
 
- 
-
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.model.resource.info.Prices;
 
 /**
  * This enum defines all the ingots available by default in the game.
@@ -40,7 +37,7 @@ public enum Ingot implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    IRON_INGOT("Lingot de fer", Prices.transformedPrice(), "Iron-Ingot.png"),
+    IRON_INGOT("Lingot de fer", "130", "Iron-Ingot.png"),
 
     /**
      * <p>
@@ -52,7 +49,7 @@ public enum Ingot implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    GOLD_INGOT("Lingot d'or", Prices.transformedPrice(), "Gold-Ingot.png"),
+    GOLD_INGOT("Lingot d'or", "130", "Gold-Ingot.png"),
 
     /**
      * <p>
@@ -64,7 +61,7 @@ public enum Ingot implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    COPPER_INGOT("Lingot de cuivre", Prices.transformedPrice(), "Copper-Ingot.png"),
+    COPPER_INGOT("Lingot de cuivre","130", "Copper-Ingot.png"),
 
     /**
      * <p>
@@ -76,7 +73,7 @@ public enum Ingot implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    SILVER_INGOT("Lingot d'argent", Prices.transformedPrice(), "Silver-Ingot.png"),
+    SILVER_INGOT("Lingot d'argent", "130", "Silver-Ingot.png"),
 
     /**
      * <p>
@@ -88,15 +85,15 @@ public enum Ingot implements Resource {
      * 
      * @see io.github.martinheywang.products.api.model.resource.info.Prices
      */
-    ALUMINIUM_INGOT("Lingot d'aluminium", Prices.transformedPrice(), "Aluminium-Ingot.png");
+    ALUMINIUM_INGOT("Lingot d'aluminium", "130", "Aluminium-Ingot.png");
 
     private String name;
     private BigInteger price;
     private String url;
 
-    Ingot(String name, BigInteger price, String file) {
+    Ingot(String name, String price, String file) {
         this.name = name;
-        this.price = price;
+        this.price = new BigInteger(price);
         this.url = Ingot.class.getResource("/images/resources/Ingot/"+file).toExternalForm();
     }
 

@@ -31,8 +31,10 @@ import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.model.resource.ToWire;
+import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack;
+import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.utils.ResourceUtils;
 import io.github.martinheywang.products.kit.resource.DefaultResource;
 import javafx.scene.Node;
 
@@ -41,7 +43,7 @@ import javafx.scene.Node;
  * possible -. If not, the action won't be successful, the assembly line won't
  * give suite.
  */
- 
+
 @AccessibleName("Presse à fil")
 @Description("Le presse à fil fond les resources qui lui parviennent en fils")
 @Prices(build = "2000", upgradeTo2 = "15000", upgradeTo3 = "500000", destroyAt1 = "1800", destroyAt2 = "13000", destroyAt3 = "450000")
@@ -63,24 +65,24 @@ public class WireDrawer extends Device {
 	public final Action act(Pack resources) throws MoneyException {
 		final Action action = new Action(this, resources);
 
-		// The given pack cannot be transformed (error catching)
-		if (!resources.getResource().hasAnnotation(ToWire.class))
-			return action;
+		final Resource resource = resources.getResource();
 
-		final ToWire annotation = resources.getResource().getField().getAnnotation(ToWire.class);
-		Resource transformed;
-		try {
-			transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			transformed = DefaultResource.NONE;
+		if (ResourceUtils.hasGroup(resource, "wire_drawer")) {
+			final AnnotationPackGroup group = ResourceUtils.getGroup(resource, "wire_drawer");
+			final AnnotationPack annotation = group.value()[0];
+			Resource transformed;
+			try {
+				transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
+				final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+				action.setOutput(output);
+				action.setGivenPack(new Pack(transformed, resources.getQuantity()));
+				action.markAsSuccessful();
+				action.addCost(this.getActionCost());
+			} catch (final Exception e) {
+				e.printStackTrace();
+				transformed = DefaultResource.NONE;
+			}
 		}
-		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
-		action.setOutput(output);
-		action.setGivenPack(new Pack(transformed, resources.getQuantity()));
-		action.addCost(this.getActionCost());
-		action.markAsSuccessful();
-
 		return action;
 	}
 

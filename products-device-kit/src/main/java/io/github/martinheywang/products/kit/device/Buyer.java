@@ -37,11 +37,11 @@ import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Independent;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
-import io.github.martinheywang.products.api.model.resource.Buyable;
 import io.github.martinheywang.products.api.model.resource.Resource;
+import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.utils.ResourceUtils;
 import io.github.martinheywang.products.kit.resource.DefaultResource;
-import io.github.martinheywang.products.kit.resource.Ore;
 import io.github.martinheywang.products.kit.view.component.Carousel;
 import io.github.martinheywang.products.kit.view.component.ResourceView;
 import javafx.scene.Node;
@@ -50,12 +50,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
- * The buyer is an independent {@link io.github.martinheywang.products.api.model.device.Device} 
- * that take nothing as entry and buys the resource to distribute it.
+ * <p>
+ * The buyer is an independent
+ * {@link io.github.martinheywang.products.api.model.device.Device} that take
+ * nothing as entry and buys the resource to distribute it.
+ * </p>
+ * <p>
+ * To know whether a resource if buyable or not, it checks fro a tag having the
+ * property "buyable" and the value "true". The cost of it is defined at 10 for
+ * the moment.
+ * </p>
  * 
  * @author Martin Heywang
  */
- 
 @Buildable
 @Independent
 @ActionCost("10")
@@ -75,8 +82,8 @@ public final class Buyer extends Device {
 	 * {@link Buyable}.
 	 * </p>
 	 * <p>
-	 * All the Resource must be marked with the {@link Buyable} annotation, but
-	 * all Resources marked with Buyable <em>might be</em> in it.
+	 * All the Resource must be marked with the {@link Buyable} annotation, but all
+	 * Resources marked with Buyable <em>might be</em> in it.
 	 * </p>
 	 */
 	private static final List<Resource> buyableResources = new ArrayList<>();
@@ -91,21 +98,23 @@ public final class Buyer extends Device {
 	 */
 	public Buyer(DeviceModel model) {
 		super(model);
-		this.loadDistributedResource();
-
-		if(buyableResources.isEmpty()){
-			for(Ore ore : Ore.values()){
-				buyableResources.add(ore);
+		
+		if (buyableResources.isEmpty()) {
+			// Iterating over all the resources
+			for (Resource resource : ResourceManager.getReferences()) {
+				if (ResourceUtils.getPropertyValue(resource, "buyable").equals("true"))
+				buyableResources.add(resource);
 			}
 		}
+		
+		this.loadDistributedResource();
 	}
 
 	/**
 	 * Loads the distributed resource when the device is created
 	 */
 	private void loadDistributedResource() {
-		this.distributedResource = new Pack(DefaultResource.NONE,
-				BigInteger.ONE, this.model);
+		this.distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
 		try {
 			final Dao<Pack, Long> dao = Database.createDao(Pack.class);
 
@@ -114,18 +123,19 @@ public final class Buyer extends Device {
 			// associated pack already
 			if (this.model.getID() == null)
 				/*
-				 * Here this exception is practical because it sets the packs
-				 * without printing out the message
+				 * Here this exception is practical because it sets the packs without printing
+				 * out the message
 				 */
 				throw new IndexOutOfBoundsException();
 
-			final Pack fetched = dao.queryForEq("model", this.model.getID())
-					.get(0);
+			final Pack fetched = dao.queryForEq("model", this.model.getID()).get(0);
 			this.setDistributedResource(fetched.getResource());
 
 		} catch (final SQLException e) {
+			System.err.println("Error fetching pack for buyer at location : "+this.getPosition());
 			e.printStackTrace();
 		} catch (final IndexOutOfBoundsException e) {
+			System.err.println("Buyer at "+this.getPosition()+" couldn't not retrieve any resource with the given filters.");
 		}
 	}
 
@@ -137,12 +147,10 @@ public final class Buyer extends Device {
 			// Return early; the distributed resource isn't a valid one.
 			return action;
 
-		final Coordinate output = this.template.getPointersFor(PointerType.EXIT)
-				.get(0);
+		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
 
 		action.addCost(this.getActionCost().add(this.resourceCost));
-		action.setGivenPack(new Pack(
-				this.distributedResource.getResource(), BigInteger.ONE));
+		action.setGivenPack(new Pack(this.distributedResource.getResource(), BigInteger.ONE));
 		action.setOutput(output);
 		action.markAsSuccessful();
 		return action;
@@ -164,15 +172,13 @@ public final class Buyer extends Device {
 		carousel.setSelection(selection);
 
 		carousel.setOnSelectionChanged(event -> {
-			final Resource resource = ((ResourceView) event.getNewSelection())
-					.getResource();
+			final Resource resource = ((ResourceView) event.getNewSelection()).getResource();
 			this.setDistributedResource(resource);
 		});
 
 		final VBox box = new VBox();
 		box.setSpacing(2d);
-		final Label helpLabel = new Label(
-				"Changer la ressource distribuée ici à l'aide des flèches:");
+		final Label helpLabel = new Label("Changer la ressource distribuée ici à l'aide des flèches:");
 		helpLabel.setFont(new Font(11d));
 		box.getChildren().addAll(helpLabel, carousel);
 
@@ -182,14 +188,13 @@ public final class Buyer extends Device {
 	@Override
 	public void saveElements() {
 		/*
-		 * <?> What is that ? Well here we don't change anything as far as I
-		 * know, this is necessary in order to save the pack.
+		 * <?> What is that ? Well here we don't change anything as far as I know, this
+		 * is necessary in order to save the pack.
 		 */
 		this.distributedResource.setModel(this.model);
 		try {
 			// Updates the distributed resource
-			Database.createDao(Pack.class)
-			.createOrUpdate(this.distributedResource);
+			Database.createDao(Pack.class).createOrUpdate(this.distributedResource);
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
@@ -206,12 +211,10 @@ public final class Buyer extends Device {
 
 	/**
 	 * Sets a new distributed resource to the device. <strong>Warning: If this
-	 * resource is not a part of the accepted resources, this method won't warn
-	 * you but the buyer will skip its action as it can't distribute
-	 * it.</strong>
+	 * resource is not a part of the accepted resources, this method won't warn you
+	 * but the buyer will skip its action as it can't distribute it.</strong>
 	 * 
-	 * @param res
-	 *            the new resource
+	 * @param res the new resource
 	 */
 	public void setDistributedResource(Resource res) {
 		if (!buyableResources.contains(res))
@@ -220,30 +223,6 @@ public final class Buyer extends Device {
 
 		this.distributedResource.setResource(res);
 		this.distributedResource.setQuantity(BigInteger.ONE);
-		// XXX : calculate price
 		this.resourceCost = new BigInteger("10");
 	}
-
-	/**
-	 * Adds a Resource to the accepted resources. Note that it must be marked
-	 * with the Buyable annotation.
-	 * 
-	 * @param res
-	 *            the res to add
-	 */
-	public static final void addAcceptedResource(Resource res) {
-		if (res.hasAnnotation(Buyable.class))
-			buyableResources.add(res);
-	}
-
-	/**
-	 * Removes an accepted resource, if it is in the list
-	 * 
-	 * @param res
-	 *            the res to remove
-	 */
-	public static final void removeAcceptedResource(Resource res) {
-		buyableResources.remove(res);
-	}
-
 }

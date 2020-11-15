@@ -10,5 +10,8 @@
 # Build directory
 target/
 
+# Database
+Products.db
+
 # Other
 pixils #(pixilart.com)

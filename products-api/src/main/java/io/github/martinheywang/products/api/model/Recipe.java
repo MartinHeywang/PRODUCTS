@@ -15,16 +15,24 @@
 */
 package io.github.martinheywang.products.api.model;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.martinheywang.products.api.model.resource.Resource;
+
 /**
- * A recipe is a list of {@link io.github.martinheywang.products.api.model.Pack packs}. 
- * It represents the resources needed to create a specific Resource. 
- * This object is created when you put the {@link io.github.martinheywang.products.api.model.resource.Craftable} annotation to a Resource field.
+ * A recipe is a list of {@link io.github.martinheywang.products.api.model.Pack
+ * packs}. It represents the resources needed to create a specific Resource.
+ * This object is created when you put the
+ * {@link io.github.martinheywang.products.api.model.resource.Craftable}
+ * annotation to a Resource field.
  */
 public class Recipe {
 
 	/**
 	 * The packs of the recipe;
-	 */	
+	 */
 	private Pack[] packs;
 
 	/**
@@ -52,11 +60,28 @@ public class Recipe {
 	/**
 	 * Set a pack at a given index.
 	 * 
-	 * @param pack the pack to set
+	 * @param pack  the pack to set
 	 * @param index the index - where to set
 	 */
 	public void setPack(Pack pack, int index) {
 		this.packs[index] = pack;
+	}
+
+	/**
+	 * Extract this recipe into a list of {@link io.github.martinheywang.products.api.model.resource.Resource}.
+	 * 
+	 * @return
+	 */
+	public List<Resource> extract() {
+		final ArrayList<Resource> list = new ArrayList<>();
+
+		for (Pack pack : this.packs) {
+			for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i.add(BigInteger.ONE)) {
+				list.add(pack.getResource());
+			}
+		}
+
+		return list;
 	}
 
 }
