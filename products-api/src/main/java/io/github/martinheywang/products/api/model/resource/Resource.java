@@ -15,8 +15,6 @@
 */
 package io.github.martinheywang.products.api.model.resource;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 
 import org.pf4j.ExtensionPoint;
@@ -79,36 +77,4 @@ public interface Resource extends ExtensionPoint {
      * @return the local url of the image
      */
     public String getURL();
-
-    /**
-     * Returns true if this Resource object owns the given annotation. It allows you
-     * to check if this Resource object is Buyable, for instance.
-     * 
-     * @param annotation the annotation to check
-     * @return whether the declaring field of this resource is marked with the given
-     *         annotation.
-     */
-    public default boolean hasAnnotation(Class<? extends Annotation> annotation) {
-        try {
-            return this.getClass().getField(toString()).isAnnotationPresent(annotation);
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Returns the declaring field of this resource. 
-     * Shortcut to <code>resource.getClass().getField(resource.toString())</code>
-     * 
-     * @return the field
-     */
-    public default Field getField() {
-        try {
-            return this.getClass().getField(toString());
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
