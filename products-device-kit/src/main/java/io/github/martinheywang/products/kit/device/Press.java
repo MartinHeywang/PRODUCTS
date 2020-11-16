@@ -31,17 +31,26 @@ import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.model.resource.ToPlate;
+import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack;
+import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.utils.ResourceUtils;
 import io.github.martinheywang.products.kit.resource.DefaultResource;
 import javafx.scene.Node;
 
 /**
+ * <p>
  * A press is a {@link io.github.martinheywang.products.api.model.device.Device}
  * that presses the received resource, - if it's possible -. It it's not, the
  * action won't be successful and the assembly line will not give suite.
+ * </p>
+ * <p>
+ * To know whether a resource is pressable or not, the furnace searches for an
+ * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup}
+ * targeting "press".
+ * </p>
  */
- 
+
 @AccessibleName("Presse")
 @Description("Le presse transforme les resources qui lui parviennent en plaques.")
 @Prices(build = "2000", upgradeTo2 = "15000", upgradeTo3 = "500000", destroyAt1 = "1800", destroyAt2 = "13000", destroyAt3 = "450000")
@@ -63,23 +72,24 @@ public class Press extends Device {
 	public final Action act(Pack resources) throws MoneyException {
 		final Action action = new Action(this, resources);
 
-		// The given pack cannot be transformed (error catching)
-		if (!resources.getResource().hasAnnotation(ToPlate.class))
-			return action;
+		final Resource resource = resources.getResource();
 
-		final ToPlate annotation = resources.getResource().getField().getAnnotation(ToPlate.class);
-		Resource transformed;
-		try {
-			transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			transformed = DefaultResource.NONE;
+		if (ResourceUtils.hasGroup(resource, "press")) {
+			final AnnotationPackGroup group = ResourceUtils.getGroup(resource, "press");
+			final AnnotationPack annotation = group.value()[0];
+			Resource transformed;
+			try {
+				transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
+				final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+				action.setOutput(output);
+				action.setGivenPack(new Pack(transformed, resources.getQuantity()));
+				action.markAsSuccessful();
+				action.addCost(this.getActionCost());
+			} catch (final Exception e) {
+				e.printStackTrace();
+				transformed = DefaultResource.NONE;
+			}
 		}
-		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
-		action.setOutput(output);
-		action.setGivenPack(new Pack(transformed, resources.getQuantity()));
-		action.addCost(this.getActionCost());
-		action.markAsSuccessful();
 
 		return action;
 	}

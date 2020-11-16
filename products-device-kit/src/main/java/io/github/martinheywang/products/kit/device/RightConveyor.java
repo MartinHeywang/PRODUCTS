@@ -24,7 +24,7 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
 
 /**
  * A right-conveyor is a particular
- * {@link io.github.martinheywang.products.model.device.Conveyor} that has a
+ * {@link io.github.martinheywang.products.kit.device.Conveyor} that has a
  * different
  * {@link io.github.martinheywang.products.api.model.template.Template}. It
  * takes an entry at the top and an exit to the right.

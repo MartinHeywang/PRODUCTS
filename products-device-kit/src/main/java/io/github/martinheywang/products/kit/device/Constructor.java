@@ -26,6 +26,7 @@ import com.j256.ormlite.dao.Dao;
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
+import io.github.martinheywang.products.api.model.Recipe;
 import io.github.martinheywang.products.api.model.action.Action;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
@@ -36,12 +37,12 @@ import io.github.martinheywang.products.api.model.device.annotation.DefaultTempl
 import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
-import io.github.martinheywang.products.api.model.resource.Craftable;
 import io.github.martinheywang.products.api.model.resource.Resource;
+import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.api.utils.PackUtils;
+import io.github.martinheywang.products.api.utils.ResourceUtils;
 import io.github.martinheywang.products.kit.resource.DefaultResource;
-import io.github.martinheywang.products.kit.resource.Product;
 import io.github.martinheywang.products.kit.view.component.Carousel;
 import io.github.martinheywang.products.kit.view.component.RecipeView;
 import io.github.martinheywang.products.kit.view.component.ResourceView;
@@ -51,12 +52,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
+ * <p>
  * A constructor is a complex
  * {@link io.github.martinheywang.products.api.model.device.Device} that takes
  * multiple entries but one exit, and create valuable products based on
  * different resources.
+ * </p>
+ * <p>
+ * It checks whether a resource is craftable or not by searching an
+ * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup}
+ * targeting the keyword "recipe". This AnnotationPackGroup represents the
+ * recipe/the craft of the resource.
+ * </p>
  */
- 
 @Buildable
 @ActionCost("50")
 @AccessibleName("Constructeur")
@@ -78,13 +86,15 @@ public final class Constructor extends Device {
 	 */
 	public Constructor(final DeviceModel model) {
 		super(model);
-		this.loadProduct();
-
-		if(acceptedResources.isEmpty()){
-			for(Product product : Product.values()){
-				acceptedResources.add(product);
+		
+		if (acceptedResources.isEmpty()) {
+			// Iterating over all the resources
+			for (Resource resource : ResourceManager.getReferences()) {
+				if (ResourceUtils.hasGroup(resource, "recipe"))
+				acceptedResources.add(resource);
 			}
 		}
+		this.loadProduct();
 	}
 
 	private void loadProduct() {
@@ -119,19 +129,13 @@ public final class Constructor extends Device {
 
 	private void generateExtractedRecipe() {
 		this.extractedRecipe.clear();
-		try {
-			if (!this.product.getResource().equals(DefaultResource.NONE)) {
+		final Resource resource = this.product.getResource();
+		if (!ResourceUtils.hasGroup(resource, "recipe"))
+			return;
 
-				final Craftable annotation = this.product.getResource().getClass()
-						.getField(this.product.getResource().toString()).getAnnotation(Craftable.class);
-				for (final Pack pack : PackUtils.toPack(annotation.recipe()))
-					for (BigInteger i = BigInteger.ZERO; i.compareTo(pack.getQuantity()) == -1; i = i
-							.add(BigInteger.ONE))
-						this.extractedRecipe.add(pack.getResource());
-			}
-		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		}
+		final Recipe recipe = PackUtils.toRecipe(ResourceUtils.getGroup(resource, "recipe"));
+
+		this.extractedRecipe.addAll(recipe.extract());
 	}
 
 	@Override
@@ -258,17 +262,6 @@ public final class Constructor extends Device {
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * Adds a Resource to the accepted resources. Note that it must be marked with
-	 * the Craftable annotation.
-	 * 
-	 * @param res the res to add
-	 */
-	public static final void addAcceptedResource(Resource res) {
-		if (res.hasAnnotation(Craftable.class))
-			acceptedResources.add(res);
 	}
 
 	/**

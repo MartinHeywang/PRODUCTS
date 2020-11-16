@@ -23,7 +23,7 @@ import io.github.martinheywang.products.api.model.device.annotation.DefaultTempl
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 
 /**
- * A left-conveyor is a modified version of the {@link io.github.martinheywang.products.model.device.Conveyor} that has a different
+ * A left-conveyor is a modified version of the {@link io.github.martinheywang.products.kit.device.Conveyor} that has a different
  * {@link io.github.martinheywang.products.api.model.template.Template}. It
  * takes an entry at the top, and an exit on the left.
  * 
