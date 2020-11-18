@@ -42,8 +42,7 @@ public class MoneyException extends Exception {
      * @param toSubtract the amount of money that wanted to be subtracted.
      */
     public MoneyException(BigInteger beforeTransaction, BigInteger toSubtract) {
-	super(String.format("Attempting to subtract too many money (%0 demandés, %1 disponibles)", toSubtract,
-		beforeTransaction));
+	super("Attempting to subtract too many money ("+toSubtract+" demandés, "+beforeTransaction+" disponibles)");
     }
 
 }

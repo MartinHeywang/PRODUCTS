@@ -1,58 +1,83 @@
-$cta-color: rgb(0, 110, 10);
-$cta-hover-color: rgb(0, 130, 15);
+$cta-color: rgba(0, 255, 25, 0.4);
+$cta-hover-color: rgba(0, 255, 25, 0.3);
+$cta-border-color: rgba(0, 150, 18, 0.8);
 $text-color: #eee;
 
-@font-face{
-    src: url(./products.ttf);
-    font-family: "Products";
+html {
+	scroll-behavior: smooth;
 }
 
-body{
-    background: url(../images/Background.png);
-    background-size: 40px;
-    font-family: "Products";
+body {
+	background-image: url(../images/Background.png);
+	font-family: "Segoe UI", sans-serif;
 
-    text-align: center;
-
-    padding-top: 5em;
+	text-align: center;
 }
 
-.about__text{
-    max-width: 100ch;
-    margin: auto;
+main{
+	min-height: 85vh;
+	padding-top: 10vh;
 }
 
-.download-row{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    margin: auto;
+section{
+	padding: 3vh 2%;
 }
 
-.container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+img{
+	margin: 2%;
+} 
+
+p {
+	text-align: justify-all;
+	
+	margin: 0 3%;
+
+	&.warning{
+		color: rgb(255, 200, 50);
+	}
+
+	&.precision{
+		font-size: 80%;
+	}
 }
 
-h2{
-    margin: 2% 0;
+.buttons-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+
+	width: 100%;
+	padding: 0.5% 2%;
 }
 
-a.button{
-    display: block;
-    width: 90%;
-    max-width: 350px;
-    color: #eee;
-    background: rgba(10, 255, 10, 0.4);
+div.divider-horizontal {
+	min-height: 1px;
+	width: 100%;
 
-    padding: 1% 4%;
-    margin: 1.5% 0;
-    font-weight: 500;
+	background-color: $text-color;
 }
 
-a.button:hover{
-    background: rgba(10, 255, 10, 0.5);
+a.button {
+	margin: 2%;
+	padding: 1% 4%;
+
+	width: 35%;
+
+	color: #eee;
+	background: $cta-color;
+	border: solid 2px $cta-border-color;
+	font-weight: 500;
+
+	&:hover{
+		background: $cta-hover-color;
+	}
+}
+	
+
+@media screen and (max-width: 600px) {
+	a.button {
+		width: 100%;
+	}
 }
