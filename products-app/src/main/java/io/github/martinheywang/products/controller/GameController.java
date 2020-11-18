@@ -385,16 +385,16 @@ public final class GameController {
 				try {
 					// Calculate average grow
 					BigInteger average = BigInteger.ZERO;
-					for (final BigInteger grow : GameController.this.lastsGrow)
+					for (final BigInteger grow : lastsGrow)
 						average = average.add(grow);
-					average = average.divide(BigInteger.valueOf(GameController.this.lastsGrow.size()));
+					average = average.divide(BigInteger.valueOf(lastsGrow.size()));
 
-					GameController.this.game.setMaxBuyer(GameController.this.maxBuyer);
-					GameController.this.game.setDelay(gameLoopDelay);
-					GameController.this.game.setGrow(average);
-					GameController.this.game.updateLastSave();
-					Database.createDao(Game.class).createOrUpdate(GameController.this.game);
-					GameController.this.deviceController.save();
+					game.setMaxBuyer(maxBuyer);
+					game.setDelay(gameLoopDelay);
+					game.setGrow(average);
+					game.updateLastSave();
+					Database.createDao(Game.class).createOrUpdate(game);
+					deviceController.save();
 				} catch (final SQLException e) {
 					e.printStackTrace();
 					Platform.runLater(() -> {
@@ -535,11 +535,11 @@ public final class GameController {
 		@Override
 		public void run() {
 			do {
-				final BigInteger amountBefore = GameController.this.game.getMoney();
+				final BigInteger amountBefore = game.getMoney();
 
 				try {
-					GameController.this.deviceController.clearIterations();
-					for (final Device independent : GameController.this.deviceController
+					deviceController.clearIterations();
+					for (final Device independent : deviceController
 							.getIndependentDevices())
 						for (int i = 0; i < independent.getLevel().getValue(); i++) {
 							final List<Device> toPulse = new ArrayList<>();
@@ -561,10 +561,10 @@ public final class GameController {
 								// with the next device.
 								if (action.getOutput() == null)
 									break;
-								if (!GameController.this.connectionExists(action.getPosition(), action.getOutput()))
+								if (!connectionExists(action.getPosition(), action.getOutput()))
 									break;
 
-								final Device next = GameController.this.getDevice(action.getOutput());
+								final Device next = getDevice(action.getOutput());
 
 								// The next device is overload, it cannot do
 								// anything
@@ -577,18 +577,18 @@ public final class GameController {
 							}
 
 							for (final Device device : toPulse)
-								GameController.this.gameView.pulseView(device.getPosition());
-							GameController.this.removeMoney(cost);
+								gameView.pulseView(device.getPosition());
+							removeMoney(cost);
 						}
 				} catch (final MoneyException e) {
 					e.printStackTrace();
 				}
 
 				// Register evolution
-				final BigInteger evolution = GameController.this.game.getMoney().subtract(amountBefore);
-				GameController.this.lastsGrow.add(evolution);
-				if (GameController.this.lastsGrow.size() > lastsGrowMaxSize)
-					GameController.this.lastsGrow.remove(0);
+				final BigInteger evolution = game.getMoney().subtract(amountBefore);
+				lastsGrow.add(evolution);
+				if (lastsGrow.size() > lastsGrowMaxSize)
+					lastsGrow.remove(0);
 
 				// Wait a little bit of course
 				try {

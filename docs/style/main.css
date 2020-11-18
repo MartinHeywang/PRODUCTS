@@ -1,68 +1,82 @@
-@font-face {
-  src: url(./products.ttf);
-  font-family: "Products";
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: url(../images/Background.png);
-  background-size: 40px;
-  font-family: "Products";
+  background-image: url(../images/Background.png);
+  font-family: "Segoe UI", sans-serif;
   text-align: center;
-  padding-top: 5em;
 }
 
-.about__text {
-  max-width: 100ch;
-  margin: auto;
+main {
+  min-height: 85vh;
+  padding-top: 10vh;
 }
 
-.download-row {
+section {
+  padding: 3vh 2%;
+}
+
+img {
+  margin: 2%;
+}
+
+p {
+  text-align: justify-all;
+  margin: 0 3%;
+}
+
+p.warning {
+  color: #ffc832;
+}
+
+p.precision {
+  font-size: 80%;
+}
+
+.buttons-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  width: 90%;
-  margin: auto;
-}
-
-.container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+      -ms-flex-direction: row;
+          flex-direction: row;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+  padding: 0.5% 2%;
 }
 
-h2 {
-  margin: 2% 0;
+div.divider-horizontal {
+  min-height: 1px;
+  width: 100%;
+  background-color: #eee;
 }
 
 a.button {
-  display: block;
-  width: 90%;
-  max-width: 350px;
-  color: #eee;
-  background: rgba(10, 255, 10, 0.4);
+  margin: 2%;
   padding: 1% 4%;
-  margin: 1.5% 0;
+  width: 35%;
+  color: #eee;
+  background: rgba(0, 255, 25, 0.4);
+  border: solid 2px rgba(0, 150, 18, 0.8);
   font-weight: 500;
 }
 
 a.button:hover {
-  background: rgba(10, 255, 10, 0.5);
+  background: rgba(0, 255, 25, 0.3);
+}
+
+@media screen and (max-width: 600px) {
+  a.button {
+    width: 100%;
+  }
 }
 /*# sourceMappingURL=main.css.map */
