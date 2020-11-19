@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>io.github.martinheywang</groupId>
 		<artifactId>products</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.1.2-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>io.github.martinheywang</groupId>
 	<artifactId>products-device-kit</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 
 	<name>PRODUCTS. - Devices</name>
 	<description>The default devices available in PRODUCTS. (a game)</description>
