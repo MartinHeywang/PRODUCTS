@@ -82,7 +82,8 @@ public final class DeviceView extends ImageView {
 	public static final DataFormat classFormat = new DataFormat("class");
 
 	/**
-	 * A {@link javafx.scene.input.DataFormat} for class {@link io.github.martinheywang.products.api.model.Coordinate}.
+	 * A {@link javafx.scene.input.DataFormat} for class
+	 * {@link io.github.martinheywang.products.api.model.Coordinate}.
 	 */
 	public static final DataFormat coordinateFormat = new DataFormat("coordinate");
 
@@ -99,7 +100,7 @@ public final class DeviceView extends ImageView {
 	/**
 	 * Builds a new DeviceView.
 	 * 
-	 * @param device the device to display
+	 * @param device      the device to display
 	 * @param gameManager the game controller that manages the device.
 	 */
 	public DeviceView(Device device, GameController gameManager) {
@@ -179,10 +180,6 @@ public final class DeviceView extends ImageView {
 			this.setOnMouseExited(event -> {
 				this.setEffect(new Glow(defaultGlowAmount));
 			});
-		}
-
-		// ON CLICK
-		if (!this.device.getClass().equals(Floor.class))
 			this.setOnMouseClicked(event -> {
 				if (event.getButton() == MouseButton.SECONDARY)
 					try {
@@ -192,7 +189,8 @@ public final class DeviceView extends ImageView {
 					}
 				else if (event.getButton() == MouseButton.PRIMARY)
 					try {
-						final FXMLLoader loader = ViewUtils.prepareFXMLLoader(Device.class.getResource("/fxml/Device.fxml"));
+						final FXMLLoader loader = ViewUtils
+								.prepareFXMLLoader(Device.class.getResource("/fxml/Device.fxml"));
 
 						final Dialog<Void> dialog = new Dialog<>();
 						final DialogPane root = loader.load();
@@ -207,12 +205,11 @@ public final class DeviceView extends ImageView {
 					}
 			});
 
-		// ON DRAG
-		if (!this.device.getClass().equals(Floor.class))
+			// ON DRAG
 			this.setOnDragDetected(event -> {
 				/*
-				 * I used MOVE to swap devices. I use LINK to destroy devices, and COPY to
-				 * build devices.
+				 * I used MOVE to swap devices. I use LINK to destroy devices, and COPY to build
+				 * devices.
 				 */
 				final Dragboard db = this.startDragAndDrop(TransferMode.MOVE, TransferMode.LINK);
 				final ClipboardContent content = new ClipboardContent();
@@ -223,6 +220,7 @@ public final class DeviceView extends ImageView {
 				db.setContent(content);
 
 			});
+		}
 		this.setOnDragOver(event -> {
 			event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
 		});
@@ -287,5 +285,12 @@ public final class DeviceView extends ImageView {
 			}
 
 		});
+
+		if(this.device.getClass().equals(Floor.class)){
+			this.setOnDragDetected(e -> {});
+			this.setOnMouseClicked(e -> {});
+			this.setOnMouseEntered(e -> {});
+			this.setOnMouseExited(e -> {});
+		}
 	}
 }
