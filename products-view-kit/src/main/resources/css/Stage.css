@@ -1,0 +1,21 @@
+/*
+    This file gives styles for the JavaFX stage.
+*/
+
+/* Top bar with buttons : reduce, maxi/mini-mize, close */
+HBox.stageButtons{
+    -fx-background-color: #444;
+}
+HBox.stageButtons Button, HBox.stageButtons Button *{
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-border-width: 0px;
+}
+/* Hover color for reduce and maxi/mini-mize button */
+HBox.stageButtons Button:hover{
+    -fx-background-color: #555;
+}
+/* Specific hover color for the close button */
+.closeButton:hover{
+    -fx-background-color: rgb(245, 10, 10);
+}

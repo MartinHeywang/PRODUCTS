@@ -19,7 +19,6 @@
 .button:hover{
 	-fx-background-color: #018E0F;
 	-fx-text-fill: lightgray;
-	-fx-cursor: hand;
 }
 
 .button.danger{
@@ -34,14 +33,10 @@
 	-fx-border-color: transparent;
 	-fx-background-color: transparent;
 }
-.button.as-icon:hover{
-	-fx-cursor: hand;
-}
 
 VBox.button, HBox.button{
     -fx-background-color: transparent;
 }
 VBox.button:hover, HBox.button:hover{
     -fx-background-color: #282828;
-    -fx-cursor: hand;
 }

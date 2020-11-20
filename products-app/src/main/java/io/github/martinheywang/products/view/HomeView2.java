@@ -30,6 +30,7 @@ import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -44,6 +45,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -60,11 +62,18 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private HBox logoContainer;
 	@FXML
-	private VBox root, optionContainer;
+	private VBox root, content, optionContainer;
 	@FXML
 	private Separator logoSeparator;
 	@FXML
 	private Label lead, helpLabel;
+
+	@FXML
+	private HBox stageBar;
+
+	// Stage buttons
+	@FXML
+	private Button reduceButton, maximizeButton, closeButton;
 
 	final Pane growPane = new Pane();
 
@@ -86,13 +95,41 @@ public class HomeView2 implements Initializable {
 
 	@Override
 	public void initialize(final URL url, final ResourceBundle resources) {
-		this.root.getStylesheets().addAll(
-			ViewUtils.class.getResource("/css/General.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Home2.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/TextField.css").toExternalForm()
-		);
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Home2.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/TextField.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Stage.css").toExternalForm());
+
+		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
+		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
+		maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
+
+		closeButton.setOnMouseClicked(event -> {
+			Platform.exit();
+		});
+		reduceButton.setOnMouseClicked(event -> {
+			((Stage) reduceButton.getScene().getWindow()).setIconified(true);
+		});
+		maximizeButton.setOnMouseClicked(event -> {
+			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
+			if(stage.isMaximized()){
+				stage.setMaximized(false);
+				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
+			}else{
+				stage.setMaximized(true);
+				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Minimize.svg"), 20, 20));
+			}
+		});
+
+		stageBar.setOnMousePressed(pressEvent -> {
+			stageBar.setOnMouseDragged(dragEvent -> {
+				final Stage primaryStage = (Stage) this.root.getScene().getWindow();
+				primaryStage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+				primaryStage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+			});
+		});
 
 		this.logoContainer.getChildren().add(0, new SVGImage(getClass().getResource("/images/icons/logo.svg"), 50, 75));
 		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
@@ -135,11 +172,13 @@ public class HomeView2 implements Initializable {
 	 */
 	public void setMainApp(final Main main) {
 		this.main = main;
+		maximizeButton.disableProperty()
+				.bind(((Stage) maximizeButton.getScene().getWindow()).resizableProperty().not());
 	}
 
 	private void fadeOut() {
 		final Timeline tl = new Timeline();
-		for (final Node node : this.root.getChildrenUnmodifiable())
+		for (final Node node : this.content.getChildrenUnmodifiable())
 			tl.getKeyFrames().addAll(
 					new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), node.getOpacity())),
 					new KeyFrame(Duration.millis(500), new KeyValue(node.opacityProperty(), 0d)));
@@ -148,7 +187,7 @@ public class HomeView2 implements Initializable {
 
 	private void fadeIn() {
 		final Timeline tl = new Timeline();
-		for (final Node node : this.root.getChildrenUnmodifiable())
+		for (final Node node : this.content.getChildrenUnmodifiable())
 			tl.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), 0d)),
 					new KeyFrame(Duration.millis(500), new KeyValue(node.opacityProperty(), 1d)));
 		tl.playFromStart();
@@ -157,21 +196,21 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private void goToOpen() {
 		this.fadeOut();
-		this.root.getChildren().removeAll(this.optionContainer, this.logoSeparator, this.logoContainer);
-		this.root.getChildren().add(this.gameScroll);
+		this.content.getChildren().removeAll(this.optionContainer, this.logoSeparator, this.logoContainer);
+		this.content.getChildren().add(this.gameScroll);
 
 		this.helpLabel.setText("Sélectionnez une partie à charger:");
-		this.root.getChildren().addAll(this.growPane, this.backButton);
+		this.content.getChildren().addAll(this.growPane, this.backButton);
 		this.fadeIn();
 	}
 
 	@FXML
 	private void goToCreate() {
 		this.fadeOut();
-		this.root.getChildren().removeAll(this.optionContainer, this.logoContainer, this.logoSeparator);
+		this.content.getChildren().removeAll(this.optionContainer, this.logoContainer, this.logoSeparator);
 		this.helpLabel.setText(
 				"Entrez le nom de la nouvelle partie, puis appuyez sur entrer: (Vous ne pourrez pas le changer!)");
-		this.root.getChildren().addAll(this.field, this.growPane, this.backButton);
+		this.content.getChildren().addAll(this.field, this.growPane, this.backButton);
 		this.fadeIn();
 	}
 
@@ -179,10 +218,10 @@ public class HomeView2 implements Initializable {
 	private void reloadJustOpened() {
 		this.fadeOut();
 		this.helpLabel.setText("Choisissez l'une des deux options suivantes:");
-		this.root.getChildren().removeAll(this.gameScroll, this.backButton, this.field, this.growPane);
-		this.root.getChildren().add(0, this.logoSeparator);
-		this.root.getChildren().add(0, this.logoContainer);
-		this.root.getChildren().add(this.optionContainer);
+		this.content.getChildren().removeAll(this.gameScroll, this.backButton, this.field, this.growPane);
+		this.content.getChildren().add(0, this.logoSeparator);
+		this.content.getChildren().add(0, this.logoContainer);
+		this.content.getChildren().add(this.optionContainer);
 		this.fadeIn();
 	}
 

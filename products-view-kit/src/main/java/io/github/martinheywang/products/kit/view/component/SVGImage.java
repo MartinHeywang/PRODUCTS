@@ -39,7 +39,6 @@ public final class SVGImage extends StackPane {
      * @param pathToImage the path to the SVG image
      */
     public SVGImage(URL pathToImage, double width, double height) {
-        this.getStylesheets().add(getClass().getResource("/css/WebView.css").toExternalForm());
 
         final WebView webView = new WebView();
         final WebEngine engine = webView.getEngine();
@@ -52,6 +51,7 @@ public final class SVGImage extends StackPane {
 
         engine.load(pathToImage.toExternalForm());
         webView.setPrefSize(width, height);
+        webView.setFocusTraversable(false);
 
         // Here the @SupressWarnings avoids a discouraged access (but actually it
         // doesn't matter in that case)
