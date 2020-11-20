@@ -23,5 +23,8 @@ release.properties
 # Database
 *.db
 
-# Other
-.pixil
+# Files from pixilart.com (used for drawing resources)
+*.pixil
+
+# Ideas, notes, thing to do later on the project.
+ideas/*

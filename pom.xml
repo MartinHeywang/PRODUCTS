@@ -5,7 +5,7 @@
 
 	<groupId>io.github.martinheywang</groupId>
 	<artifactId>products</artifactId>
-	<version>1.1.2-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>PRODUCTS.</name>
 	<description>Products is a factory management game. Create assembly lines to become wealthy. Build, earn, upgrade... !</description>
@@ -163,6 +163,11 @@
 				<artifactId>javafx-controls</artifactId>
 				<version>16-ea+2</version>
 			</dependency>
+			<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-web</artifactId>
+				<version>16-ea+2</version>
+			</dependency>
 			<!-- PF4J (Plugin Library for Java-->
 			<dependency>
 				<groupId>org.pf4j</groupId>
@@ -174,22 +179,22 @@
 			<dependency>
 				<groupId>io.github.martinheywang</groupId>
 				<artifactId>products-resource-kit</artifactId>
-				<version>1.1.2-SNAPSHOT</version>
+				<version>1.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.martinheywang</groupId>
 				<artifactId>products-device-kit</artifactId>
-				<version>1.1.2-SNAPSHOT</version>
+				<version>1.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.martinheywang</groupId>
 				<artifactId>products-view-kit</artifactId>
-				<version>1.1.2-SNAPSHOT</version>
+				<version>1.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.martinheywang</groupId>
 				<artifactId>products-api</artifactId>
-				<version>1.1.2-SNAPSHOT</version>
+				<version>1.2-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

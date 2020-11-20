@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>io.github.martinheywang</groupId>
 		<artifactId>products</artifactId>
-		<version>1.1.2-SNAPSHOT</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>io.github.martinheywang</groupId>
 	<artifactId>products-view-kit</artifactId>
-	<version>1.1.2-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 
 	<name>PRODUCTS. - View Components</name>
 	<description>The view components available in PRODUCTS.</description>
@@ -50,6 +50,10 @@
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.github.martinheywang</groupId>
