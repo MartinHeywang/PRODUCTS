@@ -64,7 +64,7 @@ public class Carousel extends HBox {
 	 * calling {@link #addNodes(Node...)}.
 	 */
 	public Carousel() {
-		this.getStylesheets().add(this.getClass().getResource("/fxml/Buttons.css").toString());
+		this.getStylesheets().add(this.getClass().getResource("/css/Buttons.css").toExternalForm());
 
 		final ImageView left_arrow = new ImageView(
 				new Image(this.getClass().getResourceAsStream("/images/icons/left_arrow.png")));

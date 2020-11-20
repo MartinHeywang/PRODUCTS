@@ -79,7 +79,7 @@ public final class Main extends Application {
 	public void start(Stage primaryStage) {
 		stage = primaryStage;
 		stage.setTitle("PRODUCTS.");
-		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/Icon.png")));
+		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/icons/Icon.png")));
 
 		try {
 			// If at least one game is already registered

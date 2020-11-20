@@ -190,7 +190,7 @@ public final class DeviceView extends ImageView {
 				else if (event.getButton() == MouseButton.PRIMARY)
 					try {
 						final FXMLLoader loader = ViewUtils
-								.prepareFXMLLoader(Device.class.getResource("/fxml/Device.fxml"));
+								.prepareFXMLLoader(this.getClass().getResource("/fxml/Device.fxml"));
 
 						final Dialog<Void> dialog = new Dialog<>();
 						final DialogPane root = loader.load();

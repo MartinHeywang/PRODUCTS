@@ -40,8 +40,8 @@ public class IterationView extends VBox {
 	public IterationView(Iteration data) {
 		this.setSpacing(20d);
 		this.getStylesheets().addAll(
-				ViewUtils.class.getResource("/fxml/Buttons.css").toExternalForm(),
-				ViewUtils.class.getResource("/fxml/Label.css").toExternalForm());
+				ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Label.css").toExternalForm());
 
 		this.setDisplayed(data);
 	}

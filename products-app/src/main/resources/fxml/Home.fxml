@@ -12,18 +12,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="300.0" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.HomeView">
+<VBox fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.HomeView">
    <children>
-      <HBox alignment="CENTER" VBox.vgrow="NEVER">
+      <HBox fx:id="logoContainer" alignment="CENTER" VBox.vgrow="NEVER">
          <children>
-            <ImageView fitHeight="75.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/Icon.png" />
-               </image>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </ImageView>
             <Pane HBox.hgrow="ALWAYS" />
             <Label text="PRODUCTS.">
                <font>
@@ -53,12 +45,12 @@
                   <Insets left="5.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="field" focusTraversable="false" promptText="&quot;Partie de Luc&quot;" stylesheets="@TextField.css">
+            <TextField fx:id="field" focusTraversable="false" promptText="&quot;Partie de Luc&quot;">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="2.0" />
                </VBox.margin>
             </TextField>
-            <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#create" stylesheets="@Buttons.css" text="Commencer !" VBox.vgrow="NEVER">
+            <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#create" text="Commencer !" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>

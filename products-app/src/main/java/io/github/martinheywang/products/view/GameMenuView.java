@@ -37,6 +37,7 @@ import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
 import io.github.martinheywang.products.kit.view.component.ZoomableScrollPane;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.bundle.GameLoopUpdate;
 import io.github.martinheywang.products.model.bundle.GrilleUpdate;
 import io.github.martinheywang.products.model.bundle.MaxBuyerUpdate;
@@ -50,6 +51,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -83,6 +85,9 @@ public class GameMenuView implements Initializable {
 	 * Instance of Main used to changed the view for example (return to home...)
 	 */
 	private GameController gameManager;
+
+	@FXML
+	private Parent root;
 
 	@FXML
 	private AnchorPane main;
@@ -136,6 +141,16 @@ public class GameMenuView implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.root.getStylesheets().addAll(
+			ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/ProgressBar.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm()
+		);
+
 		this.grid = new GridPane();
 		this.scrollpane = new ZoomableScrollPane(this.grid);
 		this.main.getChildren().add(0, this.scrollpane);

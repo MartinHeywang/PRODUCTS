@@ -16,11 +16,11 @@
 <?import javafx.scene.layout.VBox ?>
 <?import javafx.scene.text.Font ?>
 
-<DialogPane expanded="true" stylesheets="@General.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.DeviceMenuView">
+<DialogPane fx:id="root" expanded="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.DeviceMenuView">
    <content>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0">
          <children>
-            <Label fx:id="coordinate" alignment="CENTER" minHeight="35.0" style="-fx-border-color: #eee;" styleClass="h6" stylesheets="@Label.css" text="X: 0, Y: 0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <Label fx:id="coordinate" alignment="CENTER" minHeight="35.0" style="-fx-border-color: #eee;" styleClass="h6" text="X: 0, Y: 0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
@@ -42,7 +42,7 @@
                   </Separator>
                   <AnchorPane HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="literal" alignment="CENTER" styleClass="h4" stylesheets="@Label.css" text="Acheteur | Niveau 1 | 0°" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Label fx:id="literal" alignment="CENTER" styleClass="h4" text="Acheteur | Niveau 1 | 0°" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                      <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -53,12 +53,12 @@
                   <DropShadow />
                </effect>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" stylesheets="@ScrollPane.css" vbarPolicy="NEVER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" vbarPolicy="NEVER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0">
                <padding>
                   <Insets bottom="10.0" left="70.0" right="70.0" top="10.0" />
                </padding>
                <content>
-                  <VBox fx:id="main" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@TitledPane.css">
+                  <VBox fx:id="main" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <children>
                         <TitledPane animated="false" expanded="false" text="Actions &amp; Options">
                            <font>
@@ -148,11 +148,6 @@
                                        </padding>
                                     </HBox>
                                  </children>
-                                 <stylesheets>
-                                    <URL value="@Box.css" />
-                                    <URL value="@Label.css" />
-                                    <URL value="@Buttons.css" />
-                                 </stylesheets>
                               </VBox>
                            </content>
                         </TitledPane>

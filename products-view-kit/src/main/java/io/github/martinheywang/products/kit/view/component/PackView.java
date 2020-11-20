@@ -54,7 +54,7 @@ public class PackView extends VBox {
 		this.setSpacing(10d);
 
 		this.getStylesheets().add(
-				ViewUtils.class.getResource("/fxml/Label.css").toExternalForm());
+				ViewUtils.class.getResource("/css/Label.css").toExternalForm());
 
 		this.setDisplayed(data);
 	}

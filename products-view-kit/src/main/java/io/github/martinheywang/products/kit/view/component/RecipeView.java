@@ -44,7 +44,7 @@ public class RecipeView extends HBox {
 		this.setMinHeight(175d);
 		this.setAlignment(Pos.CENTER);
 
-		this.getStylesheets().add(getClass().getResource("/fxml/Label.css").toExternalForm());
+		this.getStylesheets().add(getClass().getResource("/css/Label.css").toExternalForm());
 
 		this.setDisplayedResource(displayed);
 	}

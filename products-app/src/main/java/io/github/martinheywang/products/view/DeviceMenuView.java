@@ -25,8 +25,10 @@ import io.github.martinheywang.products.api.model.exception.EditException;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.view.component.IterationView;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -55,6 +57,8 @@ public final class DeviceMenuView implements Initializable {
 	/*
 	 * View components below :
 	 */
+	@FXML
+	private Parent root;
 
 	@FXML
 	private Label coordinate, literal, upgradePrice, destroyPrice;
@@ -76,6 +80,12 @@ public final class DeviceMenuView implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm());
 		deleteView.setImage(new Image(getClass().getResourceAsStream("/images/dashboard/Destroy.png")));
 	}
 

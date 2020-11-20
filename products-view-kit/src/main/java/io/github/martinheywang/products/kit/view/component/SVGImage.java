@@ -2,6 +2,8 @@ package io.github.martinheywang.products.kit.view.component;
 
 import java.net.URL;
 
+import com.sun.webkit.WebPage;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -37,6 +39,8 @@ public final class SVGImage extends StackPane {
      * @param pathToImage the path to the SVG image
      */
     public SVGImage(URL pathToImage, double width, double height) {
+        this.getStylesheets().add(getClass().getResource("/css/WebView.css").toExternalForm());
+
         final WebView webView = new WebView();
         final WebEngine engine = webView.getEngine();
 
@@ -48,6 +52,15 @@ public final class SVGImage extends StackPane {
 
         engine.load(pathToImage.toExternalForm());
         webView.setPrefSize(width, height);
+
+        // Here the @SupressWarnings avoids a discouraged access (but actually it
+        // doesn't matter in that case)
+        // Only the IDE shows this warning
+        // Maven has nothing wrong with it
+        // But it's annoying, so I prefer add it.
+        @SuppressWarnings("restriction")
+        final WebPage page = com.sun.javafx.webkit.Accessor.getPageFor(engine);
+        page.setBackgroundColor(0);
 
         this.getChildren().add(webView);
     }

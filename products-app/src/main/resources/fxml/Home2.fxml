@@ -15,11 +15,6 @@
    <children>
       <HBox fx:id="logoContainer" alignment="CENTER" VBox.vgrow="NEVER">
          <children>
-            <ImageView fitHeight="75.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-               <image>
-                  <Image url="@../images/Icon.png" />
-               </image>
-            </ImageView>
             <Label text="PRODUCTS.">
                <font>
                   <Font name="System Bold" size="36.0" />
@@ -106,10 +101,4 @@
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
-   <stylesheets>
-      <URL value="@General.css" />
-      <URL value="@Label.css" />
-      <URL value="@Home2.css" />
-      <URL value="@Buttons.css" />
-   </stylesheets>
 </VBox>

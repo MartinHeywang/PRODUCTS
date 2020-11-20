@@ -53,7 +53,7 @@ public class ResourceView extends VBox {
 		this.setAlignment(Pos.CENTER);
 
 		this.getStylesheets().add(
-				ResourceView.class.getResource("/fxml/Label.css").toExternalForm());
+				this.getClass().getResource("/css/Label.css").toExternalForm());
 
 		this.setDisplayed(data);
 	}

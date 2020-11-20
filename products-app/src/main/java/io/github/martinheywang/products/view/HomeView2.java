@@ -25,6 +25,8 @@ import io.github.martinheywang.products.Main;
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.kit.view.component.GameView;
+import io.github.martinheywang.products.kit.view.component.SVGImage;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -84,9 +86,17 @@ public class HomeView2 implements Initializable {
 
 	@Override
 	public void initialize(final URL url, final ResourceBundle resources) {
+		this.root.getStylesheets().addAll(
+			ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Home2.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/TextField.css").toExternalForm()
+		);
+
+		this.logoContainer.getChildren().add(0, new SVGImage(getClass().getResource("/images/icons/logo.svg"), 50, 75));
 		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
 		this.field.setOnAction(event -> this.create(this.field.getText()));
-		this.field.getStylesheets().add(Main.class.getResource("/fxml/TextField.css").toExternalForm());
 		this.field.setFocusTraversable(false);
 		this.field.setPromptText("\"Partie de Luc\"");
 		VBox.setMargin(this.field, new Insets(2d, 0d, 5d, 0d));
