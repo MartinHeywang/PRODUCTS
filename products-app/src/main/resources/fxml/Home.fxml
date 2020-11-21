@@ -5,60 +5,84 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.HomeView">
+<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.HomeView">
    <children>
-      <HBox fx:id="logoContainer" alignment="CENTER" VBox.vgrow="NEVER">
+      <HBox fx:id="stageBar" alignment="CENTER_RIGHT" maxHeight="30.0" minHeight="30.0" styleClass="stageButtons" VBox.vgrow="NEVER">
          <children>
-            <Pane HBox.hgrow="ALWAYS" />
             <Label text="PRODUCTS.">
                <font>
-                  <Font name="System Bold" size="36.0" />
+                  <Font size="18.0" />
                </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
             </Label>
+            <Pane styleClass="transparent" HBox.hgrow="ALWAYS" />
+            <Button fx:id="reduceButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
+            <Button fx:id="closeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" styleClass="closeButton" />
          </children>
       </HBox>
-      <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2.0" prefWidth="270.0" style="-fx-background-color: #eee;">
-         <VBox.margin>
-            <Insets bottom="10.0" top="10.0" />
-         </VBox.margin>
-      </Separator>
-      <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+      <VBox VBox.vgrow="ALWAYS">
          <children>
-            <Label text="Hey patron ! Tu nous rejoins ?" wrapText="true">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Pane VBox.vgrow="ALWAYS" />
-            <Label text="Entre le nom de ta première partie:">
-               <font>
-                  <Font size="11.0" />
-               </font>
+            <HBox fx:id="logoContainer" alignment="CENTER" spacing="15.0">
+               <children>
+                  <Label text="PRODUCTS.">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Separator maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #eee;" VBox.vgrow="NEVER">
                <VBox.margin>
-                  <Insets left="5.0" />
+                  <Insets bottom="5.0" top="5.0" />
                </VBox.margin>
-            </Label>
-            <TextField fx:id="field" focusTraversable="false" promptText="&quot;Partie de Luc&quot;">
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="2.0" />
-               </VBox.margin>
-            </TextField>
-            <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#create" text="Commencer !" VBox.vgrow="NEVER">
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Button>
+            </Separator>
+            <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" text="Hey patron !" wrapText="true">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label maxWidth="1.7976931348623157E308" text="Tu nous rejoins ?">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Pane VBox.vgrow="ALWAYS" />
+                  <Label text="Entre le nom de ta première partie:">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="field" focusTraversable="false" promptText="&quot;Partie de Luc&quot;">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="2.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#create" text="Commencer !" VBox.vgrow="NEVER">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
          </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
       </VBox>
    </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
 </VBox>

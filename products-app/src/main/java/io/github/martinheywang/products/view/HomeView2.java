@@ -73,7 +73,7 @@ public class HomeView2 implements Initializable {
 
 	// Stage buttons
 	@FXML
-	private Button reduceButton, maximizeButton, closeButton;
+	private Button reduceButton, closeButton;
 
 	final Pane growPane = new Pane();
 
@@ -104,23 +104,12 @@ public class HomeView2 implements Initializable {
 
 		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
 		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
-		maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
-
+		
 		closeButton.setOnMouseClicked(event -> {
 			Platform.exit();
 		});
 		reduceButton.setOnMouseClicked(event -> {
 			((Stage) reduceButton.getScene().getWindow()).setIconified(true);
-		});
-		maximizeButton.setOnMouseClicked(event -> {
-			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
-			if(stage.isMaximized()){
-				stage.setMaximized(false);
-				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
-			}else{
-				stage.setMaximized(true);
-				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Minimize.svg"), 20, 20));
-			}
 		});
 
 		stageBar.setOnMousePressed(pressEvent -> {
@@ -172,8 +161,6 @@ public class HomeView2 implements Initializable {
 	 */
 	public void setMainApp(final Main main) {
 		this.main = main;
-		maximizeButton.disableProperty()
-				.bind(((Stage) maximizeButton.getScene().getWindow()).resizableProperty().not());
 	}
 
 	private void fadeOut() {

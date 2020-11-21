@@ -23,11 +23,14 @@ import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 /**
  * The HomeView class is the controller class, in javafx terms, for the view
@@ -36,12 +39,14 @@ import javafx.scene.layout.HBox;
 public final class HomeView implements Initializable {
 
     @FXML
-    private TextField field;
-
-    @FXML
     private Parent root;
     @FXML
-    private HBox logoContainer;
+    private HBox logoContainer, stageBar;
+
+    @FXML
+    private TextField field;
+    @FXML
+    private Button reduceButton, closeButton;
 
     Main main;
 
@@ -65,7 +70,26 @@ public final class HomeView implements Initializable {
         this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
                 ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
                 ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+                ViewUtils.class.getResource("/css/Stage.css").toExternalForm(),
                 ViewUtils.class.getResource("/css/TextField.css").toExternalForm());
+
+        closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
+        reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
+        
+        closeButton.setOnMouseClicked(event -> {
+            Platform.exit();
+        });
+        reduceButton.setOnMouseClicked(event -> {
+            ((Stage) reduceButton.getScene().getWindow()).setIconified(true);
+        });
+
+        stageBar.setOnMousePressed(pressEvent -> {
+            stageBar.setOnMouseDragged(dragEvent -> {
+                final Stage primaryStage = (Stage) this.root.getScene().getWindow();
+                primaryStage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+                primaryStage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+            });
+        });
 
         this.logoContainer.getChildren().add(0, new SVGImage(getClass().getResource("/images/icons/logo.svg"), 50, 75));
     }
