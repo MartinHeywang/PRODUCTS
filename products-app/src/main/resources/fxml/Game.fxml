@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -11,16 +10,32 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="root" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.GameMenuView">
-   <!-- The root -->
+<VBox fx:id="root" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.GameMenuView">
    <children>
-      <AnchorPane fx:id="main">
+      <HBox fx:id="stageBar" alignment="CENTER_RIGHT" maxHeight="30.0" minHeight="30.0" styleClass="stageButtons" VBox.vgrow="NEVER">
          <children>
-            <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Label text="PRODUCTS.">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Label>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="reduceButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
+            <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
+            <Button fx:id="closeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" styleClass="closeButton" />
+         </children>
+      </HBox>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <children>
+            <AnchorPane VBox.vgrow="NEVER">
                <children>
                   <Label fx:id="moneyLabel" alignment="CENTER" prefHeight="30.0" style="-fx-border-color: eee;" styleClass="h5" text="Chargement en cours..." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   <ProgressBar fx:id="progression" prefHeight="30.0" progress="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
@@ -29,83 +44,92 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </AnchorPane>
-            <HBox fx:id="sidebarsContainer" alignment="CENTER_RIGHT" layoutX="698.0" layoutY="34.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <children>
-                  <AnchorPane fx:id="options" minWidth="250.0" onMouseClicked="#showOrHideSidebar" style="-fx-background-color: #00500A;">
+                  <StackPane fx:id="main" HBox.hgrow="ALWAYS">
                      <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutX="10.0" prefWidth="240.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                           <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #00650a;">
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                                 <children>
-                                    <TitledPane animated="false" text="Tutoriel">
-                                       <content>
-                                          <VBox minHeight="450.0" spacing="4.0">
-                                             <children>
-                                                <Label text="Le but de ce jeu est de s'enrichir un maximum. Construisez-des lignes d'assemblages les plus rentables possibles !" wrapText="true" />
-                                                <Label text="Vous trouverez ci-dessous un petit tutoriel pour bien débuter :" wrapText="true" />
-                                                <Label text="Construisez votre première appareil en effectuant un glisser-déposer depuis la liste de construction. Vous la trouverez en-dessous de ce menu." wrapText="true" />
-                                                <Label text="Tout appareil a un prix, celui-ci est indiqué quand vous survolez un appareil dans la liste de construction." wrapText="true" />
-                                                <Label text="Dans un premier temps, construisez un Acheteur et un Vendeur. Connectez-les !" wrapText="true" />
-                                                <Label text="Cliquez sur l'Acheteur et choissisez une ressoure à distribuer à l'aide des flèches. C'est tout !" wrapText="true" />
-                                                <Label text="Vous pourrez replier ce menu en cliquant sur &quot;Tutoriel&quot; en haut." wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                       <font>
-                                          <Font size="22.0" />
-                                       </font>
-                                    </TitledPane>
-                                    <TitledPane animated="false" layoutX="15.0" layoutY="15.0" text="Construction">
-                                       <font>
-                                          <Font size="22.0" />
-                                       </font>
-                                       <content>
-                                          <VBox fx:id="devicesBuild" prefHeight="200.0" prefWidth="100.0" />
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" layoutX="15.0" layoutY="514.0" text="Amélioration">
-                                       <font>
-                                          <Font size="22.0" />
-                                       </font>
-                                       <content>
-                                          <VBox minHeight="480.0" spacing="20.0">
-                                             <children>
-                                                <Label fx:id="upgradeGridInfo" wrapText="true" />
-                                                <Button fx:id="upgradeGridBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#upgradeGrid" text="Agrandir la grille" />
-                                                <Separator prefWidth="200.0" />
-                                                <Label fx:id="upgradeLoopInfo" wrapText="true" />
-                                                <Button fx:id="upgradeLoopBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#decreaseGameLoopDelay" text="Accélérer !" />
-                                                <Separator prefWidth="200.0" />
-                                                <Label fx:id="upgradeBuyerInfo" layoutX="28.0" layoutY="137.0" wrapText="true" />
-                                                <Button fx:id="upgradeBuyerBtn" layoutX="28.0" layoutY="174.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#increaseMaxBuyer" text="Augmenter !" />
-                                                <Separator layoutX="28.0" layoutY="223.0" prefWidth="200.0" />
-                                                <Label text="Plus d'améliorations à venir..." wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                 </children>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
+                        <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" spacing="5.0" style="-fx-background-color: transparent;" StackPane.alignment="CENTER_LEFT">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
                      </children>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </AnchorPane>
+                  </StackPane>
+                  <HBox fx:id="sidebarsContainer" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" style="-fx-background-color: transparent;" HBox.hgrow="NEVER">
+                     <children>
+                        <AnchorPane fx:id="options" maxHeight="1.7976931348623157E308" minWidth="250.0" onMouseClicked="#showOrHideSidebar" style="-fx-background-color: #00500A;">
+                           <children>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutX="10.0" maxHeight="1.7976931348623157E308" prefWidth="240.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #00650a;">
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                       <children>
+                                          <TitledPane animated="false" text="Tutoriel">
+                                             <content>
+                                                <VBox minHeight="450.0" spacing="4.0">
+                                                   <children>
+                                                      <Label text="Le but de ce jeu est de s'enrichir un maximum. Construisez-des lignes d'assemblages les plus rentables possibles !" wrapText="true" />
+                                                      <Label text="Vous trouverez ci-dessous un petit tutoriel pour bien débuter :" wrapText="true" />
+                                                      <Label text="Construisez votre première appareil en effectuant un glisser-déposer depuis la liste de construction. Vous la trouverez en-dessous de ce menu." wrapText="true" />
+                                                      <Label text="Tout appareil a un prix, celui-ci est indiqué quand vous survolez un appareil dans la liste de construction." wrapText="true" />
+                                                      <Label text="Dans un premier temps, construisez un Acheteur et un Vendeur. Connectez-les !" wrapText="true" />
+                                                      <Label text="Cliquez sur l'Acheteur et choissisez une ressoure à distribuer à l'aide des flèches. C'est tout !" wrapText="true" />
+                                                      <Label text="Vous pourrez replier ce menu en cliquant sur &quot;Tutoriel&quot; en haut." wrapText="true" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                             <font>
+                                                <Font size="22.0" />
+                                             </font>
+                                          </TitledPane>
+                                          <TitledPane animated="false" layoutX="15.0" layoutY="15.0" text="Construction">
+                                             <font>
+                                                <Font size="22.0" />
+                                             </font>
+                                             <content>
+                                                <VBox fx:id="devicesBuild" prefHeight="200.0" prefWidth="100.0" />
+                                             </content>
+                                          </TitledPane>
+                                          <TitledPane animated="false" layoutX="15.0" layoutY="514.0" text="Amélioration">
+                                             <font>
+                                                <Font size="22.0" />
+                                             </font>
+                                             <content>
+                                                <VBox minHeight="480.0" spacing="20.0">
+                                                   <children>
+                                                      <Label fx:id="upgradeGridInfo" wrapText="true" />
+                                                      <Button fx:id="upgradeGridBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#upgradeGrid" text="Agrandir la grille" />
+                                                      <Separator prefWidth="200.0" />
+                                                      <Label fx:id="upgradeLoopInfo" wrapText="true" />
+                                                      <Button fx:id="upgradeLoopBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#decreaseGameLoopDelay" text="Accélérer !" />
+                                                      <Separator prefWidth="200.0" />
+                                                      <Label fx:id="upgradeBuyerInfo" layoutX="28.0" layoutY="137.0" wrapText="true" />
+                                                      <Button fx:id="upgradeBuyerBtn" layoutX="28.0" layoutY="174.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#increaseMaxBuyer" text="Augmenter !" />
+                                                      <Separator layoutX="28.0" layoutY="223.0" prefWidth="200.0" />
+                                                      <Label text="Plus d'améliorations à venir..." wrapText="true" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </TitledPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
                </children>
             </HBox>
-            <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" spacing="5.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="42.0">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </VBox>
-         </children></AnchorPane>
+         </children>
+      </VBox>
    </children>
-</StackPane>
+</VBox>

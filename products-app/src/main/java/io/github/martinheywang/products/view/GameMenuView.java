@@ -36,6 +36,7 @@ import io.github.martinheywang.products.api.utils.MoneyFormat;
 import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
+import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.component.ZoomableScrollPane;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.bundle.GameLoopUpdate;
@@ -64,8 +65,11 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -90,54 +94,31 @@ public class GameMenuView implements Initializable {
 	private Parent root;
 
 	@FXML
-	private AnchorPane main;
+	private StackPane main;
 
 	private ZoomableScrollPane scrollpane;
 
-	/**
-	 * The main grid with all the devices
-	 */
 	private GridPane grid;
-	/**
-	 * The label showing the money
-	 */
+
 	@FXML
 	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo, upgradeBuyerInfo;
 
-	/**
-	 * The Progress Bar showing the progress on long treatment.
-	 */
 	@FXML
 	private ProgressBar progression;
 
-	/**
-	 * The box displaying the sidebars. (For example: options, toasts...)
-	 */
 	@FXML
-	private HBox sidebarsContainer;
+	private HBox sidebarsContainer, stageBar;
 
-	/**
-	 * The list of all the toasts
-	 * 
-	 * @see GameMenuView#toast(String, Color, double)
-	 */
 	@FXML
 	private VBox toasts;
 
-	/**
-	 * The list showing the options (research, grid...)
-	 */
 	@FXML
 	private AnchorPane options;
-
-	/**
-	 * The list showing the
-	 */
 	@FXML
 	private VBox devicesBuild;
 
 	@FXML
-	private Button upgradeGridBtn, upgradeLoopBtn, upgradeBuyerBtn;
+	private Button upgradeGridBtn, upgradeLoopBtn, upgradeBuyerBtn, reduceButton, maximizeButton, closeButton;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -145,26 +126,53 @@ public class GameMenuView implements Initializable {
 			ViewUtils.class.getResource("/css/General.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+			ViewUtils.class.getResource("/css/Stage.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/ProgressBar.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
 			ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm()
 		);
 
+		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
+		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
+		maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
+
+		closeButton.setOnMouseClicked(event -> {
+			Platform.exit();
+		});
+		reduceButton.setOnMouseClicked(event -> {
+			((Stage) reduceButton.getScene().getWindow()).setIconified(true);
+		});
+		maximizeButton.setOnMouseClicked(event -> {
+			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
+			if(stage.isMaximized()){
+				stage.setMaximized(false);
+				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
+			}else{
+				stage.setMaximized(true);
+				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Minimize.svg"), 20, 20));
+			}
+		});
+
+		stageBar.setOnMousePressed(pressEvent -> {
+			stageBar.setOnMouseDragged(dragEvent -> {
+				final Stage primaryStage = (Stage) this.root.getScene().getWindow();
+				primaryStage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+				primaryStage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+			});
+		});
+
 		this.grid = new GridPane();
 		this.scrollpane = new ZoomableScrollPane(this.grid);
 		this.main.getChildren().add(0, this.scrollpane);
-		AnchorPane.setTopAnchor(this.scrollpane, 35d);
-		AnchorPane.setRightAnchor(this.scrollpane, 0d);
-		AnchorPane.setBottomAnchor(this.scrollpane, 0d);
-		AnchorPane.setLeftAnchor(this.scrollpane, 3d);
 
 		this.scrollpane.setFitToHeight(false);
 		this.scrollpane.setFitToWidth(false);
-		this.scrollpane.setVbarPolicy(ScrollBarPolicy.NEVER);
-		this.scrollpane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		this.scrollpane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+		this.scrollpane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
+		HBox.setHgrow(this.scrollpane, Priority.ALWAYS);
 		this.scrollpane.setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
+			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP) 
 				event.consume();
 		});
 
