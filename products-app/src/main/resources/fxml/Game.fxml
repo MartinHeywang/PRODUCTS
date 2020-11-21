@@ -10,7 +10,6 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,31 +18,34 @@
    <children>
       <HBox fx:id="stageBar" alignment="CENTER_RIGHT" maxHeight="30.0" minHeight="30.0" styleClass="stageButtons" VBox.vgrow="NEVER">
          <children>
-            <Label text="PRODUCTS.">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            <AnchorPane HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
-            </Label>
-            <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="reduceButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
-            <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
-            <Button fx:id="closeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" styleClass="closeButton" />
+               <children>
+                  <Label fx:id="gameName" maxWidth="300.0" text="PRODUCTS. - game name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="moneyLabel" alignment="CENTER" prefHeight="30.0" styleClass="h5" text="- 0.00 €" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="reduceButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
+                  <Button fx:id="maximizeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" />
+                  <Button fx:id="closeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="1.7976931348623157E308" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" prefWidth="30.0" styleClass="closeButton" />
+               </children>
+            </HBox>
          </children>
       </HBox>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane VBox.vgrow="NEVER">
-               <children>
-                  <Label fx:id="moneyLabel" alignment="CENTER" prefHeight="30.0" style="-fx-border-color: eee;" styleClass="h5" text="Chargement en cours..." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <ProgressBar fx:id="progression" prefHeight="30.0" progress="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-               </children>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </AnchorPane>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <children>
                   <StackPane fx:id="main" HBox.hgrow="ALWAYS">
@@ -129,6 +131,7 @@
                   </HBox>
                </children>
             </HBox>
+            <ProgressBar fx:id="progression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" progress="0.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>

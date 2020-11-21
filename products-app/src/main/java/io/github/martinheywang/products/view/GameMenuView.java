@@ -74,7 +74,8 @@ import javafx.util.Duration;
 
 /**
  * The GameView class is the view controller of the file Game.fxml. It mapps and
- * updates the component as the {@link io.github.martinheywang.products.controller.GameController} wants.
+ * updates the component as the
+ * {@link io.github.martinheywang.products.controller.GameController} wants.
  * 
  * @author Martin Heywang
  */
@@ -101,7 +102,7 @@ public class GameMenuView implements Initializable {
 	private GridPane grid;
 
 	@FXML
-	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo, upgradeBuyerInfo;
+	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo, upgradeBuyerInfo, gameName;
 
 	@FXML
 	private ProgressBar progression;
@@ -122,16 +123,14 @@ public class GameMenuView implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.root.getStylesheets().addAll(
-			ViewUtils.class.getResource("/css/General.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Stage.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/ProgressBar.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
-			ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm()
-		);
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Stage.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/ProgressBar.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
+				ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm());
 
 		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
 		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
@@ -145,10 +144,10 @@ public class GameMenuView implements Initializable {
 		});
 		maximizeButton.setOnMouseClicked(event -> {
 			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
-			if(stage.isMaximized()){
+			if (stage.isMaximized()) {
 				stage.setMaximized(false);
 				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
-			}else{
+			} else {
 				stage.setMaximized(true);
 				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Minimize.svg"), 20, 20));
 			}
@@ -172,7 +171,7 @@ public class GameMenuView implements Initializable {
 		this.scrollpane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		HBox.setHgrow(this.scrollpane, Priority.ALWAYS);
 		this.scrollpane.setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP) 
+			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
 				event.consume();
 		});
 
@@ -184,12 +183,13 @@ public class GameMenuView implements Initializable {
 	 * Loads the given game and the given devices into the view.
 	 * 
 	 * @param devices the devices to load in the grid-view
-	 * @param game the game to load
+	 * @param game    the game to load
 	 */
 	public void loadGame(ArrayList2D<Device> devices, Game game) {
 		this.toProcessView();
 
 		this.grid.getChildren().clear();
+		this.gameName.setText("PRODUCTS. - "+game.getName());
 
 		// LOAD DEVICES
 		for (int x = 0; x < devices.size(); x++)
@@ -198,7 +198,7 @@ public class GameMenuView implements Initializable {
 				// If a Device doesn't exists, create a new FLOOR
 				if (device == null)
 					device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game, new Coordinate(x, y))
-					.instantiate();
+							.instantiate();
 				this.grid.add(new DeviceView(device, this.gameManager), x, y);
 			}
 		this.setMoney(game.getMoney());
@@ -554,6 +554,7 @@ public class GameMenuView implements Initializable {
 		fadeIn.playFromStart();
 		this.moneyLabel.setVisible(true);
 		this.progression.setVisible(false);
+		this.progression.setMinHeight(0d);
 	}
 
 	/**
@@ -567,9 +568,9 @@ public class GameMenuView implements Initializable {
 				new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 0d)));
 		fadeOut.playFromStart();
 		this.grid.setVisible(false);
-		this.moneyLabel.setVisible(false);
 		this.progression.setVisible(true);
-		this.progression.setProgress(0.0);
+		this.progression.setMinHeight(30d);
+		this.progression.setProgress(.0d);
 	}
 
 }
