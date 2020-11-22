@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 	<name>PRODUCTS.</name>
 	<description>Products is a factory management game. Create assembly lines to become wealthy. Build, earn, upgrade... !</description>
-	<url>http://martinheywang.github.io/PRODUCTS</url>
+	<url>https://martinheywang.github.io/PRODUCTS</url>
 
 	<properties>
 		<!-- UTF-8, JRE 8 at least...-->
@@ -37,7 +37,7 @@
 		</license>
 	</licenses>
 
-	<!-- Me, young devloper-->
+	<!-- Me, young developer-->
 	<developers>
 		<developer>
 			<name>Martin Heywang</name>
