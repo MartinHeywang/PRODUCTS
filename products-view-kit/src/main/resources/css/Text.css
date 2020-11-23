@@ -1,0 +1,56 @@
+/*
+    This stylesheet is all about text : in labels, buttons, in general in the app.
+
+    You may want to add some style classes:
+     - .logo : for the logo PRODUCTS. only
+     - .h1 to .h6 : differents headers (h1 the biggest, h6 the smallest)
+     - .info : sweet blue text
+     - .warning : orange text
+     - .error : alarming red text
+     - .help : little text (used for indications)
+*/
+
+Label, Button, Text {
+    /* Segoe UI is the default Java FX font, but I set it anyway */
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-text-fill: #E8E9E8;
+}
+
+/* The logo of the game is made of text */
+.logo{
+    -fx-font-weight: bold;
+    -fx-font-size: 38px;
+}
+
+/*
+    Like in HTML, h1 to h6.
+*/
+.h1{
+    -fx-font-size: 40px;
+}
+.h2{
+    -fx-font-size: 32px;
+}
+.h3{
+    -fx-font-size: 28px;
+}
+.h4{
+    -fx-font-size: 23px;
+}
+.h5{
+    -fx-font-size: 20px;
+}
+.h6{
+    -fx-font-size: 16px;
+}
+
+.warning {
+    -fx-text-fill: #d67404;
+}
+.info{
+    -fx-text-fill: #1885D9;
+}
+.help{
+    -fx-font-size: 11px;
+}

@@ -1,27 +1,20 @@
 /*
- * Main css file to applies to ALL elements.
- */
-* {
-	-fx-background-color: rgb(30, 30, 30);
-	-fx-text-fill: #fff;
-}
+    These styles defines basic styling for all components and 
+    imports all others stylesheets.
+*/
 
-.transparent{
-	-fx-background-color: transparent;
-}
+@import "./Layout.css";
+@import "./Text.css";
+@import "./Button.css";
+@import "./Stage.css";
 
-.hover-traversable:hover > *{
-	-fx-background-color: #333; 
-	-fx-cursor: hand;
-}
-
-*.selectable{
-	-fx-opacity: 0.8;
-}
-*.selectable:hover{
-	-fx-cursor: hand;
-}
-*.selectable:focused{
-	-fx-opacity: 0.95;
-	-fx-cursor: default;
+/*
+    The box content of the stage. 
+    The content is everything except the top 
+    bar and the glass pane used for the shadow.
+*/
+.contentBox {
+    -fx-background-image: url("../images/background.png");
+    -fx-padding: 10px;
+    -fx-background-position: 5px 10px;
 }

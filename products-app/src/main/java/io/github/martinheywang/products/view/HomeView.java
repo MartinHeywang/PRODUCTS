@@ -67,11 +67,7 @@ public final class HomeView implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
-        this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
-                ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
-                ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
-                ViewUtils.class.getResource("/css/Stage.css").toExternalForm(),
-                ViewUtils.class.getResource("/css/TextField.css").toExternalForm());
+        this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
 
         closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
         reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));

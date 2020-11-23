@@ -1,21 +1,61 @@
 /*
-    This file gives styles for the JavaFX stage.
+    As stages (window) in PRODUCTS. are transparent, 
+    they must include their own stage bar - generally at the top, 
+    with close, reduce, and whatever buttons -, 
+    and this stylesheet is here to define them.
+    Also the platform displays (at least Windows) 
+    a shadow behind the stage : it handles it. 
+    But some configuration is needed : 
+    First, both stage and scene must be TRANSPARENT.
+    Second, you must understand that the shadow only shows 
+    if it's IN the stage. So there must be applied a padding 
+    to the root receiving the shadow in our case.
+    But to apply padding, the Node must have a Parent, the actual root.
+    Here the root is selected with '.root', the Java FX default one.
+    And the node receiving the shadow is called with '.userRoot'.
+
+    The bar replacing the original one (depending on the platform) 
+    has a style class of '.stageBar', the title on the left has '.title'.
+    The buttons on the right has got the '.stageButtons', 
+    pr the close button only with '.closeButton'. 
+    Those selectors are used in this stylesheet, 
+    its free to you to make use of them !
 */
 
-/* Top bar with buttons : reduce, maxi/mini-mize, close */
-HBox.stageButtons{
-    -fx-background-color: #444;
+.stageBar {
+    -fx-background-color: #0A690A;
+    -fx-padding: 0 0 0 7px;
+    -fx-min-height: 35px;
 }
-HBox.stageButtons Button, HBox.stageButtons Button *{
-    -fx-background-color: transparent;
-    -fx-background-radius: 0px;
-    -fx-border-width: 0px;
+
+.stageBar .title {
+    -fx-font-size: 16px;
 }
-/* Hover color for reduce and maxi/mini-mize button */
-HBox.stageButtons Button:hover{
-    -fx-background-color: #555;
+
+.stageBar .stageButtons{
+    -fx-padding: 5px;
+    -fx-min-height: 35px;
+    -fx-min-width: 55px;
 }
-/* Specific hover color for the close button */
-.closeButton:hover{
-    -fx-background-color: rgb(245, 10, 10);
+.stageBar .stageButtons:hover{
+    -fx-background-color: #0A8F0A;
+}
+.stageBar .stageButtons:disabled{
+    -fx-background-color: rgba(0, 0, 0, .1);
+}
+
+.stageBar .closeButton:hover{
+    -fx-background-color: #CD2020;
+}
+
+.userRoot{
+    -fx-padding: 0 30px 30px 0;
+    -fx-effect: dropshadow(
+		three-pass-box,
+		rgba(0, 0, 0, .15),
+		10,
+		0,
+        5,
+        5
+	);
 }

@@ -80,12 +80,7 @@ public final class DeviceMenuView implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/General.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Box.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/TitledPane.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/ScrollPane.css").toExternalForm());
+		this.root.getStylesheets().add(ViewUtils.class.getResource("/css/General.css").toExternalForm());
 		deleteView.setImage(new Image(getClass().getResourceAsStream("/images/dashboard/Destroy.png")));
 	}
 

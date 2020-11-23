@@ -57,11 +57,12 @@ import io.github.martinheywang.products.view.HomeView2;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -79,7 +80,7 @@ public final class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		stage = primaryStage;
-		stage.initStyle(StageStyle.UNDECORATED);
+		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.setTitle("PRODUCTS.");
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/icons/Icon.png")));
 		try {
@@ -115,7 +116,7 @@ public final class Main extends Application {
 		try {
 			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Home.fxml"));
 
-			final Parent root = loader.load();
+			final Region root = loader.load();
 			this.changeSceneTo(root);
 
 			stage.setResizable(false);
@@ -140,7 +141,7 @@ public final class Main extends Application {
 		try {
 			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Home2.fxml"));
 
-			final Parent root = loader.load();
+			final Region root = loader.load();
 			this.changeSceneTo(root);
 
 			stage.setResizable(true);
@@ -172,7 +173,7 @@ public final class Main extends Application {
 		try {
 			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Game.fxml"));
 
-			final Parent root = loader.load();
+			final Region root = loader.load();
 			this.changeSceneTo(root);
 
 			stage.setResizable(true);
@@ -208,9 +209,12 @@ public final class Main extends Application {
 	 * 
 	 * @param node the new scene's root
 	 */
-	private void changeSceneTo(Parent node) {
+	private void changeSceneTo(Region node) {
 		final Scene scene = new Scene(node);
+		scene.setFill(Color.TRANSPARENT);
+		scene.getStylesheets().addAll(getClass().getResource("/css/Window.css").toExternalForm());
 		stage.setScene(scene);
+		stage.show();
 	}
 
 	/**

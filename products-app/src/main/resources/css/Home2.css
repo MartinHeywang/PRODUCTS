@@ -1,16 +1,3 @@
-.option {
-    -fx-background-color: #2C2C2C;
-}
-
-.option:hover{
-    -fx-background-color: #0A890A;
-    -fx-cursor: hand;
-}
-
-.game-open *{
-    -fx-background-color: transparent;
-}
-
-.game-open:hover{
-    -fx-background-color: #2C2C2C;
-}
+/*
+    This stylesheet applies to the Home2.fxml file.
+*/

@@ -35,12 +35,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -58,22 +59,19 @@ public class HomeView2 implements Initializable {
 	Main main;
 
 	@FXML
-	private AnchorPane openPane, createPane;
-	@FXML
 	private HBox logoContainer;
 	@FXML
-	private VBox root, content, optionContainer;
+	private Parent root;
+	@FXML
+	private VBox content, optionContainer;
 	@FXML
 	private Separator logoSeparator;
 	@FXML
 	private Label lead, helpLabel;
 
+	// The bar replacing at top replacing the platform specific one.
 	@FXML
 	private HBox stageBar;
-
-	// Stage buttons
-	@FXML
-	private Button reduceButton, closeButton;
 
 	final Pane growPane = new Pane();
 
@@ -95,21 +93,26 @@ public class HomeView2 implements Initializable {
 
 	@Override
 	public void initialize(final URL url, final ResourceBundle resources) {
-		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Home2.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Label.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Buttons.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/TextField.css").toExternalForm(),
-				ViewUtils.class.getResource("/css/Stage.css").toExternalForm());
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
 
-		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
-		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
-		
-		closeButton.setOnMouseClicked(event -> {
+		final SVGImage reduce = new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 18, 18);
+		reduce.getStyleClass().addAll("stageButtons");
+		stageBar.getChildren().add(reduce);
+
+		final SVGImage maximize = new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 18, 18);
+		maximize.getStyleClass().addAll("stageButtons");
+		maximize.setDisable(true);
+		stageBar.getChildren().add(maximize);
+
+		final SVGImage close = new SVGImage(getClass().getResource("/images/icons/Close.svg"), 18, 18);
+		close.getStyleClass().addAll("stageButtons", "closeButton");
+		stageBar.getChildren().add(close);
+
+		close.setOnMouseClicked(event -> {
 			Platform.exit();
 		});
-		reduceButton.setOnMouseClicked(event -> {
-			((Stage) reduceButton.getScene().getWindow()).setIconified(true);
+		reduce.setOnMouseClicked(event -> {
+			((Stage) reduce.getScene().getWindow()).setIconified(true);
 		});
 
 		stageBar.setOnMousePressed(pressEvent -> {
@@ -133,9 +136,6 @@ public class HomeView2 implements Initializable {
 		this.gameScroll.setFitToHeight(true);
 		this.gameScroll.setFitToWidth(true);
 		this.gameScroll.setContent(this.gameContainer);
-
-		this.openPane.setStyle("-fx-background-radius: 3px");
-		this.createPane.setStyle("-fx-background-radius: 3px");
 
 		try {
 			final List<Game> games = Database.createDao(Game.class).queryForAll();
@@ -210,6 +210,18 @@ public class HomeView2 implements Initializable {
 		this.content.getChildren().add(0, this.logoContainer);
 		this.content.getChildren().add(this.optionContainer);
 		this.fadeIn();
+	}
+
+	@FXML
+	private void selectNode(MouseEvent event) {
+		final Button hovered = (Button) event.getSource();
+		hovered.setGraphic(new SVGImage(getClass().getResource("/images/icons/right_keyboard_arrow.svg"), 18, 18));
+	}
+
+	@FXML
+	private void unselectNode(MouseEvent event) {
+		final Button hovered = (Button) event.getSource();
+		hovered.setGraphic(null);
 	}
 
 }

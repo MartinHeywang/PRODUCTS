@@ -1,7 +1,0 @@
-/*
- * This style applies to ProgressBar. Those are still overridable.
- */
-ProgressBar .bar{
-	-fx-background-color: #eee;
-	-fx-background-radius: 0px;
-}

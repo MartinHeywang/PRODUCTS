@@ -1,0 +1,12 @@
+/*
+    This stylesheet gives styles about layout : parent padding for instance.
+*/
+HBox.small-spacing, VBox.small-spacing {
+    -fx-spacing: 3px;
+}
+HBox.medium-spacing, VBox.medium-spacing {
+    -fx-spacing: 7px;
+}
+HBox.large-spacing, VBox.large-spacing {
+    -fx-spacing: 15px;
+}
