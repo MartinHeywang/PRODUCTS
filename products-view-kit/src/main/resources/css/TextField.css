@@ -1,0 +1,18 @@
+/*
+    This stylesheet gives styles for text fields and text areas.
+*/
+
+TextField, TextArea {
+    -fx-border-color: #0A690A;
+    -fx-border-width: 2px;
+
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+
+    -fx-text-fill: -default-text-color;
+    -fx-prompt-text-fill: #909090;
+}
+
+TextField:hover, TextArea:hover, TextField:focused, TextArea:focused{
+    -fx-border-color: #0A8F0A;
+}

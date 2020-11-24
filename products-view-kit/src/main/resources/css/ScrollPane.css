@@ -1,0 +1,25 @@
+ScrollPane.list {
+    -fx-border-color: -cta-dark;
+    -fx-border-width: 2px;
+
+    -fx-background-radius: 0;
+
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: always;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+}
+ScrollPane.list, ScrollPane.list * {
+    -fx-background-color: transparent;
+}
+ScrollPane .increment-arrow, ScrollPane .decrement-arrow {
+    -fx-background-color: #777;
+}
+
+ScrollPane .thumb {
+    -fx-background-color: #777;
+    -fx-background-radius: 1px;
+}
+ScrollPane .thumb:hover {
+    -fx-background-color: #999;
+}

@@ -1,0 +1,11 @@
+/*
+    The box stylesheet defines styles for VBoxes and HBoxes.
+*/
+
+VBox, HBox{
+    -fx-background-color: transparent;
+}
+
+VBox * {
+    -fx-background-color: transparent;
+}

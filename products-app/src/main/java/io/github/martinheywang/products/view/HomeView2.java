@@ -26,6 +26,7 @@ import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.kit.view.component.GameView;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
+import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -43,7 +44,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -56,24 +56,31 @@ import javafx.util.Duration;
  */
 public class HomeView2 implements Initializable {
 
-	Main main;
+	// The instance of main is used to load the stage further (the game view for
+	// example).
+	private Main main;
+
+	// The actual root
+	@FXML
+	private Parent root;
+	// The root seen by the user
+	@FXML
+	private VBox content;
 
 	@FXML
 	private HBox logoContainer;
 	@FXML
-	private Parent root;
-	@FXML
-	private VBox content, optionContainer;
-	@FXML
 	private Separator logoSeparator;
-	@FXML
-	private Label lead, helpLabel;
 
-	// The bar replacing at top replacing the platform specific one.
+	@FXML
+	private VBox options;
+	@FXML
+	private Label title;
+	@FXML
+	private Label help;
+
 	@FXML
 	private HBox stageBar;
-
-	final Pane growPane = new Pane();
 
 	final ScrollPane gameScroll = new ScrollPane();
 	final VBox gameContainer = new VBox();
@@ -95,16 +102,16 @@ public class HomeView2 implements Initializable {
 	public void initialize(final URL url, final ResourceBundle resources) {
 		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
 
-		final SVGImage reduce = new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 18, 18);
+		final SVGImage reduce = new SVGImage(Icons.asURL("reduce.svg"), 18, 18);
 		reduce.getStyleClass().addAll("stageButtons");
 		stageBar.getChildren().add(reduce);
 
-		final SVGImage maximize = new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 18, 18);
+		final SVGImage maximize = new SVGImage(Icons.asURL("maximize.svg"), 18, 18);
 		maximize.getStyleClass().addAll("stageButtons");
 		maximize.setDisable(true);
 		stageBar.getChildren().add(maximize);
 
-		final SVGImage close = new SVGImage(getClass().getResource("/images/icons/Close.svg"), 18, 18);
+		final SVGImage close = new SVGImage(Icons.asURL("close.svg"), 18, 18);
 		close.getStyleClass().addAll("stageButtons", "closeButton");
 		stageBar.getChildren().add(close);
 
@@ -123,15 +130,14 @@ public class HomeView2 implements Initializable {
 			});
 		});
 
-		this.logoContainer.getChildren().add(0, new SVGImage(getClass().getResource("/images/icons/logo.svg"), 50, 75));
+		this.logoContainer.getChildren().add(0, new SVGImage(Icons.asURL("logo.svg"), 50, 75));
 		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
 		this.field.setOnAction(event -> this.create(this.field.getText()));
 		this.field.setFocusTraversable(false);
 		this.field.setPromptText("\"Partie de Luc\"");
 		VBox.setMargin(this.field, new Insets(2d, 0d, 5d, 0d));
 
-		this.lead.setMinHeight(100d);
-		VBox.setVgrow(this.growPane, Priority.ALWAYS);
+		this.title.setMinHeight(100d);
 
 		this.gameScroll.setFitToHeight(true);
 		this.gameScroll.setFitToWidth(true);
@@ -183,39 +189,45 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private void goToOpen() {
 		this.fadeOut();
-		this.content.getChildren().removeAll(this.optionContainer, this.logoSeparator, this.logoContainer);
+		this.content.getChildren().removeAll(this.options, this.logoSeparator, this.logoContainer);
+		this.gameScroll.getStyleClass().add("list");
+		VBox.setVgrow(this.gameScroll, Priority.ALWAYS);
 		this.content.getChildren().add(this.gameScroll);
 
-		this.helpLabel.setText("Sélectionnez une partie à charger:");
-		this.content.getChildren().addAll(this.growPane, this.backButton);
+		this.help.setText("Cliquer sur la partie à charger:");
+		this.title.setText("Quelle partie veux-tu lancer ?");
+		this.content.getChildren().addAll(this.backButton);
 		this.fadeIn();
 	}
 
 	@FXML
 	private void goToCreate() {
 		this.fadeOut();
-		this.content.getChildren().removeAll(this.optionContainer, this.logoContainer, this.logoSeparator);
-		this.helpLabel.setText(
-				"Entrez le nom de la nouvelle partie, puis appuyez sur entrer: (Vous ne pourrez pas le changer!)");
-		this.content.getChildren().addAll(this.field, this.growPane, this.backButton);
+		this.content.getChildren().removeAll(this.options, this.logoContainer, this.logoSeparator);
+		this.help.setText("Entrez le nom de la nouvelle partie, puis appuyez sur entrée pour valider.");
+		this.help.setWrapText(true);
+		this.field.setPromptText("\"Partie de Luc\"");
+		this.title.setText("Prêt à recommencer l'aventure ?");
+		this.content.getChildren().addAll(this.field, this.backButton);
 		this.fadeIn();
 	}
 
 	@FXML
 	private void reloadJustOpened() {
 		this.fadeOut();
-		this.helpLabel.setText("Choisissez l'une des deux options suivantes:");
-		this.content.getChildren().removeAll(this.gameScroll, this.backButton, this.field, this.growPane);
+		this.help.setText("Que voulez-vous faire ?");
+		this.title.setText("Content de te revoir, patron !");
+		this.content.getChildren().removeAll(this.gameScroll, this.backButton, this.field);
 		this.content.getChildren().add(0, this.logoSeparator);
 		this.content.getChildren().add(0, this.logoContainer);
-		this.content.getChildren().add(this.optionContainer);
+		this.content.getChildren().add(this.options);
 		this.fadeIn();
 	}
 
 	@FXML
 	private void selectNode(MouseEvent event) {
 		final Button hovered = (Button) event.getSource();
-		hovered.setGraphic(new SVGImage(getClass().getResource("/images/icons/right_keyboard_arrow.svg"), 18, 18));
+		hovered.setGraphic(new SVGImage(Icons.asURL("right_keyboard_arrow.svg"), 18, 18));
 	}
 
 	@FXML
@@ -223,5 +235,4 @@ public class HomeView2 implements Initializable {
 		final Button hovered = (Button) event.getSource();
 		hovered.setGraphic(null);
 	}
-
 }

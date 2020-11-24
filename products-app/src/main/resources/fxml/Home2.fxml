@@ -13,8 +13,7 @@
 
 <StackPane fx:id="root" style="-fx-background-color: transparent;" stylesheets="@../css/Home2.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.martinheywang.products.view.HomeView2">
    <children>
-      
-      <VBox fx:id="content" styleClass="userRoot">
+      <VBox fx:id="userRoot" styleClass="userRoot">
          <children>
             <HBox fx:id="stageBar" alignment="CENTER_RIGHT" styleClass="stageBar" VBox.vgrow="NEVER">
                <children>
@@ -26,7 +25,7 @@
                   <Pane styleClass="transparent" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="contentBox" VBox.vgrow="ALWAYS">
+            <VBox fx:id="content" prefHeight="200.0" prefWidth="100.0" styleClass="contentBox" VBox.vgrow="ALWAYS">
                <children>
                   <HBox fx:id="logoContainer" alignment="CENTER" VBox.vgrow="NEVER">
                      <children>
@@ -42,10 +41,10 @@
                         <Insets bottom="10.0" top="10.0" />
                      </VBox.margin>
                   </Separator>
-                  <Label fx:id="lead" prefWidth="220.0" styleClass="h4" text="Content de te revoir, boss !" wrapText="true" VBox.vgrow="SOMETIMES" />
-                  <VBox fx:id="optionContainer" styleClass="big-spacing" VBox.vgrow="ALWAYS">
+                  <Label fx:id="title" prefWidth="220.0" styleClass="h4" text="Content de te revoir, boss !" wrapText="true" VBox.vgrow="SOMETIMES" />
+                  <VBox fx:id="options" styleClass="big-spacing" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label fx:id="helpLabel" text="Que voulez-vous faire ?">
+                        <Label fx:id="help" text="Que voulez-vous faire ?">
                            <styleClass>
                               <String fx:value="help" />
                               <String fx:value="info" />
@@ -53,7 +52,7 @@
                         </Label>
                         <Button fx:id="open" alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToOpen" onMouseEntered="#selectNode" onMouseExited="#unselectNode" styleClass="h5" text="Charger une partie" />
                         <Button fx:id="create" alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreate" onMouseEntered="#selectNode" onMouseExited="#unselectNode" styleClass="h5" text="Créer une partie" />
-                        <Button fx:id="create1" alignment="TOP_LEFT" disable="true" layoutX="10.0" layoutY="52.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreate" onMouseEntered="#selectNode" onMouseExited="#unselectNode" styleClass="h5" text="Aller aux paramètres" />
+                        <Button fx:id="settings" alignment="TOP_LEFT" disable="true" layoutX="10.0" layoutY="52.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreate" onMouseEntered="#selectNode" onMouseExited="#unselectNode" styleClass="h5" text="Aller aux paramètres" />
                      </children>
                   </VBox>
                </children>

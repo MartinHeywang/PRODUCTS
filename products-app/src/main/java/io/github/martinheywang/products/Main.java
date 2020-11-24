@@ -49,6 +49,7 @@ import io.github.martinheywang.products.kit.resource.Ore;
 import io.github.martinheywang.products.kit.resource.Plate;
 import io.github.martinheywang.products.kit.resource.Product;
 import io.github.martinheywang.products.kit.resource.Wire;
+import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.database.ResourcePersister;
 import io.github.martinheywang.products.view.GameMenuView;
@@ -82,7 +83,7 @@ public final class Main extends Application {
 		stage = primaryStage;
 		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.setTitle("PRODUCTS.");
-		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/images/icons/Icon.png")));
+		stage.getIcons().add(new Image(Icons.asStream("Icon.png")));
 		try {
 			// If at least one game is already registered
 			if (Database.createDao(Game.class).countOf() == 0)

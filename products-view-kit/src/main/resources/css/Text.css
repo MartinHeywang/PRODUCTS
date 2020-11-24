@@ -14,7 +14,7 @@ Label, Button, Text {
     /* Segoe UI is the default Java FX font, but I set it anyway */
     -fx-font-family: "Segoe UI";
     -fx-font-size: 12px;
-    -fx-text-fill: #E8E9E8;
+    -fx-text-fill: -default-text-color;
 }
 
 /* The logo of the game is made of text */
@@ -44,12 +44,14 @@ Label, Button, Text {
 .h6{
     -fx-font-size: 16px;
 }
-
+.error{
+    -fx-text-fill: -error;
+}
 .warning {
-    -fx-text-fill: #d67404;
+    -fx-text-fill: -warning;
 }
 .info{
-    -fx-text-fill: #1885D9;
+    -fx-text-fill: -info;
 }
 .help{
     -fx-font-size: 11px;
