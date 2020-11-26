@@ -3,18 +3,15 @@ package io.github.martinheywang.products.kit.view.component;
 import java.net.URL;
 
 import io.github.martinheywang.products.kit.view.utils.Icons;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 public class ComplexButton extends HBox {
 
@@ -23,9 +20,6 @@ public class ComplexButton extends HBox {
     private Label descLabel;
 
     private Region graphic;
-
-    private final Background bgDefault = new Background(new BackgroundFill(Color.web("rgba(0, 0, 0, .1)"), new CornerRadii(4d), null));
-    private final Background bgHover = new Background(new BackgroundFill(Color.web("rgba(0, 0, 0, .2)"), new CornerRadii(4d), null));
 
     /**
      * Creates a new ComplexButton.
@@ -51,20 +45,20 @@ public class ComplexButton extends HBox {
         text.setSpacing(5d);
         this.setPadding(new Insets(10d));
         this.setMinHeight(50d);
-        this.setBackground(bgDefault);
+        this.setBackground(ViewUtils.bgDefault);
         this.getChildren().add(text);
 
         this.setOnMouseEntered(event -> {
             titleLabel.getStyleClass().add("full-white");
             descLabel.getStyleClass().add("precision-light");
             this.getChildren().set(0, new SVGImage(Icons.asURL("right_keyboard_arrow.svg"), 30d, 30d));
-            this.setBackground(bgHover);
+            this.setBackground(ViewUtils.bgHover);
         });
         this.setOnMouseExited(event -> {
             titleLabel.getStyleClass().remove("full-white");
             descLabel.getStyleClass().remove("precision-light");
             this.getChildren().set(0, this.graphic);
-            this.setBackground(bgDefault);
+            this.setBackground(ViewUtils.bgDefault);
         });
     }
 

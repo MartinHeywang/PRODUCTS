@@ -16,3 +16,7 @@ TextField, TextArea {
 TextField:hover, TextArea:hover, TextField:focused, TextArea:focused{
     -fx-border-color: #0A8F0A;
 }
+
+TextField.error{
+    -fx-border-color: -error;
+}

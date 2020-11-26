@@ -16,23 +16,37 @@
 package io.github.martinheywang.products.kit.view.component;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 /**
- * A GameView is a Java FX {@link javafx.scene.Node} that displays a particular {@link io.github.martinheywang.products.api.model.Game}.
+ * A GameView is a Java FX {@link javafx.scene.Node} that displays a particular
+ * {@link io.github.martinheywang.products.api.model.Game}.
  */
-public final class GameView extends VBox {
+public final class GameView extends HBox {
+
+	private Game game;
+
+	private boolean isCollapsed = true;
+
+	private VBox text;
+	private Label help;
+	private Label money;
+	private Label save;
 
 	/**
 	 * Creates a new GameView.
@@ -40,8 +54,9 @@ public final class GameView extends VBox {
 	 * @param data the displayed game
 	 */
 	public GameView(Game data) {
-		this.setPadding(new Insets(5));
-
+		this.setPadding(new Insets(10d));
+		this.setBackground(ViewUtils.bgDefault);
+		this.setAlignment(Pos.CENTER);
 		this.setDisplayed(data);
 	}
 
@@ -52,38 +67,69 @@ public final class GameView extends VBox {
 	 */
 	public void setDisplayed(Game game) {
 		this.getChildren().clear();
+		this.game = game;
 
-		final Label nom = new Label();
-		nom.setUnderline(true);
-		nom.setAlignment(Pos.TOP_CENTER);
-		nom.setText(game.getName());
-		nom.setWrapText(true);
+		final Label name = new Label(game.getName());
+		name.getStyleClass().add("h5");
+		name.setMaxWidth(250d);
 
-		final DateTimeFormatter formatter = DateTimeFormatter
-				.ofPattern("dd/MM/yyyy HH:mm");
+		this.help = new Label("Cliquez pour afficher les détails.");
+		help.getStyleClass().add("precision");
 
-		final Label money = new Label();
-		money.setText("Argent en compte: "
-				+ MoneyFormat.getSingleton().format(game.getMoney()));
+		this.money = new Label("Argent : " + MoneyFormat.getSingleton().format(this.game.getMoney()));
+		this.save = new Label("Dernière sauvegarde : "
+				+ this.game.getLastSave().format(DateTimeFormatter.ofPattern("hh:mm dd/MM/yyyy")));
 
-		final Label save = new Label();
-		save.setText(
-				"Dernière sauvegarde: " + game.getLastSave().format(formatter));
+		this.text = new VBox();
+		text.getChildren().addAll(name, help);
+		text.setSpacing(6d);
 
-		final Pane fancy = new Pane();
-		fancy.setPrefHeight(2d);
+		// This pane is used to create a void between components.
+		final Pane grow = new Pane();
+		HBox.setHgrow(grow, Priority.ALWAYS);
+		this.getChildren().addAll(text, grow);
 
 		this.setOnMouseEntered(event -> {
-			fancy.setBackground(new Background(new BackgroundFill(
-					Color.DODGERBLUE, CornerRadii.EMPTY, new Insets(0))));
-			this.setBackground(new Background(new BackgroundFill(
-					Color.web("181818"), new CornerRadii(5d), new Insets(0d))));
+			this.setBackground(ViewUtils.bgHover);
+			help.getStyleClass().add("precision-light");
+			name.getStyleClass().add("full-white");
 		});
 		this.setOnMouseExited(event -> {
-			fancy.setBackground(Background.EMPTY);
-			this.setBackground(Background.EMPTY);
+			this.setBackground(ViewUtils.bgDefault);
+			help.getStyleClass().add("precision-light");
+			name.getStyleClass().remove("full-white");
 		});
+		this.setOnMouseClicked(event -> {
+			if (isCollapsed) {
+				showAll();
+			} else {
+				collapse();
+			}
+			this.isCollapsed = !this.isCollapsed;
+		});
+	}
 
-		this.getChildren().addAll(nom, money, save, fancy);
+	private void showAll() {
+		help.setText("Cliquez pour cacher les détails.");
+		this.text.getChildren().addAll(1, Arrays.asList(money, save));
+	}
+
+	private void collapse() {
+		this.text.getChildren().removeAll(money, save);
+		this.help.setText("Cliquez pour afficher les détails.");
+	}
+
+	/**
+	 * Adds a button on the right of the view.
+	 * 
+	 * @param name    the text of the button
+	 * @param handler what will be executed if the button is fired.
+	 */
+	public void allowAction(String name, EventHandler<ActionEvent> handler) {
+		final Button button = new Button(name);
+		button.setOnAction(handler);
+		button.getStyleClass().add("fancy-border");
+		button.setCursor(Cursor.HAND);
+		this.getChildren().add(button);
 	}
 }

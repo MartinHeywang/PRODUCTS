@@ -1,5 +1,21 @@
 Button {
+    -fx-background-color: rgba(0, 0, 0, .1);
+    -fx-padding: 2px 3px 2px 3px;
+    -fx-font-size: 13px;
+}
+
+Button:hover{
+    -fx-underline: true;
+    -fx-background-color: rgba(0, 0, 0, .2);
+}
+
+Button.fancy-border{
     -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 7px;
+    -fx-border-color: -cta;
+    -fx-border-width: 0px 1px 1px 0px;
+    -fx-text-fill: -default-text-color;
+}
+Button.fancy-border:hover{
+    -fx-background-color: transparent;
+    -fx-border-color: -cta-light;
 }

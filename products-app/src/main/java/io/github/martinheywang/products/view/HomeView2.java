@@ -17,7 +17,6 @@ package io.github.martinheywang.products.view;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -25,8 +24,8 @@ import java.util.ResourceBundle;
 import io.github.martinheywang.products.Main;
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Game;
-import io.github.martinheywang.products.api.utils.MoneyFormat;
 import io.github.martinheywang.products.kit.view.component.ComplexButton;
+import io.github.martinheywang.products.kit.view.component.GameView;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
@@ -36,7 +35,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -81,9 +80,7 @@ public class HomeView2 implements Initializable {
 
 	ScrollPane gameScroll = new ScrollPane();
 	final VBox gameContainer = new VBox();
-	Button backButton = new Button("Retour");
-
-	final TextField field = new TextField();
+	Button backButton = new Button();
 
 	private void create(String text) {
 		try {
@@ -146,10 +143,7 @@ public class HomeView2 implements Initializable {
 		this.options.getChildren().add(quit);
 
 		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
-		this.field.setOnAction(event -> this.create(this.field.getText()));
-		this.field.setFocusTraversable(false);
-		this.field.setPromptText("\"Partie de Luc\"");
-		VBox.setMargin(this.field, new Insets(2d, 0d, 5d, 0d));
+		this.backButton.setGraphic(new SVGImage(Icons.asURL("left_keyboard_arrow.svg"), 30d, 30d));
 	}
 
 	/**
@@ -163,9 +157,9 @@ public class HomeView2 implements Initializable {
 		this.main = main;
 
 		final double translateYValue = 50d;
-		
+
 		this.root.getScene().getWindow().setOnShowing(event -> {
-			for(Node children : this.content.getChildrenUnmodifiable()){
+			for (Node children : this.content.getChildrenUnmodifiable()) {
 				children.setTranslateY(translateYValue);
 			}
 		});
@@ -173,7 +167,8 @@ public class HomeView2 implements Initializable {
 			final Timeline tl = new Timeline();
 			for (Node children : content.getChildrenUnmodifiable()) {
 				tl.getKeyFrames()
-						.addAll(new KeyFrame(Duration.millis(100d), new KeyValue(children.translateYProperty(), translateYValue),
+						.addAll(new KeyFrame(Duration.millis(100d),
+								new KeyValue(children.translateYProperty(), translateYValue),
 								new KeyValue(children.opacityProperty(), 0d)),
 								new KeyFrame(Duration.millis(700d), new KeyValue(children.translateYProperty(), 0d),
 										new KeyValue(children.opacityProperty(), 1d)));
@@ -207,10 +202,6 @@ public class HomeView2 implements Initializable {
 		this.help = new Label();
 		this.help.getStyleClass().add("h5");
 		this.help.setText("Quelle partie veux-tu charger ?");
-
-		this.backButton = new Button();
-		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
-		this.backButton.setGraphic(new SVGImage(Icons.asURL("left_keyboard_arrow.svg"), 30d, 30d));
 		this.help.setGraphic(this.backButton);
 
 		this.gameScroll = new ScrollPane();
@@ -224,18 +215,16 @@ public class HomeView2 implements Initializable {
 			final List<Game> games = Database.createDao(Game.class).queryForAll();
 			games.sort(Comparator.comparing(Game::getLastSave).reversed());
 			for (final Game game : games) {
-				final String desc = "Argent : " + MoneyFormat.getSingleton().format(game.getMoney())
-						+ "; Dernière sauvegarde : "
-						+ game.getLastSave().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-				final ComplexButton button = new ComplexButton(game.getName(), desc, null);
-				button.setOnMousePressed(event -> main.initGame(game));
-				this.gameContainer.getChildren().add(button);
+				final GameView view = new GameView(game);
+				view.allowAction("Lancer !", event -> {
+					main.initGame(game);
+				});
+				this.gameContainer.getChildren().add(view);
 			}
-			this.gameScroll.setContent(this.gameContainer);
+			this.gameContainer.setSpacing(10d);
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
-
 		this.content.getChildren().addAll(this.help, this.gameScroll);
 
 		this.fadeIn();
@@ -245,14 +234,34 @@ public class HomeView2 implements Initializable {
 	private void goToCreate() {
 		this.fadeOut();
 
+		this.content.getChildren().clear();
+		this.content.setSpacing(15d);
+		this.content.setAlignment(Pos.CENTER_LEFT);
+
+		this.help = new Label("Créez une nouvelle partie !");
+		this.help.getStyleClass().add("h5");
+
+		final TextField field = new TextField();
+		field.setPromptText("Nom de la nouvelle partie");
+
+		final Label precision = new Label("Appuyez sur entrer ou cliquez sur le bouton ci-dessous pour continuer.");
+		precision.getStyleClass().add("precision");
+
+		final Button validate = new Button("Créer !");
+		validate.getStyleClass().add("fancy-border");
+
+		validate.setOnAction(event -> create(field.getText()));
+		field.setOnAction(validate.getOnAction());
+
+		this.content.getChildren().addAll(backButton, help, field, precision, validate);
+
 		this.fadeIn();
 	}
 
 	@FXML
 	private void reloadJustOpened() {
 		this.fadeOut();
-
-		this.fadeIn();
+		main.initAccueil2();
 	}
 
 	@FXML
