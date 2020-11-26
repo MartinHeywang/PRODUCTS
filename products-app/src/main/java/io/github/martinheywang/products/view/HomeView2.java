@@ -17,6 +17,7 @@ package io.github.martinheywang.products.view;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -24,7 +25,8 @@ import java.util.ResourceBundle;
 import io.github.martinheywang.products.Main;
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Game;
-import io.github.martinheywang.products.kit.view.component.GameView;
+import io.github.martinheywang.products.api.utils.MoneyFormat;
+import io.github.martinheywang.products.kit.view.component.ComplexButton;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
@@ -40,7 +42,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -63,14 +64,10 @@ public class HomeView2 implements Initializable {
 	// The actual root
 	@FXML
 	private Parent root;
+
 	// The root seen by the user
 	@FXML
 	private VBox content;
-
-	@FXML
-	private HBox logoContainer;
-	@FXML
-	private Separator logoSeparator;
 
 	@FXML
 	private VBox options;
@@ -82,7 +79,7 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private HBox stageBar;
 
-	final ScrollPane gameScroll = new ScrollPane();
+	ScrollPane gameScroll = new ScrollPane();
 	final VBox gameContainer = new VBox();
 	Button backButton = new Button("Retour");
 
@@ -130,32 +127,29 @@ public class HomeView2 implements Initializable {
 			});
 		});
 
-		this.logoContainer.getChildren().add(0, new SVGImage(Icons.asURL("logo.svg"), 50, 75));
+		final SVGImage logo = new SVGImage(Icons.asURL("logo.svg"), 75d, 112.5d);
+		this.content.getChildren().add(0, logo);
+
+		final URL arrow = Icons.asURL("point.svg");
+
+		final ComplexButton load = new ComplexButton("Ouvrir !", "Charger une partie déjà existante.", arrow);
+		load.setOnMouseClicked(event -> goToOpen());
+		this.options.getChildren().add(load);
+
+		final ComplexButton create = new ComplexButton("Créer !", "Recommencer l'aventure dans une nouvelle partie.",
+				arrow);
+		create.setOnMouseClicked(event -> goToCreate());
+		this.options.getChildren().add(create);
+
+		final ComplexButton quit = new ComplexButton("Quitter...", "Fermer le jeu.", arrow);
+		quit.setOnMouseClicked(close.getOnMouseClicked());
+		this.options.getChildren().add(quit);
+
 		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
 		this.field.setOnAction(event -> this.create(this.field.getText()));
 		this.field.setFocusTraversable(false);
 		this.field.setPromptText("\"Partie de Luc\"");
 		VBox.setMargin(this.field, new Insets(2d, 0d, 5d, 0d));
-
-		this.title.setMinHeight(100d);
-
-		this.gameScroll.setFitToHeight(true);
-		this.gameScroll.setFitToWidth(true);
-		this.gameScroll.setContent(this.gameContainer);
-
-		try {
-			final List<Game> games = Database.createDao(Game.class).queryForAll();
-			games.sort(Comparator.comparing(Game::getLastSave).reversed());
-			for (final Game game : games) {
-				final GameView view = new GameView(game);
-				view.setOnMouseClicked(event -> this.main.initGame(game));
-				view.getStyleClass().add("game-open");
-				this.gameContainer.getChildren().add(view);
-
-			}
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -167,6 +161,25 @@ public class HomeView2 implements Initializable {
 	 */
 	public void setMainApp(final Main main) {
 		this.main = main;
+
+		final double translateYValue = 50d;
+		
+		this.root.getScene().getWindow().setOnShowing(event -> {
+			for(Node children : this.content.getChildrenUnmodifiable()){
+				children.setTranslateY(translateYValue);
+			}
+		});
+		this.root.getScene().getWindow().setOnShown(event -> {
+			final Timeline tl = new Timeline();
+			for (Node children : content.getChildrenUnmodifiable()) {
+				tl.getKeyFrames()
+						.addAll(new KeyFrame(Duration.millis(100d), new KeyValue(children.translateYProperty(), translateYValue),
+								new KeyValue(children.opacityProperty(), 0d)),
+								new KeyFrame(Duration.millis(700d), new KeyValue(children.translateYProperty(), 0d),
+										new KeyValue(children.opacityProperty(), 1d)));
+			}
+			tl.play();
+		});
 	}
 
 	private void fadeOut() {
@@ -189,39 +202,62 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private void goToOpen() {
 		this.fadeOut();
-		this.content.getChildren().removeAll(this.options, this.logoSeparator, this.logoContainer);
-		this.gameScroll.getStyleClass().add("list");
-		VBox.setVgrow(this.gameScroll, Priority.ALWAYS);
-		this.content.getChildren().add(this.gameScroll);
 
-		this.help.setText("Cliquer sur la partie à charger:");
-		this.title.setText("Quelle partie veux-tu lancer ?");
-		this.content.getChildren().addAll(this.backButton);
+		this.content.getChildren().clear();
+		this.help = new Label();
+		this.help.getStyleClass().add("h5");
+		this.help.setText("Quelle partie veux-tu charger ?");
+
+		this.backButton = new Button();
+		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
+		this.backButton.setGraphic(new SVGImage(Icons.asURL("left_keyboard_arrow.svg"), 30d, 30d));
+		this.help.setGraphic(this.backButton);
+
+		this.gameScroll = new ScrollPane();
+		this.gameScroll.getStyleClass().add("list");
+		this.gameScroll.setFitToHeight(true);
+		this.gameScroll.setFitToWidth(true);
+		this.gameScroll.setContent(this.gameContainer);
+		VBox.setVgrow(this.gameScroll, Priority.ALWAYS);
+
+		try {
+			final List<Game> games = Database.createDao(Game.class).queryForAll();
+			games.sort(Comparator.comparing(Game::getLastSave).reversed());
+			for (final Game game : games) {
+				final String desc = "Argent : " + MoneyFormat.getSingleton().format(game.getMoney())
+						+ "; Dernière sauvegarde : "
+						+ game.getLastSave().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+				final ComplexButton button = new ComplexButton(game.getName(), desc, null);
+				button.setOnMousePressed(event -> main.initGame(game));
+				this.gameContainer.getChildren().add(button);
+			}
+			this.gameScroll.setContent(this.gameContainer);
+		} catch (final SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.content.getChildren().addAll(this.help, this.gameScroll);
+
 		this.fadeIn();
 	}
 
 	@FXML
 	private void goToCreate() {
 		this.fadeOut();
-		this.content.getChildren().removeAll(this.options, this.logoContainer, this.logoSeparator);
-		this.help.setText("Entrez le nom de la nouvelle partie, puis appuyez sur entrée pour valider.");
-		this.help.setWrapText(true);
-		this.field.setPromptText("\"Partie de Luc\"");
-		this.title.setText("Prêt à recommencer l'aventure ?");
-		this.content.getChildren().addAll(this.field, this.backButton);
+
 		this.fadeIn();
 	}
 
 	@FXML
 	private void reloadJustOpened() {
 		this.fadeOut();
-		this.help.setText("Que voulez-vous faire ?");
-		this.title.setText("Content de te revoir, patron !");
-		this.content.getChildren().removeAll(this.gameScroll, this.backButton, this.field);
-		this.content.getChildren().add(0, this.logoSeparator);
-		this.content.getChildren().add(0, this.logoContainer);
-		this.content.getChildren().add(this.options);
+
 		this.fadeIn();
+	}
+
+	@FXML
+	private void close() {
+		((Stage) this.root.getScene().getWindow()).close();
 	}
 
 	@FXML

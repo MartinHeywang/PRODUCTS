@@ -1,6 +1,6 @@
 ScrollPane.list {
     -fx-border-color: -cta-dark;
-    -fx-border-width: 2px;
+    -fx-border-width: 0 0 0 2px;
 
     -fx-background-radius: 0;
 

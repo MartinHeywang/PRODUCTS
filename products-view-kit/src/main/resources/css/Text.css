@@ -43,6 +43,10 @@ Label, Button, Text {
 }
 .h6{
     -fx-font-size: 16px;
+    -fx-text-fill: #ddd;
+}
+.full-white{
+    -fx-text-fill: #fff;
 }
 .error{
     -fx-text-fill: -error;
@@ -50,8 +54,11 @@ Label, Button, Text {
 .warning {
     -fx-text-fill: -warning;
 }
-.info{
-    -fx-text-fill: -info;
+.precision{
+    -fx-text-fill: -cta;
+}
+.precision-light{
+    -fx-text-fill: -cta-light;
 }
 .help{
     -fx-font-size: 11px;

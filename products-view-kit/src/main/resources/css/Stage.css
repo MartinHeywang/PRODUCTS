@@ -48,8 +48,12 @@
     -fx-background-color: #CD2020;
 }
 
+.root {
+    -fx-background-color: transparent;
+}
+
 .userRoot{
-    -fx-padding: 0 30px 30px 0;
+    -fx-padding: 0 10px 10px 0;
     -fx-effect: dropshadow(
 		three-pass-box,
 		rgba(0, 0, 0, .15),

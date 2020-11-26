@@ -145,12 +145,6 @@ public final class Main extends Application {
 			final Region root = loader.load();
 			this.changeSceneTo(root);
 
-			stage.setResizable(true);
-			stage.setMaxWidth(700d);
-			stage.setMaxHeight(600d);
-			stage.setMinWidth(500d);
-			stage.setMinHeight(530d);
-
 			final HomeView2 controller = loader.getController();
 			controller.setMainApp(this);
 
@@ -215,7 +209,6 @@ public final class Main extends Application {
 		scene.setFill(Color.TRANSPARENT);
 		scene.getStylesheets().addAll(getClass().getResource("/css/Window.css").toExternalForm());
 		stage.setScene(scene);
-		stage.show();
 	}
 
 	/**
