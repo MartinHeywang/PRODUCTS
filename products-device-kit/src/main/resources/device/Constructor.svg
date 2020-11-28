@@ -1,0 +1,70 @@
+<svg viewBox="0 0 490 490" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="490" height="490" fill="#656361" />
+    <rect x="11" y="10" width="150" height="150" fill="#CECCCC" />
+    <rect x="171" y="10" width="150" height="150" fill="#CECCCC" />
+    <rect x="331" y="10" width="150" height="150" fill="#CECCCC" />
+    <rect x="331" y="170" width="150" height="150" fill="#CECCCC" />
+    <rect x="171" y="170" width="150" height="150" fill="#CECCCC" />
+    <rect x="11" y="170" width="150" height="150" fill="#CECCCC" />
+    <rect x="11" y="330" width="150" height="150" fill="#CECCCC" />
+    <rect x="171" y="330" width="150" height="150" fill="#CECCCC" />
+    <rect x="331" y="330" width="150" height="150" fill="#CECCCC" />
+    <path d="M21 20H31H151V30H31V150H21V20Z" fill="#115F19" />
+    <path d="M471 20V30V150H461V30L341 30V20L471 20Z" fill="#115F19" />
+    <path d="M471 470H461L341 470V460L461 460L461 340H471L471 470Z" fill="#115F19" />
+    <path d="M21 470V460L21 340H31L31 460H151V470H21Z" fill="#115F19" />
+    <rect x="141" y="140" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="20" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="20" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="140" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="140" width="10" height="10" fill="#496B7B" />
+    <rect x="461" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="461" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="341" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="341" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="141" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="141" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="21" y="180" width="10" height="10" fill="#496B7B" />
+    <rect x="21" y="300" width="10" height="10" fill="#496B7B" />
+    <rect x="141" y="340" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="340" width="10" height="10" fill="#496B7B" />
+    <rect x="181" y="460" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="460" width="10" height="10" fill="#496B7B" />
+    <rect x="301" y="340" width="10" height="10" fill="#496B7B" />
+    <rect x="341" y="340" width="10" height="10" fill="#496B7B" />
+    <rect x="341" y="140" width="10" height="10" fill="#496B7B" />
+    <rect x="200" y="10" width="90" height="140" fill="#656361" />
+    <rect x="210" width="70" height="150" fill="#767472" />
+    <rect x="229" y="30" width="10" height="10" fill="#545250" />
+    <rect x="219" y="20" width="10" height="10" fill="#545250" />
+    <rect x="259" y="20" width="10" height="10" fill="#545250" />
+    <rect x="249" y="30" width="10" height="10" fill="#545250" />
+    <rect x="239" y="40" width="10" height="10" fill="#545250" />
+    <rect x="10" y="290" width="90" height="150" transform="rotate(-90 10 290)" fill="#656361" />
+    <rect y="280" width="70" height="151" transform="rotate(-90 0 280)" fill="#767472" />
+    <rect x="30" y="261" width="10" height="10" transform="rotate(-90 30 261)" fill="#545250" />
+    <rect x="20" y="271" width="10" height="10" transform="rotate(-90 20 271)" fill="#545250" />
+    <rect x="20" y="231" width="10" height="10" transform="rotate(-90 20 231)" fill="#545250" />
+    <rect x="30" y="241" width="10" height="10" transform="rotate(-90 30 241)" fill="#545250" />
+    <rect x="40" y="251" width="10" height="10" transform="rotate(-90 40 251)" fill="#545250" />
+    <rect x="489" y="200" width="90" height="150" transform="rotate(90 489 200)" fill="#656361" />
+    <rect x="490" y="210" width="70" height="150" transform="rotate(90 490 210)" fill="#767472" />
+    <rect x="460" y="250" width="10" height="10" transform="rotate(-90 460 250)" fill="#545250" />
+    <rect x="450" y="240" width="10" height="10" transform="rotate(-90 450 240)" fill="#545250" />
+    <rect x="440" y="270" width="10" height="10" transform="rotate(-90 440 270)" fill="#545250" />
+    <rect x="450" y="260" width="10" height="10" transform="rotate(-90 450 260)" fill="#545250" />
+    <rect x="440" y="230" width="10" height="10" transform="rotate(-90 440 230)" fill="#545250" />
+    <rect x="151" y="150" width="190" height="190" fill="#212121" />
+    <rect x="162.176" y="161.177" width="167.647" height="167.647" fill="#424242" />
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M206.882 172.353H218.059V183.529L229.235 183.529V172.353H240.412V183.529V194.706V205.882V217.059V228.235V239.412H229.235H218.059H206.882H195.706H184.529H173.353V228.235H184.529L184.529 217.059H173.353V205.882H184.529L184.529 194.706H195.706V183.529L206.882 183.529V172.353ZM218.059 194.706H206.882V205.882H195.706V217.059L206.882 217.059L218.059 217.059V205.882V194.706Z" fill="#9E9E9E" />
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M318.647 205.882V217.059H307.471L307.471 228.235H318.647V239.412H307.471H296.294H285.118H273.941H262.765H251.588V228.235V217.059V205.882V194.706V183.529V172.353H262.765V183.529L273.941 183.529V172.353H285.118V183.529L296.294 183.529V194.706H307.471L307.471 205.882H318.647ZM296.294 217.059V205.882H285.118V194.706H273.941L273.941 205.882L273.941 217.059H285.118H296.294Z" fill="#9E9E9E" />
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M285.118 317.647H273.941V306.471L262.765 306.471V317.647H251.588V306.471L251.588 295.294V284.118V272.941L251.588 261.765L251.588 250.588L262.765 250.588H273.941H285.118H296.294H307.471H318.647V261.765H307.471L307.471 272.941H318.647V284.118H307.471L307.471 295.294H296.294L296.294 306.471L285.118 306.471V317.647ZM273.941 295.294H285.118V284.118H296.294V272.941L285.118 272.941L273.941 272.941V284.118V295.294Z" fill="#9E9E9E" />
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M173.353 284.118V272.941H184.529L184.529 261.765H173.353V250.588H184.529H195.706H206.882H218.059H229.235H240.412V261.765V272.941V284.118V295.294V306.471V317.647H229.235V306.471L218.059 306.471V317.647H206.882V306.471L195.706 306.471V295.294H184.529L184.529 284.118H173.353ZM195.706 272.941V284.118H206.882V295.294H218.059L218.059 284.118L218.059 272.941H206.882H195.706Z" fill="#9E9E9E" />
+    <rect x="240.412" y="172.353" width="11.1765" height="134.118" fill="#9E9E9E" />
+    <rect x="173.353" y="239.412" width="145.294" height="11.1765" fill="#9E9E9E" />
+    <rect x="229.235" y="228.235" width="33.5294" height="33.5294" fill="#115F19" />
+</svg>

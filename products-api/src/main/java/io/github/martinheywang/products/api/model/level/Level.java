@@ -15,26 +15,23 @@
 */
 package io.github.martinheywang.products.api.model.level;
 
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
+
 /**
  * <p>
  * The level is a value that defines the efficiency of a device.<br>
  * More the level is high, more the device is performant.<br>
- * So it is directly associated with device.
+ * So it is directly associated with the
+ * {@link io.github.martinheywang.products.api.model.device.Device} class.
  * </p>
  * <p>
- * It also helps defining the folder in which the image / 
- * view of the device can be found, as below :
- * </p>
- * <ul>
- * <li>Level 1 : [resource_folder]/images/devices_level_1/</li>
- * <li>Level 2 : [resource_folder]/images/devices_level_2/</li>
- * <li>Level 3 : [resource_folder]/images/devices_level_3/</li>
- * </ul>
- * 
- * <p>
- * Each constant defines also an accessible name and an efficiency value. 
- * The accessible name is displayed in the UI and the efficency value is used to 
+ * Each constant defines also an accessible name and an efficiency value. The
+ * accessible name is displayed in the UI and the efficency value is used to
  * generate the 'max act count' of a device.
+ * </p>
+ * <p>
+ * It also defines an effect to apply to the image.
  * </p>
  */
 public enum Level {
@@ -42,39 +39,31 @@ public enum Level {
 	 * Level 1.
 	 * 
 	 * <ul>
-	 * <li>Folder : [resource_folder]/images/devices_level_1/</li>
 	 * <li>Efficiency: 1</li>
 	 * <li>Accesible name : Niveau 1</li>
 	 * </ul>
 	 */
-	LEVEL_1("devices_level_1", 1, "Niveau 1"), 
+	LEVEL_1(1, "Niveau 1", new ColorAdjust(-.2, 0, -.1, 0)),
 
 	/**
 	 * Level 2.
 	 * 
 	 * <ul>
-	 * <li>Folder : [resource_folder]/images/devices_level_2/</li>
 	 * <li>Efficiency: 2</li>
 	 * <li>Accesible name : Niveau 2</li>
 	 * </ul>
 	 */
-	LEVEL_2("devices_level_2", 2, "Niveau 2"),
+	LEVEL_2(2, "Niveau 2", new ColorAdjust(0, 0, 0, 0)),
 
 	/**
 	 * Level 3.
 	 * 
 	 * <ul>
-	 * <li>Folder : [resource_folder]/images/devices_level_3/</li>
 	 * <li>Efficiency: 4</li>
 	 * <li>Accesible name : Niveau 3</li>
 	 * </ul>
 	 */
-	LEVEL_3("devices_level_3", 4, "Niveau 3");
-
-	/**
-	 * The folder url of the level
-	 */
-	private String url;
+	LEVEL_3(4, "Niveau 3", new ColorAdjust(.2, 0, .1, 0));
 
 	/**
 	 * The accesible name, displayed in the UI
@@ -87,18 +76,23 @@ public enum Level {
 	private int efficiency;
 
 	/**
+	 * The effect to apply to on the image of the device.
+	 */
+	private Effect effect;
+
+	/**
 	 * Creates a new level
 	 */
-	Level(String url, int efficiency, String accessibleName) {
-		this.url = "/"+url+"/";
+	Level(int efficiency, String accessibleName, Effect effect) {
 		this.efficiency = efficiency;
 		this.accessibleName = accessibleName;
+		this.effect = effect;
 	}
 
 	/**
-	 * Returns the next value in this enum. For example, this method invoked on
-	 * a LEVEL_1 will return a LEVEL_2. If the level, is already at maximum,
-	 * will return the max.
+	 * Returns the next value in this enum. For example, this method invoked on a
+	 * LEVEL_1 will return a LEVEL_2. If the level, is already at maximum, will
+	 * return the max.
 	 * 
 	 * @return the next ordinal
 	 */
@@ -108,12 +102,14 @@ public enum Level {
 	}
 
 	/**
-	 * Returns the URL of this level.
+	 * Returns the path to the image. The path doesn't depend on the level since 1.2.0
+	 * and give the same result whatever the level is. Instead, to distinguish the
+	 * different levels, an effect should be applied on the image.
 	 * 
 	 * @return the url of the level
-	 */	
+	 */
 	public String getURL() {
-		return this.url;
+		return "/device/";
 	}
 
 	/**
@@ -128,5 +124,14 @@ public enum Level {
 	 */
 	public String getAccessibleName() {
 		return this.accessibleName;
+	}
+
+	/**
+	 * The effect to apply on the image for the given level.
+	 * 
+	 * @return the effect
+	 */
+	public Effect getEffect() {
+		return this.effect;
 	}
 }
