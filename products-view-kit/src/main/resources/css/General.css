@@ -7,8 +7,9 @@
 @import "./ScrollPane.css";
 @import "./Text.css";
 @import "./Button.css";
-@import "./TextField.css";
 @import "./Stage.css";
+@import "./TextField.css";
+@import "./TitledPane.css";
 
 /*
     The box content of the stage. 
@@ -17,7 +18,6 @@
 */
 .contentBox {
     -fx-background-image: url("../images/background.png");
-    -fx-padding: 10px;
     -fx-background-position: 5px 10px;
 }
 
@@ -27,6 +27,7 @@
     -cta-dark: #0A690A;
     -cta: #0A8F0A;
     -cta-light: #0AC80A;
+    -cta-reversed: #C80A0A;
     -error: #CD2020;
     -warning: #D66700;
     -info: #1885D9;

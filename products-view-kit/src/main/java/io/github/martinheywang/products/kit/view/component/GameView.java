@@ -78,7 +78,7 @@ public final class GameView extends HBox {
 
 		this.money = new Label("Argent : " + MoneyFormat.getSingleton().format(this.game.getMoney()));
 		this.save = new Label("Dernière sauvegarde : "
-				+ this.game.getLastSave().format(DateTimeFormatter.ofPattern("hh:mm dd/MM/yyyy")));
+				+ this.game.getLastSave().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")));
 
 		this.text = new VBox();
 		text.getChildren().addAll(name, help);

@@ -7,6 +7,8 @@ import com.sun.webkit.WebPage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -25,12 +27,13 @@ import javafx.scene.web.WebView;
  */
 public final class SVGImage extends StackPane {
 
-    private final URL pathToImage;
+    private URL pathToImage;
 
-    private final WebView view;
-    private final WebEngine engine;
+    private WebView view;
 
     private double width, height;
+
+    private Effect viewEffect;
 
     /**
      * Builds a new image using the url to the svg. This svg should not have
@@ -39,31 +42,7 @@ public final class SVGImage extends StackPane {
      * @param pathToImage the path to the SVG image
      */
     public SVGImage(URL pathToImage, double width, double height) {
-
-        final WebView webView = new WebView();
-        final WebEngine engine = webView.getEngine();
-
-        this.pathToImage = pathToImage;
-        this.view = webView;
-        this.engine = this.view.getEngine();
-        this.width = width;
-        this.height = height;
-
-        engine.load(pathToImage.toExternalForm());
-        webView.setPrefSize(width, height);
-        webView.setFocusTraversable(false);
-        webView.setContextMenuEnabled(false);
-
-        // Here the @SupressWarnings avoids a discouraged access (but actually it
-        // doesn't matter in that case)
-        // Only the IDE shows this warning
-        // Maven has nothing wrong with it
-        // But it's annoying, so I prefer add it.
-        @SuppressWarnings("restriction")
-        final WebPage page = com.sun.javafx.webkit.Accessor.getPageFor(engine);
-        page.setBackgroundColor(0);
-
-        this.getChildren().add(webView);
+        this.setImage(pathToImage, width, height);
     }
 
     /**
@@ -108,9 +87,64 @@ public final class SVGImage extends StackPane {
     /**
      * Sets the displayed icon.
      * 
+     * <strong>Note : if an effect was set (using {@link #setViewEffect(Effect)}),
+     * it will remain.</strong>
+     * 
      * @param pathToImage the path to the SVG image.
      */
-    public void setImage(URL pathToImage) {
-        this.engine.load(pathToImage.toExternalForm());
+    public void setImage(URL pathToImage, double width, double height) {
+        this.getChildren().clear();
+
+        final WebView webView = new WebView();
+        final WebEngine engine = webView.getEngine();
+
+        this.pathToImage = pathToImage;
+        this.view = webView;
+        this.width = width;
+        this.height = height;
+
+        engine.load(pathToImage.toExternalForm());
+        webView.setPrefSize(width, height);
+        webView.setFocusTraversable(false);
+        webView.setContextMenuEnabled(false);
+
+        // Disable scroll too and doesn't affect the image
+        webView.setDisable(true);
+
+        webView.setEffect(this.viewEffect);
+
+        // Here the @SupressWarnings avoids a discouraged access (but actually it
+        // doesn't matter in that case)
+        // Only the IDE shows this warning
+        // Maven has nothing wrong with it
+        // But it's annoying, so I prefer add it.
+        @SuppressWarnings("restriction")
+        final WebPage page = com.sun.javafx.webkit.Accessor.getPageFor(engine);
+        page.setBackgroundColor(0);
+
+        this.getChildren().add(webView);
+    }
+
+    /**
+     * Adds an hover effect.
+     */
+    public void addHoverEffect() {
+        this.setOnMouseEntered(event -> {
+            view.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+        });
+        this.setOnMouseExited(event -> {
+            view.setEffect(null);
+        });
+    }
+
+    /**
+     * Adds an {@link javafx.scene.effect.Effect} on the icon (not the notification,
+     * if it exists).
+     * 
+     * @param effect the effect to add.
+     */
+    public void setViewEffect(Effect effect) {
+        view.setEffect(effect);
+        this.viewEffect = effect;
     }
 }

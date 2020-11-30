@@ -2,7 +2,8 @@
     This stylesheet gives styles for text fields and text areas.
 */
 
-TextField, TextArea {
+TextField, 
+TextArea {
     -fx-border-color: #0A690A;
     -fx-border-width: 2px;
 
@@ -13,10 +14,22 @@ TextField, TextArea {
     -fx-prompt-text-fill: #909090;
 }
 
-TextField:hover, TextArea:hover, TextField:focused, TextArea:focused{
+TextField:hover, 
+TextArea:hover, 
+TextField:focused, 
+TextArea:focused{
     -fx-border-color: #0A8F0A;
 }
 
-TextField.error{
-    -fx-border-color: -error;
+TextField.graytone,
+TextArea.graytone {
+    -fx-border-color: #ccc;
+    -fx-prompt-text-fill: #ddd;
+}
+
+TextField.graytone:hover,
+TextArea.graytone:hover,
+TextField.graytone:focused,
+TextArea.graytone:focused{
+    -fx-border-color: #eee;
 }

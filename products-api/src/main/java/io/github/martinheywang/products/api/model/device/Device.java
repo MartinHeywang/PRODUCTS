@@ -16,6 +16,7 @@
 package io.github.martinheywang.products.api.model.device;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.pf4j.ExtensionPoint;
@@ -25,27 +26,19 @@ import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
 import io.github.martinheywang.products.api.model.action.Iteration;
-import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
-import io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate;
-import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.model.template.Template;
-import io.github.martinheywang.products.api.model.template.TemplateCreator;
-import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.model.template.TemplateModel;
+import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import javafx.scene.Node;
 
 /**
  * @author Martin Heywang
  */
-@AccessibleName
-@Description
-@Prices(build = "0", upgradeTo2 = "0", upgradeTo3 = "0", destroyAt1 = "0", destroyAt2 = "0", destroyAt3 = "0")
-@DefaultTemplate
-@ActionCost
 public abstract class Device implements ExtensionPoint {
 	/**
 	 * The model is the part of the device that persists in the database.
@@ -106,6 +99,16 @@ public abstract class Device implements ExtensionPoint {
 	public abstract Action act(Pack resources) throws MoneyException;
 
 	/**
+	 * Returns the list of widgets of this device. A widget is a component displayed
+	 * in the device menu.
+	 * 
+	 * @return a list of {@link javafx.scene.Node}, considered as widgets.
+	 */
+	public List<Node> getWidgets() {
+		return Arrays.asList();
+	}
+
+	/**
 	 * This inheritable method does not nothing by default. You don't need everytime
 	 * to inherit it. But in case your device uses packs, in this method you should
 	 * save these packs to make sure they are stored in the database.
@@ -122,13 +125,12 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * Generates the template of the device
+	 * (Re-)Generates the template of the device, based on the device type and the
+	 * rotation.
 	 */
 	public void generateTemplate() {
-		final DefaultTemplate annotation = this.getClass().getAnnotation(DefaultTemplate.class);
-		this.template = TemplateCreator.getSingleton().setTop(annotation.top()).setRight(annotation.right())
-				.setBottom(annotation.bottom()).setLeft(annotation.left()).getModel()
-				.create(this.getPosition(), this.getDirection());
+		final TemplateModel templateModel = StaticDeviceDataRetriever.getDefaultTemplate(this.getClass());
+		this.template = templateModel.create(this.getPosition(), this.getDirection());
 	}
 
 	/**
@@ -139,10 +141,8 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * <p>
-	 * Returns the action cost of this device, how many money it spend each time it
-	 * is called.
-	 * </p>
+	 * Shortcut to
+	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever}.
 	 * 
 	 * @return the action cost
 	 */
@@ -165,7 +165,11 @@ public abstract class Device implements ExtensionPoint {
 	 * </p>
 	 * 
 	 * @return a prices modules
+	 * @deprecated use
+	 *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getPrices(Class)}
+	 *             instead.
 	 */
+	@Deprecated
 	protected PricesModule getPrices() {
 		if (this.getClass().isAnnotationPresent(Prices.class)) {
 			final Prices annotation = this.getClass().getAnnotation(Prices.class);
@@ -176,19 +180,23 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
+	 * Shortcut of
+	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getEntriesCount(Class)}.
 	 * 
-	 * @return the number of entries that this device has
+	 * @return the entries count
 	 */
 	public int getEntriesCount() {
-		return this.template.getPointersFor(PointerType.ENTRY).size();
+		return StaticDeviceDataRetriever.getEntriesCount(this.getClass());
 	}
 
 	/**
+	 * Shortcut of
+	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getExitsCount(Class)}.
 	 * 
-	 * @return the number of exits that this device has.
+	 * @return the exits count
 	 */
 	public int getExitsCount() {
-		return this.template.getPointersFor(PointerType.EXIT).size();
+		return StaticDeviceDataRetriever.getExitsCount(this.getClass());
 	}
 
 	/**
@@ -204,13 +212,6 @@ public abstract class Device implements ExtensionPoint {
 		// that's actually pretty wide but it avoids cheated assembly lines.
 		return this.getEntriesCount() * this.getLevel().getValue() * 2;
 	}
-
-	/**
-	 * Returns the list of widgets of this device. A widget is a component displayed in the device menu.
-	 * 
-	 @return a list of {@link javafx.scene.Node}, considered as widgets.
-	 */
-	public abstract List<Node> getWidgets();
 
 	/**
 	 * See {@link DeviceModel#getURL()}.

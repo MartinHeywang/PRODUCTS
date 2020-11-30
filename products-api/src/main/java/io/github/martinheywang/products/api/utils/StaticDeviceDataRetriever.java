@@ -5,9 +5,17 @@ import java.math.BigInteger;
 import java.net.URL;
 
 import io.github.martinheywang.products.api.model.device.Device;
+import io.github.martinheywang.products.api.model.device.PricesModule;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
+import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
+import io.github.martinheywang.products.api.model.device.annotation.Buildable;
+import io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate;
 import io.github.martinheywang.products.api.model.device.annotation.Description;
+import io.github.martinheywang.products.api.model.device.annotation.Independent;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
+import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.model.template.TemplateCreator;
+import io.github.martinheywang.products.api.model.template.TemplateModel;
 
 /**
  * Utility class that allows to get static data of a device type. Those
@@ -31,7 +39,7 @@ public final class StaticDeviceDataRetriever {
         if (clazz.isAnnotationPresent(AccessibleName.class)) {
             return clazz.getAnnotation(AccessibleName.class).value();
         }
-        return "Aucun nom...";
+        return "Aucun nom.";
     }
 
     /**
@@ -46,7 +54,24 @@ public final class StaticDeviceDataRetriever {
         if (clazz.isAnnotationPresent(Description.class)) {
             return clazz.getAnnotation(Description.class).value();
         }
-        return "Aucun description..";
+        return "Aucune description.";
+    }
+
+    /**
+     * Returns the prices modules containing all the prices provided byt the
+     * {@link io.github.martinheywang.products.api.model.device.annotation.Prices}
+     * annotation.
+     * 
+     * @param clazz the class to retrieve the data from
+     * @return the prices
+     */
+    public static PricesModule getPrices(Class<? extends Device> clazz) {
+        if (clazz.isAnnotationPresent(Prices.class)) {
+            final Prices annotation = clazz.getAnnotation(Prices.class);
+            return new PricesModule(annotation.build(), annotation.upgradeTo2(), annotation.upgradeTo3(),
+                    annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
+        }
+        return new PricesModule("0", "0", "0", "0", "0", "0");
     }
 
     /**
@@ -54,12 +79,11 @@ public final class StaticDeviceDataRetriever {
      * {@link io.github.martinheywang.products.api.model.device.annotation.Prices}
      * annotation. This is the price of building a device of the given type.
      * 
+     * @param clazz the class to retrieve the data from.
+     * @return the build price of the device type
      */
     public static BigInteger getBuildPrice(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).build());
-        }
-        return BigInteger.ZERO;
+        return getPrices(clazz).getLevel1Build();
     }
 
     /**
@@ -72,10 +96,7 @@ public final class StaticDeviceDataRetriever {
      * @return the upgrade price
      */
     public static BigInteger getUpgradeTo2Price(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).upgradeTo2());
-        }
-        return BigInteger.ZERO;
+        return getPrices(clazz).getLevel2Build();
     }
 
     /**
@@ -88,10 +109,7 @@ public final class StaticDeviceDataRetriever {
      * @return the upgrade price
      */
     public static BigInteger getUpgradeTo3Price(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).upgradeTo3());
-        }
-        return BigInteger.ZERO;
+        return getPrices(clazz).getLevel3Build();
     }
 
     /**
@@ -104,10 +122,7 @@ public final class StaticDeviceDataRetriever {
      * @return the destory price
      */
     public static BigInteger getDestoryAt1Gain(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).destroyAt1());
-        }
-        return BigInteger.ZERO;
+        return getPrices(clazz).getLevel1Delete();
     }
 
     /**
@@ -120,10 +135,7 @@ public final class StaticDeviceDataRetriever {
      * @return the destory price
      */
     public static BigInteger getDestoryAt2Gain(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).destroyAt2());
-        }
-        return BigInteger.ZERO;
+        return getPrices(clazz).getLevel2Delete();
     }
 
     /**
@@ -136,33 +148,109 @@ public final class StaticDeviceDataRetriever {
      * @return the destory price
      */
     public static BigInteger getDestoryAt3Gain(Class<? extends Device> clazz) {
-        if (clazz.isAnnotationPresent(Prices.class)) {
-            return new BigInteger(clazz.getAnnotation(Prices.class).destroyAt3());
-        }
-        return BigInteger.ZERO;
+       return getPrices(clazz).getLevel3Delete();
     }
 
     /**
      * <p>
      * Returns an URL pointing to the image of the device type. The image is
      * searched in the device folder, itself in the resource folder of the class.
-     * (call to {@link Class#getResource(String)}). The image must be an SVG, and
+     * (call to {@link java.lang.Class#getResource(String)}). The image must be an SVG, and
      * the view box should be square, no matter the size. The name of the SVG should
      * be 'SimpleNameOfTheClass.svg'. The simple name of the class is the name
-     * without the package. (See {@link Class#getSimpleName()}).
+     * without the package. (See {@link java.lang.Class#getSimpleName()}).
      * </p>
-     * <p>
-     * For example, the associated image to the
-     * {@link io.github.martinheywang.products.api.model.device.Buyer} class will be
-     * found at '[resource_folder]/device/Buyer.svg'.
-     * </p>
+     * 
+     * @param clazz the class to retrieve the data from
+     * @return the path to the image of the device type
      */
     public static URL getView(Class<? extends Device> clazz) {
         if (Modifier.isAbstract(clazz.getModifiers())) {
             System.err.println("'" + clazz.getCanonicalName()
-                    + "' is abstract, it should not have an image (and therefore the URL can't may not be resolved.");
+                    + "' is abstract, it should not have an image (and therefore the URL may not be resolved.");
             return null;
         }
         return clazz.getResource("/device/" + clazz.getSimpleName() + ".svg");
+    }
+
+    /**
+     * Returns the static action cost of the device type. Here 'static' means it
+     * doesn't depend on the level of a certain device.
+     * 
+     * @param clazz the clazz to extract the data from
+     * @return the cost per action of the device type
+     */
+    public static BigInteger getActionCost(Class<? extends Device> clazz) {
+        if (clazz.isAnnotationPresent(ActionCost.class)) {
+            return new BigInteger(clazz.getAnnotation(ActionCost.class).value());
+        }
+        return BigInteger.ZERO;
+    }
+
+    /**
+     * Returns the
+     * {@link io.github.martinheywang.products.api.model.template.TemplateModel} of
+     * the device type.
+     * 
+     * @param clazz the device type to retrieve the data from
+     * @return the template model (or default template)
+     */
+    public static TemplateModel getDefaultTemplate(Class<? extends Device> clazz) {
+        if (clazz.isAnnotationPresent(DefaultTemplate.class)) {
+            final DefaultTemplate annotation = clazz.getAnnotation(DefaultTemplate.class);
+            final TemplateModel template = TemplateCreator.withAnnotation(annotation);
+            return template;
+        }
+
+        // Default default template (no entry, no exit)
+        return TemplateCreator.getSingleton().setAll(PointerType.NONE).getModel();
+    }
+
+    /**
+     * Returns the number of entries of the given device type.
+     * 
+     * @param clazz the device type to retrieve the data from
+     * @return how many entries the device type has
+     */
+    public static Integer getEntriesCount(Class<? extends Device> clazz) {
+        final TemplateModel template = getDefaultTemplate(clazz);
+        return template.countOf(PointerType.ENTRY);
+    }
+
+    /**
+     * Returns the number of exits of the given device type.
+     * 
+     * @param clazz the device type to retrieve the data from
+     * @return how many exits the device type has
+     */
+    public static Integer getExitsCount(Class<? extends Device> clazz) {
+        final TemplateModel template = getDefaultTemplate(clazz);
+        return template.countOf(PointerType.EXIT);
+    }
+
+    /**
+     * Returns whether the device type is buildable (by the user).
+     * 
+     * @param clazz the class to retrieve the data from.
+     * @return whether the type is buildable or not.
+     */
+    public static Boolean isBuildable(Class<? extends Device> clazz){
+        if(clazz.isAnnotationPresent(Buildable.class)){
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Returns whether the device type is independent.
+     * 
+     * @param clazz the class to retrieve the data from.
+     * @return whether the type is independent or not.
+     */
+    public static Boolean isIndependent(Class<? extends Device> clazz){
+        if(clazz.isAnnotationPresent(Independent.class)){
+            return true;
+        }
+        return false;
     }
 }

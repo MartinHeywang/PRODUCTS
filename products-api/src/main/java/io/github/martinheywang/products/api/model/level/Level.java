@@ -43,7 +43,7 @@ public enum Level {
 	 * <li>Accesible name : Niveau 1</li>
 	 * </ul>
 	 */
-	LEVEL_1(1, "Niveau 1", new ColorAdjust(-.2, 0, -.1, 0)),
+	LEVEL_1(1, "Niveau 1", new ColorAdjust(+.05, 0, -.05, .025)),
 
 	/**
 	 * Level 2.
@@ -63,7 +63,7 @@ public enum Level {
 	 * <li>Accesible name : Niveau 3</li>
 	 * </ul>
 	 */
-	LEVEL_3(4, "Niveau 3", new ColorAdjust(.2, 0, .1, 0));
+	LEVEL_3(4, "Niveau 3", new ColorAdjust(-.05, 0, .05, .025));
 
 	/**
 	 * The accesible name, displayed in the UI

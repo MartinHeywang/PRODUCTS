@@ -20,33 +20,48 @@ Label, Button, Text {
 /* The logo of the game is made of text */
 .logo{
     -fx-font-weight: bold;
-    -fx-font-size: 38px;
+    -fx-font-size: 18px;
 }
 
 /*
-    Like in HTML, h1 to h6.
+    Like HTML, h1 to h6.
 */
 .h1{
     -fx-font-size: 40px;
+    -fx-margin: 10px 0 30px 0;
 }
 .h2{
     -fx-font-size: 32px;
+    -fx-margin: 10px 0 25px 0;
 }
 .h3{
     -fx-font-size: 28px;
+    -fx-margin: 8px 0 20px;
 }
 .h4{
     -fx-font-size: 23px;
+    -fx-margin: 5px 0 15px;
 }
 .h5{
     -fx-font-size: 20px;
+    -fx-margin: 3px 0 10px 0;
 }
 .h6{
     -fx-font-size: 16px;
     -fx-text-fill: #ddd;
+    -fx-margin: 3px 0 3px 0;
 }
 .full-white{
     -fx-text-fill: #fff;
+}
+.italic{
+    -fx-font-style: italic;
+}
+.bold{
+    -fx-font-weight: bold;
+}
+.thin{
+    -fx-font-weight: 200;
 }
 .error{
     -fx-text-fill: -error;

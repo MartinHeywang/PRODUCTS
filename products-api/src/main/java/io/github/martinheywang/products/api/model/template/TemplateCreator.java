@@ -15,11 +15,12 @@
 */
 package io.github.martinheywang.products.api.model.template;
 
+import io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 
 /**
- * Singleton class that allows the users to create templates easily
- * and quickly.
+ * 
+ * Singleton class that allows the users to create templates easily and quickly.
  * 
  * @author Martin Heywang
  */
@@ -42,14 +43,13 @@ public final class TemplateCreator {
 	}
 
 	/**
-	 * Creates and returns the {@link TemplateModel} according the values previously sets. Once created, resets the values.
+	 * Creates and returns the {@link TemplateModel} according the values previously
+	 * sets. Once created, resets the values.
 	 * 
 	 * @return the created template model.
 	 */
 	public TemplateModel getModel() {
-		TemplateModel templateModel = new TemplateModel(pointers[0],
-				pointers[1],
-				pointers[2], pointers[3]);
+		TemplateModel templateModel = new TemplateModel(pointers[0], pointers[1], pointers[2], pointers[3]);
 		reset();
 		return templateModel;
 	}
@@ -110,6 +110,18 @@ public final class TemplateCreator {
 		pointers[2] = pointer;
 		pointers[3] = pointer;
 		return this;
+	}
+
+	/**
+	 * Creates a {@link TemplateModel} using the
+	 * {@link io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate}.
+	 * 
+	 * @param annotation the annotation to create the model.
+	 * @return the brand new created template model
+	 */
+	public static TemplateModel withAnnotation(DefaultTemplate annotation) {
+		return getSingleton().setTop(annotation.top()).setRight(annotation.right()).setBottom(annotation.bottom())
+				.setLeft(annotation.left()).getModel();
 	}
 
 	/**

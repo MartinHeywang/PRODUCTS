@@ -17,27 +17,25 @@ package io.github.martinheywang.products.view;
 
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
-import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
-import io.github.martinheywang.products.api.model.device.annotation.Buildable;
-import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.direction.Direction;
-import io.github.martinheywang.products.api.model.exception.EditException;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.ArrayList2D;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
+import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
+import io.github.martinheywang.products.kit.view.component.StaticDeviceView;
 import io.github.martinheywang.products.kit.view.component.ZoomableScrollPane;
+import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.bundle.GameLoopUpdate;
 import io.github.martinheywang.products.model.bundle.GrilleUpdate;
@@ -56,13 +54,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -81,53 +76,59 @@ import javafx.util.Duration;
  */
 public class GameMenuView implements Initializable {
 
-	/**
-	 * Is true if the options sidebar is shown
-	 */
-	private static boolean optionsSidebarShown = true;
-
-	/**
-	 * Instance of Main used to changed the view for example (return to home...)
-	 */
 	private GameController gameManager;
 
+	private String currentMenu = "none";
+
+	// VIEW COMPONENTS ------------------------------------------------------
 	@FXML
-	private Parent root;
-
+	private Parent root; // The root considered by javafx
 	@FXML
-	private StackPane main;
-
-	private ZoomableScrollPane scrollpane;
-
-	private GridPane grid;
-
+	private VBox userRoot; // The 'root' seen by the user (the one who has the shadow)
 	@FXML
-	private Label moneyLabel, upgradeGridInfo, upgradeLoopInfo, upgradeBuyerInfo, gameName;
-
-	@FXML
-	private ProgressBar progression;
+	// The stage bar replacing the platform dependent one
+	// (with buttons such as close, reduce...)
+	private GridPane stageBar;
 
 	@FXML
-	private HBox sidebarsContainer, stageBar;
+	private Label moneyLabel;
+	@FXML
+	private Label gameName;
+	@FXML
+	private Button closeButton, reduceButton, maximizeButton; // The stage buttons
+	@FXML
+	private VBox content; // The content of the stage (without the stage bar)
+
+	@FXML
+	private HBox mainView; // containing the grid, optionnal menu and toolbar
+	@FXML
+	private StackPane main; // containing grid and additionnal windows.
+
+	private ZoomableScrollPane scrollpane; // containing the grid view
+	private GridPane grid; // containing the devices view
+
+	private ProgressBar progression = new ProgressBar(); // the progress bar
+
+	@FXML
+	private VBox toolbar;
+	
+	private VBox buildMenu = new VBox();
+	private VBox devices = new VBox();
+	private TextField buildSearch = new TextField();
 
 	@FXML
 	private VBox toasts;
 
-	@FXML
-	private AnchorPane options;
-	@FXML
-	private VBox devicesBuild;
-
-	@FXML
-	private Button upgradeGridBtn, upgradeLoopBtn, upgradeBuyerBtn, reduceButton, maximizeButton, closeButton;
+	// -----------------------------------------------------------------------
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
+				getClass().getResource("/css/Game.css").toExternalForm());
 
-		closeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Close.svg"), 20, 20));
-		reduceButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Reduce.svg"), 20, 20));
-		maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
+		closeButton.setGraphic(new SVGImage(Icons.asURL("close.svg"), 20, 20));
+		reduceButton.setGraphic(new SVGImage(Icons.asURL("reduce.svg"), 20, 20));
+		maximizeButton.setGraphic(new SVGImage(Icons.asURL("maximize.svg"), 20, 20));
 
 		closeButton.setOnMouseClicked(event -> {
 			Platform.exit();
@@ -138,11 +139,13 @@ public class GameMenuView implements Initializable {
 		maximizeButton.setOnMouseClicked(event -> {
 			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
 			if (stage.isMaximized()) {
+				userRoot.setPadding(new Insets(0, 10d, 10d, 0));
+				maximizeButton.setGraphic(new SVGImage(Icons.asURL("maximize.svg"), 20, 20));
 				stage.setMaximized(false);
-				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Maximize.svg"), 20, 20));
 			} else {
+				maximizeButton.setGraphic(new SVGImage(Icons.asURL("minimize.svg"), 20, 20));
+				userRoot.setPadding(new Insets(0));
 				stage.setMaximized(true);
-				maximizeButton.setGraphic(new SVGImage(getClass().getResource("/images/icons/Minimize.svg"), 20, 20));
 			}
 		});
 
@@ -162,6 +165,7 @@ public class GameMenuView implements Initializable {
 		this.scrollpane.setFitToWidth(false);
 		this.scrollpane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 		this.scrollpane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
+		this.scrollpane.getStyleClass().add("grid");
 		HBox.setHgrow(this.scrollpane, Priority.ALWAYS);
 		this.scrollpane.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
@@ -182,7 +186,7 @@ public class GameMenuView implements Initializable {
 		this.toProcessView();
 
 		this.grid.getChildren().clear();
-		this.gameName.setText("PRODUCTS. - "+game.getName());
+		this.gameName.setText("- " + game.getName());
 
 		// LOAD DEVICES
 		for (int x = 0; x < devices.size(); x++)
@@ -195,50 +199,6 @@ public class GameMenuView implements Initializable {
 				this.grid.add(new DeviceView(device, this.gameManager), x, y);
 			}
 		this.setMoney(game.getMoney());
-
-		// Updating the upgrade grid zone (prices)
-		try {
-			final int currentSize = this.gameManager.getGridSize();
-			final int nextSize = this.gameManager.getGridSize() + 1;
-
-			final ResourceBundle gridBundle = ResourceBundle
-				.getBundle(GrilleUpdate.class.getCanonicalName());
-
-			final BigInteger nextGridCost = new BigInteger(gridBundle.getString(String.valueOf(nextSize)));
-
-			this.upgradeGridInfo.setText("Votre grille actuelle est de " + currentSize + "x" + currentSize + ". Passer à "
-					+ nextSize + "x" + nextSize + " vous coûte " + MoneyFormat.getSingleton().format(nextGridCost));
-		} catch (final MissingResourceException e) {
-			this.upgradeGridInfo.setText("Vous avez atteint la taille maximale !");
-			this.upgradeGridBtn.setDisable(true);
-		}
-
-		try {
-
-			final int currentDelay = this.gameManager.getDelay();
-			final int nextDelay = this.gameManager.getDelay() - 50;
-			final ResourceBundle loopBundle = ResourceBundle
-				.getBundle(GameLoopUpdate.class.getCanonicalName());
-			final BigInteger nextLoopCost = new BigInteger(loopBundle.getString(String.valueOf(nextDelay)));
-			this.upgradeLoopInfo.setText("La boucle de jeu se répète toute les " + currentDelay + " millisecondes. Passer à "
-					+ nextDelay + " vous coûte " + MoneyFormat.getSingleton().format(nextLoopCost) + ".");
-		} catch (final MissingResourceException e) {
-			this.upgradeLoopInfo.setText("Vous ne pouvez plus accélérer la boucle de jeu !");
-			this.upgradeLoopBtn.setDisable(true);
-		}
-
-		try {
-			final int currentMax = this.gameManager.getMaxBuyer();
-			final int nextMax = this.gameManager.getMaxBuyer() + 4;
-			final ResourceBundle maxBundle = ResourceBundle
-				.getBundle(MaxBuyerUpdate.class.getCanonicalName());
-			final BigInteger nextMaxCost = new BigInteger(maxBundle.getString(String.valueOf(nextMax)));
-			this.upgradeBuyerInfo.setText("Vous pouvez construire jusqu'à " + currentMax + " Acheteurs. Passer à "
-					+ nextMax + " vous coûte " + MoneyFormat.getSingleton().format(nextMaxCost) + ".");
-		} catch (final MissingResourceException e) {
-			this.upgradeBuyerInfo.setText("Vous ne pouvez augmenter le nombre maximum d'acheteur !");
-			this.upgradeBuyerBtn.setDisable(true);
-		}
 
 		this.toPlayableView();
 	}
@@ -377,108 +337,98 @@ public class GameMenuView implements Initializable {
 	 * Prepares the toolbar at the end of a refresh
 	 */
 	private void prepareToolbar() {
-		Platform.runLater(() -> {
-			for (final Class<? extends Device> clazz : DeviceController.knownTypes) {
-				if (clazz.isAnnotationPresent(Buildable.class)) {
+		final SVGImage build = new SVGImage(Icons.asURL("build.svg"), 40d, 40d);
+		build.addHoverEffect();
 
-					final HBox deviceUI = new HBox();
-					deviceUI.getStyleClass().add("device-build-optn");
-					/*
-					 * The image of the device must be found in the resource folder, then in
-					 * images/devices_level_1/<class_name_to_upper_case>.png
-					 */
-					final String url = clazz
-							.getResource("/images/devices_level_1/" + clazz.getSimpleName().toUpperCase() + ".png")
-							.toExternalForm();
-					final ImageView view = new ImageView(url);
-					view.setFitWidth(40d);
-					view.setFitHeight(40d);
+		prepareBuildMenu(this.buildMenu);
 
-					// All subclasses of Device has this annotation, don't need
-					// to test this.
-					final String str = clazz.getAnnotation(AccessibleName.class).value();
-					final Label label = new Label(str);
-					label.setWrapText(true);
-
-					deviceUI.setSpacing(10d);
-					deviceUI.getChildren().addAll(view, label);
-					deviceUI.setAlignment(Pos.CENTER_LEFT);
-					deviceUI.setPadding(new Insets(2d, 5d, 2d, 5d));
-
-					final BigInteger price = new BigInteger(clazz.getAnnotation(Prices.class).build());
-
-					deviceUI.setOnMouseEntered(event -> {
-						label.setText(MoneyFormat.getSingleton().format(price));
-					});
-					deviceUI.setOnMouseExited(event -> {
-						label.setText(str);
-					});
-
-					// DRAG BEHAVIOUR
-					deviceUI.setOnDragDetected(event -> {
-						final Dragboard db = deviceUI.startDragAndDrop(TransferMode.COPY);
-						final ClipboardContent content = new ClipboardContent();
-
-						content.put(DeviceView.classFormat, clazz);
-						content.putImage(view.getImage());
-
-						db.setContent(content);
-
-						event.consume();
-					});
-
-					deviceUI.getStyleClass().add("device-build-displayer");
-
-					this.devicesBuild.getChildren().add(deviceUI);
-				}
-				this.devicesBuild.setSpacing(5d);
-
-				this.options.setOnDragOver(event -> {
-					event.acceptTransferModes(TransferMode.MOVE);
-				});
-				this.options.setOnDragDropped(event -> {
-					if (event.getTransferMode().equals(TransferMode.MOVE)) {
-						final Dragboard db = event.getDragboard();
-
-						if (db.hasContent(DeviceView.coordinateFormat)) {
-
-							final Coordinate coord = (Coordinate) db.getContent(DeviceView.coordinateFormat);
-
-							try {
-								this.gameManager.destroy(this.gameManager.getDevice(coord));
-							} catch (final EditException e) {
-								e.printStackTrace();
-							}
-
-							event.setDropCompleted(true);
-						}
-					}
-				});
-			}
-		});
+		build.setOnMouseClicked(event -> toggleBuildMenu());
+		toolbar.getChildren().addAll(build);
 	}
 
-	/**
-	 * Shows / Hide the options sidebar according ot its actual poisition
-	 */
-	@FXML
-	private void showOrHideSidebar() {
-		final Timeline transition = new Timeline();
-		if (!optionsSidebarShown) {
-			transition.getKeyFrames().addAll(
-					new KeyFrame(Duration.ZERO, new KeyValue(this.sidebarsContainer.translateXProperty(), 240d)),
-					new KeyFrame(Duration.millis(250), new KeyValue(this.sidebarsContainer.translateXProperty(), 0d)));
-			transition.playFromStart();
+	private boolean closeMenu() {
+		if (this.currentMenu != "none") {
+			Node node = this.mainView.getChildren().get(1);
+			this.mainView.getChildren().remove(node);
+			node.setTranslateX(0d);
+			this.currentMenu = "none";
 
-		} else {
-			transition.getKeyFrames().addAll(
-					new KeyFrame(Duration.ZERO, new KeyValue(this.sidebarsContainer.translateXProperty(), 0d)),
-					new KeyFrame(Duration.millis(250),
-							new KeyValue(this.sidebarsContainer.translateXProperty(), 240d)));
-			transition.playFromStart();
+			return true;
 		}
+		return false;
+	}
 
-		optionsSidebarShown = !optionsSidebarShown;
+	private void addMenu(VBox menu, String name) {
+		this.mainView.getChildren().add(1, menu);
+		this.currentMenu = name;
+	}
+
+	private void prepareBuildMenu(VBox menu) {
+		menu.getStyleClass().add("menu");
+		menu.setAlignment(Pos.TOP_CENTER);
+		menu.setPadding(new Insets(10d));
+		menu.setSpacing(15d);
+		// Like a fixed size
+		menu.setMinWidth(250d);
+		menu.setMaxWidth(250d);
+
+		final Label title = new Label("Construction");
+		title.getStyleClass().add("h5");
+
+		this.buildSearch = new TextField();
+		buildSearch.setPromptText("Rechercher...");
+		buildSearch.getStyleClass().addAll("graytone");
+
+		final Label tutorial = new Label();
+		tutorial.setText("Cliquez sur un type d'appareil ci-dessous pour obtenir plus d'informations. \n"
+				+ "Faites un glisser-déposer vers la grille pour construire les appareils à "
+				+ "l'emplacement désiré.\nEntrez du texte dans la barre de recherche " 
+				+ "et appuyez sur entrer pour effectuer une recherche.");
+		tutorial.setWrapText(true);
+		tutorial.setMinHeight(120d);
+		tutorial.getStyleClass().addAll("precision-light");
+
+		final ScrollPane scroll = new ScrollPane();
+		VBox.setVgrow(scroll, Priority.ALWAYS);
+		scroll.getStyleClass().add("list");
+
+		this.devices = new VBox();
+		devices.setSpacing(10d);
+		refreshAvailableDevices("");
+		buildSearch.setOnAction(event -> {
+			refreshAvailableDevices(buildSearch.getText());
+		});
+		scroll.setContent(devices);
+
+		menu.getChildren().addAll(title, buildSearch, tutorial, scroll);
+	}
+
+	private void refreshAvailableDevices(String mustContain){
+		devices.getChildren().clear();
+
+			for (Class<? extends Device> clazz : DeviceController.knownTypes) {
+				if (!StaticDeviceDataRetriever.isBuildable(clazz)) {
+					continue;
+				}
+				final String name = StaticDeviceDataRetriever.getAccessibleName(clazz).toLowerCase();
+				if (name.contains(this.buildSearch.getText().toLowerCase())) {
+					final StaticDeviceView view = new StaticDeviceView(clazz);
+					view.addHoverEffect();
+					devices.getChildren().add(view);
+				}
+			}
+			if(devices.getChildren().isEmpty()){
+				final Label none = new Label("Aucun résultat.");
+				devices.getChildren().add(none);
+			}
+	}
+
+	private void toggleBuildMenu() {
+		if (closeMenu()) {
+			return;
+		}
+		addMenu(this.buildMenu, "build");
+
 	}
 
 	@FXML
@@ -502,8 +452,7 @@ public class GameMenuView implements Initializable {
 	private void decreaseGameLoopDelay() {
 		final int newDelay = this.gameManager.getDelay() - 50;
 
-		final ResourceBundle bundle = ResourceBundle
-			.getBundle(GameLoopUpdate.class.getCanonicalName());
+		final ResourceBundle bundle = ResourceBundle.getBundle(GameLoopUpdate.class.getCanonicalName());
 		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newDelay)));
 
 		try {
@@ -520,8 +469,7 @@ public class GameMenuView implements Initializable {
 	private void increaseMaxBuyer() {
 		final int newMax = this.gameManager.getMaxBuyer() + 4;
 
-		final ResourceBundle bundle = ResourceBundle
-			.getBundle(MaxBuyerUpdate.class.getCanonicalName());
+		final ResourceBundle bundle = ResourceBundle.getBundle(MaxBuyerUpdate.class.getCanonicalName());
 		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newMax)));
 
 		try {
@@ -546,8 +494,7 @@ public class GameMenuView implements Initializable {
 				new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 1d)));
 		fadeIn.playFromStart();
 		this.moneyLabel.setVisible(true);
-		this.progression.setVisible(false);
-		this.progression.setMinHeight(0d);
+		this.content.getChildren().remove(progression);
 	}
 
 	/**
@@ -561,9 +508,8 @@ public class GameMenuView implements Initializable {
 				new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 0d)));
 		fadeOut.playFromStart();
 		this.grid.setVisible(false);
-		this.progression.setVisible(true);
-		this.progression.setMinHeight(30d);
 		this.progression.setProgress(.0d);
+		this.content.getChildren().add(progression);
 	}
 
 }

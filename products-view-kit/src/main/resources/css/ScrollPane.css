@@ -1,29 +1,41 @@
-ScrollPane.list {
+.scroll-pane.list {
 	-fx-background-radius: 0;
 	-fx-padding: 5px;
 
 	-fx-hbar-policy: never;
 	-fx-vbar-policy: always;
-	-fx-fit-to-height: true;
+	-fx-fit-to-height: false;
 	-fx-fit-to-width: true;
 }
 /* 
-    Selects the scroll pane itself and the the content child only ('>' is the direct child selector)
+    Selects the scroll pane itself and the content child only ('>' is the direct child selector)
     it doesn't look for nested nodes.
 */
-ScrollPane.list,
-ScrollPane.list > * {
+.scroll-pane.list,
+.scroll-pane.list > * {
 	-fx-background-color: transparent;
 }
-ScrollPane .increment-arrow,
-ScrollPane .decrement-arrow {
-	-fx-background-color: #777;
+
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow {
+	-fx-background-color: -default-text-color;
+}
+.scroll-pane .increment-button:hover,
+.scroll-pane .decrement-button:hover {
+	-fx-background-color: transparent;
 }
 
-ScrollPane .thumb {
-	-fx-background-color: #777;
+.scroll-pane .thumb {
+	-fx-background-color: -default-text-color;
 	-fx-background-radius: 1px;
 }
-ScrollPane .thumb:hover {
-	-fx-background-color: #999;
+.scroll-pane .thumb:hover {
+	-fx-background-color: #fff;
+}
+
+
+.scroll-pane.grid,
+.scroll-pane.grid > *{
+	-fx-background-color: transparent;
+	-fx-padding: 0;
 }

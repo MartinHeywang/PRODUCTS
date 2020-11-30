@@ -16,7 +16,7 @@ public class StaticDeviceDataRetrieverTest {
 
         final String name = StaticDeviceDataRetriever.getAccessibleName(clazz);
 
-        assertThat(name).isEqualTo("No name provided.");
+        assertThat(name).isEqualTo("Aucun nom.");
     }
     
     @Test
@@ -25,7 +25,7 @@ public class StaticDeviceDataRetrieverTest {
 
         final String desc = StaticDeviceDataRetriever.getDescription(clazz);
 
-        assertThat(desc).isEqualTo("No description provided.");
+        assertThat(desc).isEqualTo("Aucune description.");
     }
 
     @Test
@@ -80,5 +80,50 @@ public class StaticDeviceDataRetrieverTest {
         final BigInteger price = StaticDeviceDataRetriever.getDestoryAt3Gain(clazz);
 
         assertThat(price).isEqualTo(new BigInteger("0"));
+    }
+
+    @Test
+    public void getActionCost_returnsZero_ofTheDeviceType(){
+        Class<? extends Device> clazz = Device.class;
+
+        final BigInteger cost = StaticDeviceDataRetriever.getActionCost(clazz);
+
+        assertThat(cost).isEqualTo(BigInteger.ZERO);
+    }
+
+    @Test
+    public void getEntriesCount_returnsZero_ofTheDeviceType(){
+        Class<? extends Device> clazz = Device.class;
+
+        final Integer cost = StaticDeviceDataRetriever.getEntriesCount(clazz);
+
+        assertThat(cost).isEqualTo(0);
+    }
+
+    @Test
+    public void getExitsCount_returnsZero_ofTheDeviceType(){
+        Class<? extends Device> clazz = Device.class;
+
+        final Integer cost = StaticDeviceDataRetriever.getExitsCount(clazz);
+
+        assertThat(cost).isEqualTo(0);
+    }
+
+    @Test
+    public void isBuildable_retursFalse_ofTheDeviceType(){
+        Class<? extends Device> clazz = Device.class;
+
+        final boolean value = StaticDeviceDataRetriever.isBuildable(clazz);
+
+        assertThat(value).isEqualTo(false);
+    }
+
+    @Test
+    public void isIndependent_retursFalse_ofTheDeviceType(){
+        Class<? extends Device> clazz = Device.class;
+
+        final boolean value = StaticDeviceDataRetriever.isIndependent(clazz);
+
+        assertThat(value).isEqualTo(false);
     }
 }

@@ -23,29 +23,34 @@
 */
 
 .stageBar {
-    -fx-background-color: #0A690A;
+    -fx-background-color: -cta-dark;
     -fx-padding: 0 0 0 7px;
     -fx-min-height: 35px;
 }
-
-.stageBar .title {
-    -fx-font-size: 16px;
+.stageBar.graytone{
+    -fx-background-color: #333;
 }
 
 .stageBar .stageButtons{
     -fx-padding: 5px;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
     -fx-min-height: 35px;
     -fx-min-width: 55px;
 }
 .stageBar .stageButtons:hover{
-    -fx-background-color: #0A8F0A;
+    -fx-background-color: -cta;
+}
+.stageBar.graytone .stageButtons:hover {
+    -fx-background-color: #444;
 }
 .stageBar .stageButtons:disabled{
     -fx-background-color: rgba(0, 0, 0, .1);
 }
 
-.stageBar .closeButton:hover{
-    -fx-background-color: #CD2020;
+.stageBar .closeButton:hover,
+.stageBar.graytone .closeButton:hover{
+    -fx-background-color: -error;
 }
 
 .root {

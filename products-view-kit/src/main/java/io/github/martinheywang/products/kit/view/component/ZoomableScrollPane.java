@@ -50,6 +50,7 @@ public class ZoomableScrollPane extends ScrollPane {
 		super();
 		this.target = target;
 		this.zoomNode = new Group(target);
+		this.applyCss();
 		setContent(outerNode(zoomNode));
 
 		setPannable(false);

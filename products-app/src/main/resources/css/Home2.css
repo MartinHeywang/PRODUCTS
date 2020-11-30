@@ -1,3 +1,6 @@
 /*
     This stylesheet applies to the Home2.fxml file.
 */
+.contentBox{
+    -fx-padding: 10px;
+}

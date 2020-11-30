@@ -208,7 +208,7 @@ public class DeviceModel {
      *         model.
      */
     public String getURL() {
-        final String url = "/images" + this.getLevel().getURL() + this.getType().getSimpleName().toUpperCase() + ".png";
+        final String url = "/images" + this.getLevel().getURL() + this.getType().getSimpleName() + ".svg";
 	    return url;
     }
 
@@ -219,7 +219,7 @@ public class DeviceModel {
      *         (level+1) of this model.
      */
     public String getUpgradedURL() {
-        final String url = "/images" + this.getLevel().getNext().getURL() + this.getType().getSimpleName().toUpperCase() + ".png";
+        final String url = "/images" + this.getLevel().getNext().getURL() + this.getType().getSimpleName() + ".svg";
         return url;
     }
 

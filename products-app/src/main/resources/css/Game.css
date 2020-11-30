@@ -1,7 +1,14 @@
-.device-build-optn{
+.game{
     -fx-background-color: transparent;
 }
-.device-build-optn:hover{
-    -fx-background-color: #00890A;
-    -fx-cursor: hand;
+
+.main{
+    -fx-background-color: transparent;
+}
+
+.toolbar{
+    -fx-background-color: rgba(0, 0, 0, .8);
+}
+.menu{
+    -fx-background-color: rgba(0, 0, 0, .4);
 }

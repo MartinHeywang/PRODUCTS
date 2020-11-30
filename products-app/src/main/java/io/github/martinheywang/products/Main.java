@@ -86,11 +86,13 @@ public final class Main extends Application {
 		stage.getIcons().add(new Image(Icons.asStream("Icon.png")));
 		try {
 			// If at least one game is already registered
-			if (Database.createDao(Game.class).countOf() == 0)
+			if (Database.createDao(Game.class).countOf() < 1){
 				// We launch the home of the first users
 				this.initAccueil();
-			else
+			}
+			else{
 				// Else we launch the select or create window.
+			}
 				this.initAccueil2();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -172,10 +174,6 @@ public final class Main extends Application {
 			this.changeSceneTo(root);
 
 			stage.setResizable(true);
-			stage.setMaxWidth(Double.MAX_VALUE);
-			stage.setMaxHeight(Double.MAX_VALUE);
-			stage.setMinWidth(550d);
-			stage.setMinHeight(600d);
 
 			final GameMenuView controller = loader.getController();
 
@@ -207,7 +205,6 @@ public final class Main extends Application {
 	private void changeSceneTo(Region node) {
 		final Scene scene = new Scene(node);
 		scene.setFill(Color.TRANSPARENT);
-		scene.getStylesheets().addAll(getClass().getResource("/css/Window.css").toExternalForm());
 		stage.setScene(scene);
 	}
 
