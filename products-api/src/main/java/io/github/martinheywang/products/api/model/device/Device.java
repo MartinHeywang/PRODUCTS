@@ -214,10 +214,12 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * See {@link DeviceModel#getURL()}.
+	 * Shortcut for {@link DeviceModel#getURL()}.
 	 * 
 	 * @return an url as string
+	 * @deprecated see {@link DeviceModel#getURL()} for explanation.
 	 */
+	@Deprecated
 	public String getURL() {
 		return this.model.getURL();
 	}

@@ -108,7 +108,7 @@ public class StaticDeviceView extends HBox {
         infos.getChildren().addAll(entries, exits, actionCost);
         this.text.getChildren().addAll(this.name, this.icon, description, infos, this.price);
 
-        this.icon.setImage(StaticDeviceDataRetriever.getView(this.type), 96d, 96d);
+        this.icon.setImage(StaticDeviceDataRetriever.getView(this.type), 96d, 96d, 1d);
     }
 
     /**
@@ -121,7 +121,7 @@ public class StaticDeviceView extends HBox {
         this.price.setText(MoneyFormat.getSingleton().format(StaticDeviceDataRetriever.getBuildPrice(this.type)));
         this.text.getChildren().addAll(this.name, this.price);
 
-        this.icon.setImage(StaticDeviceDataRetriever.getView(this.type), 50d, 50d);
+        this.icon.setImage(StaticDeviceDataRetriever.getView(this.type), 50d, 50d, 1d);
         this.getChildren().add(this.icon);
     }
 

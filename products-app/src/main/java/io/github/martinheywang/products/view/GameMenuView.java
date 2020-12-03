@@ -34,13 +34,14 @@ import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.component.StaticDeviceView;
-import io.github.martinheywang.products.kit.view.component.ZoomableScrollPane;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.bundle.GameLoopUpdate;
 import io.github.martinheywang.products.model.bundle.GrilleUpdate;
 import io.github.martinheywang.products.model.bundle.MaxBuyerUpdate;
 import io.github.martinheywang.products.view.component.DeviceView;
+import io.github.martinheywang.products.view.component.GameGrid;
+import io.github.martinheywang.products.view.component.LocatedScrollPane;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -104,8 +105,8 @@ public class GameMenuView implements Initializable {
 	@FXML
 	private StackPane main; // containing grid and additionnal windows.
 
-	private ZoomableScrollPane scrollpane; // containing the grid view
-	private GridPane grid; // containing the devices view
+	private LocatedScrollPane scrollpane;
+	private GameGrid grid; // containing the devices view
 
 	private ProgressBar progression = new ProgressBar(); // the progress bar
 
@@ -157,10 +158,8 @@ public class GameMenuView implements Initializable {
 			});
 		});
 
-		this.grid = new GridPane();
-		this.scrollpane = new ZoomableScrollPane(this.grid);
-		this.main.getChildren().add(0, this.scrollpane);
-
+		this.grid = new GameGrid();
+		this.scrollpane = new LocatedScrollPane(this.grid);
 		this.scrollpane.setFitToHeight(false);
 		this.scrollpane.setFitToWidth(false);
 		this.scrollpane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -189,15 +188,16 @@ public class GameMenuView implements Initializable {
 		this.gameName.setText("- " + game.getName());
 
 		// LOAD DEVICES
-		for (int x = 0; x < devices.size(); x++)
+		for (int x = 0; x < devices.size(); x++){
 			for (int y = 0; y < devices.size(); y++) {
 				Device device = devices.get(x, y);
-				// If a Device doesn't exists, create a new FLOOR
+				// If a d doesn't exists at the given coordinate, create a new FLOOR
 				if (device == null)
 					device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game, new Coordinate(x, y))
 							.instantiate();
 				this.grid.add(new DeviceView(device, this.gameManager), x, y);
 			}
+		}
 		this.setMoney(game.getMoney());
 
 		this.toPlayableView();
@@ -488,6 +488,7 @@ public class GameMenuView implements Initializable {
 	 * {@link Platform#runLater(Runnable)}.
 	 */
 	private void toPlayableView() {
+		this.main.getChildren().clear();
 		this.grid.setVisible(true);
 		final Timeline fadeIn = new Timeline();
 		fadeIn.getKeyFrames().addAll(new KeyFrame(Duration.millis(0d), new KeyValue(this.grid.opacityProperty(), 0d)),
@@ -495,6 +496,7 @@ public class GameMenuView implements Initializable {
 		fadeIn.playFromStart();
 		this.moneyLabel.setVisible(true);
 		this.content.getChildren().remove(progression);
+		this.main.getChildren().addAll(this.scrollpane);
 	}
 
 	/**

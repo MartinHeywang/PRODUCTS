@@ -82,7 +82,7 @@
                      <children>
                         <StackPane fx:id="main" HBox.hgrow="ALWAYS">
                            <children>
-                              <VBox fx:id="toasts" maxWidth="150.0" prefWidth="150.0" spacing="5.0" style="-fx-background-color: transparent;" StackPane.alignment="CENTER_LEFT">
+                              <VBox fx:id="toasts" mouseTransparent="true" maxWidth="150.0" prefWidth="150.0" spacing="5.0" style="-fx-background-color: transparent;" StackPane.alignment="CENTER_LEFT">
                                  <padding>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </padding>

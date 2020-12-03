@@ -206,10 +206,15 @@ public class DeviceModel {
     /**
      * @return the system path to the image file corresponding to the view of this
      *         model.
+     * 
+     * @deprecated use
+     *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getView(Class)}
+     *             (static) instead. Give as argument the result of {@link #getType()}.
      */
+    @Deprecated
     public String getURL() {
         final String url = "/images" + this.getLevel().getURL() + this.getType().getSimpleName() + ".svg";
-	    return url;
+        return url;
     }
 
     /**

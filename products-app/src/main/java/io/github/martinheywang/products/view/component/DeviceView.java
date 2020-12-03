@@ -21,24 +21,27 @@ import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.exception.EditException;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
+import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.view.DeviceMenuView;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.effect.Glow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 /**
@@ -68,11 +71,11 @@ import javafx.util.Duration;
  * 
  * @author Martin Heywang
  */
-public final class DeviceView extends ImageView {
+public final class DeviceView extends StackPane {
 
 	// CONSTANT VALUES
-	private static final double defaultOpacityValue = .7d;
-	private static final double activeOpacityValue = .9d;
+	private static final double defaultOpacityValue = 1d;
+	private static final double activeOpacityValue = 1d;
 	private static final double defaultGlowAmount = .0d;
 	private static final double hoverGlowAmount = .3d;
 
@@ -87,6 +90,7 @@ public final class DeviceView extends ImageView {
 	 */
 	public static final DataFormat coordinateFormat = new DataFormat("coordinate");
 
+	// ---------- DATA ----------------------------------------------------------
 	/**
 	 * The Device used to build this view.
 	 */
@@ -96,6 +100,11 @@ public final class DeviceView extends ImageView {
 	 * The current game manager (the controller)
 	 */
 	private final GameController gameManager;
+
+	// ---------- VIEW  --------------------------------------------------------
+	private SVGImage view;
+
+	private final DoubleProperty scaleProperty = new SimpleDoubleProperty(1d);
 
 	/**
 	 * Builds a new DeviceView.
@@ -149,11 +158,14 @@ public final class DeviceView extends ImageView {
 	 * @param model the model to display
 	 */
 	private void generateView(DeviceModel model) {
-		final Image image = new Image(model.getType().getResourceAsStream(model.getURL()));
-		this.setImage(image);
-		this.setRotate(model.getDirection().getRotate());
+		this.getChildren().clear();
 
-		this.setOpacity(defaultOpacityValue);
+		this.view = new SVGImage(StaticDeviceDataRetriever.getView(model.getType()), 100d, 100d);
+		this.view.setRotate(model.getDirection().getRotate());
+		this.view.setOpacity(defaultOpacityValue);
+		this.view.setViewEffect(model.getLevel().getEffect());
+
+		this.getChildren().addAll(view);
 	}
 
 	/**
@@ -215,7 +227,6 @@ public final class DeviceView extends ImageView {
 				final ClipboardContent content = new ClipboardContent();
 
 				content.put(coordinateFormat, this.device.getPosition());
-				content.putImage(this.getImage());
 
 				db.setContent(content);
 
@@ -292,5 +303,14 @@ public final class DeviceView extends ImageView {
 			this.setOnMouseEntered(e -> {});
 			this.setOnMouseExited(e -> {});
 		}
+	}
+
+	/**
+	 * Returns the view node.
+	 * 
+	 * @return the view
+	 */
+	public SVGImage getImage(){
+		return this.view;
 	}
 }
