@@ -59,6 +59,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -112,7 +113,7 @@ public class GameMenuView implements Initializable {
 
 	@FXML
 	private VBox toolbar;
-	
+
 	private VBox buildMenu = new VBox();
 	private VBox devices = new VBox();
 	private TextField buildSearch = new TextField();
@@ -172,7 +173,6 @@ public class GameMenuView implements Initializable {
 		});
 
 		this.scrollpane.setFocusTraversable(true);
-		this.prepareToolbar();
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class GameMenuView implements Initializable {
 		this.gameName.setText("- " + game.getName());
 
 		// LOAD DEVICES
-		for (int x = 0; x < devices.size(); x++){
+		for (int x = 0; x < devices.size(); x++) {
 			for (int y = 0; y < devices.size(); y++) {
 				Device device = devices.get(x, y);
 				// If a d doesn't exists at the given coordinate, create a new FLOOR
@@ -199,6 +199,7 @@ public class GameMenuView implements Initializable {
 			}
 		}
 		this.setMoney(game.getMoney());
+		this.prepareToolbar();
 
 		this.toPlayableView();
 	}
@@ -353,6 +354,8 @@ public class GameMenuView implements Initializable {
 			node.setTranslateX(0d);
 			this.currentMenu = "none";
 
+			gameManager.setBuildClass(null);
+
 			return true;
 		}
 		return false;
@@ -382,7 +385,7 @@ public class GameMenuView implements Initializable {
 		final Label tutorial = new Label();
 		tutorial.setText("Cliquez sur un type d'appareil ci-dessous pour obtenir plus d'informations. \n"
 				+ "Faites un glisser-déposer vers la grille pour construire les appareils à "
-				+ "l'emplacement désiré.\nEntrez du texte dans la barre de recherche " 
+				+ "l'emplacement désiré.\nEntrez du texte dans la barre de recherche "
 				+ "et appuyez sur entrer pour effectuer une recherche.");
 		tutorial.setWrapText(true);
 		tutorial.setMinHeight(120d);
@@ -403,24 +406,40 @@ public class GameMenuView implements Initializable {
 		menu.getChildren().addAll(title, buildSearch, tutorial, scroll);
 	}
 
-	private void refreshAvailableDevices(String mustContain){
+	private void refreshAvailableDevices(String mustContain) {
+		gameManager.setBuildClass(null);
 		devices.getChildren().clear();
 
-			for (Class<? extends Device> clazz : DeviceController.knownTypes) {
-				if (!StaticDeviceDataRetriever.isBuildable(clazz)) {
-					continue;
-				}
-				final String name = StaticDeviceDataRetriever.getAccessibleName(clazz).toLowerCase();
-				if (name.contains(this.buildSearch.getText().toLowerCase())) {
-					final StaticDeviceView view = new StaticDeviceView(clazz);
-					view.addHoverEffect();
-					devices.getChildren().add(view);
-				}
+		for (Class<? extends Device> clazz : DeviceController.knownTypes) {
+			if (!StaticDeviceDataRetriever.isBuildable(clazz)) {
+				continue;
 			}
-			if(devices.getChildren().isEmpty()){
-				final Label none = new Label("Aucun résultat.");
-				devices.getChildren().add(none);
+			final String name = StaticDeviceDataRetriever.getAccessibleName(clazz).toLowerCase();
+			if (name.contains(this.buildSearch.getText().toLowerCase())) {
+				final StaticDeviceView view = new StaticDeviceView(clazz);
+				view.addHoverEffect();
+				view.setOnMouseClicked(event -> {
+					if (event.getButton().equals(MouseButton.PRIMARY)) {
+						final boolean selected = view.getStyleClass().contains("colored");
+						ViewUtils.removeStyleClassToChildrens(devices, "colored");
+						if(selected){
+							gameManager.setBuildClass(null);
+							return;
+						}
+
+						view.getStyleClass().addAll("colored");
+						gameManager.setBuildClass(view.getDeviceType());
+					} else {
+						view.toggleCollapsed();
+					}
+				});
+				devices.getChildren().add(view);
 			}
+		}
+		if (devices.getChildren().isEmpty()) {
+			final Label none = new Label("Aucun résultat.");
+			devices.getChildren().add(none);
+		}
 	}
 
 	private void toggleBuildMenu() {
@@ -429,6 +448,24 @@ public class GameMenuView implements Initializable {
 		}
 		addMenu(this.buildMenu, "build");
 
+	}
+
+	/**
+	 * Changes the view mode to the default one.
+	 */
+	public void defaultMode(){
+		for(DeviceView view : grid.getDeviceChildren()){
+			view.activateDefaultMode();
+		}
+	}
+
+	/**
+	 * Changes the view mode to the build mode.
+	 */
+	public void buildMode(){
+		for(DeviceView view : grid.getDeviceChildren()){
+			view.activateBuildMode(StaticDeviceDataRetriever.getView(gameManager.getBuildClazz()));
+		}
 	}
 
 	@FXML

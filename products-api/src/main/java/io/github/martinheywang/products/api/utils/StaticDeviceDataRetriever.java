@@ -165,6 +165,9 @@ public final class StaticDeviceDataRetriever {
      * @return the path to the image of the device type
      */
     public static URL getView(Class<? extends Device> clazz) {
+        if(clazz == null){
+            return null;
+        }
         if (Modifier.isAbstract(clazz.getModifiers())) {
             System.err.println("'" + clazz.getCanonicalName()
                     + "' is abstract, it should not have an image (and therefore the URL may not be resolved.");

@@ -2,7 +2,7 @@
     These styles defines basic styling for all components and 
     imports all others stylesheets.
 */
-
+@import "./Box.css";
 @import "./Layout.css";
 @import "./ScrollPane.css";
 @import "./Text.css";

@@ -15,32 +15,24 @@
 */
 package io.github.martinheywang.products.view.component;
 
-import java.io.IOException;
+import java.net.URL;
 
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.exception.EditException;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
-import io.github.martinheywang.products.kit.view.utils.ViewUtils;
-import io.github.martinheywang.products.view.DeviceMenuView;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
+import javafx.event.EventHandler;
 import javafx.scene.effect.Glow;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -73,22 +65,11 @@ import javafx.util.Duration;
  */
 public final class DeviceView extends StackPane {
 
-	// CONSTANT VALUES
+	// ---------- CONSTANT VALUES -----------------------------------------------
 	private static final double defaultOpacityValue = 1d;
 	private static final double activeOpacityValue = 1d;
-	private static final double defaultGlowAmount = .0d;
-	private static final double hoverGlowAmount = .3d;
-
-	/**
-	 * A {@link javafx.scene.input.DataFormat} for class {@link java.lang.Class}
-	 */
-	public static final DataFormat classFormat = new DataFormat("class");
-
-	/**
-	 * A {@link javafx.scene.input.DataFormat} for class
-	 * {@link io.github.martinheywang.products.api.model.Coordinate}.
-	 */
-	public static final DataFormat coordinateFormat = new DataFormat("coordinate");
+	private static final double defaultGlowAmount = 0d;
+	private static final double hoverGlowAmount = .2d;
 
 	// ---------- DATA ----------------------------------------------------------
 	/**
@@ -101,10 +82,18 @@ public final class DeviceView extends StackPane {
 	 */
 	private final GameController gameManager;
 
-	// ---------- VIEW  --------------------------------------------------------
+	private final double side = 96d; // both width and height
+	private double zoom = 1d;
+
+	// 'Sensible' means the view will be react to certain event.
+	private boolean isHoverable = false;
+	private boolean isClickable = false;
+	private boolean isBuildModeActivated = false;
+
+	// ---------- VIEW ----------------------------------------------------------
 	private SVGImage view;
 
-	private final DoubleProperty scaleProperty = new SimpleDoubleProperty(1d);
+	private SVGImage buildReflect;
 
 	/**
 	 * Builds a new DeviceView.
@@ -115,6 +104,15 @@ public final class DeviceView extends StackPane {
 	public DeviceView(Device device, GameController gameManager) {
 		this.device = device;
 		this.gameManager = gameManager;
+
+		this.view = new SVGImage();
+		this.buildReflect = new SVGImage();
+
+		if (!StaticDeviceDataRetriever.isBuildable(device.getClass())) {
+			this.isHoverable = true;
+		} else {
+			this.isClickable = true;
+		}
 
 		this.hardRefresh();
 	}
@@ -140,7 +138,7 @@ public final class DeviceView extends StackPane {
 	 */
 	public void hardRefresh() {
 		this.lightRefresh();
-		this.refreshEventHandling();
+		this.resetEventHandling();
 	}
 
 	/**
@@ -160,7 +158,7 @@ public final class DeviceView extends StackPane {
 	private void generateView(DeviceModel model) {
 		this.getChildren().clear();
 
-		this.view = new SVGImage(StaticDeviceDataRetriever.getView(model.getType()), 100d, 100d);
+		this.view.setImage(StaticDeviceDataRetriever.getView(model.getType()), this.side, this.side, this.zoom);
 		this.view.setRotate(model.getDirection().getRotate());
 		this.view.setOpacity(defaultOpacityValue);
 		this.view.setViewEffect(model.getLevel().getEffect());
@@ -181,136 +179,126 @@ public final class DeviceView extends StackPane {
 	}
 
 	/**
-	 * Refreshes the event handling behaviour (drag, click, ...etc.)
+	 * Resets the event handling behaviour and set it to default values. (If the
+	 * some modes were activated, all of them won't take effect after using this
+	 * method.)
 	 */
-	private void refreshEventHandling() {
-		// ON HOVER
-		if (!this.device.getClass().equals(Floor.class)) {
-			this.setOnMouseEntered(event -> {
-				this.setEffect(new Glow(hoverGlowAmount));
-			});
-			this.setOnMouseExited(event -> {
-				this.setEffect(new Glow(defaultGlowAmount));
-			});
-			this.setOnMouseClicked(event -> {
-				if (event.getButton() == MouseButton.SECONDARY)
-					try {
-						this.gameManager.turn(this.device);
-					} catch (final EditException e) {
-						e.printStackTrace();
-					}
-				else if (event.getButton() == MouseButton.PRIMARY)
-					try {
-						final FXMLLoader loader = ViewUtils
-								.prepareFXMLLoader(this.getClass().getResource("/fxml/Device.fxml"));
-
-						final Dialog<Void> dialog = new Dialog<>();
-						final DialogPane root = loader.load();
-						dialog.setDialogPane(root);
-
-						final DeviceMenuView controller = loader.getController();
-						controller.setContent(this.device, this.gameManager);
-
-						dialog.show();
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
-			});
-
-			// ON DRAG
-			this.setOnDragDetected(event -> {
-				/*
-				 * I used MOVE to swap devices. I use LINK to destroy devices, and COPY to build
-				 * devices.
-				 */
-				final Dragboard db = this.startDragAndDrop(TransferMode.MOVE, TransferMode.LINK);
-				final ClipboardContent content = new ClipboardContent();
-
-				content.put(coordinateFormat, this.device.getPosition());
-
-				db.setContent(content);
-
-			});
-		}
-		this.setOnDragOver(event -> {
-			event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
-		});
-		this.setOnDragEntered(event -> {
-			/* the drag-and-drop gesture entered the target */
-			/* show to the user that it is an actual gesture target */
-			this.setEffect(new Glow(hoverGlowAmount));
-
-		});
-		this.setOnDragExited(event -> {
-			/* the drag-and-drop gesture entered the target */
-			/* show to the user that it is an actual gesture target */
-			this.setEffect(new Glow(defaultGlowAmount));
-
-		});
-		this.setOnDragDropped(event -> {
-			final Dragboard db = event.getDragboard();
-
-			boolean success = false;
-
-			if (event.getTransferMode().equals(TransferMode.COPY)) {
-				if (db.hasContent(classFormat)) {
-					@SuppressWarnings("unchecked")
-					final Class<? extends Device> type = (Class<? extends Device>) db.getContent(classFormat);
-					try {
-						this.gameManager.build(type, this.device.getPosition());
-					} catch (final MoneyException e) {
-						e.printStackTrace();
-					} catch (final EditException e) {
-						e.printStackTrace();
-					}
-					success = true;
-				}
-			} else if (event.getTransferMode().equals(TransferMode.LINK)) {
-				try {
-					this.gameManager.swap(this.device.getPosition());
-				} catch (final EditException e) {
-					e.printStackTrace();
-				}
-				success = true;
-			}
-
-			event.setDropCompleted(success);
-
-			event.consume();
-		});
-
-		this.setOnDragDone(event -> { // If the other target was a DeviceView
-			try {
-				if (event.getTarget().getClass().equals(DeviceView.class))
-					if (event.getTransferMode().equals(TransferMode.LINK))
-						try {
-							this.gameManager.swap(this.device.getPosition());
-						} catch (final EditException e) {
-							e.printStackTrace();
-						}
-			} catch (final NullPointerException e) {
-				/*
-				 * If an error occurs during the drag'n drop gesture, the event is not properly
-				 * set, that means that the properties are not accesible and throws this error
-				 */
-			}
-
-		});
-
-		if(this.device.getClass().equals(Floor.class)){
-			this.setOnDragDetected(e -> {});
-			this.setOnMouseClicked(e -> {});
-			this.setOnMouseEntered(e -> {});
-			this.setOnMouseExited(e -> {});
+	private void resetEventHandling() {
+		// Floors doesn't react to anything by default
+		if (!(device instanceof Floor)) {
+			this.setOnMouseEntered(new DefaultEnteredBehaviour());
+			this.setOnMouseExited(new DefaultExitedBehaviour());
+			this.setOnMouseClicked(new DefaultClickBehaviour());
 		}
 	}
 
 	/**
-	 * Returns the view node.
+	 * <p>
+	 * Activates the build mode.
+	 * </p>
+	 * <p>
+	 * The build mode is a mode where the view has different reactions to certain
+	 * event. On hover, the view displays a semi-transparent view of the currently
+	 * selected. On click, the view builds a device at its coordinate.
+	 * </p>
 	 * 
-	 * @return the view
+	 * @param reflectURL the url of the reflect
 	 */
-	public SVGImage getImage(){
-		return this.view;
+	public void activateBuildMode(URL reflectURL) {
+		this.buildReflect.setImage(reflectURL, this.side, this.side, this.zoom);
+		this.buildReflect.setViewEffect(Level.LEVEL_1.getEffect());
+		this.buildReflect.setOpacity(.5d);
+
+		this.setOnMouseEntered(new BuildEnteredBehaviour());
+		this.setOnMouseExited(new BuildExitedBehaviour());
+		this.setOnMouseClicked(new BuildClickBehaviour());
+	}
+
+	/**
+	 * <p>
+	 * Activates the default mode (or disable all)
+	 * </p>
+	 * <p>
+	 * On hover, the device view glows a bit. On click, the view tries to open the
+	 * dashboard of the device.
+	 */
+	public void activateDefaultMode() {
+		this.setOnMouseEntered(new DefaultEnteredBehaviour());
+		this.setOnMouseExited(new DefaultExitedBehaviour());
+		this.setOnMouseClicked(new DefaultClickBehaviour());
+	}
+
+	/**
+	 * Sets the zoom amount to the given value and refreshes the view.
+	 * 
+	 * @param value the new amount of zoom
+	 */
+	public void applyZoom(double value) {
+		this.zoom = value;
+		lightRefresh();
+	}
+
+	private class DefaultClickBehaviour implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent event) {
+			if (event.getButton() == MouseButton.SECONDARY) {
+				try {
+					gameManager.turn(device);
+				} catch (final EditException e) {
+					e.printStackTrace();
+				}
+			} else if (event.getButton() == MouseButton.PRIMARY) {
+				gameManager.openDashboardOf(device.getPosition());
+			}
+		}
+
+	}
+
+	private class BuildClickBehaviour implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			try {
+				gameManager.build(device.getPosition());
+			} catch (MoneyException | EditException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private class DefaultEnteredBehaviour implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent event) {
+			if(device instanceof Floor){
+				return;
+			}
+			setEffect(new Glow(hoverGlowAmount));
+		}
+
+	}
+
+	private class BuildEnteredBehaviour implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			if(!(device instanceof Floor)){
+				return;
+			}
+			getChildren().add(buildReflect);
+		}
+	}
+
+	private class DefaultExitedBehaviour implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			setEffect(new Glow(defaultGlowAmount));
+		}
+	}
+
+	private class BuildExitedBehaviour implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			getChildren().remove(buildReflect);
+		}
 	}
 }

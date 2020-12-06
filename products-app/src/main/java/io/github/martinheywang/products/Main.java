@@ -56,6 +56,7 @@ import io.github.martinheywang.products.view.GameMenuView;
 import io.github.martinheywang.products.view.HomeView;
 import io.github.martinheywang.products.view.HomeView2;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -86,14 +87,13 @@ public final class Main extends Application {
 		stage.getIcons().add(new Image(Icons.asStream("Icon.png")));
 		try {
 			// If at least one game is already registered
-			if (Database.createDao(Game.class).countOf() < 1){
+			if (Database.createDao(Game.class).countOf() < 1) {
 				// We launch the home of the first users
 				this.initAccueil();
-			}
-			else{
+			} else {
 				// Else we launch the select or create window.
 			}
-				this.initAccueil2();
+			this.initAccueil2();
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
@@ -181,16 +181,8 @@ public final class Main extends Application {
 			manager.start();
 
 			stage.setOnCloseRequest(event -> {
-				try {
-					manager.save();
-				} catch (final SQLException e) {
-					e.printStackTrace();
-					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Partie non sauvegardée.");
-					alert.setHeaderText("Une erreur est survenue lors de la sauvegarde de cette partie.");
-					alert.setContentText(e.getMessage());
-				}
-				System.exit(0);
+				manager.save();
+				Platform.exit();
 			});
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -238,9 +230,9 @@ public final class Main extends Application {
 
 		final List<Class<? extends Resource>> resourceEnums = pluginManager.getExtensionClasses(Resource.class);
 		for (final Class<? extends Resource> resourceEnum : resourceEnums) {
-			ResourceManager.register(resourceEnum);	
+			ResourceManager.register(resourceEnum);
 		}
-		
+
 		System.out.println("Registering device type:");
 		DeviceController.registerType(Floor.class);
 		DeviceController.registerType(Buyer.class);

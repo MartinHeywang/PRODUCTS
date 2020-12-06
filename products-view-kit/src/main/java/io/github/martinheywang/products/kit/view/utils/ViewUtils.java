@@ -3,6 +3,7 @@ package io.github.martinheywang.products.kit.view.utils;
 import java.net.URL;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -44,5 +45,31 @@ public class ViewUtils {
      */
     public static void prepareScene(Parent root) {
         root.getStylesheets().add(ViewUtils.class.getResource("/css/General.css").toExternalForm());
+    }
+
+    /**
+     * Adds the given style class to all childrens of the given parent. If nodes are
+     * added after invoking this method, they won't be receive the style class.
+     * 
+     * @param parent the container of the nodes
+     * @param styleClass the style class to add
+     */
+    public static void addStyleClassToChildrens(Parent parent, String styleClass) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            node.getStyleClass().add(styleClass);
+        }
+    }
+
+    /**
+     * Removes the given style class to all childrens of the given parent. If nodes are
+     * added after invoking this method, they won't be affected by this method.
+     * 
+     * @param parent the container of the nodes
+     * @param styleClass the style class to remove
+     */
+    public static void removeStyleClassToChildrens(Parent parent, String styleClass) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            node.getStyleClass().remove(styleClass);
+        }
     }
 }

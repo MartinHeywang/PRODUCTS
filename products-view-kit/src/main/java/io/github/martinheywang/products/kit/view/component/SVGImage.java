@@ -31,6 +31,9 @@ public final class SVGImage extends StackPane {
 
     private Effect viewEffect;
 
+    public SVGImage(){
+        this.setImage(null, 0d, 0d, 1d);
+    }
     /**
      * Builds a new image using the url to the svg. This svg should not have
      * <code>width</code> or <code>height</code> properties.
@@ -77,7 +80,11 @@ public final class SVGImage extends StackPane {
 
         this.view = webView;
 
-        engine.load(pathToImage.toExternalForm());
+        if(this.pathToImage != null){
+            engine.load(pathToImage.toExternalForm());
+        }else{
+            engine.load(null);
+        }
         webView.setPrefSize(width * zoom, height * zoom);
         webView.setFocusTraversable(false);
         webView.setContextMenuEnabled(false);

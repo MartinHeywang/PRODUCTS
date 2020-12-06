@@ -75,6 +75,10 @@ Label, Button, Text {
 .precision-light{
     -fx-text-fill: -cta-light;
 }
+.colored .precision,
+.colored .precision-light{
+    -fx-text-fill: white;
+}
 .help{
     -fx-font-size: 11px;
 }

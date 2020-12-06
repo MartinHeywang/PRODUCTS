@@ -1,9 +1,11 @@
 package io.github.martinheywang.products.view.component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -39,8 +41,8 @@ public class GameGrid extends GridPane {
     public void add(DeviceView node, int x, int y) {
         super.add(node, x, y);
 
-        this.zoomProperty.addListener( (obs, oldVal, newVal) -> {
-            node.getImage().applyZoom(newVal.doubleValue());
+        this.zoomProperty.addListener((obs, oldVal, newVal) -> {
+            node.applyZoom(newVal.doubleValue());
         });
     }
 
@@ -58,18 +60,34 @@ public class GameGrid extends GridPane {
         return;
     }
 
-    public void setZoom(double amount){
-        if(amount < .4d || amount > 5d){
+    /**
+     * Returns the children of the grid, or at least, only the device view(s).
+     * Unfortunately this method casts a lot of things, so don't use it too often.
+     * 
+     * @return the childrens
+     */
+    public List<DeviceView> getDeviceChildren() {
+        final List<DeviceView> children = new ArrayList<>();
+        for (Node node : this.getChildren()) {
+            if (node instanceof DeviceView) {
+                children.add((DeviceView) node);
+            }
+        }
+        return children;
+    }
+
+    public void setZoom(double amount) {
+        if (amount < .4d || amount > 5d) {
             return;
         }
         zoomProperty.set(amount);
     }
 
-    public void zoomOut(){
+    public void zoomOut() {
         setZoom(this.zoomProperty.get() - this.zoomFactor);
     }
 
-    public void zoomIn(){
+    public void zoomIn() {
         setZoom(this.zoomProperty.get() + this.zoomFactor);
     }
 }

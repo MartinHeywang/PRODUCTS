@@ -9,3 +9,12 @@ VBox, HBox{
 VBox * {
     -fx-background-color: transparent;
 }
+
+.colored{
+    -fx-background-color: -cta-dark;
+    -fx-background-radius: 3px;
+}
+.colored:hover{
+    -fx-text-fill: white;
+    -fx-background-color: -cta;
+}

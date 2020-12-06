@@ -15,6 +15,7 @@
 */
 package io.github.martinheywang.products.controller;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -39,12 +40,18 @@ import io.github.martinheywang.products.api.model.exception.LoadException;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
+import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.kit.device.Floor;
+import io.github.martinheywang.products.kit.view.utils.ViewUtils;
+import io.github.martinheywang.products.view.DeviceMenuView;
 import io.github.martinheywang.products.view.GameMenuView;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.paint.Color;
 
 /**
@@ -58,23 +65,23 @@ import javafx.scene.paint.Color;
  */
 public final class GameController {
 
+	private final Game game;
+
 	/**
 	 * The current delay applied between each iteration of the game loop.
 	 */
-	public static int gameLoopDelay;
-
+	private int gameLoopDelay;
 	private int maxBuyer;
+	private final List<BigInteger> lastsGrow = new ArrayList<>();
 
-	private final GameMenuView gameView;
 	private DeviceController deviceController;
+	private final GameMenuView gameView;
 
-	private final Game game;
 	private final GameLoop gameLoop;
 	private final Thread gameThread;
 
+	private Class<? extends Device> buildClazz = null;
 	private Coordinate toMove;
-
-	private final List<BigInteger> lastsGrow = new ArrayList<>();
 
 	/**
 	 * Builds a new GameManager and launches the game loop in auto mode.
@@ -133,25 +140,29 @@ public final class GameController {
 	}
 
 	/**
-	 * Builds a device of the given type at the given position.
+	 * Builds a device at the given coordinate, using the current build class. See
+	 * {@link #setBuildClass(Class)} to learn more about the build class and how to
+	 * set it.
 	 * 
-	 * @param clazz    the type of the device to build
 	 * @param position where
 	 * @throws MoneyException if we don't have enough money
-	 * @throws EditException if the edit couldn't be performed.
+	 * @throws EditException  if the edit couldn't be performed.
 	 */
-	public void build(Class<? extends Device> clazz, Coordinate position) throws MoneyException, EditException {
-
-		final BigInteger actionPrice = new BigInteger(clazz.getAnnotation(Prices.class).build());
+	public void build(Coordinate position) throws MoneyException, EditException {
+		if (this.buildClazz == null) {
+			return;
+		}
+		final BigInteger actionPrice = new BigInteger(this.buildClazz.getAnnotation(Prices.class).build());
 
 		if (this.game.getMoney().compareTo(actionPrice) == -1)
 			throw new MoneyException(this.getMoney(), actionPrice);
 
 		this.removeMoney(actionPrice);
 
-		final Device newDevice = new DeviceModel(clazz, Level.LEVEL_1, Direction.UP, this.game, position).instantiate();
-		if (clazz.isAnnotationPresent(Independent.class)) {
-			final boolean autoActive = clazz.getAnnotation(Independent.class).value();
+		final Device newDevice = new DeviceModel(this.buildClazz, Level.LEVEL_1, Direction.UP, this.game, position)
+				.instantiate();
+		if (this.buildClazz.isAnnotationPresent(Independent.class)) {
+			final boolean autoActive = this.buildClazz.getAnnotation(Independent.class).value();
 			if (autoActive)
 				this.deviceController.getIndependentDevices().add(newDevice);
 		}
@@ -179,8 +190,7 @@ public final class GameController {
 		}
 
 		// Update model and view
-		this.deviceController.replace(Floor.class, Level.LEVEL_1, Direction.UP,
-				device.getPosition());
+		this.deviceController.replace(Floor.class, Level.LEVEL_1, Direction.UP, device.getPosition());
 		this.hardRefresh(device.getPosition());
 
 		this.deviceController.removeIndependentDevice(device);
@@ -313,7 +323,7 @@ public final class GameController {
 	/**
 	 * Adds money to the game
 	 * 
-	 * @param value  the amount to add
+	 * @param value the amount to add
 	 * @throws MoneyException if the money reaches 0 or less before the transaction.
 	 */
 	public void addMoney(BigInteger value) throws MoneyException {
@@ -324,7 +334,7 @@ public final class GameController {
 	/**
 	 * Removes money to the game
 	 * 
-	 * @param value  the amount to remove
+	 * @param value the amount to remove
 	 * @throws MoneyException if the money amount reaches 0 or less.
 	 */
 	public void removeMoney(BigInteger value) throws MoneyException {
@@ -361,6 +371,35 @@ public final class GameController {
 	}
 
 	/**
+	 * Returns the build class (the class used to as type whenever the
+	 * {@link #build(Coordinate)} method is called).
+	 * 
+	 * @return the build class
+	 */
+	public Class<? extends Device> getBuildClazz() {
+		return this.buildClazz;
+	}
+
+	/**
+	 * Sets the build class. The build class is the type of the device that will be
+	 * created if the {@link #build(Coordinate)} method is invoked.
+	 * 
+	 * @param clazz the build class
+	 */
+	public void setBuildClass(Class<? extends Device> clazz) {
+		if (clazz == null || !StaticDeviceDataRetriever.isBuildable(clazz)) {
+			clazz = null;
+		}
+		this.buildClazz = clazz;
+
+		if(this.buildClazz != null){
+			gameView.buildMode();
+		}else{
+			gameView.defaultMode();
+		}
+	}
+
+	/**
 	 * Displays a toast in the top right corner of the game scene.
 	 * 
 	 * @param text       the text to display
@@ -372,11 +411,30 @@ public final class GameController {
 	}
 
 	/**
-	 * Saves the managed game with its devices and everything.
+	 * Open the dashboard of the device at the given coordinate.
 	 * 
-	 * @throws SQLException if an error with the database occurs.
+	 * @param coord the position of the device
 	 */
-	public void save() throws SQLException {
+	public void openDashboardOf(Coordinate coord) {
+		try {
+			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(this.getClass().getResource("/fxml/Device.fxml"));
+
+			final Dialog<Void> dialog = new Dialog<>();
+			final DialogPane root = loader.load();
+			dialog.setDialogPane(root);
+
+			final DeviceMenuView controller = loader.getController();
+			controller.setContent(getDevice(coord), this);
+			dialog.show();
+		} catch (IOException e) {
+			toast("Erreur lors de l'ouverture du tableau de bord.", Color.DARKRED, 5d);
+		}
+	}
+
+	/**
+	 * Saves the managed game with its devices and everything.
+	 */
+	public void save() {
 		final Alert info = new Alert(AlertType.INFORMATION);
 
 		final Task<Void> saving = new Task<Void>() {
@@ -457,7 +515,7 @@ public final class GameController {
 	}
 
 	/**
-	 * @return the {@link #gameLoopDelay} 
+	 * @return the {@link #gameLoopDelay}
 	 */
 	public Integer getDelay() {
 		return gameLoopDelay;
@@ -539,8 +597,7 @@ public final class GameController {
 
 				try {
 					deviceController.clearIterations();
-					for (final Device independent : deviceController
-							.getIndependentDevices())
+					for (final Device independent : deviceController.getIndependentDevices())
 						for (int i = 0; i < independent.getLevel().getValue(); i++) {
 							final List<Device> toPulse = new ArrayList<>();
 							BigInteger cost = BigInteger.ZERO;
