@@ -21,7 +21,11 @@ import io.github.martinheywang.products.api.model.Game;
  * A LoadException is throwed whenever a game fail loading.
  * 
  * @author Martin Heywang
+ * 
+ * @deprecated not clear, too less precise, you may use {@link DeviceException}
+ *             or {@link MoneyException} instead.
  */
+@Deprecated
 public class LoadException extends Exception {
 
     /**
@@ -35,7 +39,7 @@ public class LoadException extends Exception {
      * @param game the game wanted to load
      */
     public LoadException(Game game) {
-	super("Une erreur lors du chargement de la partie est survenue. (ID: " + game.getID() + ")");
+        super("Une erreur lors du chargement de la partie est survenue. (ID: " + game.getID() + ")");
     }
 
     /**
@@ -45,7 +49,7 @@ public class LoadException extends Exception {
      * @param game    the game wanted to load
      */
     public LoadException(String message, Game game) {
-	super(message + " (ID: " + game.getID() + ")");
+        super(message + " (ID: " + game.getID() + ")");
     }
 
 }

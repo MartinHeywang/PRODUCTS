@@ -24,7 +24,6 @@ import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.direction.Direction;
-import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.ArrayList2D;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
@@ -36,9 +35,6 @@ import io.github.martinheywang.products.kit.view.component.SVGImage;
 import io.github.martinheywang.products.kit.view.component.StaticDeviceView;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
-import io.github.martinheywang.products.model.bundle.GameLoopUpdate;
-import io.github.martinheywang.products.model.bundle.GrilleUpdate;
-import io.github.martinheywang.products.model.bundle.MaxBuyerUpdate;
 import io.github.martinheywang.products.view.component.DeviceView;
 import io.github.martinheywang.products.view.component.GameGrid;
 import io.github.martinheywang.products.view.component.LocatedScrollPane;
@@ -220,7 +216,7 @@ public class GameMenuView implements Initializable {
 	 * 
 	 * @see DeviceView#lightRefresh()
 	 */
-	public void lightViewRefresh(Coordinate coord) {
+	public void lightDeviceViewRefreshAt(Coordinate coord) {
 		final int x = coord.getX();
 		final int y = coord.getY();
 
@@ -235,13 +231,21 @@ public class GameMenuView implements Initializable {
 	 * 
 	 * @see DeviceView#hardRefresh()
 	 */
-	public void hardViewRefresh(Coordinate coord) {
+	public void hardDeviceViewRefreshAt(Coordinate coord) {
 		final int x = coord.getX();
 		final int y = coord.getY();
 
 		final DeviceView view = this.findDeviceView(x, y);
 		view.setDevice(this.gameManager.getDevice(coord));
 		view.hardRefresh();
+	}
+
+	/**
+	 * Refreshes the money label on top of the screen. Sets the text to the current
+	 * amount of money.
+	 */
+	public void refreshMoney() {
+		this.moneyLabel.setText(MoneyFormat.getSingleton().format(gameManager.getMoney()));
 	}
 
 	/**
@@ -422,7 +426,7 @@ public class GameMenuView implements Initializable {
 					if (event.getButton().equals(MouseButton.PRIMARY)) {
 						final boolean selected = view.getStyleClass().contains("colored");
 						ViewUtils.removeStyleClassToChildrens(devices, "colored");
-						if(selected){
+						if (selected) {
 							gameManager.setBuildClass(null);
 							return;
 						}
@@ -447,14 +451,13 @@ public class GameMenuView implements Initializable {
 			return;
 		}
 		addMenu(this.buildMenu, "build");
-
 	}
 
 	/**
 	 * Changes the view mode to the default one.
 	 */
-	public void defaultMode(){
-		for(DeviceView view : grid.getDeviceChildren()){
+	public void defaultMode() {
+		for (DeviceView view : grid.getDeviceChildren()) {
 			view.activateDefaultMode();
 		}
 	}
@@ -462,60 +465,9 @@ public class GameMenuView implements Initializable {
 	/**
 	 * Changes the view mode to the build mode.
 	 */
-	public void buildMode(){
-		for(DeviceView view : grid.getDeviceChildren()){
-			view.activateBuildMode(StaticDeviceDataRetriever.getView(gameManager.getBuildClazz()));
-		}
-	}
-
-	@FXML
-	private void upgradeGrid() {
-		final int newSize = this.gameManager.getGridSize() + 1;
-
-		final ResourceBundle bundle = ResourceBundle.getBundle(GrilleUpdate.class.getCanonicalName());
-		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newSize)));
-		try {
-			this.gameManager.removeMoney(cost);
-			this.gameManager.upgradeGrid();
-		} catch (final MoneyException e) {
-			this.gameManager.toast(
-					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
-					Color.DARKORANGE, 4d);
-		}
-
-	}
-
-	@FXML
-	private void decreaseGameLoopDelay() {
-		final int newDelay = this.gameManager.getDelay() - 50;
-
-		final ResourceBundle bundle = ResourceBundle.getBundle(GameLoopUpdate.class.getCanonicalName());
-		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newDelay)));
-
-		try {
-			this.gameManager.removeMoney(cost);
-			this.gameManager.decreaseGameLoopDelay();
-		} catch (final MoneyException e) {
-			this.gameManager.toast(
-					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
-					Color.DARKORANGE, 4d);
-		}
-	}
-
-	@FXML
-	private void increaseMaxBuyer() {
-		final int newMax = this.gameManager.getMaxBuyer() + 4;
-
-		final ResourceBundle bundle = ResourceBundle.getBundle(MaxBuyerUpdate.class.getCanonicalName());
-		final BigInteger cost = new BigInteger(bundle.getString(String.valueOf(newMax)));
-
-		try {
-			this.gameManager.removeMoney(cost);
-			this.gameManager.addMaxBuyer();
-		} catch (final MoneyException e) {
-			this.gameManager.toast(
-					"Vous n'avez pas assez d'argent! (" + MoneyFormat.getSingleton().format(cost) + " demandés)",
-					Color.DARKORANGE, 4d);
+	public void buildMode() {
+		for (DeviceView view : grid.getDeviceChildren()) {
+			view.activateBuildMode(StaticDeviceDataRetriever.getView(gameManager.getBuildClass()));
 		}
 	}
 

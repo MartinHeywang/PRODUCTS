@@ -92,7 +92,7 @@ public class Game {
      * The maximum buildable buyers.
      */
     @DatabaseField
-    private Integer maxBuyer;
+    private Integer maxIndependent;
 
     /**
      * Creates an empty Game;
@@ -107,13 +107,13 @@ public class Game {
      * @throws SQLException if this object can't be registered in the database
      */
     public Game(String name) throws SQLException {
-	this.name = name;
-	this.gridSize = 3;
-	this.money = new BigInteger("1250");
-	this.grow = new BigInteger("0");
-	this.gameLoopDelay = 1000;
-	this.maxBuyer = 4;
-	this.lastSave = LocalDateTime.now().toString();
+        this.name = name;
+        this.gridSize = 3;
+        this.money = new BigInteger("1250");
+        this.grow = new BigInteger("0");
+        this.gameLoopDelay = 1000;
+        this.maxIndependent = 4;
+        this.lastSave = LocalDateTime.now().toString();
     }
 
     // PROPERTIES GETTER
@@ -124,7 +124,7 @@ public class Game {
      * @return the id of this object in the database.
      */
     public Long getID() {
-	return this.id;
+        return this.id;
     }
 
     /**
@@ -133,7 +133,7 @@ public class Game {
      * @return the name of this game
      */
     public String getName() {
-	return this.name;
+        return this.name;
     }
 
     /**
@@ -142,7 +142,7 @@ public class Game {
      * @return the grid-size
      */
     public Integer getGridSize() {
-	return this.gridSize;
+        return this.gridSize;
     }
 
     /**
@@ -151,7 +151,7 @@ public class Game {
      * @return the money amount
      */
     public BigInteger getMoney() {
-	return this.money;
+        return this.money;
     }
 
     // PROPERTIES GETTER
@@ -162,15 +162,15 @@ public class Game {
      * @return the grow
      */
     public BigInteger getGrow() {
-	return this.grow;
+        return this.grow;
     }
 
     /**
      * 
      * @return the game loop delay
      */
-    public Integer getDelay(){
-	return this.gameLoopDelay;
+    public Integer getDelay() {
+        return this.gameLoopDelay;
     }
 
     /**
@@ -180,15 +180,29 @@ public class Game {
      *         also known as JodaTime)
      */
     public LocalDateTime getLastSave() {
-	return LocalDateTime.parse(this.lastSave);
+        return LocalDateTime.parse(this.lastSave);
     }
 
     /**
+     * Returns the max number of buyer that the game can have at the same time on
+     * the grid.
+     * 
+     * @return the max buyer amount
+     * @deprecated use {@link #getMaxIndependent()} instead, changed name
+     */
+    @Deprecated
+    public Integer getMaxBuyer() {
+        return this.maxIndependent;
+    }
+
+    /**
+     * Returns the max number of independent devices that the game can have at the
+     * same time on the grid.
      * 
      * @return the max buyer amount
      */
-    public Integer getMaxBuyer(){
-	return this.maxBuyer;
+    public Integer getMaxIndependent() {
+        return this.maxIndependent;
     }
 
     /**
@@ -197,7 +211,7 @@ public class Game {
      * @param name the new name
      */
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     /**
@@ -206,14 +220,14 @@ public class Game {
      * @param money the new money-amount
      */
     public void setMoney(BigInteger money) {
-	this.money = money;
+        this.money = money;
     }
 
     /**
      * Sets the last save to now. Use carefully.
      */
     public void updateLastSave() {
-	this.lastSave = LocalDateTime.now().toString();
+        this.lastSave = LocalDateTime.now().toString();
     }
 
     /**
@@ -222,7 +236,7 @@ public class Game {
      * @param grow the new grow value
      */
     public void setGrow(BigInteger grow) {
-	this.grow = grow;
+        this.grow = grow;
     }
 
     /**
@@ -231,27 +245,37 @@ public class Game {
      * @param delay the new delay value
      */
     public void setDelay(int delay) {
-	this.gameLoopDelay = delay;
+        this.gameLoopDelay = delay;
     }
 
     /**
      * Sets the new amount of max buyers.
      * 
      * @param newValue the new value
+     * @deprecated use {@link #setMaxIndependent(int)} instead, changed name.
      */
-    public void setMaxBuyer(int newValue){
-	this.maxBuyer = newValue;
+    public void setMaxBuyer(int newValue) {
+        this.maxIndependent = newValue;
+    }
+
+    /**
+     * Sets the new amount of max independent devices.
+     * 
+     * @param newValue the new value
+     */
+    public void setMaxIndependent(int newValue) {
+        this.maxIndependent = newValue;
     }
 
     @Override
     public String toString() {
-	return "{" + this.name + ", " + this.money + "€ }";
+        return "{" + this.name + ", " + this.money + "€ }";
     }
 
     /**
      * Increases the current grid size by one.
      */
     public void upgradeGrid() {
-	this.gridSize++;
+        this.gridSize++;
     }
 }

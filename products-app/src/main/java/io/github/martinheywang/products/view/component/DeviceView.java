@@ -19,8 +19,6 @@ import java.net.URL;
 
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
-import io.github.martinheywang.products.api.model.exception.EditException;
-import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.controller.GameController;
@@ -82,13 +80,8 @@ public final class DeviceView extends StackPane {
 	 */
 	private final GameController gameManager;
 
-	private final double side = 96d; // both width and height
+	private double side = 100d; // both width and height
 	private double zoom = 1d;
-
-	// 'Sensible' means the view will be react to certain event.
-	private boolean isHoverable = false;
-	private boolean isClickable = false;
-	private boolean isBuildModeActivated = false;
 
 	// ---------- VIEW ----------------------------------------------------------
 	private SVGImage view;
@@ -107,12 +100,6 @@ public final class DeviceView extends StackPane {
 
 		this.view = new SVGImage();
 		this.buildReflect = new SVGImage();
-
-		if (!StaticDeviceDataRetriever.isBuildable(device.getClass())) {
-			this.isHoverable = true;
-		} else {
-			this.isClickable = true;
-		}
 
 		this.hardRefresh();
 	}
@@ -138,7 +125,6 @@ public final class DeviceView extends StackPane {
 	 */
 	public void hardRefresh() {
 		this.lightRefresh();
-		this.resetEventHandling();
 	}
 
 	/**
@@ -176,20 +162,6 @@ public final class DeviceView extends StackPane {
 				new KeyFrame(Duration.millis(10), new KeyValue(this.opacityProperty(), activeOpacityValue)),
 				new KeyFrame(Duration.millis(800), new KeyValue(this.opacityProperty(), defaultOpacityValue)));
 		tl.playFromStart();
-	}
-
-	/**
-	 * Resets the event handling behaviour and set it to default values. (If the
-	 * some modes were activated, all of them won't take effect after using this
-	 * method.)
-	 */
-	private void resetEventHandling() {
-		// Floors doesn't react to anything by default
-		if (!(device instanceof Floor)) {
-			this.setOnMouseEntered(new DefaultEnteredBehaviour());
-			this.setOnMouseExited(new DefaultExitedBehaviour());
-			this.setOnMouseClicked(new DefaultClickBehaviour());
-		}
 	}
 
 	/**
@@ -243,11 +215,7 @@ public final class DeviceView extends StackPane {
 		@Override
 		public void handle(MouseEvent event) {
 			if (event.getButton() == MouseButton.SECONDARY) {
-				try {
-					gameManager.turn(device);
-				} catch (final EditException e) {
-					e.printStackTrace();
-				}
+				gameManager.turn(device.getPosition());
 			} else if (event.getButton() == MouseButton.PRIMARY) {
 				gameManager.openDashboardOf(device.getPosition());
 			}
@@ -258,11 +226,7 @@ public final class DeviceView extends StackPane {
 	private class BuildClickBehaviour implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			try {
-				gameManager.build(device.getPosition());
-			} catch (MoneyException | EditException e) {
-				e.printStackTrace();
-			}
+			gameManager.build(device.getPosition());
 		}
 	}
 
@@ -270,7 +234,7 @@ public final class DeviceView extends StackPane {
 
 		@Override
 		public void handle(MouseEvent event) {
-			if(device instanceof Floor){
+			if (device instanceof Floor) {
 				return;
 			}
 			setEffect(new Glow(hoverGlowAmount));
@@ -281,9 +245,10 @@ public final class DeviceView extends StackPane {
 	private class BuildEnteredBehaviour implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			if(!(device instanceof Floor)){
+			if (!(device instanceof Floor)) {
 				return;
 			}
+			buildReflect.applyZoom(zoom);
 			getChildren().add(buildReflect);
 		}
 	}

@@ -17,7 +17,13 @@ package io.github.martinheywang.products.api.model.exception;
 
 /**
  * An edit exception is an exeception that occurs when the game couldn't perform a requested edit, such as building on something else than a floor.
+ * 
+ * @author Martin Heywang
+ * 
+ * @deprecated not clear, too less precise, you may use {@link DeviceException}
+ *             or {@link MoneyException} instead.
  */
+@Deprecated
 public class EditException extends Exception {
 
     /**

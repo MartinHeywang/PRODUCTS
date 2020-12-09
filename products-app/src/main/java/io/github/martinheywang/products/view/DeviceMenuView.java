@@ -21,8 +21,8 @@ import java.util.ResourceBundle;
 import io.github.martinheywang.products.Main;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
-import io.github.martinheywang.products.api.model.exception.EditException;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
+import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.view.component.IterationView;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
@@ -94,7 +94,7 @@ public final class DeviceMenuView implements Initializable {
 		this.device = data;
 		this.gameManager = gameManager;
 
-		this.view.setImage(new Image(data.getModel().getType().getResourceAsStream(data.getURL())));
+		this.view.setImage(new Image(StaticDeviceDataRetriever.getView(data.getClass()).toExternalForm()));
 
 		this.coordinate.setText(data.getPosition().toString());
 
@@ -140,11 +140,7 @@ public final class DeviceMenuView implements Initializable {
 	 */
 	@FXML
 	public void upgrade() {
-		try {
-			this.gameManager.upgrade(this.device);
-		} catch (final EditException e) {
-			e.printStackTrace();
-		}
+		this.gameManager.upgrade(this.device.getPosition());
 		this.refreshUpgradeBox();
 	}
 
@@ -154,11 +150,10 @@ public final class DeviceMenuView implements Initializable {
 			this.destroyPrice.setText("+ " + formatter.format(this.device.getDeletePrice()));
 			this.upgradePrice.setText("- " + formatter.format(this.device.getUpgradePrice()));
 
-			this.view.setImage(new Image(this.device.getModel().getType().getResourceAsStream(this.device.getURL())));
-			this.upgradedView.setImage(
-					new Image(this.device.getModel().getType().getResourceAsStream(this.device.getUpgradedURL())));
-			this.turnedView
-					.setImage(new Image(this.device.getModel().getType().getResourceAsStream(this.device.getURL())));
+			this.view.setImage(new Image(StaticDeviceDataRetriever.getView(device.getClass()).toExternalForm()));
+			this.upgradedView
+					.setImage(new Image(StaticDeviceDataRetriever.getView(device.getClass()).toExternalForm()));
+			this.turnedView.setImage(new Image(StaticDeviceDataRetriever.getView(device.getClass()).toExternalForm()));
 
 			this.refreshLiteral();
 		} catch (final ArrayIndexOutOfBoundsException e) {
@@ -181,11 +176,7 @@ public final class DeviceMenuView implements Initializable {
 	 */
 	@FXML
 	public void turn() {
-		try {
-			this.gameManager.turn(this.device);
-		} catch (final EditException e) {
-			e.printStackTrace();
-		}
+		this.gameManager.turn(this.device.getPosition());
 		this.refreshTurnedView();
 	}
 
@@ -200,16 +191,12 @@ public final class DeviceMenuView implements Initializable {
 	 */
 	@FXML
 	public void destroy() {
-		try {
-			this.gameManager.destroy(this.device);
+		this.gameManager.destroy(this.device.getPosition());
 
-			// Close the window
-			// The device doesn't exist anymore
-			final Stage window = (Stage) this.upgradeBox.getScene().getWindow();
-			window.close();
-		} catch (final EditException e) {
-			e.printStackTrace();
-		}
+		// Close the window
+		// The device doesn't exist anymore
+		final Stage window = (Stage) this.upgradeBox.getScene().getWindow();
+		window.close();
 	}
 
 }

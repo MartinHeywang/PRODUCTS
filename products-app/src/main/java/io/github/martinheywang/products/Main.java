@@ -60,8 +60,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -181,6 +179,7 @@ public final class Main extends Application {
 			manager.start();
 
 			stage.setOnCloseRequest(event -> {
+				manager.stop();
 				manager.save();
 				Platform.exit();
 			});

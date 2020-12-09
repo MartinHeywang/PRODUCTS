@@ -16,10 +16,12 @@
 package io.github.martinheywang.products.api.model.exception;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 
 /**
- * A MoneyException is an exception that occurs when an action, from the user or the program wants
- * the money amount. If it goes under 0 or any defined value in the program, this exception occurs.
+ * A MoneyException is an exception that occurs when an action, from the user or
+ * the program wants the money amount. If it goes under 0 or any defined value
+ * in the program, this exception occurs.
  */
 public class MoneyException extends Exception {
 
@@ -32,17 +34,18 @@ public class MoneyException extends Exception {
      * Creates a new MoneyException with a default message.
      */
     public MoneyException() {
-	super("Attempting to subtract too many money.");
+        super("Vous n'avez pas assez d'argent !");
     }
 
     /**
-     * Creates a MoneyException with a specific message using the given informations.
+     * Creates a MoneyException with a specific message using the given
+     * informations.
      * 
      * @param beforeTransaction the amount of money before the transaction.
-     * @param toSubtract the amount of money that wanted to be subtracted.
+     * @param toSubtract        the amount of money that wanted to be subtracted.
      */
     public MoneyException(BigInteger beforeTransaction, BigInteger toSubtract) {
-	super("Attempting to subtract too many money ("+toSubtract+" demandés, "+beforeTransaction+" disponibles)");
+        super(MessageFormat.format("Vous n''avez pas assez d''argent ! ({0} - {1} < 0)", beforeTransaction, toSubtract.negate()));
     }
 
 }
