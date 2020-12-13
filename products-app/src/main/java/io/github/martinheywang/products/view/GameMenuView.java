@@ -15,7 +15,6 @@
 */
 package io.github.martinheywang.products.view;
 
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -26,43 +25,32 @@ import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.utils.ArrayList2D;
-import io.github.martinheywang.products.api.utils.MoneyFormat;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
-import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Floor;
-import io.github.martinheywang.products.kit.view.component.SVGImage;
-import io.github.martinheywang.products.kit.view.component.StaticDeviceView;
-import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.view.component.DeviceView;
 import io.github.martinheywang.products.view.component.GameGrid;
+import io.github.martinheywang.products.view.component.GameStageBar;
 import io.github.martinheywang.products.view.component.LocatedScrollPane;
+import io.github.martinheywang.products.view.component.MenuView;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 /**
@@ -76,43 +64,27 @@ public class GameMenuView implements Initializable {
 
 	private GameController gameManager;
 
-	private String currentMenu = "none";
-
 	// VIEW COMPONENTS ------------------------------------------------------
 	@FXML
 	private Parent root; // The root considered by javafx
 	@FXML
-	private VBox userRoot; // The 'root' seen by the user (the one who has the shadow)
-	@FXML
-	// The stage bar replacing the platform dependent one
-	// (with buttons such as close, reduce...)
-	private GridPane stageBar;
+	private VBox userRoot; // The 'root' seen by the user (the one with the shadow)
 
-	@FXML
-	private Label moneyLabel;
-	@FXML
-	private Label gameName;
-	@FXML
-	private Button closeButton, reduceButton, maximizeButton; // The stage buttons
+	private final GameStageBar stageBar = new GameStageBar();
+
 	@FXML
 	private VBox content; // The content of the stage (without the stage bar)
-
 	@FXML
 	private HBox mainView; // containing the grid, optionnal menu and toolbar
 	@FXML
-	private StackPane main; // containing grid and additionnal windows.
+	private StackPane main; // containing grid and the toast container
 
 	private LocatedScrollPane scrollpane;
 	private GameGrid grid; // containing the devices view
 
+	private MenuView menuView;
+
 	private ProgressBar progression = new ProgressBar(); // the progress bar
-
-	@FXML
-	private VBox toolbar;
-
-	private VBox buildMenu = new VBox();
-	private VBox devices = new VBox();
-	private TextField buildSearch = new TextField();
 
 	@FXML
 	private VBox toasts;
@@ -124,48 +96,20 @@ public class GameMenuView implements Initializable {
 		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm(),
 				getClass().getResource("/css/Game.css").toExternalForm());
 
-		closeButton.setGraphic(new SVGImage(Icons.asURL("close.svg"), 20, 20));
-		reduceButton.setGraphic(new SVGImage(Icons.asURL("reduce.svg"), 20, 20));
-		maximizeButton.setGraphic(new SVGImage(Icons.asURL("maximize.svg"), 20, 20));
-
-		closeButton.setOnMouseClicked(event -> {
-			Platform.exit();
-		});
-		reduceButton.setOnMouseClicked(event -> {
-			((Stage) reduceButton.getScene().getWindow()).setIconified(true);
-		});
-		maximizeButton.setOnMouseClicked(event -> {
-			final Stage stage = ((Stage) reduceButton.getScene().getWindow());
-			if (stage.isMaximized()) {
-				userRoot.setPadding(new Insets(0, 10d, 10d, 0));
-				maximizeButton.setGraphic(new SVGImage(Icons.asURL("maximize.svg"), 20, 20));
-				stage.setMaximized(false);
-			} else {
-				maximizeButton.setGraphic(new SVGImage(Icons.asURL("minimize.svg"), 20, 20));
-				userRoot.setPadding(new Insets(0));
-				stage.setMaximized(true);
-			}
-		});
-
-		stageBar.setOnMousePressed(pressEvent -> {
-			stageBar.setOnMouseDragged(dragEvent -> {
-				final Stage primaryStage = (Stage) this.root.getScene().getWindow();
-				primaryStage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
-				primaryStage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
-			});
-		});
-
 		this.grid = new GameGrid();
 		this.scrollpane = new LocatedScrollPane(this.grid);
-		this.scrollpane.setFitToHeight(false);
-		this.scrollpane.setFitToWidth(false);
-		this.scrollpane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-		this.scrollpane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
 		this.scrollpane.getStyleClass().add("grid");
-		HBox.setHgrow(this.scrollpane, Priority.ALWAYS);
+		this.main.getChildren().add(scrollpane);
+
+		this.menuView = new MenuView();
+		this.mainView.getChildren().add(menuView);
+
+		this.userRoot.getChildren().add(0, stageBar);
+
 		this.scrollpane.setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP)
+			if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP) {
 				event.consume();
+			}
 		});
 
 		this.scrollpane.setFocusTraversable(true);
@@ -181,21 +125,24 @@ public class GameMenuView implements Initializable {
 		this.toProcessView();
 
 		this.grid.getChildren().clear();
-		this.gameName.setText("- " + game.getName());
+
+		final Label products = new Label("PRODUCTS.");
+		products.getStyleClass().addAll("logo", "h5");
+		final Label gameName = new Label("- " + game.getName());
+		gameName.getStyleClass().addAll("italic", "h6");
+		this.stageBar.setTitle(products, gameName);
 
 		// LOAD DEVICES
 		for (int x = 0; x < devices.size(); x++) {
 			for (int y = 0; y < devices.size(); y++) {
 				Device device = devices.get(x, y);
-				// If a d doesn't exists at the given coordinate, create a new FLOOR
+				// If a device doesn't exists at the given coordinate, create a new FLOOR
 				if (device == null)
 					device = new DeviceModel(Floor.class, Level.LEVEL_1, Direction.UP, game, new Coordinate(x, y))
 							.instantiate();
 				this.grid.add(new DeviceView(device, this.gameManager), x, y);
 			}
 		}
-		this.setMoney(game.getMoney());
-		this.prepareToolbar();
 
 		this.toPlayableView();
 	}
@@ -238,14 +185,6 @@ public class GameMenuView implements Initializable {
 		final DeviceView view = this.findDeviceView(x, y);
 		view.setDevice(this.gameManager.getDevice(coord));
 		view.hardRefresh();
-	}
-
-	/**
-	 * Refreshes the money label on top of the screen. Sets the text to the current
-	 * amount of money.
-	 */
-	public void refreshMoney() {
-		this.moneyLabel.setText(MoneyFormat.getSingleton().format(gameManager.getMoney()));
 	}
 
 	/**
@@ -312,17 +251,6 @@ public class GameMenuView implements Initializable {
 	}
 
 	/**
-	 * Updates the money label view.
-	 * 
-	 * @param value the value to update to.
-	 */
-	public void setMoney(BigInteger value) {
-		Platform.runLater(() -> {
-			this.moneyLabel.setText(MoneyFormat.getSingleton().format(value));
-		});
-	}
-
-	/**
 	 * Iterrates over the grid's children to find a DeviceView matching the given x
 	 * and y position. If none is found, returns null.
 	 * 
@@ -336,121 +264,6 @@ public class GameMenuView implements Initializable {
 				if (GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y)
 					return (DeviceView) node;
 		return null;
-	}
-
-	/**
-	 * Prepares the toolbar at the end of a refresh
-	 */
-	private void prepareToolbar() {
-		final SVGImage build = new SVGImage(Icons.asURL("build.svg"), 40d, 40d);
-		build.addHoverEffect();
-
-		prepareBuildMenu(this.buildMenu);
-
-		build.setOnMouseClicked(event -> toggleBuildMenu());
-		toolbar.getChildren().addAll(build);
-	}
-
-	private boolean closeMenu() {
-		if (this.currentMenu != "none") {
-			Node node = this.mainView.getChildren().get(1);
-			this.mainView.getChildren().remove(node);
-			node.setTranslateX(0d);
-			this.currentMenu = "none";
-
-			gameManager.setBuildClass(null);
-
-			return true;
-		}
-		return false;
-	}
-
-	private void addMenu(VBox menu, String name) {
-		this.mainView.getChildren().add(1, menu);
-		this.currentMenu = name;
-	}
-
-	private void prepareBuildMenu(VBox menu) {
-		menu.getStyleClass().add("menu");
-		menu.setAlignment(Pos.TOP_CENTER);
-		menu.setPadding(new Insets(10d));
-		menu.setSpacing(15d);
-		// Like a fixed size
-		menu.setMinWidth(250d);
-		menu.setMaxWidth(250d);
-
-		final Label title = new Label("Construction");
-		title.getStyleClass().add("h5");
-
-		this.buildSearch = new TextField();
-		buildSearch.setPromptText("Rechercher...");
-		buildSearch.getStyleClass().addAll("graytone");
-
-		final Label tutorial = new Label();
-		tutorial.setText("Cliquez sur un type d'appareil ci-dessous pour obtenir plus d'informations. \n"
-				+ "Faites un glisser-déposer vers la grille pour construire les appareils à "
-				+ "l'emplacement désiré.\nEntrez du texte dans la barre de recherche "
-				+ "et appuyez sur entrer pour effectuer une recherche.");
-		tutorial.setWrapText(true);
-		tutorial.setMinHeight(120d);
-		tutorial.getStyleClass().addAll("precision-light");
-
-		final ScrollPane scroll = new ScrollPane();
-		VBox.setVgrow(scroll, Priority.ALWAYS);
-		scroll.getStyleClass().add("list");
-
-		this.devices = new VBox();
-		devices.setSpacing(10d);
-		refreshAvailableDevices("");
-		buildSearch.setOnAction(event -> {
-			refreshAvailableDevices(buildSearch.getText());
-		});
-		scroll.setContent(devices);
-
-		menu.getChildren().addAll(title, buildSearch, tutorial, scroll);
-	}
-
-	private void refreshAvailableDevices(String mustContain) {
-		gameManager.setBuildClass(null);
-		devices.getChildren().clear();
-
-		for (Class<? extends Device> clazz : DeviceController.knownTypes) {
-			if (!StaticDeviceDataRetriever.isBuildable(clazz)) {
-				continue;
-			}
-			final String name = StaticDeviceDataRetriever.getAccessibleName(clazz).toLowerCase();
-			if (name.contains(this.buildSearch.getText().toLowerCase())) {
-				final StaticDeviceView view = new StaticDeviceView(clazz);
-				view.addHoverEffect();
-				view.setOnMouseClicked(event -> {
-					if (event.getButton().equals(MouseButton.PRIMARY)) {
-						final boolean selected = view.getStyleClass().contains("colored");
-						ViewUtils.removeStyleClassToChildrens(devices, "colored");
-						if (selected) {
-							gameManager.setBuildClass(null);
-							return;
-						}
-
-						view.getStyleClass().addAll("colored");
-						gameManager.setBuildClass(view.getDeviceType());
-					} else {
-						view.toggleCollapsed();
-					}
-				});
-				devices.getChildren().add(view);
-			}
-		}
-		if (devices.getChildren().isEmpty()) {
-			final Label none = new Label("Aucun résultat.");
-			devices.getChildren().add(none);
-		}
-	}
-
-	private void toggleBuildMenu() {
-		if (closeMenu()) {
-			return;
-		}
-		addMenu(this.buildMenu, "build");
 	}
 
 	/**
@@ -483,7 +296,6 @@ public class GameMenuView implements Initializable {
 		fadeIn.getKeyFrames().addAll(new KeyFrame(Duration.millis(0d), new KeyValue(this.grid.opacityProperty(), 0d)),
 				new KeyFrame(Duration.millis(250d), new KeyValue(this.grid.opacityProperty(), 1d)));
 		fadeIn.playFromStart();
-		this.moneyLabel.setVisible(true);
 		this.content.getChildren().remove(progression);
 		this.main.getChildren().addAll(this.scrollpane);
 	}

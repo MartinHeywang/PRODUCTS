@@ -27,6 +27,7 @@ import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.kit.view.component.ComplexButton;
 import io.github.martinheywang.products.kit.view.component.GameView;
 import io.github.martinheywang.products.kit.view.component.SVGImage;
+import io.github.martinheywang.products.kit.view.utils.Icon;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import javafx.animation.KeyFrame;
@@ -36,13 +37,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -58,7 +59,9 @@ public class HomeView2 implements Initializable {
 
 	// The instance of main is used to load the stage further (the game view for
 	// example).
-	private Main main;
+	private Main mainClass;
+
+	private static boolean setUp = false;
 
 	// The actual root
 	@FXML
@@ -66,7 +69,9 @@ public class HomeView2 implements Initializable {
 
 	// The root seen by the user
 	@FXML
-	private VBox content;
+	private AnchorPane content;
+	@FXML
+	private VBox main;
 
 	@FXML
 	private VBox options;
@@ -78,42 +83,41 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private HBox stageBar;
 
-	ScrollPane gameScroll = new ScrollPane();
-	final VBox gameContainer = new VBox();
-	Button backButton = new Button();
+	private ScrollPane gameScroll = new ScrollPane();
+	private final VBox gameContainer = new VBox();
+	private Button backButton = new Button();
+
+	private static final SVGImage reduce = Icon.REDUCE.createView(18d);
+	private static final SVGImage maximize = Icon.MAXIMIZE.createView(18d);
+	private static final SVGImage close = Icon.CLOSE.createView(18d);
+
+	private static final SVGImage logo = Icon.LOGO.createView(75d, 112.5d);
+	private static final AnchorPane logoContainer = new AnchorPane(logo);
 
 	private void create(String text) {
 		try {
 			final Game game = new Game(text);
 			Database.createDao(Game.class).create(game);
-			this.main.initGame(game);
+			this.mainClass.initGame(game);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void initialize(final URL url, final ResourceBundle resources) {
-		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
-
-		final SVGImage reduce = new SVGImage(Icons.asURL("reduce.svg"), 18, 18);
+	// The setup methods differs from the initialize by the fact that setUp() is
+	// called once, and initialize() each time the fxml file is loaded.
+	private void setUp() {
 		reduce.getStyleClass().addAll("stageButtons");
-		stageBar.getChildren().add(reduce);
-
-		final SVGImage maximize = new SVGImage(Icons.asURL("maximize.svg"), 18, 18);
-		maximize.getStyleClass().addAll("stageButtons");
-		maximize.setDisable(true);
-		stageBar.getChildren().add(maximize);
-
-		final SVGImage close = new SVGImage(Icons.asURL("close.svg"), 18, 18);
-		close.getStyleClass().addAll("stageButtons", "closeButton");
-		stageBar.getChildren().add(close);
-
-		close.setOnMouseClicked(event -> {
-			Platform.exit();
-		});
 		reduce.setOnMouseClicked(event -> {
 			((Stage) reduce.getScene().getWindow()).setIconified(true);
+		});
+
+		maximize.getStyleClass().addAll("stageButtons");
+		maximize.setDisable(true);
+
+		close.getStyleClass().addAll("stageButtons", "closeButton");
+		close.setOnMouseClicked(event -> {
+			Platform.exit();
 		});
 
 		stageBar.setOnMousePressed(pressEvent -> {
@@ -124,73 +128,84 @@ public class HomeView2 implements Initializable {
 			});
 		});
 
-		final SVGImage logo = new SVGImage(Icons.asURL("logo.svg"), 75d, 112.5d);
-		this.content.getChildren().add(0, logo);
+		AnchorPane.setTopAnchor(logo, 0d);
+		AnchorPane.setRightAnchor(logo, 0d);
+		AnchorPane.setBottomAnchor(logo, 0d);
+		AnchorPane.setLeftAnchor(logo, 0d);
 
-		final URL arrow = Icons.asURL("point.svg");
+		setUp = true;
+	}
 
-		final ComplexButton load = new ComplexButton("Ouvrir !", "Charger une partie déjà existante.", arrow);
+	@Override
+	public void initialize(final URL url, final ResourceBundle resources) {
+		this.root.getStylesheets().addAll(ViewUtils.class.getResource("/css/General.css").toExternalForm());
+
+		if (!setUp) {
+			setUp();
+		}
+
+		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
+		this.backButton.setGraphic(Icon.LEFT_KEYBOARD_ARROW.createView(30));
+
+		stageBar.getChildren().add(reduce);
+		stageBar.getChildren().add(maximize);
+		stageBar.getChildren().add(close);
+
+		this.main.getChildren().setAll(logoContainer, title, help, options);
+
+		final URL point = Icons.asURL("point.svg");
+
+		final ComplexButton load = new ComplexButton("Ouvrir !", "Charger une partie déjà existante.", point);
 		load.setOnMouseClicked(event -> goToOpen());
 		this.options.getChildren().add(load);
 
 		final ComplexButton create = new ComplexButton("Créer !", "Recommencer l'aventure dans une nouvelle partie.",
-				arrow);
+				point);
 		create.setOnMouseClicked(event -> goToCreate());
 		this.options.getChildren().add(create);
 
-		final ComplexButton quit = new ComplexButton("Quitter...", "Fermer le jeu.", arrow);
+		final ComplexButton quit = new ComplexButton("Quitter...", "Fermer le jeu.", point);
 		quit.setOnMouseClicked(close.getOnMouseClicked());
 		this.options.getChildren().add(quit);
-
-		this.backButton.setOnMouseClicked(event -> this.reloadJustOpened());
-		this.backButton.setGraphic(new SVGImage(Icons.asURL("left_keyboard_arrow.svg"), 30d, 30d));
 	}
 
 	/**
 	 * <p>
-	 * Sets the main instance in order to re-call things.
+	 * Sets the instance of the main class.
 	 * </p>
 	 * 
 	 * @param main the object to set
 	 */
-	public void setMainApp(final Main main) {
-		this.main = main;
+	public void setMainApp(Main main) {
+		this.mainClass = main;
 
 		final double translateYValue = 50d;
 
 		this.root.getScene().getWindow().setOnShowing(event -> {
-			for (Node children : this.content.getChildrenUnmodifiable()) {
-				children.setTranslateY(translateYValue);
-			}
+			this.main.setTranslateY(translateYValue);
 		});
 		this.root.getScene().getWindow().setOnShown(event -> {
 			final Timeline tl = new Timeline();
-			for (Node children : content.getChildrenUnmodifiable()) {
-				tl.getKeyFrames()
-						.addAll(new KeyFrame(Duration.millis(100d),
-								new KeyValue(children.translateYProperty(), translateYValue),
-								new KeyValue(children.opacityProperty(), 0d)),
-								new KeyFrame(Duration.millis(700d), new KeyValue(children.translateYProperty(), 0d),
-										new KeyValue(children.opacityProperty(), 1d)));
-			}
+			tl.getKeyFrames()
+					.addAll(new KeyFrame(Duration.ZERO, new KeyValue(this.main.translateYProperty(), translateYValue),
+							new KeyValue(this.main.opacityProperty(), 0d)),
+							new KeyFrame(Duration.millis(1500), new KeyValue(this.main.translateYProperty(), 0d),
+									new KeyValue(this.main.opacityProperty(), 1d)));
 			tl.play();
 		});
 	}
 
 	private void fadeOut() {
 		final Timeline tl = new Timeline();
-		for (final Node node : this.content.getChildrenUnmodifiable())
-			tl.getKeyFrames().addAll(
-					new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), node.getOpacity())),
-					new KeyFrame(Duration.millis(500), new KeyValue(node.opacityProperty(), 0d)));
+		tl.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, new KeyValue(main.opacityProperty(), 1d)),
+				new KeyFrame(Duration.millis(500), new KeyValue(main.opacityProperty(), 0d)));
 		tl.playFromStart();
 	}
 
 	private void fadeIn() {
 		final Timeline tl = new Timeline();
-		for (final Node node : this.content.getChildrenUnmodifiable())
-			tl.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), 0d)),
-					new KeyFrame(Duration.millis(500), new KeyValue(node.opacityProperty(), 1d)));
+		tl.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, new KeyValue(main.opacityProperty(), 0d)),
+				new KeyFrame(Duration.millis(500), new KeyValue(main.opacityProperty(), 1d)));
 		tl.playFromStart();
 	}
 
@@ -198,11 +213,9 @@ public class HomeView2 implements Initializable {
 	private void goToOpen() {
 		this.fadeOut();
 
-		this.content.getChildren().clear();
 		this.help = new Label();
 		this.help.getStyleClass().add("h5");
 		this.help.setText("Quelle partie veux-tu charger ?");
-		this.help.setGraphic(this.backButton);
 
 		this.gameScroll = new ScrollPane();
 		this.gameScroll.getStyleClass().add("list");
@@ -217,7 +230,7 @@ public class HomeView2 implements Initializable {
 			for (final Game game : games) {
 				final GameView view = new GameView(game);
 				view.allowAction("Lancer !", event -> {
-					main.initGame(game);
+					mainClass.initGame(game);
 				});
 				this.gameContainer.getChildren().add(view);
 			}
@@ -225,7 +238,7 @@ public class HomeView2 implements Initializable {
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
-		this.content.getChildren().addAll(this.help, this.gameScroll);
+		this.main.getChildren().setAll(this.backButton, this.help, this.gameScroll);
 
 		this.fadeIn();
 	}
@@ -234,9 +247,8 @@ public class HomeView2 implements Initializable {
 	private void goToCreate() {
 		this.fadeOut();
 
-		this.content.getChildren().clear();
-		this.content.setSpacing(15d);
-		this.content.setAlignment(Pos.CENTER_LEFT);
+		this.main.setSpacing(15d);
+		this.main.setAlignment(Pos.CENTER_LEFT);
 
 		this.help = new Label("Créez une nouvelle partie !");
 		this.help.getStyleClass().add("h5");
@@ -253,7 +265,7 @@ public class HomeView2 implements Initializable {
 		validate.setOnAction(event -> create(field.getText()));
 		field.setOnAction(validate.getOnAction());
 
-		this.content.getChildren().addAll(backButton, help, field, precision, validate);
+		this.main.getChildren().setAll(backButton, help, field, precision, validate);
 
 		this.fadeIn();
 	}
@@ -261,7 +273,7 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private void reloadJustOpened() {
 		this.fadeOut();
-		main.initAccueil2();
+		mainClass.initAccueil2();
 	}
 
 	@FXML
@@ -272,7 +284,7 @@ public class HomeView2 implements Initializable {
 	@FXML
 	private void selectNode(MouseEvent event) {
 		final Button hovered = (Button) event.getSource();
-		hovered.setGraphic(new SVGImage(Icons.asURL("right_keyboard_arrow.svg"), 18, 18));
+		hovered.setGraphic(new SVGImage(Icons.asURL("right_keyboard_point.svg"), 18, 18));
 	}
 
 	@FXML

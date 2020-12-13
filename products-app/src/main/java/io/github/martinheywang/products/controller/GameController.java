@@ -342,7 +342,7 @@ public final class GameController {
 	 * Refreshes the money label.
 	 */
 	public void refreshMoney() {
-		gameView.refreshMoney();
+		// Fixme : gameView.refreshMoney();
 	}
 
 	// ====================================================================================

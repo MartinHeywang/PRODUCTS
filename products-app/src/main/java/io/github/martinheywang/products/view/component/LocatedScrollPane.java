@@ -24,10 +24,11 @@ import javafx.scene.layout.VBox;
 
 /**
  * <p>
- * A scrollable, pannable and zoomable pane in JavaFX.
+ * A scrollable, pannable and zoomable pane in JavaFX. It is used in the grid
+ * devices view.
  * </p>
  * 
- * @author Daniel Hári
+ * @author Daniel Hári, MartinHeywang
  * 
  * @see javafx.scene.control.ScrollPane
  */
@@ -46,6 +47,7 @@ public class LocatedScrollPane extends ScrollPane {
 	 */
 	public LocatedScrollPane(GameGrid target) {
 		super();
+		
 		this.target = target;
 		this.zoomNode = new Group(target);
 		this.applyCss();
@@ -54,6 +56,8 @@ public class LocatedScrollPane extends ScrollPane {
 		setPannable(true);
 		setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		setFitToHeight(false);
+		setFitToWidth(false);
 
 		updateScale();
 	}

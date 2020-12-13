@@ -17,9 +17,9 @@ import javafx.scene.paint.Color;
 public class ViewUtils {
 
     public static final Background bgDefault = new Background(
-            new BackgroundFill(Color.web("rgba(0, 0, 0, .1)"), new CornerRadii(4d), null));
+            new BackgroundFill(Color.web("transparent"), new CornerRadii(4d), null));
     public static final Background bgHover = new Background(
-            new BackgroundFill(Color.web("rgba(0, 0, 0, .2)"), new CornerRadii(4d), null));
+            new BackgroundFill(Color.web("rgba(0, 0, 0, .3)"), new CornerRadii(4d), null));
 
     private ViewUtils() {
     }
@@ -51,7 +51,7 @@ public class ViewUtils {
      * Adds the given style class to all childrens of the given parent. If nodes are
      * added after invoking this method, they won't be receive the style class.
      * 
-     * @param parent the container of the nodes
+     * @param parent     the container of the nodes
      * @param styleClass the style class to add
      */
     public static void addStyleClassToChildrens(Parent parent, String styleClass) {
@@ -61,10 +61,10 @@ public class ViewUtils {
     }
 
     /**
-     * Removes the given style class to all childrens of the given parent. If nodes are
-     * added after invoking this method, they won't be affected by this method.
+     * Removes the given style class to all childrens of the given parent. If nodes
+     * are added after invoking this method, they won't be affected by this method.
      * 
-     * @param parent the container of the nodes
+     * @param parent     the container of the nodes
      * @param styleClass the style class to remove
      */
     public static void removeStyleClassToChildrens(Parent parent, String styleClass) {

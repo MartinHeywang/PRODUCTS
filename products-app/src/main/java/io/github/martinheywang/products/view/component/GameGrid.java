@@ -22,6 +22,7 @@ import javafx.scene.layout.GridPane;
 public class GameGrid extends GridPane {
 
     private DoubleProperty zoomProperty = new SimpleDoubleProperty();
+    private List<DeviceView> children = new ArrayList<>();
 
     private final double zoomFactor = 0.05;
 
@@ -40,6 +41,7 @@ public class GameGrid extends GridPane {
      */
     public void add(DeviceView node, int x, int y) {
         super.add(node, x, y);
+        children.add(node);
 
         this.zoomProperty.addListener((obs, oldVal, newVal) -> {
             node.applyZoom(newVal.doubleValue());
@@ -47,7 +49,7 @@ public class GameGrid extends GridPane {
     }
 
     /**
-     * Does nothing, you can't add Node into that GameGrid. See
+     * Does nothing, you can't add basic Node into that GameGrid. See
      * {@link #add(DeviceView, int, int)}.
      * 
      * @param children    the children
@@ -62,17 +64,10 @@ public class GameGrid extends GridPane {
 
     /**
      * Returns the children of the grid, or at least, only the device view(s).
-     * Unfortunately this method casts a lot of things, so don't use it too often.
      * 
      * @return the childrens
      */
     public List<DeviceView> getDeviceChildren() {
-        final List<DeviceView> children = new ArrayList<>();
-        for (Node node : this.getChildren()) {
-            if (node instanceof DeviceView) {
-                children.add((DeviceView) node);
-            }
-        }
         return children;
     }
 
