@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * The MenuView class is a view component that manages the different
- * {@link io.github.martinheywang.products.kit.view.component.Menu}.
+ * {@link io.github.martinheywang.products.kit.view.component.Menu}s.
  */
 public class MenuView extends HBox {
 
@@ -25,6 +25,8 @@ public class MenuView extends HBox {
         toolbar = new VBox();
         toolbar.setPadding(new Insets(5d));
         this.getChildren().add(toolbar);
+
+        toolbar.setPrefWidth(55d);
     }
 
     /**

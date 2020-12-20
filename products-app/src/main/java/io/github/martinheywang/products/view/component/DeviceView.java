@@ -101,30 +101,15 @@ public final class DeviceView extends StackPane {
 		this.view = new SVGImage();
 		this.buildReflect = new SVGImage();
 
-		this.hardRefresh();
+		this.refresh();
 	}
 
 	/**
-	 * Refreshes this view 'lightly'. It re-generatates the view. Useful in case the
-	 * level or the direction changed.
+	 * Updates the view on order to match the new values of the device given
+	 * initially in the constructor.
 	 */
-	public void lightRefresh() {
+	public void refresh() {
 		this.generateView(this.device.getModel());
-	}
-
-	/**
-	 * <p>
-	 * The hard refresh calls first the light refresh, then refreshes the event
-	 * handling behaviour. It is much more heavier than the light refresh, so
-	 * consider calling the light refresh when it is sufficient.
-	 * </p>
-	 * <p>
-	 * For example, the hard refresh is useful in case the type of the displayed
-	 * device has changed. (It may change the event handling behaviour.)
-	 * </p>
-	 */
-	public void hardRefresh() {
-		this.lightRefresh();
 	}
 
 	/**
@@ -134,6 +119,14 @@ public final class DeviceView extends StackPane {
 	 */
 	public void setDevice(Device device) {
 		this.device = device;
+	}
+
+	/**
+	 * 
+	 * @return the device, the subject of the view
+	 */
+	public Device getDevice() {
+		return this.device;
 	}
 
 	/**
@@ -207,7 +200,7 @@ public final class DeviceView extends StackPane {
 	 */
 	public void applyZoom(double value) {
 		this.zoom = value;
-		lightRefresh();
+		refresh();
 	}
 
 	private class DefaultClickBehaviour implements EventHandler<MouseEvent> {

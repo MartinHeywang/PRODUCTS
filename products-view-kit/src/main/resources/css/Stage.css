@@ -58,7 +58,7 @@
 }
 
 .userRoot{
-    -fx-padding: 0 10px 10px 0;
+    -fx-padding: 0 15px 15px 0;
     -fx-effect: dropshadow(
 		three-pass-box,
 		rgba(0, 0, 0, .15),

@@ -11,7 +11,9 @@ import io.github.martinheywang.products.kit.view.component.SVGImage;
  * Sources :
  * <ul>
  * <li>https://material.io/resources/icons</li>
+ * <li>Martin Heywang</li>
  * </ul>
+ * <br>
  * 
  * @author Martin Heywang
  */
@@ -21,6 +23,16 @@ public enum Icon {
      * The build icon. (Example : icon for the build menu in the toolbar)
      */
     BUILD("build.svg"),
+
+    /**
+     * The upgrade icon (an arrow in a circle)
+     */
+    UPGRADE("upgrade.svg"),
+
+    /**
+     * The destroy (a cross)
+     */
+    DESTROY("destroy.svg"),
 
     /**
      * The close icon. (Example : close button of the stage)
@@ -104,7 +116,12 @@ public enum Icon {
     /**
      * The help icon (A question mark in a circle).
      */
-    HELP("question-mark.svg");
+    HELP("question-mark.svg"),
+
+    /**
+     * An eye
+     */
+    EYE("eye.svg");
 
     private URL path;
 

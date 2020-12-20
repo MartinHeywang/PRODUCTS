@@ -29,7 +29,6 @@ import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.device.Device;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
-import io.github.martinheywang.products.api.utils.ArrayList2D;
 import io.github.martinheywang.products.controller.DeviceController;
 import io.github.martinheywang.products.controller.GameController;
 import io.github.martinheywang.products.kit.device.Buyer;
@@ -49,16 +48,17 @@ import io.github.martinheywang.products.kit.resource.Ore;
 import io.github.martinheywang.products.kit.resource.Plate;
 import io.github.martinheywang.products.kit.resource.Product;
 import io.github.martinheywang.products.kit.resource.Wire;
+import io.github.martinheywang.products.kit.view.controller.ContentRoot;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
 import io.github.martinheywang.products.model.database.ResourcePersister;
-import io.github.martinheywang.products.view.GameMenuView;
+import io.github.martinheywang.products.view.GameRoot;
 import io.github.martinheywang.products.view.HomeView;
 import io.github.martinheywang.products.view.HomeView2;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
@@ -117,7 +117,8 @@ public final class Main extends Application {
 		try {
 			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Home.fxml"));
 
-			final Region root = loader.load();
+			final ContentRoot root = new ContentRoot();
+			root.setContent(loader.load());
 			this.changeSceneTo(root);
 
 			stage.setResizable(false);
@@ -142,7 +143,8 @@ public final class Main extends Application {
 		try {
 			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Home2.fxml"));
 
-			final Region root = loader.load();
+			final ContentRoot root = new ContentRoot();
+			root.setContent(loader.load());
 			this.changeSceneTo(root);
 
 			final HomeView2 controller = loader.getController();
@@ -155,37 +157,15 @@ public final class Main extends Application {
 	}
 
 	/**
-	 * 
-	 * Initialize the stage with the view Jeu.fxml, who loads all the images and
-	 * resources to do this game functionnal.
+	 * Loads the game view of the given game
 	 * 
 	 * @param game the game to load
-	 * 
-	 * @see GameMenuView
-	 * @see GameMenuView#loadGame(ArrayList2D, Game)
 	 */
 	public void initGame(Game game) {
-		try {
-			final FXMLLoader loader = ViewUtils.prepareFXMLLoader(getClass().getResource("/fxml/Game.fxml"));
-
-			final Region root = loader.load();
-			this.changeSceneTo(root);
-
-			stage.setResizable(true);
-
-			final GameMenuView controller = loader.getController();
-
-			final GameController manager = new GameController(controller, game);
-			manager.start();
-
-			stage.setOnCloseRequest(event -> {
-				manager.stop();
-				manager.save();
-				Platform.exit();
-			});
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		final GameController controller = new GameController(game);
+		final ContentRoot root = controller.getView();
+		this.changeSceneTo(root);
+		root.autoPadding();
 	}
 
 	/**
@@ -193,7 +173,7 @@ public final class Main extends Application {
 	 * 
 	 * @param node the new scene's root
 	 */
-	private void changeSceneTo(Region node) {
+	private void changeSceneTo(ContentRoot node) {
 		final Scene scene = new Scene(node);
 		scene.setFill(Color.TRANSPARENT);
 		stage.setScene(scene);

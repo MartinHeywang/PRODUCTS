@@ -1,0 +1,7 @@
+.located-progress-bar .track{
+    -fx-background-color: transparent;
+}
+
+.located-progress-bar .bar{
+    -fx-background-color: -cta;
+}

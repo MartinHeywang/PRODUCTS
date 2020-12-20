@@ -159,7 +159,7 @@ public final class DeviceController {
 				position).instantiate();
 
 		setDevice(device, position);
-		controller.hardRefreshAt(position);
+		controller.refreshPos(position);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public final class DeviceController {
 		independentDevices.remove(oldDevice);
 
 		setDevice(device, position);
-		controller.hardRefreshAt(position);
+		controller.refreshPos(position);
 	}
 
 	/**
@@ -213,8 +213,8 @@ public final class DeviceController {
 			first.generateTemplate();
 			second.generateTemplate();
 
-			controller.hardRefreshAt(swapTempo);
-			controller.hardRefreshAt(position);
+			controller.refreshPos(swapTempo);
+			controller.refreshPos(position);
 
 			swapTempo = null;
 		}
@@ -238,7 +238,7 @@ public final class DeviceController {
 		}
 		device.getModel().setLevel(currentLevel.getNext());
 
-		controller.lightRefreshAt(position);
+		controller.refreshPos(position);
 	}
 
 	/**
@@ -250,7 +250,7 @@ public final class DeviceController {
 		final Device device = getDevice(position);
 		device.getModel().setDirection(device.getModel().getDirection().getNext());
 
-		controller.lightRefreshAt(position);
+		controller.refreshPos(position);
 	}
 
 	private void setDevice(Device device, Coordinate position) throws DeviceException {

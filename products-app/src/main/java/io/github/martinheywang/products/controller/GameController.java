@@ -29,8 +29,9 @@ import io.github.martinheywang.products.api.model.exception.DeviceException;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.utils.MoneyFormat;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
+import io.github.martinheywang.products.model.GameMode;
 import io.github.martinheywang.products.view.DeviceMenuView;
-import io.github.martinheywang.products.view.GameMenuView;
+import io.github.martinheywang.products.view.GameRoot;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -52,12 +53,13 @@ import javafx.scene.paint.Color;
 public final class GameController {
 
 	private final Game game;
+	private GameMode mode;
 
 	private final DeviceController deviceController;
 	private final MoneyController moneyController;
 	private final LoopController loopController;
 
-	private final GameMenuView gameView;
+	private final GameRoot view;
 
 	/**
 	 * Builds a new GameManager and launches the game loop in auto mode.
@@ -65,13 +67,14 @@ public final class GameController {
 	 * @param gameController the view controller, in order to refresh the view
 	 * @param game           the game that this manager will handle
 	 */
-	public GameController(GameMenuView gameController, Game game) {
+	public GameController(Game game) {
 		Coordinate.setGridSize(game.getGridSize());
 
 		// The game
 		this.game = game;
-		this.gameView = gameController;
-		this.gameView.setGameManager(this);
+		this.mode = GameMode.DEFAULT;
+		// The view
+		this.view = new GameRoot(this);
 
 		// The game loop controller
 		this.loopController = new LoopController(this);
@@ -81,7 +84,7 @@ public final class GameController {
 		try {
 			models = Database.createDao(DeviceModel.class).queryForEq("game_id", game.getID());
 		} catch (SQLException e) {
-			toast("Erreur de chargement des appareils.", Color.DARKRED, 20d);
+			toast("Erreur...", "Erreur de chargement des appareils.", Color.DARKRED, 20d);
 		}
 		this.deviceController = new DeviceController(this, models);
 
@@ -90,15 +93,22 @@ public final class GameController {
 		try {
 			final BigInteger offline = moneyController.calculateOfflineMoney(game.getLastSave());
 			moneyController.addMoney(offline);
-			toast(MessageFormat.format("Vous avez gagné {0} pendant votre absence !",
+			toast("Cool !", MessageFormat.format("Vous avez gagné {0} pendant votre absence !",
 					MoneyFormat.getSingleton().format(offline)), Color.BLUEVIOLET, 10d);
 		} catch (MoneyException e) {
-			toast("Erreur lors du calcul de l'argent gagné !", Color.DARKRED, 20d);
+			toast("Erreur...", "Erreur lors du calcul de l'argent gagné !", Color.DARKRED, 20d);
 		}
 
-		// The game view
-		this.gameView.setGameManager(this);
-		this.gameView.loadGame(deviceController.getDevices2D(), game);
+	}
+
+	/**
+	 * Returns the view. The view is the GUI that this controller tries to update
+	 * whenever the model is changed.
+	 * 
+	 * @return the view
+	 */
+	public GameRoot getView() {
+		return view;
 	}
 
 	// ====================================================================================
@@ -119,10 +129,10 @@ public final class GameController {
 			deviceController.build(position);
 		} catch (DeviceException e) {
 			System.out.println(e.getMessage());
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Erreur...", e.getMessage(), Color.DARKORANGE, 7d);
 		} catch (MoneyException e) {
 			System.out.println(e.getMessage());
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Pas assez d'argent...", e.getMessage(), Color.DARKORANGE, 7d);
 		}
 	}
 
@@ -136,9 +146,9 @@ public final class GameController {
 		try {
 			deviceController.destroy(position);
 		} catch (DeviceException e) {
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Erreur...", e.getMessage(), Color.DARKORANGE, 7d);
 		} catch (MoneyException e) {
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Pas assez d'argent...", e.getMessage(), Color.DARKORANGE, 7d);
 		}
 	}
 
@@ -153,7 +163,7 @@ public final class GameController {
 		try {
 			deviceController.swap(position);
 		} catch (DeviceException e) {
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Erreur...", e.getMessage(), Color.DARKORANGE, 7d);
 		}
 	}
 
@@ -167,9 +177,9 @@ public final class GameController {
 		try {
 			deviceController.upgrade(position);
 		} catch (DeviceException e) {
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Erreur...", e.getMessage(), Color.DARKORANGE, 7d);
 		} catch (MoneyException e) {
-			toast(e.getMessage(), Color.DARKORANGE, 7d);
+			toast("Pas assez d'argent...", e.getMessage(), Color.DARKORANGE, 7d);
 		}
 	}
 
@@ -235,9 +245,16 @@ public final class GameController {
 	}
 
 	// ====================================================================================
-	// GAME - save
+	// GAME - current state, save...
 	// ====================================================================================
 
+	/**
+	 * @return the current game mode
+	 */
+	public GameMode getGameMode(){
+		return mode;
+	}
+	
 	/**
 	 * Saves the managed game with its devices and everything.
 	 */
@@ -281,22 +298,25 @@ public final class GameController {
 
 	/**
 	 * Displays a toast in the top right corner of the game scene.
+	 * More information here : {@link GameRoot#toast(String, String, Color, double)}.
 	 * 
-	 * @param text       the text to display
-	 * @param background the background color of the toast (in seconds)
-	 * @param seconds    the duration of the toast
+	 * @param header       see link above
+	 * @param content       see link above
+	 * @param color see link above
+	 * @param duration    see link above
 	 */
-	public void toast(String text, Color background, double seconds) {
-		this.gameView.toast(text, background, seconds);
+	public void toast(String header, String content, Color color, double duration) {
+		this.view.toast(header, content, color, duration);
 	}
 
 	/**
-	 * Pulses the device view corresponding to the device passed as argument.
+	 * Pulses the device view corresponding to the device passed as argument. "To
+	 * pulse" a view means highlightning it for a short moment.
 	 * 
-	 * @param device the device to pulse
+	 * @param device the pos of the device to pulse
 	 */
-	public void pulseDevice(Device device) {
-		this.gameView.pulseView(device.getPosition());
+	public void pulsePos(Coordinate pos) {
+		this.view.pulsePos(pos);
 	}
 
 	/**
@@ -316,26 +336,17 @@ public final class GameController {
 			controller.setContent(getDevice(coord), this);
 			dialog.show();
 		} catch (Exception e) {
-			toast("Erreur lors de l'ouverture du tableau de bord.", Color.DARKRED, 5d);
+			toast("Problème...", "Erreur lors de l'ouverture du tableau de bord.", Color.DARKRED, 5d);
 		}
 	}
 
 	/**
-	 * See {@link GameMenuView#lightViewRefresh(Coordinate)}.
+	 * See {@link GameRoot#refreshPos(Coordinate)}.
 	 * 
 	 * @param coord the location
 	 */
-	public void lightRefreshAt(Coordinate coord) {
-		this.gameView.lightDeviceViewRefreshAt(coord);
-	}
-
-	/**
-	 * See {@link GameMenuView#hardViewRefresh(Coordinate)}.
-	 * 
-	 * @param coord the location
-	 */
-	public void hardRefreshAt(Coordinate coord) {
-		this.gameView.hardDeviceViewRefreshAt(coord);
+	public void refreshPos(Coordinate coord) {
+		this.view.refreshPos(coord);
 	}
 
 	/**
@@ -368,9 +379,9 @@ public final class GameController {
 	public void setBuildClass(Class<? extends Device> clazz) {
 		deviceController.setBuildClass(clazz);
 		if (deviceController.getBuildClass() != null) {
-			gameView.buildMode();
+			view.buildMode();
 		} else {
-			gameView.defaultMode();
+			view.defaultMode();
 		}
 	}
 
@@ -402,8 +413,7 @@ public final class GameController {
 		return moneyController.currentAmount();
 	}
 
-	// Only sub-part of this controller may access these parts
-	Game getGame() {
+	public Game getGame() {
 		return game;
 	}
 

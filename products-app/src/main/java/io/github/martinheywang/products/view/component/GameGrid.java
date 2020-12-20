@@ -3,6 +3,7 @@ package io.github.martinheywang.products.view.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.martinheywang.products.api.model.Coordinate;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
@@ -71,6 +72,36 @@ public class GameGrid extends GridPane {
         return children;
     }
 
+    /**
+     * Returns the view located at the given position (the one that display a device
+     * with the given coordinate).
+     * 
+     * @param pos the position
+     * @return the view if one was found, else null.
+     */
+    public DeviceView getView(Coordinate pos) {
+        for (DeviceView view : getDeviceChildren()) {
+            if (view.getDevice().getPosition().propertiesEquals(pos)) {
+                return view;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Refreshes the device view at the given position.
+     * 
+     * @param pos the position of the device view to refresh
+     */
+    public void refreshPos(Coordinate pos) {
+        this.getView(pos).refresh();
+    }
+
+    /**
+     * Sets the new zoom amount
+     * 
+     * @param amount the new value
+     */
     public void setZoom(double amount) {
         if (amount < .4d || amount > 5d) {
             return;
@@ -78,10 +109,16 @@ public class GameGrid extends GridPane {
         zoomProperty.set(amount);
     }
 
+    /**
+     * Performs a zoom out.
+     */
     public void zoomOut() {
         setZoom(this.zoomProperty.get() - this.zoomFactor);
     }
 
+    /**
+     * Performs a zoom in.
+     */
     public void zoomIn() {
         setZoom(this.zoomProperty.get() + this.zoomFactor);
     }

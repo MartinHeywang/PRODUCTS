@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -35,7 +36,7 @@ public class StageBar extends GridPane {
         // 3 column
         for(int i = 0; i < 2; i++){
             final ColumnConstraints col = new ColumnConstraints();
-            col.setPercentWidth(100 / 2);
+            col.setPercentWidth(50);
             this.getColumnConstraints().add(col);
         }
 

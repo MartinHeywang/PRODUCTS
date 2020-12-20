@@ -92,7 +92,7 @@ public final class LoopController {
                             }
 
                             for (final Device device : toPulse) {
-                                controller.pulseDevice(device);
+                                controller.pulsePos(device.getPosition());
                             }
                             controller.removeMoney(cost);
                             controller.moneyController().registerChange();

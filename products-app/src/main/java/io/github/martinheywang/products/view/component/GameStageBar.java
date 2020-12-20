@@ -27,13 +27,14 @@ public final class GameStageBar extends StageBar {
         this.getColumnConstraints().clear();
         for(int i = 0; i < 3; i++){
             final ColumnConstraints col = new ColumnConstraints();
-            col.setPercentWidth(100 / 3);
+            col.setPercentWidth(34);
             this.getColumnConstraints().add(col);
         }
 
         // 1 row inherited
 
-        this.money = new Label("Something");
+        this.money = new Label("500 €");
+        this.money.getStyleClass().add("h5");
 
         this.getChildren().clear();
         this.add(this.title, 0, 0);

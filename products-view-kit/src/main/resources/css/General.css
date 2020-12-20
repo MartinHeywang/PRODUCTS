@@ -9,6 +9,7 @@
 @import "./Button.css";
 @import "./Stage.css";
 @import "./TextField.css";
+@import "./ProgressBar.css";
 @import "./TitledPane.css";
 
 /*
@@ -31,4 +32,26 @@
     -error: #CD2020;
     -warning: #D66700;
     -info: #1885D9;
+}
+
+.cta{
+    -fx-background-color: -cta;
+}
+
+.cta-dark{
+    -fx-background-color: -cta-dark;
+}
+
+.cta-light {
+    -fx-background-color: -cta-light;
+}
+
+.transparent {
+    -fx-background-color: transparent;
+}
+.dark-transparent {
+    -fx-background-color: rgba(0, 0, 0, .2);
+}
+.light-transparent{
+    -fx-background-color: rgba(255, 255, 255, .2);
 }
