@@ -22,80 +22,63 @@ import java.time.LocalDateTime;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * <p>
- * The Game class represents a Game in PRODUCTS. In contains all the data about
- * them. This object may be stored in the database.
+ * Sort of Java FX Beans that represents a game in the software.
  * </p>
  * <p>
- * This class is using JavaFX Properties, you can at any time observe one of
- * them and apply changes in consequence.
- * </p>
- * <p>
- * It's near of a Java Bean:
+ * In PRODUCTS, the player can create games : this is the base class for it. It
+ * contains a lot of informations about a game :
  * </p>
  * <ul>
- * <li>It has a default constructor</li>
- * <li>It has a getter and setter for <em>almost</em> all properties and
- * values</li>
+ * <li>The name</li>
+ * <li>The date of last save</li>
+ * <li>The amount of money</li>
+ * <li>The grid size</li>
+ * <li>The grow amount (evolution of the money amount per second)</li>
+ * <li>The delay applied to the game loop</li>
+ * <li>The independent max count</li>
  * </ul>
+ * <p>
+ * Those are all informations that doesn't depends directly on other objects.
+ * Even if the grid size depends on the count of devices, we doesn't need to
+ * have the device to retrieve this kind of information.
+ * </p>
+ * <p>
+ * This class is persistent.
+ * </p>
  * 
  * @author Martin Heywang
  */
 @DatabaseTable(tableName = "game")
 public class Game {
 
-    /**
-     * The ID of this game in the database. May be null.
-     */
     @DatabaseField(columnName = "id", generatedId = true)
     private Long id;
-
-    /**
-     * The accesible name (shown in the UI) of this game
-     */
     @DatabaseField
-    private String name;
-
-    /**
-     * As a Game can be saved in the database, we register the time of the last
-     * saving session.
-     */
+    private StringProperty name;
     @DatabaseField
-    private String lastSave;
-
-    /**
-     * The money amount that "owns" this Game.
-     */
+    private SimpleDateTimeProperty lastSave;
     @DatabaseField
-    private BigInteger money;
-
-    /**
-     * The grid size of this game.
-     */
+    private SimpleBigIntegerProperty money;
     @DatabaseField
-    private Integer gridSize;
-
-    /**
-     * The grow of this game.
-     */
+    private IntegerProperty gridSize;
     @DatabaseField
-    private BigInteger grow;
-
-    /**
-     * The delay b/w each iterations of the game loop.
-     */
-    @DatabaseField(columnName = "delay")
-    private Integer gameLoopDelay;
-
-    /**
-     * The maximum buildable buyers.
-     */
+    private SimpleBigIntegerProperty grow;
     @DatabaseField
-    private Integer maxIndependent;
+    private IntegerProperty delay;
+    @DatabaseField
+    private IntegerProperty maxIndependent;
 
     /**
-     * Creates an empty Game;
+     * Creates an empty Game.
      */
     public Game() {
     }
@@ -107,175 +90,239 @@ public class Game {
      * @throws SQLException if this object can't be registered in the database
      */
     public Game(String name) throws SQLException {
-        this.name = name;
-        this.gridSize = 3;
-        this.money = new BigInteger("1250");
-        this.grow = new BigInteger("0");
-        this.gameLoopDelay = 1000;
-        this.maxIndependent = 4;
-        this.lastSave = LocalDateTime.now().toString();
+        this.name = new SimpleStringProperty(name);
+        this.gridSize = new SimpleIntegerProperty(3);
+        this.money = new SimpleBigIntegerProperty(new BigInteger("1250"));
+        this.grow = new SimpleBigIntegerProperty(new BigInteger("0"));
+        this.delay = new SimpleIntegerProperty(1000);
+        this.maxIndependent = new SimpleIntegerProperty(4);
+        this.lastSave = new SimpleDateTimeProperty(LocalDateTime.now());
     }
 
-    // PROPERTIES GETTER
+    /**
+     * Sets the last save to now.
+     * 
+     * @deprecated should be done in the controller, this shouldn't be part of the
+     *             API.
+     */
+    @Deprecated
+    public void updateLastSave() {
+        this.lastSave.set(LocalDateTime.now());
+    }
 
     /**
-     * May be null.
+     * Increases the grid size by 1
      * 
-     * @return the id of this object in the database.
+     * @deprecated should be done by the controller, this shouldn't be part of the
+     *             API.
+     */
+    @Deprecated
+    public void upgradeGrid() {
+        this.gridSize.set(getGridSize() + 1);
+    }
+
+    /**
+     * The name of the game is the accessible name. This is the one defined by the
+     * user, when creating it. It shows in the user interface.
+     * 
+     * @return the name property
+     */
+    public StringProperty nameProperty() {
+        return name;
+    }
+
+    /**
+     * By 'last save' should we understand 'the date and time of the last save'.
+     * This value is updated whenever the game is saved in the database.
+     * 
+     * @return the last save property
+     */
+    public SimpleDateTimeProperty lastSaveProperty() {
+        return lastSave;
+    }
+
+    /**
+     * The money is the amount of money that the player currently have.
+     * 
+     * @return the money property
+     */
+    public SimpleBigIntegerProperty moneyProperty() {
+        return money;
+    }
+
+    /**
+     * The grid size property is a value that contains the size of the grid of the
+     * game. The grid is a square, so this is single value.
+     * 
+     * @return the grid size property
+     */
+    public IntegerProperty gridSizeProperty() {
+        return gridSize;
+    }
+
+    /**
+     * The grow property is a value that stores the evolution per second of the
+     * money amount.
+     * 
+     * @return the grow property
+     */
+    public SimpleBigIntegerProperty growProperty() {
+        return grow;
+    }
+
+    /**
+     * The delay is the period that the game loop waits at the end of each
+     * iteration.
+     * 
+     * @return the delay property
+     */
+    public IntegerProperty delayProperty() {
+        return delay;
+    }
+
+    /**
+     * The max independent is a value that limits the player from building two many
+     * independents devices. It may evolve whenever the player do some research.
+     * 
+     * @return the max independent property
+     */
+    public IntegerProperty maxIndependentProperty() {
+        return maxIndependent;
+    }
+
+    /**
+     * Returns the ID of this object. The id may be null if this Game object isn't
+     * persistant.
+     * 
+     * @return the id
      */
     public Long getID() {
-        return this.id;
+        return id;
     }
 
     /**
-     * Returns the accesible name of this Game object.
+     * Returns the value of the {@link #nameProperty()}.
      * 
-     * @return the name of this game
+     * @return the name
      */
     public String getName() {
-        return this.name;
+        return name.get();
     }
 
     /**
-     * Returns the size of the grid.
+     * Returns the value of the {@link #lastSaveProperty()}.
      * 
-     * @return the grid-size
+     * @return the last save
      */
-    public Integer getGridSize() {
-        return this.gridSize;
+    public LocalDateTime getLastSave() {
+        return lastSave.get();
     }
 
     /**
-     * Returns how money this game has.
+     * Returns the value of the {@link #moneyProperty()}.
      * 
-     * @return the money amount
+     * @return the money
      */
     public BigInteger getMoney() {
-        return this.money;
+        return money.get();
     }
 
-    // PROPERTIES GETTER
+    /**
+     * Returns the value of the {@link #gridSizeProperty()}.
+     * 
+     * @return the grid size
+     */
+    public Integer getGridSize() {
+        return gridSize.get();
+    }
 
     /**
-     * Returns how many this game generate each iterations of the game loop.
+     * Returns the value of the {@link #growProperty()}.
      * 
      * @return the grow
      */
     public BigInteger getGrow() {
-        return this.grow;
+        return grow.get();
     }
 
     /**
+     * Returns the value of the {@link #delayProperty()}.
      * 
-     * @return the game loop delay
+     * @return the delay
      */
     public Integer getDelay() {
-        return this.gameLoopDelay;
+        return delay.get();
     }
 
     /**
-     * The timing of the last save of this Game object.
+     * Returns the value of the {@link #maxIndependentProperty()}.
      * 
-     * @return the date and time of the last save of this object (as LocalDateTime,
-     *         also known as JodaTime)
-     */
-    public LocalDateTime getLastSave() {
-        return LocalDateTime.parse(this.lastSave);
-    }
-
-    /**
-     * Returns the max number of buyer that the game can have at the same time on
-     * the grid.
-     * 
-     * @return the max buyer amount
-     * @deprecated use {@link #getMaxIndependent()} instead, changed name
-     */
-    @Deprecated
-    public Integer getMaxBuyer() {
-        return this.maxIndependent;
-    }
-
-    /**
-     * Returns the max number of independent devices that the game can have at the
-     * same time on the grid.
-     * 
-     * @return the max buyer amount
+     * @return the max independent
      */
     public Integer getMaxIndependent() {
-        return this.maxIndependent;
+        return maxIndependent.get();
     }
 
     /**
-     * Sets the new accesible name of this Game object.
+     * Sets the value of the {@link #nameProperty()}.
      * 
-     * @param name the new name
+     * @param newName the new name
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String newName) {
+        name.set(newName);
     }
 
     /**
-     * Sets the new amount of money of this Game object
+     * Sets the value of the {@link #lastSaveProperty()}.
      * 
-     * @param money the new money-amount
+     * @param newLastSave the new lastSave
      */
-    public void setMoney(BigInteger money) {
-        this.money = money;
+    public void setLastSave(LocalDateTime newLastSave) {
+        lastSave.set(newLastSave);
     }
 
     /**
-     * Sets the last save to now. Use carefully.
-     */
-    public void updateLastSave() {
-        this.lastSave = LocalDateTime.now().toString();
-    }
-
-    /**
-     * Sets the grow property
+     * Sets the value of the {@link #moneyProperty()}.
      * 
-     * @param grow the new grow value
+     * @param newMoney the new money
      */
-    public void setGrow(BigInteger grow) {
-        this.grow = grow;
+    public void setMoney(BigInteger newMoney) {
+        money.set(newMoney);
     }
 
     /**
-     * Sets the delay property
+     * Sets the value of the {@link #gridSizeProperty()}.
      * 
-     * @param delay the new delay value
+     * @param newGridSize the new gridSize
      */
-    public void setDelay(int delay) {
-        this.gameLoopDelay = delay;
+    public void setGridSize(Integer newGridSize) {
+        gridSize.set(newGridSize);
     }
 
     /**
-     * Sets the new amount of max buyers.
+     * Sets the value of the {@link #growProperty()}.
      * 
-     * @param newValue the new value
-     * @deprecated use {@link #setMaxIndependent(int)} instead, changed name.
+     * @param newGrow the new grow
      */
-    public void setMaxBuyer(int newValue) {
-        this.maxIndependent = newValue;
+    public void setGrow(BigInteger newGrow) {
+        grow.set(newGrow);
     }
 
     /**
-     * Sets the new amount of max independent devices.
+     * Sets the value of the {@link #delayProperty()}.
      * 
-     * @param newValue the new value
+     * @param newDelay the new delay
      */
-    public void setMaxIndependent(int newValue) {
-        this.maxIndependent = newValue;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + this.name + ", " + this.money + "€ }";
+    public void setDelay(Integer newDelay) {
+        delay.set(newDelay);
     }
 
     /**
-     * Increases the current grid size by one.
+     * Sets the value of the {@link #maxIndependentProperty()}.
+     * 
+     * @param newMaxIndependent the new maxIndependent
      */
-    public void upgradeGrid() {
-        this.gridSize++;
+    public void setMaxIndependent(Integer newMaxIndependent) {
+        maxIndependent.set(newMaxIndependent);
     }
 }
