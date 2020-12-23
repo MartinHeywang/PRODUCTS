@@ -15,30 +15,19 @@
 */
 package io.github.martinheywang.products.api.model.properties;
 
-import java.time.LocalDateTime;
-
+import io.github.martinheywang.products.api.model.level.Level;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * The SimpleDirectionProperty is a class that 'gives a name' to the the generic
- * {@link SimpleObjectProperty}, giving as type argument {@link Direction}.
+ * {@link SimpleObjectProperty}, giving as type argument {@link Level}.
  * The purpose of giving a name is to create a persister for ormlite.
  * 
  * @author Martin Heywang
  */
-public class SimpleDateTimeProperty extends SimpleObjectProperty<LocalDateTime> {
+public class SimpleLevelProperty extends SimpleObjectProperty<Level> {
     
-    /**
-     * Creates a new {@link SimpleDateTimeProperty} using the value of {@link LocalDateTime#MIN}.
-     */
-    public SimpleDateTimeProperty(){
-        super(LocalDateTime.MIN);
-    }
-
-     /**
-     * Creates a new {@link SimpleDateTimeProperty} using the given value.
-     */
-    public SimpleDateTimeProperty(LocalDateTime value){
-        super(value);
+    public SimpleLevelProperty(Level level){
+        super(level);
     }
 }

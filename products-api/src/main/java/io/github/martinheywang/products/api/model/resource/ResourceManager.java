@@ -74,30 +74,53 @@ public class ResourceManager {
     }
 
     /**
-     * <p>
-     * Search through all registered resources one matches the given parsable
-     * string.
-     * </p>
-     * <p>
-     * This method may be the sources of problems if two resources are named
-     * similarly, in this case, the first one found will be returned.
-     * </p>
-     * <p>
-     * If none is found, this method returns the default resource NONE.
-     * </p>
+     * Parses the given string in a {@link Resource}. Returns null if none was
+     * found.
      * 
-     * @param str a parsable string, containing only the name of the resource.
-     * @return the resource from the parsed string.
+     * @param str a parsable string
+     * @return the resource
      */
     public static Resource valueOf(String str) {
         for (final Resource resource : references)
             if (resource.toString().equals(str))
                 return resource;
-        System.err.println("No Resource was found for input string : '" + str + "'\nReturning default resource NONE");
+
+        // No match : deep search
+        final int dotIndex = str.lastIndexOf(".");
+        if (dotIndex == -1) { // No '.' in the string
+            final String canonicalName = str.substring(0, dotIndex);
+            final String fieldName = str.substring(dotIndex, str.length());
+            try {
+                @SuppressWarnings("unchecked")
+                final Class<? extends Resource> clazz = (Class<? extends Resource>) Class.forName(canonicalName);
+                fieldToResource(clazz.getField(fieldName));
+            } catch (ClassNotFoundException | NoSuchFieldException e) {
+                // string is either invalid or points to nothing.
+            } catch (ClassCastException e) {
+                // class isn't assignable to the Resource interface
+            }
+        }
+        System.err.println("WARNING : Couldn't parse '" + str + "' to any valid Resource.");
         return null;
     }
 
-    
+    private static Resource fieldToResource(Field field) {
+        try {
+            return (Resource) field.get(null);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Field resourceToField(Resource res) {
+        try {
+            return res.getClass().getField(res.toString());
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Gets all of the resources loaded in the game.

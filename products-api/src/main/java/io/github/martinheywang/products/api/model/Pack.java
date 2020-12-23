@@ -21,29 +21,50 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import io.github.martinheywang.products.api.model.device.DeviceModel;
+import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleResourceProperty;
 import io.github.martinheywang.products.api.model.resource.Resource;
 
 /**
- * <p>A Pack is the combination between a Resource and a positive BigInteger quantity.</p>
- * <p>Instances of this class may be persistent, as it is marked with {@link DatabaseTable}</p>
+ * <p>
+ * A Pack is a simple object that result in the combination of a
+ * {@link Resource} and {@link BigInteger} quantity. It basically represents a
+ * box where we can put as many resources as we want.
+ * </p>
+ * <p>
+ * This combination is used for the most part by devices : imagine that each
+ * device opens the pack, do whatever it does, and package it to send it to the
+ * next device.
+ * </p>
+ * <p>
+ * If it doesn't take place in the assembly line, it may be used by the devices
+ * to store a resource. As example, the buyer needs to save the distributed
+ * resource to find it the next time it loads. This time the {@link #getModel()}
+ * will not return null, as it has a connection with a device model (Note: the
+ * device model is the part of the device that is persistant)
+ * </p>
+ * 
+ * @author Martin Heywang
  */
 @DatabaseTable
-public class Pack {
+public final class Pack {
 
 	@DatabaseField(columnName = "id", generatedId = true)
-	private Long idPaquet;
+	private Long id;
 
 	@DatabaseField
-	private Resource resource;
+	private SimpleResourceProperty resource;
 
 	@DatabaseField
-	private BigInteger quantity;
+	private SimpleBigIntegerProperty quantity;
 
-	@DatabaseField(columnName = "model", foreign = true, foreignColumnName = "id")
+	@DatabaseField(canBeNull = false, foreign = true)
 	private DeviceModel model;
 
 	/**
-	 * Creates a new empty Pack.
+	 * Creates a new empty Pack. This is used by the ORM when creating the object.
+	 * Unless you inject values into the field, you won't be able to use the object
+	 * properly.
 	 */
 	public Pack() {
 	}
@@ -55,8 +76,8 @@ public class Pack {
 	 * @param quantity the quantity of the pack
 	 */
 	public Pack(Resource resource, BigInteger quantity) {
-		this.resource = resource;
-		this.quantity = quantity;
+		this.resource = new SimpleResourceProperty(resource);
+		this.quantity = new SimpleBigIntegerProperty(quantity);
 	}
 
 	/**
@@ -64,11 +85,11 @@ public class Pack {
 	 * 
 	 * @param resource the resource of the pack
 	 * @param quantity the quantity of the pack
-	 * @param model the associated model.
+	 * @param model    the associated model.
 	 */
 	public Pack(Resource resource, BigInteger quantity, DeviceModel model) {
-		this.resource = resource;
-		this.quantity = quantity;
+		this.resource = new SimpleResourceProperty(resource);
+		this.quantity = new SimpleBigIntegerProperty(quantity);
 		this.model = model;
 	}
 
@@ -77,7 +98,7 @@ public class Pack {
 	 * @return the id
 	 */
 	public Long getID() {
-		return this.idPaquet;
+		return this.id;
 	}
 
 	/**
@@ -85,7 +106,16 @@ public class Pack {
 	 * @param id the id to set
 	 */
 	public void setID(Long id) {
-		this.idPaquet = id;
+		this.id = id;
+	}
+
+	/**
+	 * The resource of the pack is the resource contained in the pack.
+	 * 
+	 * @return the resource property
+	 */
+	public SimpleResourceProperty resourceProperty() {
+		return resource;
 	}
 
 	/**
@@ -93,7 +123,7 @@ public class Pack {
 	 * @return the resource
 	 */
 	public Resource getResource() {
-		return this.resource;
+		return this.resource.get();
 	}
 
 	/**
@@ -101,7 +131,16 @@ public class Pack {
 	 * @param res the resource to set
 	 */
 	public void setResource(Resource res) {
-		this.resource = res;
+		this.resource.set(res);
+	}
+
+	/**
+	 * The quantity is the count of resource in the same pack.
+	 * 
+	 * @return the quantity property
+	 */
+	public SimpleBigIntegerProperty quantityProperty() {
+		return this.quantity;
 	}
 
 	/**
@@ -109,7 +148,7 @@ public class Pack {
 	 * @return the quantity
 	 */
 	public BigInteger getQuantity() {
-		return this.quantity;
+		return this.quantity.get();
 	}
 
 	/**
@@ -117,7 +156,7 @@ public class Pack {
 	 * @param quantity the quantity to set
 	 */
 	public void setQuantity(BigInteger quantity) {
-		this.quantity = quantity;
+		this.quantity = new SimpleBigIntegerProperty(this.quantity.get().add(quantity));
 	}
 
 	/**
@@ -129,8 +168,9 @@ public class Pack {
 	}
 
 	/**
-	 * Merges this pack with the other. Doesn't apply any changes to this object.
-	 * If both packs has the same resource, returns a pack that has the sum of the quantity.
+	 * Merges this pack with the other. Doesn't apply any changes to this object. If
+	 * both packs has the same resource, returns a pack that has the sum of the
+	 * quantity.
 	 * 
 	 * @param other the pack to merge with
 	 * @return the newly created pack, result of both packs (this and other)
@@ -139,8 +179,7 @@ public class Pack {
 		if (this.getResource() != other.getResource())
 			return null;
 
-		return new Pack(this.getResource(),
-				this.getQuantity().add(other.getQuantity()));
+		return new Pack(this.getResource(), this.getQuantity().add(other.getQuantity()));
 	}
 
 	/**

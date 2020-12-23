@@ -18,10 +18,14 @@ package io.github.martinheywang.products.api.model;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import io.github.martinheywang.products.api.database.persisters.StringPropertyPersister;
+import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
 import javafx.beans.property.IntegerProperty;
@@ -68,6 +72,9 @@ public class Game {
     private SimpleDateTimeProperty lastSave;
     @DatabaseField
     private SimpleBigIntegerProperty money;
+    // XXX test if 'eager = true' changes anything
+    @ForeignCollectionField
+    private Collection<DeviceModel> models;
     @DatabaseField
     private IntegerProperty gridSize;
     @DatabaseField

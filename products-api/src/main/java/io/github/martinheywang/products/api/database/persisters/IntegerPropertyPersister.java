@@ -1,4 +1,19 @@
-package io.github.martinheywang.products.model.database;
+/*
+   Copyright 2020 Martin Heywang
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+package io.github.martinheywang.products.api.database.persisters;
 
 import java.sql.SQLException;
 
@@ -26,16 +41,17 @@ public class IntegerPropertyPersister extends BaseDataType {
 
     @Override
     public Integer resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        // BigInteger.toString() returns the number as a text
-        // this text can be parsed when fetching back the value
-        return ((IntegerProperty) results.getObject(columnPos)).get();
+        return results.getInt(columnPos);
     }
 
     @Override
     public IntegerProperty sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-        // We can affirm that the sql arg in the database an integer
-        // This is the defined type in the constructor
         return new SimpleIntegerProperty((int) sqlArg);
+    }
+
+    @Override
+    public Integer javaToSqlArg(FieldType type, Object obj){
+        return ((IntegerProperty) obj).get();
     }
 
     /**

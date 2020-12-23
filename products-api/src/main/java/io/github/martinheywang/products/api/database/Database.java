@@ -19,10 +19,19 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import io.github.martinheywang.products.api.database.persisters.BigIntegerPropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.ClassPropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.DateTimePropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.DirectionPropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.IntegerPropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.LevelPropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.ResourcePropertyPersister;
+import io.github.martinheywang.products.api.database.persisters.StringPropertyPersister;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.Pack;
@@ -33,8 +42,8 @@ import io.github.martinheywang.products.api.model.device.DeviceModel;
  * Class that manages connectivity to the database.
  * </p>
  * <p>
- * To create a {@link com.j256.ormlite.dao.Dao} connection to a table, 
- * use {@link #createDao(Class)} with a persistent class as an argument.
+ * To create a {@link com.j256.ormlite.dao.Dao} connection to a table, use
+ * {@link #createDao(Class)} with a persistent class as an argument.
  * </p>
  * 
  * @author Martin Heywang
@@ -52,35 +61,40 @@ public final class Database {
      * @throws SQLException
      */
     private static void setUp() throws SQLException {
-	try {
-	    connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
+        try {
+            DataPersisterManager.registerDataPersisters(BigIntegerPropertyPersister.getInstance(),
+                    ClassPropertyPersister.getInstance(), DateTimePropertyPersister.getInstance(),
+                    IntegerPropertyPersister.getInstance(), LevelPropertyPersister.getInstance(),
+                    DirectionPropertyPersister.getInstance(), ResourcePropertyPersister.getInstance(),
+                    StringPropertyPersister.getSingleton());
 
-	    TableUtils.createTableIfNotExists(connection, Game.class);
-	    TableUtils.createTableIfNotExists(connection, Pack.class);
-	    TableUtils.createTableIfNotExists(connection, DeviceModel.class);
-	    TableUtils.createTableIfNotExists(connection, Coordinate.class);
+            connection = new JdbcConnectionSource("jdbc:sqlite:Products.db");
 
-	} catch (final SQLException e) {
-	    System.err.println(
-		    "Ohh, something messed up in the initialization with the "
-			    + "database...\nHere is the full message :\n\n\n");
-	    e.printStackTrace();
-	}
+            TableUtils.createTableIfNotExists(connection, Game.class);
+            TableUtils.createTableIfNotExists(connection, Pack.class);
+            TableUtils.createTableIfNotExists(connection, DeviceModel.class);
+            TableUtils.createTableIfNotExists(connection, Coordinate.class);
+
+        } catch (final SQLException e) {
+            System.err.println("Ohh, something messed up in the initialization with the "
+                    + "database...\nHere is the full message :\n\n\n");
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Creates a fully-functionnal {@link com.j256.ormlite.dao.Dao} 
-     * based on the given <strong>persistent</strong> class.
+     * Creates a fully-functionnal {@link com.j256.ormlite.dao.Dao} based on the
+     * given <strong>persistent</strong> class.
      * 
      * @param typeClass the persistent class
-     * @param <Type> a persistent class
+     * @param <Type>    a persistent class
      * @return a functionnal dao.
      * @throws SQLException if an error with the database occured.
      */
     public static <Type> Dao<Type, Long> createDao(Class<Type> typeClass) throws SQLException {
-	if (connection == null)
-	    setUp();
-	return DaoManager.createDao(connection, typeClass);
+        if (connection == null)
+            setUp();
+        return DaoManager.createDao(connection, typeClass);
     }
 
 }

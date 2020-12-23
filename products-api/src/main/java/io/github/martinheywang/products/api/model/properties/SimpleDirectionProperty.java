@@ -15,8 +15,7 @@
 */
 package io.github.martinheywang.products.api.model.properties;
 
-import java.time.LocalDateTime;
-
+import io.github.martinheywang.products.api.model.direction.Direction;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
@@ -26,19 +25,9 @@ import javafx.beans.property.SimpleObjectProperty;
  * 
  * @author Martin Heywang
  */
-public class SimpleDateTimeProperty extends SimpleObjectProperty<LocalDateTime> {
-    
-    /**
-     * Creates a new {@link SimpleDateTimeProperty} using the value of {@link LocalDateTime#MIN}.
-     */
-    public SimpleDateTimeProperty(){
-        super(LocalDateTime.MIN);
-    }
+public class SimpleDirectionProperty extends SimpleObjectProperty<Direction> {
 
-     /**
-     * Creates a new {@link SimpleDateTimeProperty} using the given value.
-     */
-    public SimpleDateTimeProperty(LocalDateTime value){
-        super(value);
+    public SimpleDirectionProperty(Direction direction) {
+        super(direction);
     }
 }

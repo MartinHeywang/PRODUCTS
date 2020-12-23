@@ -1,4 +1,19 @@
-package io.github.martinheywang.products.model.database;
+/*
+   Copyright 2020 Martin Heywang
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+package io.github.martinheywang.products.api.database.persisters;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -13,12 +28,12 @@ import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerPro
 /**
  * Singleton class that allows ORMLite to persist simple big integer properties.
  */
-public class SBIPPersister extends BaseDataType {
+public class BigIntegerPropertyPersister extends BaseDataType {
 
-    private static final SBIPPersister instance = new SBIPPersister();
+    private static final BigIntegerPropertyPersister instance = new BigIntegerPropertyPersister();
 
-    private SBIPPersister() {
-        super(SqlType.STRING, new Class<?>[] { SimpleBigIntegerProperty.class });
+    private BigIntegerPropertyPersister() {
+        super(SqlType.LONG_STRING, new Class<?>[] { SimpleBigIntegerProperty.class });
     }
 
     @Override
@@ -29,9 +44,7 @@ public class SBIPPersister extends BaseDataType {
 
     @Override
     public String resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos) throws SQLException {
-        // BigInteger.toString() returns the number as a text
-        // this text can be parsed when fetching back the value
-        return results.getObject(columnPos).toString();
+        return results.getString(columnPos);
     }
 
     @Override
@@ -41,12 +54,17 @@ public class SBIPPersister extends BaseDataType {
         return new SimpleBigIntegerProperty(new BigInteger((String) sqlArg));
     }
 
+    @Override
+    public String javaToSqlArg(FieldType type, Object obj) {
+        return ((SimpleBigIntegerProperty) obj).get().toString();
+    }
+
     /**
      * Returns the singleton.
      * 
      * @return the singleton.
      */
-    public static SBIPPersister getInstance() {
+    public static BigIntegerPropertyPersister getInstance() {
         return instance;
     }
 

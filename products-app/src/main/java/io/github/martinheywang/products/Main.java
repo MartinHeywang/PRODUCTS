@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.j256.ormlite.field.DataPersisterManager;
-
 import org.pf4j.JarPluginManager;
 import org.pf4j.PluginManager;
 
@@ -51,17 +49,13 @@ import io.github.martinheywang.products.kit.resource.Wire;
 import io.github.martinheywang.products.kit.view.controller.ContentRoot;
 import io.github.martinheywang.products.kit.view.utils.Icons;
 import io.github.martinheywang.products.kit.view.utils.ViewUtils;
-import io.github.martinheywang.products.model.database.ResourcePersister;
-import io.github.martinheywang.products.view.GameRoot;
 import io.github.martinheywang.products.view.HomeView;
 import io.github.martinheywang.products.view.HomeView2;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -224,8 +218,6 @@ public final class Main extends Application {
 		DeviceController.registerType(Press.class);
 		DeviceController.registerType(WireDrawer.class);
 		DeviceController.registerType(Constructor.class);
-
-		DataPersisterManager.registerDataPersisters(ResourcePersister.getInstance());
 
 		final List<Class<? extends Device>> devicesClasses = pluginManager.getExtensionClasses(Device.class);
 		for (final Class<? extends Device> deviceClass : devicesClasses) {

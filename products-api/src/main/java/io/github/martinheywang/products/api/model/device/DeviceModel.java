@@ -15,48 +15,71 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
+import java.util.Collection;
+
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.table.DatabaseTable;
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Game;
+import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.level.Level;
+import io.github.martinheywang.products.api.model.properties.SimpleClassProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleDirectionProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleLevelProperty;
 
 /**
  * <p>
- * The DeviceModel class is a persistable class that stores all the data about a
- * Device.
+ * A DeviceModel is tha part of a device that is persistable. It contains
+ * informations like the level, the direction... - all the necessary to recreate
+ * a real {@link Device device} -.
  * </p>
  * <p>
- * This class is able to instantiate a device from all its fields. To do a such
- * thing, call the {@link #instantiate()} method.
+ * Some properties are specific to the device model class :
  * </p>
+ * <h4>The type</h4>
  * <p>
- * This way should be the only one, because you could break the game and create
- * a Device from a DeviceModel that register a different class. (:sad:)
+ * The type of the device model is simply the {@link java.lang.Class} extending
+ * {@link Devive} that defines the type, including what it does. When creating a
+ * Device from this device model, a constructor of this class will be called.²
  * </p>
+ * <h4>The packs</h4>
+ * <p>
+ * The {@link io.github.martinheywang.products.api.model.Pack} list is used when
+ * generating the real device. The device type may register a pack in order to
+ * get it the next time it instantiates. For example, the buyer register a pack
+ * as its distributed resource, in order to fecth it back the next time the
+ * player goes on the party.
+ * </p>
+ * <em>More informations in the {@link Device Device class}.</em>
  * 
  * @author Heywang
  */
 @DatabaseTable
 public class DeviceModel {
 
-    @DatabaseField(id = true)
+    @DatabaseField(generatedId = true)
     private Long id;
 
     @DatabaseField(columnName = "class", persisterClass = SerializableType.class)
-    private Class<? extends Device> clazz;
+    private SimpleClassProperty clazz;
 
     @DatabaseField
-    private Level level;
+    private SimpleLevelProperty level;
     @DatabaseField
-    private Direction direction;
-    @DatabaseField(foreign = true, foreignColumnName = "id", uniqueCombo = true)
+    private SimpleDirectionProperty direction;
+
+    @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoRefresh = true, uniqueCombo = true)
     private Game game;
-    @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoCreate = true, uniqueCombo = true)
+    @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoCreate = true, foreignAutoRefresh = true, uniqueCombo = true)
     private Coordinate position;
+
+    // XXX : test if 'eager = true' changes something
+    @ForeignCollectionField
+    private Collection<Pack> packs;
 
     /**
      * Creates an empty device model.
@@ -65,6 +88,8 @@ public class DeviceModel {
     }
 
     /**
+     * Creates a new DeviceModel.
+     * 
      * @param clazz     the class of the device
      * @param level     the level
      * @param direction the direction
@@ -73,9 +98,10 @@ public class DeviceModel {
      */
     public DeviceModel(Class<? extends Device> clazz, Level level, Direction direction, Game game,
             Coordinate position) {
-        this.clazz = clazz;
-        this.level = level;
-        this.direction = direction;
+
+        this.clazz = new SimpleClassProperty(clazz);
+        this.level = new SimpleLevelProperty(level);
+        this.direction = new SimpleDirectionProperty(direction);
         this.game = game;
         this.position = position;
     }
@@ -87,7 +113,9 @@ public class DeviceModel {
      */
     public Device instantiate() {
         try {
-            final Device device = this.clazz.getConstructor(DeviceModel.class).newInstance(this);
+            @SuppressWarnings("unchecked")
+            final Class<? extends Device> clazz = (Class<? extends Device>) this.clazz.get();
+            final Device device = clazz.getConstructor(DeviceModel.class).newInstance(this);
             return device;
         } catch (final Exception e) {
             e.printStackTrace();
@@ -95,7 +123,36 @@ public class DeviceModel {
         return null;
     }
 
-    // GETTERs
+    /**
+     * The class of the device model isn't equal to a simple {@link #getClass()}.
+     * Instead, it is the class of the device that would be instantiated using
+     * {@link #instantiate()}. You can consider this as the <em>the type</em> of the
+     * device model.
+     * 
+     * @return the class property
+     */
+    public SimpleClassProperty classProperty() {
+        return clazz;
+    }
+
+    /**
+     * The level of the device (model) affects its efficiency. More the level is
+     * high, more the device is efficient.
+     * 
+     * @return the level property
+     */
+    public SimpleLevelProperty levelProperty() {
+        return level;
+    }
+
+    /**
+     * The direction is the rotation level of the device.
+     * 
+     * @return the direction property
+     */
+    public SimpleDirectionProperty directionProperty() {
+        return direction;
+    }
 
     /**
      * @return the id, if it has got one.
@@ -111,7 +168,9 @@ public class DeviceModel {
      * have to do it manually.
      * 
      * @return the generated id
+     * @deprecated id is now generated automatically
      */
+    @Deprecated
     public Long generateID() {
         return this.game.getID() * 10_000 + this.position.getID();
     }
@@ -120,8 +179,9 @@ public class DeviceModel {
      * 
      * @return the type of this Device object.
      */
+    @SuppressWarnings("unchecked")
     public Class<? extends Device> getType() {
-        return this.clazz;
+        return (Class<? extends Device>) this.clazz.get();
     }
 
     /**
@@ -129,7 +189,7 @@ public class DeviceModel {
      * @return the direction of this Device object.
      */
     public Direction getDirection() {
-        return this.direction;
+        return this.direction.get();
     }
 
     /**
@@ -137,7 +197,7 @@ public class DeviceModel {
      * @return the level of this Device object.
      */
     public Level getLevel() {
-        return this.level;
+        return this.level.get();
     }
 
     /**
@@ -156,12 +216,12 @@ public class DeviceModel {
         return this.game;
     }
 
-    // SETTERs
-
     /**
      * 
      * @param id the new id
+     * @deprecated id is now generated automatically, it should be set manually
      */
+    @Deprecated
     public void setID(Long id) {
         this.id = id;
     }
@@ -170,21 +230,21 @@ public class DeviceModel {
      * @param clazz the new type
      */
     public void setType(Class<? extends Device> clazz) {
-        this.clazz = clazz;
+        this.clazz.set(clazz);
     }
 
     /**
      * @param newDirection the new direction
      */
-    public void setDirection(Direction newDirection) {
-        this.direction = newDirection;
+    public void setDirection(Direction direction) {
+        this.direction.set(direction);
     }
 
     /**
      * @param newLevel the new level
      */
-    public void setLevel(Level newLevel) {
-        this.level = newLevel;
+    public void setLevel(Level level) {
+        this.level.set(level);
     }
 
     /**
@@ -209,7 +269,8 @@ public class DeviceModel {
      * 
      * @deprecated use
      *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getView(Class)}
-     *             (static) instead. Give as argument the result of {@link #getType()}.
+     *             (static) instead. Give as argument the result of
+     *             {@link #getType()}.
      */
     @Deprecated
     public String getURL() {
@@ -218,20 +279,16 @@ public class DeviceModel {
     }
 
     /**
-     * 
-     * 
-     * @return the system path to the image file corresponding to the upgraded view
-     *         (level+1) of this model.
+     * @return the url of the device model if it was one level grade higher
+     * @deprecated use
+     *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getView(Class)}
+     *             (static) instead. Give as argument the result of
+     *             {@link #getType()}.
      */
+    @Deprecated
     public String getUpgradedURL() {
         final String url = "/images" + this.getLevel().getNext().getURL() + this.getType().getSimpleName() + ".svg";
         return url;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + this.clazz.getSimpleName() + ", " + this.level + ", " + this.direction + ", " + this.game + ", "
-                + this.position + "}";
     }
 
     /**
@@ -246,6 +303,12 @@ public class DeviceModel {
                 && this.game == other.game && this.position.propertiesEquals(other.position))
             return true;
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + this.clazz.get().getSimpleName() + ", " + this.level + ", " + this.direction + ", " + this.game
+                + ", " + this.position + "}";
     }
 
 }
