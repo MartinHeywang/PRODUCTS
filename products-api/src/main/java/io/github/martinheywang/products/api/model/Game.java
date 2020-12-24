@@ -16,15 +16,14 @@
 package io.github.martinheywang.products.api.model;
 
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import io.github.martinheywang.products.api.database.persisters.StringPropertyPersister;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
@@ -72,9 +71,10 @@ public class Game {
     private SimpleDateTimeProperty lastSave;
     @DatabaseField
     private SimpleBigIntegerProperty money;
-    // XXX test if 'eager = true' changes anything
+
     @ForeignCollectionField
     private Collection<DeviceModel> models;
+
     @DatabaseField
     private IntegerProperty gridSize;
     @DatabaseField
@@ -91,12 +91,11 @@ public class Game {
     }
 
     /**
-     * Creates a new <i>game</i>. Saves it directly in the database.
+     * Creates a new <i>game</i>.
      * 
      * @param name the name of the new game
-     * @throws SQLException if this object can't be registered in the database
      */
-    public Game(String name) throws SQLException {
+    public Game(String name) {
         this.name = new SimpleStringProperty(name);
         this.gridSize = new SimpleIntegerProperty(3);
         this.money = new SimpleBigIntegerProperty(new BigInteger("1250"));
@@ -104,6 +103,7 @@ public class Game {
         this.delay = new SimpleIntegerProperty(1000);
         this.maxIndependent = new SimpleIntegerProperty(4);
         this.lastSave = new SimpleDateTimeProperty(LocalDateTime.now());
+        this.models = new ArrayList<>();
     }
 
     /**
@@ -232,6 +232,10 @@ public class Game {
      */
     public BigInteger getMoney() {
         return money.get();
+    }
+
+    public Collection<DeviceModel> getModels(){
+        return models;
     }
 
     /**

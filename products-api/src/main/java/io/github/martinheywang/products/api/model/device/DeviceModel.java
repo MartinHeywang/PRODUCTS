@@ -15,11 +15,11 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.field.types.SerializableType;
 import com.j256.ormlite.table.DatabaseTable;
 
 import io.github.martinheywang.products.api.model.Coordinate;
@@ -64,7 +64,7 @@ public class DeviceModel {
     @DatabaseField(generatedId = true)
     private Long id;
 
-    @DatabaseField(columnName = "class", persisterClass = SerializableType.class)
+    @DatabaseField(columnName = "class")
     private SimpleClassProperty clazz;
 
     @DatabaseField
@@ -76,8 +76,7 @@ public class DeviceModel {
     private Game game;
     @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoCreate = true, foreignAutoRefresh = true, uniqueCombo = true)
     private Coordinate position;
-
-    // XXX : test if 'eager = true' changes something
+    
     @ForeignCollectionField
     private Collection<Pack> packs;
 
@@ -104,6 +103,7 @@ public class DeviceModel {
         this.direction = new SimpleDirectionProperty(direction);
         this.game = game;
         this.position = position;
+        this.packs = new ArrayList<>();
     }
 
     /**
