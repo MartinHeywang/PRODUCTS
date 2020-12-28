@@ -119,7 +119,7 @@ public abstract class Device implements ExtensionPoint {
 	/**
 	 * Clears the current iteration by replacing it with a new one.
 	 */
-	public void clearIteration() {
+	public final void clearIteration() {
 		this.iteration = new Iteration(this);
 		this.setOverload(false);
 	}
@@ -128,7 +128,7 @@ public abstract class Device implements ExtensionPoint {
 	 * (Re-)Generates the template of the device, based on the device type and the
 	 * rotation.
 	 */
-	public void generateTemplate() {
+	public final void generateTemplate() {
 		final TemplateModel templateModel = StaticDeviceDataRetriever.getDefaultTemplate(this.getClass());
 		this.template = templateModel.create(this.getPosition(), this.getDirection());
 	}
@@ -136,7 +136,7 @@ public abstract class Device implements ExtensionPoint {
 	/**
 	 * @return the template
 	 */
-	public Template getTemplate() {
+	public final Template getTemplate() {
 		return this.template;
 	}
 
@@ -146,37 +146,11 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the action cost
 	 */
-	protected BigInteger getActionCost() {
+	protected final BigInteger getActionCost() {
 		if (this.getClass().isAnnotationPresent(ActionCost.class))
 			return new BigInteger(this.getClass().getAnnotation(ActionCost.class).value());
 
 		return new BigInteger("5");
-	}
-
-	/**
-	 * <p>
-	 * Returns a prices modules that get you the information you need about the
-	 * prices of this device type.
-	 * </p>
-	 * 
-	 * <p>
-	 * <em>Consider using {@link #getUpgradePrice()} and {@link #getDeletePrice()}
-	 * when you want to access the upgrade and delete price of the device.</em>
-	 * </p>
-	 * 
-	 * @return a prices modules
-	 * @deprecated use
-	 *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getPrices(Class)}
-	 *             instead.
-	 */
-	@Deprecated
-	protected PricesModule getPrices() {
-		if (this.getClass().isAnnotationPresent(Prices.class)) {
-			final Prices annotation = this.getClass().getAnnotation(Prices.class);
-			return new PricesModule(annotation.build(), annotation.upgradeTo2(), annotation.upgradeTo3(),
-					annotation.destroyAt1(), annotation.destroyAt2(), annotation.destroyAt3());
-		}
-		return new PricesModule("0", "0", "0", "0", "0", "0");
 	}
 
 	/**
@@ -185,7 +159,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the entries count
 	 */
-	public int getEntriesCount() {
+	public final int getEntriesCount() {
 		return StaticDeviceDataRetriever.getEntriesCount(this.getClass());
 	}
 
@@ -195,7 +169,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the exits count
 	 */
-	public int getExitsCount() {
+	public final int getExitsCount() {
 		return StaticDeviceDataRetriever.getExitsCount(this.getClass());
 	}
 
@@ -211,26 +185,6 @@ public abstract class Device implements ExtensionPoint {
 		// entries count * the level value * two
 		// that's actually pretty wide but it avoids cheated assembly lines.
 		return this.getEntriesCount() * this.getLevel().getValue() * 2;
-	}
-
-	/**
-	 * Shortcut for {@link DeviceModel#getURL()}.
-	 * 
-	 * @return an url as string
-	 * @deprecated see {@link DeviceModel#getURL()} for explanation.
-	 */
-	@Deprecated
-	public String getURL() {
-		return this.model.getURL();
-	}
-
-	/**
-	 * See {@link DeviceModel#getUpgradedURL()}.
-	 * 
-	 * @return an url as string
-	 */
-	public String getUpgradedURL() {
-		return this.model.getUpgradedURL();
 	}
 
 	/**
@@ -279,44 +233,6 @@ public abstract class Device implements ExtensionPoint {
 	 */
 	public boolean isOverload() {
 		return this.overload;
-	}
-
-	/**
-	 * Returns the price (or gain) of deleting this device.
-	 * 
-	 * @return a price as a BigInteger
-	 */
-	public BigInteger getDeletePrice() {
-		final String key = this.getDeletePriceKey();
-		return this.getPrices().getPriceFromKey(key);
-	}
-
-	/**
-	 * Returns the price of upgrading this device.
-	 * 
-	 * @return a price as a BigInteger
-	 */
-	public BigInteger getUpgradePrice() {
-		final String key = this.getUpgradePriceKey();
-		return this.getPrices().getPriceFromKey(key);
-	}
-
-	/**
-	 * Returns the valid delete price key for this device.
-	 * 
-	 * @return a string
-	 */
-	private String getDeletePriceKey() {
-		return this.getLevel().toString().toLowerCase() + "_delete";
-	}
-
-	/**
-	 * Returns the valid upgarde price key for this device.
-	 * 
-	 * @return a string
-	 */
-	private String getUpgradePriceKey() {
-		return this.getLevel().getNext().toString().toLowerCase() + "_build";
 	}
 
 	/**

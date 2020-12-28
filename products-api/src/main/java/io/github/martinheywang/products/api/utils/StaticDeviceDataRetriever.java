@@ -173,7 +173,7 @@ public final class StaticDeviceDataRetriever {
                     + "' is abstract, it should not have an image (and therefore the URL may not be resolved.");
             return null;
         }
-        return clazz.getResource("/device/" + clazz.getSimpleName() + ".svg");
+        return clazz.getResource("/images/device/" + clazz.getSimpleName() + ".svg");
     }
 
     /**

@@ -162,20 +162,6 @@ public class DeviceModel {
     }
 
     /**
-     * Generates and retuns and id that corresponds to this object. P lease note
-     * that this device model must have a persistent game and a persistent
-     * coordinate in order to generate this id. This methods doesn't set the id, you
-     * have to do it manually.
-     * 
-     * @return the generated id
-     * @deprecated id is now generated automatically
-     */
-    @Deprecated
-    public Long generateID() {
-        return this.game.getID() * 10_000 + this.position.getID();
-    }
-
-    /**
      * 
      * @return the type of this Device object.
      */
@@ -217,16 +203,6 @@ public class DeviceModel {
     }
 
     /**
-     * 
-     * @param id the new id
-     * @deprecated id is now generated automatically, it should be set manually
-     */
-    @Deprecated
-    public void setID(Long id) {
-        this.id = id;
-    }
-
-    /**
      * @param clazz the new type
      */
     public void setType(Class<? extends Device> clazz) {
@@ -261,34 +237,6 @@ public class DeviceModel {
      */
     public void setPosition(Coordinate position) {
         this.position = position;
-    }
-
-    /**
-     * @return the system path to the image file corresponding to the view of this
-     *         model.
-     * 
-     * @deprecated use
-     *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getView(Class)}
-     *             (static) instead. Give as argument the result of
-     *             {@link #getType()}.
-     */
-    @Deprecated
-    public String getURL() {
-        final String url = "/images" + this.getLevel().getURL() + this.getType().getSimpleName() + ".svg";
-        return url;
-    }
-
-    /**
-     * @return the url of the device model if it was one level grade higher
-     * @deprecated use
-     *             {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getView(Class)}
-     *             (static) instead. Give as argument the result of
-     *             {@link #getType()}.
-     */
-    @Deprecated
-    public String getUpgradedURL() {
-        final String url = "/images" + this.getLevel().getNext().getURL() + this.getType().getSimpleName() + ".svg";
-        return url;
     }
 
     /**

@@ -107,28 +107,6 @@ public class Game {
     }
 
     /**
-     * Sets the last save to now.
-     * 
-     * @deprecated should be done in the controller, this shouldn't be part of the
-     *             API.
-     */
-    @Deprecated
-    public void updateLastSave() {
-        this.lastSave.set(LocalDateTime.now());
-    }
-
-    /**
-     * Increases the grid size by 1
-     * 
-     * @deprecated should be done by the controller, this shouldn't be part of the
-     *             API.
-     */
-    @Deprecated
-    public void upgradeGrid() {
-        this.gridSize.set(getGridSize() + 1);
-    }
-
-    /**
      * The name of the game is the accessible name. This is the one defined by the
      * user, when creating it. It shows in the user interface.
      * 

@@ -161,7 +161,7 @@ public final class Buyer extends Device {
 		final Carousel carousel = new Carousel();
 		Node selection = null;
 
-		carousel.addNodes(new ResourceView(DefaultResource.NONE));
+		carousel.addNodes(new ResourceView(DefaultResource.NONE)); 
 		for (final Resource resource : buyableResources) {
 			final ResourceView view = new ResourceView(resource);
 			carousel.addNodes(view);
