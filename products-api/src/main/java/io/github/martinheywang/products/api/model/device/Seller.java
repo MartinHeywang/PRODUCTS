@@ -13,16 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
-import java.util.Arrays;
-import java.util.List;
-
- 
+package io.github.martinheywang.products.api.model.device;
 
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
-import io.github.martinheywang.products.api.model.device.Device;
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.device.annotation.Buildable;
@@ -31,12 +25,13 @@ import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
-import javafx.scene.Node;
 
 /**
- * The seller is a {@link io.github.martinheywang.products.api.model.device.Device} that sells all the resource that he received.
+ * The seller is a
+ * {@link io.github.martinheywang.products.api.model.device.Device} that sells
+ * all the resource that he received.
  */
- 
+
 @AccessibleName("Vendeur")
 @Description("Le vendeur vend toutes les ressources qui lui parvient.")
 @Buildable
@@ -46,27 +41,22 @@ import javafx.scene.Node;
 public final class Seller extends Device {
 
     /**
-	 * Creates a new Seller.
-	 * 
-	 * @param model a device model, where the type may be null.
-	 */
+     * Creates a new Seller.
+     * 
+     * @param model a device model, where the type may be null.
+     */
     public Seller(DeviceModel model) {
-	super(model);
+        super(model);
     }
 
     @Override
     public Action act(Pack packs) throws MoneyException {
-	final Action action = new Action(this, packs);
-	action.addCost(
-		packs.getResource().getPrice().multiply(packs.getQuantity()).subtract(this.getActionCost()).negate());
-	action.markAsSuccessful();
+        final Action action = new Action(this, packs);
+        action.addCost(
+                packs.getResource().getPrice().multiply(packs.getQuantity()).subtract(this.getActionCost()).negate());
+        action.markAsSuccessful();
 
-	return action;
-    }
-
-    @Override
-    public List<Node> getWidgets() {
-	return Arrays.asList();
+        return action;
     }
 
 }

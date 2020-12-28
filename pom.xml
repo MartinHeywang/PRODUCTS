@@ -158,17 +158,21 @@
 				<artifactId>ormlite-jdbc</artifactId>
 				<version>5.1</version>
 			</dependency>
-			<!-- Java FX (UI library)-->
+			<!-- Java FX -->
 			<dependency>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-fxml</artifactId>
 				<version>16-ea+2</version>
 			</dependency>
+			<!-- Java FX does not provide only view components, but also 
+				observable properties that are useful even in an API. 
+				Those are located in the javafx-base artifact. -->
 			<dependency>
 				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-controls</artifactId>
+				<artifactId>javafx-base</artifactId>
 				<version>16-ea+2</version>
 			</dependency>
+			<!-- Web is mainly use to display svg icons -->
 			<dependency>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-web</artifactId>
@@ -193,23 +197,7 @@
 				<version>3.13.2</version>
 				<scope>test</scope>
 			</dependency>
-
-			<!-- The modules depends on each other -->
-			<dependency>
-				<groupId>io.github.martinheywang</groupId>
-				<artifactId>products-resource-kit</artifactId>
-				<version>2.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>io.github.martinheywang</groupId>
-				<artifactId>products-device-kit</artifactId>
-				<version>2.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>io.github.martinheywang</groupId>
-				<artifactId>products-view-kit</artifactId>
-				<version>2.0-SNAPSHOT</version>
-			</dependency>
+			
 			<dependency>
 				<groupId>io.github.martinheywang</groupId>
 				<artifactId>products-api</artifactId>
@@ -258,7 +246,6 @@
 
 	<modules>
 		<module>products-api</module>
-		<module>products-view-kit</module>
 		<module>products-app</module>
 	</modules>
 </project>

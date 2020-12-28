@@ -68,8 +68,6 @@ public class DeviceModel {
     private SimpleClassProperty clazz;
 
     @DatabaseField
-    private SimpleLevelProperty level;
-    @DatabaseField
     private SimpleDirectionProperty direction;
 
     @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoRefresh = true, uniqueCombo = true)
@@ -79,6 +77,8 @@ public class DeviceModel {
     
     @ForeignCollectionField
     private Collection<Pack> packs;
+
+    // TODO somehow add the research thing
 
     /**
      * Creates an empty device model.

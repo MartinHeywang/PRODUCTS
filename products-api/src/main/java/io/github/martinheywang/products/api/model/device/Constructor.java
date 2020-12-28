@@ -13,23 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
-
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.j256.ormlite.dao.Dao;
+package io.github.martinheywang.products.api.model.device;
 
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.Recipe;
 import io.github.martinheywang.products.api.model.action.Action;
-import io.github.martinheywang.products.api.model.device.Device;
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.device.annotation.Buildable;
@@ -37,19 +27,19 @@ import io.github.martinheywang.products.api.model.device.annotation.DefaultTempl
 import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.api.utils.PackUtils;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
-import io.github.martinheywang.products.kit.resource.DefaultResource;
-import io.github.martinheywang.products.kit.view.component.Carousel;
-import io.github.martinheywang.products.kit.view.component.RecipeView;
-import io.github.martinheywang.products.kit.view.component.ResourceView;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.j256.ormlite.dao.Dao;
 
 /**
  * <p>
@@ -191,38 +181,6 @@ public final class Constructor extends Device {
 				return false;
 			}
 		return true;
-	}
-
-	@Override
-	public List<Node> getWidgets() {
-		final Carousel carousel = new Carousel();
-		final RecipeView recipeView = new RecipeView(this.product.getResource());
-
-		Node selection = null;
-
-		carousel.addNodes(new ResourceView(DefaultResource.NONE));
-		for (final Resource resource : acceptedResources) {
-			final ResourceView view = new ResourceView(resource);
-			carousel.addNodes(view);
-
-			if (this.product.getResource() == resource)
-				selection = view;
-		}
-		carousel.setSelection(selection);
-
-		carousel.setOnSelectionChanged(event -> {
-			final Resource resource = ((ResourceView) event.getNewSelection()).getResource();
-			this.setProduct(resource);
-			recipeView.setDisplayedResource(resource);
-		});
-
-		final VBox node = new VBox();
-		final Label label = new Label("Choissisez une ressource à produire:");
-		label.setFont(new Font(10d));
-
-		node.getChildren().addAll(label, carousel, recipeView);
-
-		return Arrays.asList(node);
 	}
 
 	@Override

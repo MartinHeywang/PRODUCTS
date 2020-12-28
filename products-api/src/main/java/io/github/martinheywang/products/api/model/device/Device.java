@@ -16,8 +16,6 @@
 package io.github.martinheywang.products.api.model.device;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 
 import org.pf4j.ExtensionPoint;
 
@@ -27,19 +25,18 @@ import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
 import io.github.martinheywang.products.api.model.action.Iteration;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
-import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
-import io.github.martinheywang.products.api.model.level.Level;
 import io.github.martinheywang.products.api.model.template.Template;
 import io.github.martinheywang.products.api.model.template.TemplateModel;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
-import javafx.scene.Node;
 
 /**
  * @author Martin Heywang
  */
 public abstract class Device implements ExtensionPoint {
+
+	// TODO verify fields
 	/**
 	 * The model is the part of the device that persists in the database.
 	 * 
@@ -60,11 +57,6 @@ public abstract class Device implements ExtensionPoint {
 	 * current iteration. A new instance of it is created each iteration.
 	 */
 	protected Iteration iteration = new Iteration(this);
-
-	/**
-	 * Whether this device is overload or not.
-	 */
-	protected boolean overload = false;
 
 	/**
 	 * Creates a new Device.
@@ -99,16 +91,6 @@ public abstract class Device implements ExtensionPoint {
 	public abstract Action act(Pack resources) throws MoneyException;
 
 	/**
-	 * Returns the list of widgets of this device. A widget is a component displayed
-	 * in the device menu.
-	 * 
-	 * @return a list of {@link javafx.scene.Node}, considered as widgets.
-	 */
-	public List<Node> getWidgets() {
-		return Arrays.asList();
-	}
-
-	/**
 	 * This inheritable method does not nothing by default. You don't need everytime
 	 * to inherit it. But in case your device uses packs, in this method you should
 	 * save these packs to make sure they are stored in the database.
@@ -121,7 +103,6 @@ public abstract class Device implements ExtensionPoint {
 	 */
 	public final void clearIteration() {
 		this.iteration = new Iteration(this);
-		this.setOverload(false);
 	}
 
 	/**
@@ -174,33 +155,11 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * Returns how many times this device might act in a single iteration.
-	 * 
-	 * @return the max act count.
-	 */
-	public int getMaxActCount() {
-		if (this.getEntriesCount() == 0)
-			return this.getLevel().getValue();
-
-		// entries count * the level value * two
-		// that's actually pretty wide but it avoids cheated assembly lines.
-		return this.getEntriesCount() * this.getLevel().getValue() * 2;
-	}
-
-	/**
 	 * 
 	 * @return the model (persistent data)
 	 */
 	public DeviceModel getModel() {
 		return this.model;
-	}
-
-	/**
-	 * 
-	 * @return the level of this Device object.
-	 */
-	public Level getLevel() {
-		return this.model.getLevel();
 	}
 
 	/**
@@ -228,26 +187,11 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * 
-	 * @return whether this device is overload.
-	 */
-	public boolean isOverload() {
-		return this.overload;
-	}
-
-	/**
 	 * Returns the current IterationReport.
 	 * 
 	 * @return the current report.
 	 */
 	public Iteration getCurrentIteration() {
 		return this.iteration;
-	}
-
-	/**
-	 * @param value the new value
-	 */
-	public void setOverload(boolean value) {
-		this.overload = value;
 	}
 }

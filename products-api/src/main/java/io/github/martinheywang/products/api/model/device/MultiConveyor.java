@@ -13,21 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
+package io.github.martinheywang.products.api.model.device;
 
-import java.util.Arrays;
-import java.util.List;
-
- 
-
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate;
 import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
-import javafx.scene.Node;
 
 /**
  * The multi-conveyor is a particular
@@ -51,11 +44,6 @@ public class MultiConveyor extends Conveyor {
      */
     public MultiConveyor(DeviceModel model) {
         super(model);
-    }
-
-    @Override
-    public List<Node> getWidgets() {
-        return Arrays.asList();
     }
 
 }

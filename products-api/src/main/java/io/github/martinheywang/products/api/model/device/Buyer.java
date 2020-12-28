@@ -13,22 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
-
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.j256.ormlite.dao.Dao;
+package io.github.martinheywang.products.api.model.device;
 
 import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
-import io.github.martinheywang.products.api.model.device.Device;
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.device.annotation.Buildable;
@@ -37,17 +27,18 @@ import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Independent;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
-import io.github.martinheywang.products.kit.resource.DefaultResource;
-import io.github.martinheywang.products.kit.view.component.Carousel;
-import io.github.martinheywang.products.kit.view.component.ResourceView;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.j256.ormlite.dao.Dao;
 
 /**
  * <p>
@@ -60,8 +51,6 @@ import javafx.scene.text.Font;
  * property "buyable" and the value "true". The cost of it is defined at 10 for
  * the moment.
  * </p>
- * 
- * @author Martin Heywang
  */
 @Buildable
 @Independent
@@ -154,35 +143,6 @@ public final class Buyer extends Device {
 		action.setOutput(output);
 		action.markAsSuccessful();
 		return action;
-	}
-
-	@Override
-	public List<Node> getWidgets() {
-		final Carousel carousel = new Carousel();
-		Node selection = null;
-
-		carousel.addNodes(new ResourceView(DefaultResource.NONE)); 
-		for (final Resource resource : buyableResources) {
-			final ResourceView view = new ResourceView(resource);
-			carousel.addNodes(view);
-
-			if (this.distributedResource.getResource() == resource)
-				selection = view;
-		}
-		carousel.setSelection(selection);
-
-		carousel.setOnSelectionChanged(event -> {
-			final Resource resource = ((ResourceView) event.getNewSelection()).getResource();
-			this.setDistributedResource(resource);
-		});
-
-		final VBox box = new VBox();
-		box.setSpacing(2d);
-		final Label helpLabel = new Label("Changer la ressource distribuée ici à l'aide des flèches:");
-		helpLabel.setFont(new Font(11d));
-		box.getChildren().addAll(helpLabel, carousel);
-
-		return Arrays.asList(box);
 	}
 
 	@Override

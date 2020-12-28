@@ -13,16 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
-
-import java.util.Arrays;
-import java.util.List;
+package io.github.martinheywang.products.api.model.device;
 
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
-import io.github.martinheywang.products.api.model.device.Device;
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.device.annotation.Buildable;
@@ -30,13 +25,12 @@ import io.github.martinheywang.products.api.model.device.annotation.DefaultTempl
 import io.github.martinheywang.products.api.model.device.annotation.Description;
 import io.github.martinheywang.products.api.model.device.annotation.Prices;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack;
 import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
-import io.github.martinheywang.products.kit.resource.DefaultResource;
-import javafx.scene.Node;
 
 /**
  * <p>
@@ -92,10 +86,5 @@ public class Press extends Device {
 		}
 
 		return action;
-	}
-
-	@Override
-	public final List<Node> getWidgets() {
-		return Arrays.asList();
 	}
 }

@@ -13,11 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.device;
+package io.github.martinheywang.products.api.model.device;
 
- 
-
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.device.annotation.AccessibleName;
 import io.github.martinheywang.products.api.model.device.annotation.DefaultTemplate;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;

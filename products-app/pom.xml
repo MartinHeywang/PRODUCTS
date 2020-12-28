@@ -38,18 +38,6 @@
             <groupId>io.github.martinheywang</groupId>
             <artifactId>products-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.martinheywang</groupId>
-            <artifactId>products-resource-kit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.martinheywang</groupId>
-            <artifactId>products-device-kit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.martinheywang</groupId>
-            <artifactId>products-view-kit</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
