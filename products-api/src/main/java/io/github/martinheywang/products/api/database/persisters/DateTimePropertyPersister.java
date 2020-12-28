@@ -28,7 +28,7 @@ import io.github.martinheywang.products.api.model.properties.SimpleDateTimePrope
 /**
  * Singleton class that allows ORMLite to persist simple big integer properties.
  */
-public class DateTimePropertyPersister extends BaseDataType {
+public final class DateTimePropertyPersister extends BaseDataType {
 
     private static final DateTimePropertyPersister instance = new DateTimePropertyPersister();
 

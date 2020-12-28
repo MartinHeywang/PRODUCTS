@@ -36,7 +36,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * </p>
  */
 @DatabaseTable
-public class Coordinate implements Serializable {
+public final class Coordinate implements Serializable {
 
     /**
      *

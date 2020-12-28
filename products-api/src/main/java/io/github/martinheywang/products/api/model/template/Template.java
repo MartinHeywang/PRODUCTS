@@ -28,7 +28,7 @@ import io.github.martinheywang.products.api.utils.LocatedHashMap;
  * 
  * @author Martin HEYWANG
  */
-public class Template {
+public final class Template {
 
     /**
      * A PointerType is an indication in a {@link Template} that defines what type of connection may exist between the template owner and the other devices.

@@ -35,7 +35,7 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
 @Prices(build = "300", upgradeTo2 = "7000", upgradeTo3 = "150000", destroyAt1 = "300", destroyAt2 = "7000", destroyAt3 = "150000")
 @DefaultTemplate(top = PointerType.ENTRY, right = PointerType.ENTRY, left = PointerType.ENTRY, bottom = PointerType.EXIT)
 @ActionCost("7")
-public class MultiConveyor extends Conveyor {
+public final class MultiConveyor extends Conveyor {
 
     /**
      * Creates a new MultiConveyor.

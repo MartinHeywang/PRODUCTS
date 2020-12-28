@@ -25,7 +25,7 @@ import com.j256.ormlite.support.DatabaseResults;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class IntegerPropertyPersister extends BaseDataType {
+public final class IntegerPropertyPersister extends BaseDataType {
 
     private static final IntegerPropertyPersister instance = new IntegerPropertyPersister();
 

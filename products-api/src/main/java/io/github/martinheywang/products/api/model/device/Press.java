@@ -51,7 +51,7 @@ import io.github.martinheywang.products.api.utils.ResourceUtils;
 @DefaultTemplate(top = PointerType.ENTRY, bottom = PointerType.EXIT)
 @Buildable
 @ActionCost("20")
-public class Press extends Device {
+public final class Press extends Device {
 
 	/**
 	 * Creates a new Press.

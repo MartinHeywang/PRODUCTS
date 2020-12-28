@@ -9,7 +9,7 @@ import java.util.List;
  * 
  * @author Martin Heywang
  */
-public class MenuType {
+public final class MenuType {
 
     private static final HashMap<String, MenuType> instances = new HashMap<>();
 

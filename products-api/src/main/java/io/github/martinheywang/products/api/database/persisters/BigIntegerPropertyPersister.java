@@ -28,7 +28,7 @@ import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerPro
 /**
  * Singleton class that allows ORMLite to persist simple big integer properties.
  */
-public class BigIntegerPropertyPersister extends BaseDataType {
+public final class BigIntegerPropertyPersister extends BaseDataType {
 
     private static final BigIntegerPropertyPersister instance = new BigIntegerPropertyPersister();
 

@@ -25,7 +25,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * 
  * @author Martin Heywang
  */
-public class SimpleDirectionProperty extends SimpleObjectProperty<Direction> {
+public final class SimpleDirectionProperty extends SimpleObjectProperty<Direction> {
 
     public SimpleDirectionProperty(Direction direction) {
         super(direction);

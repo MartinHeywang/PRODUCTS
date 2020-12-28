@@ -59,7 +59,7 @@ import io.github.martinheywang.products.api.model.properties.SimpleLevelProperty
  * @author Heywang
  */
 @DatabaseTable
-public class DeviceModel {
+public final class DeviceModel {
 
     @DatabaseField(generatedId = true)
     private Long id;

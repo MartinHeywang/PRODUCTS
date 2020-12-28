@@ -28,7 +28,7 @@ import javafx.beans.property.StringProperty;
 /**
  * Singleton class that allows ORMLite to persist simple big integer properties.
  */
-public class StringPropertyPersister extends BaseDataType {
+public final class StringPropertyPersister extends BaseDataType {
 
     private static final StringPropertyPersister instance = new StringPropertyPersister();
 

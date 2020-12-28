@@ -26,7 +26,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * 
  * @author Martin Heywang
  */
-public class SimpleDateTimeProperty extends SimpleObjectProperty<LocalDateTime> {
+public final class SimpleDateTimeProperty extends SimpleObjectProperty<LocalDateTime> {
     
     /**
      * Creates a new {@link SimpleDateTimeProperty} using the value of {@link LocalDateTime#MIN}.

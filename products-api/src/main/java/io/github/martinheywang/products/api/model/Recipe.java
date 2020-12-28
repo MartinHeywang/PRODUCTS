@@ -27,7 +27,7 @@ import io.github.martinheywang.products.api.model.resource.Resource;
  * {@link io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup}
  * targeting "recipe". The value of the annotation will be used as the recipe.
  */
-public class Recipe {
+public final class Recipe {
 
 	/**
 	 * The packs of the recipe;

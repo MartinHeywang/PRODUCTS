@@ -44,7 +44,7 @@ import io.github.martinheywang.products.api.utils.ResourceUtils;
 @DefaultTemplate(top = PointerType.ENTRY, bottom = PointerType.EXIT)
 @Buildable
 @ActionCost("20")
-public class WireDrawer extends Device {
+public final class WireDrawer extends Device {
 
 	/**
 	 * Creates a new WireDrawer.

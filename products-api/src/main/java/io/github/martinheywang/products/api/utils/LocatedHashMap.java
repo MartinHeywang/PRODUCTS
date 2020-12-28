@@ -31,7 +31,7 @@ import java.util.Set;
  * @param <K> the type of the keys.
  * @param <V> the type of the values
  */
-public class LocatedHashMap<K, V> {
+public final class LocatedHashMap<K, V> {
 	/*
 	 * The map with the type parameters
 	 */

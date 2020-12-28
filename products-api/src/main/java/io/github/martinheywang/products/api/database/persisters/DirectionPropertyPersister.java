@@ -28,7 +28,7 @@ import io.github.martinheywang.products.api.model.properties.SimpleDirectionProp
 /**
  * Singleton class that allows ORMLite to persist simple big integer properties.
  */
-public class DirectionPropertyPersister extends BaseDataType {
+public final class DirectionPropertyPersister extends BaseDataType {
 
     private static final DirectionPropertyPersister instance = new DirectionPropertyPersister();
 

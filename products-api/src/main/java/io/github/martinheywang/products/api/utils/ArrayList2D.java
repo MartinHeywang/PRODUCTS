@@ -39,7 +39,7 @@ import java.util.Collection;
  *
  * @param <T> the type of objects stored by this object
  */
-public class ArrayList2D<T> {
+public final class ArrayList2D<T> {
 
     /**
      * The grid handled by this class

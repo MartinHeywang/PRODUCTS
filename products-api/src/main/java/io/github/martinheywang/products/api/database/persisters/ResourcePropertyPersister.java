@@ -29,7 +29,7 @@ import io.github.martinheywang.products.api.model.resource.ResourceManager;
 /**
  * Singleton class that allows ORMLite to persist resources.
  */
-public class ResourcePropertyPersister extends BaseDataType {
+public final class ResourcePropertyPersister extends BaseDataType {
 
     private static final ResourcePropertyPersister instance = new ResourcePropertyPersister();
 

@@ -18,7 +18,7 @@ package io.github.martinheywang.products.api.model.properties;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import javafx.beans.property.SimpleObjectProperty;
 
-public class SimpleResourceProperty extends SimpleObjectProperty<Resource> {
+public final class SimpleResourceProperty extends SimpleObjectProperty<Resource> {
     
     public SimpleResourceProperty(Resource resource) {
         super(resource);

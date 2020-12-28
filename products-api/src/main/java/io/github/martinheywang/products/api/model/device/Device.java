@@ -158,7 +158,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the model (persistent data)
 	 */
-	public DeviceModel getModel() {
+	public final DeviceModel getModel() {
 		return this.model;
 	}
 
@@ -166,7 +166,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the game of this Device object.
 	 */
-	public Game getGame() {
+	public final Game getGame() {
 		return this.model.getGame();
 	}
 
@@ -174,7 +174,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the direction of this Device object.
 	 */
-	public Direction getDirection() {
+	public final Direction getDirection() {
 		return this.model.getDirection();
 	}
 
@@ -182,7 +182,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the position of this Device object.
 	 */
-	public Coordinate getPosition() {
+	public final Coordinate getPosition() {
 		return this.model.getPosition();
 	}
 
@@ -191,7 +191,7 @@ public abstract class Device implements ExtensionPoint {
 	 * 
 	 * @return the current report.
 	 */
-	public Iteration getCurrentIteration() {
+	public final Iteration getCurrentIteration() {
 		return this.iteration;
 	}
 }

@@ -38,7 +38,7 @@ import io.github.martinheywang.products.api.model.template.Template.PointerType;
  * annotation on top of a Device subclass.
  * </p>
  */
-public class TemplateModel {
+public final class TemplateModel {
 
     private final PointerType[] pointers;
 

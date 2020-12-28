@@ -61,7 +61,7 @@ import javafx.beans.property.StringProperty;
  * @author Martin Heywang
  */
 @DatabaseTable(tableName = "game")
-public class Game {
+public final class Game {
 
     @DatabaseField(columnName = "id", generatedId = true)
     private Long id;

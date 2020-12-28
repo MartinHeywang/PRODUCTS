@@ -24,7 +24,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * 
  * @author Martin Heywang
  */
-public class SimpleClassProperty extends SimpleObjectProperty<Class<?>> {
+public final class SimpleClassProperty extends SimpleObjectProperty<Class<?>> {
 
     public SimpleClassProperty(Class<?> clazz) {
         super(clazz);

@@ -8,7 +8,7 @@ import java.util.List;
  * The ResourceManager class manages all the resources currently available in
  * the game. It stores all the registered references.
  */
-public class ResourceManager {
+public final class ResourceManager {
 
     /**
      * All the resources in the game.

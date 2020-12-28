@@ -23,7 +23,7 @@ import java.text.MessageFormat;
  * the program wants the money amount. If it goes under 0 or any defined value
  * in the program, this exception occurs.
  */
-public class MoneyException extends Exception {
+public final class MoneyException extends Exception {
 
     /**
      * 

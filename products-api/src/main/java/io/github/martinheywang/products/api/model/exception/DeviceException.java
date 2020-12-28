@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 import io.github.martinheywang.products.api.model.device.Device;
 
-public class DeviceException extends Exception{
+public final class DeviceException extends Exception{
 
 	/**
 	 *

@@ -41,7 +41,7 @@ import java.util.HashMap;
  * 
  * @author Heywang
  */
-public class PricesModule {
+public final class PricesModule {
 
 	/**
 	 * The main list of data
