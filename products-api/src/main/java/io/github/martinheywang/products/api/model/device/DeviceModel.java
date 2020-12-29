@@ -15,21 +15,19 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
+import io.github.martinheywang.products.api.model.Coordinate;
+import io.github.martinheywang.products.api.model.Game;
+import io.github.martinheywang.products.api.model.Pack;
+import io.github.martinheywang.products.api.model.direction.Direction;
+import io.github.martinheywang.products.api.model.properties.SimpleClassProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleDirectionProperty;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import io.github.martinheywang.products.api.model.Coordinate;
-import io.github.martinheywang.products.api.model.Game;
-import io.github.martinheywang.products.api.model.Pack;
-import io.github.martinheywang.products.api.model.direction.Direction;
-import io.github.martinheywang.products.api.model.level.Level;
-import io.github.martinheywang.products.api.model.properties.SimpleClassProperty;
-import io.github.martinheywang.products.api.model.properties.SimpleDirectionProperty;
-import io.github.martinheywang.products.api.model.properties.SimpleLevelProperty;
 
 /**
  * <p>
@@ -95,11 +93,10 @@ public final class DeviceModel {
      * @param game      the game
      * @param position  the position
      */
-    public DeviceModel(Class<? extends Device> clazz, Level level, Direction direction, Game game,
+    public DeviceModel(Class<? extends Device> clazz, Direction direction, Game game,
             Coordinate position) {
 
         this.clazz = new SimpleClassProperty(clazz);
-        this.level = new SimpleLevelProperty(level);
         this.direction = new SimpleDirectionProperty(direction);
         this.game = game;
         this.position = position;
@@ -133,16 +130,6 @@ public final class DeviceModel {
      */
     public SimpleClassProperty classProperty() {
         return clazz;
-    }
-
-    /**
-     * The level of the device (model) affects its efficiency. More the level is
-     * high, more the device is efficient.
-     * 
-     * @return the level property
-     */
-    public SimpleLevelProperty levelProperty() {
-        return level;
     }
 
     /**
@@ -180,14 +167,6 @@ public final class DeviceModel {
 
     /**
      * 
-     * @return the level of this Device object.
-     */
-    public Level getLevel() {
-        return this.level.get();
-    }
-
-    /**
-     * 
      * @return the position of this Device object.
      */
     public Coordinate getPosition() {
@@ -217,13 +196,6 @@ public final class DeviceModel {
     }
 
     /**
-     * @param newLevel the new level
-     */
-    public void setLevel(Level level) {
-        this.level.set(level);
-    }
-
-    /**
      * 
      * @param game the new game
      */
@@ -247,16 +219,10 @@ public final class DeviceModel {
      * @return true if the properties of the compared models are the same
      */
     public boolean propertiesEquals(DeviceModel other) {
-        if (this.clazz == other.clazz && this.direction == other.direction && this.level == other.level
+        if (this.clazz == other.clazz && this.direction == other.direction
                 && this.game == other.game && this.position.propertiesEquals(other.position))
             return true;
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + this.clazz.get().getSimpleName() + ", " + this.level + ", " + this.direction + ", " + this.game
-                + ", " + this.position + "}";
     }
 
 }
