@@ -20,6 +20,14 @@ import java.io.Serializable;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
 /**
  * <p>
  * A Coordinate is a location / position of a certain device on the grid. It
@@ -60,13 +68,13 @@ public final class Coordinate implements Serializable {
      * X Value of the coordinate.
      */
     @DatabaseField(uniqueCombo = true)
-    private int x;
+    private IntegerProperty x;
 
     /**
      * Y value of the coordinate.
      */
     @DatabaseField(uniqueCombo = true)
-    private int y;
+    private IntegerProperty y;
 
     /**
      * Creates an empty coordinate.
@@ -81,8 +89,8 @@ public final class Coordinate implements Serializable {
      * @param y y coordinate of the object
      */
     public Coordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x = new SimpleIntegerProperty(x);
+        this.y = new SimpleIntegerProperty(y);
     }
 
     /**
@@ -96,17 +104,31 @@ public final class Coordinate implements Serializable {
     }
 
     /**
-     * @return the x value of thsi coordinate.
+     * @return the x property
+     */
+    public ReadOnlyIntegerProperty xProperty() {
+        return x;
+    }
+
+    /**
+     * @return the y property
+     */
+    public ReadOnlyIntegerProperty yProperty() {
+        return y;
+    }
+
+    /**
+     * @return the x value of this coordinate.
      */
     public int getX() {
-        return this.x;
+        return x.get();
     }
 
     /**
      * @return the y value of this coordinate.
      */
     public int getY() {
-        return this.y;
+        return y.get();
     }
 
     /**
@@ -122,7 +144,7 @@ public final class Coordinate implements Serializable {
      * <code>
      * // The below examples assumes that gridSize = 3
      * 
-     * new Coordinate(0, 0).isInGrid() -> always true, whether the grid size
+     * new Coordinate(0, 0).isInGrid() -> always true, no matter the grid size
      * new Coordinate(-1, -45).isInGrid() -> false
      * new Coordinate(3, 3).isInGrid() -> false (as the 0 count, we subtract automatically one)
      * </code>
@@ -135,85 +157,21 @@ public final class Coordinate implements Serializable {
      *         <li>false if the coordinate isn't in grid
      *         </ul>
      */
-    public boolean isInGrid() {
-        if (this.x < 0 || this.y < 0 || this.x > gridSize - 1 || this.y > gridSize - 1) {
-            return false;
-        }
-        return true;
+    public BooleanBinding isInGrid() {
+        final BooleanProperty prop = new SimpleBooleanProperty(true);
+        return prop.and(x.greaterThan(0)).and(y.greaterThan(0)).and(x.lessThan(gridSize)).and(y.lessThan(gridSize));
     }
 
     /**
-     * Checks if this coordinate *is near from* the other coordinate. Means that
-     * either the x or the y value, is a neighbor number (3 and 5 are neighbors of
-     * 4) of the other. Fore more clarity, see the examples below.
-     * 
-     * <pre>
-     * <code>
-     * new Coordinate(0, 0).isNearFrom(new Coordinate(0, 1)) -> true
-     * new Coordinate(0, 2).isNearFrom(new Coordinate(2, 0)) -> false
-     * </code>
-     * </pre>
-     * 
-     * @return
-     *         <ul>
-     *         <li>true if the coordinate is near from the other
-     *         <li>false if the coordinate isn't near from the other
-     *         </ul>
-     * @param coordinates a coordinate object to compare
-     */
-    public boolean isNearFrom(Coordinate coordinates) {
-        if (this.x == coordinates.getX() + 1 || this.x == coordinates.getX() - 1) {
-            return true;
-        }
-        if (this.y == coordinates.getY() + 1 || this.x == coordinates.getY() - 1) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the x and y values are the same between the two coordinates.
-     * Returns true as long as the x and y values are the same in both coordinates.
-     * The two objects may not be exactly the same one.
+     * Returns a boolean binding that checks if the coordinates has the same x and y
+     * values. If the x of one coord changes, then the value may have changed.
      * 
      * @param coordinates the other to coordinate to compare with
      * @return whether the x and y values are the same in both coordinates.
      */
-    public boolean propertiesEquals(Coordinate coordinates) {
-        return this.x == coordinates.getX() && this.y == coordinates.getY() ? true : false;
-    }
-
-    /**
-     * 
-     * @param id the new id
-     */
-    public void setid(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * 
-     * @param x the new x value
-     */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * 
-     * @param y the new y value
-     */
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    /**
-     * Returns a displayable version of thhis coordinate. <code>{X: 0, Y: 0}</code>
-     * is an example.
-     */
-    @Override
-    public String toString() {
-        return "{X: " + this.x + ", Y: " + this.y + "}";
+    public BooleanBinding propertiesEquals(Coordinate coord) {
+        final BooleanBinding bind = Bindings.and(x.isEqualTo(coord.xProperty()), y.isEqualTo(coord.yProperty()));
+        return bind;
     }
 
     /**

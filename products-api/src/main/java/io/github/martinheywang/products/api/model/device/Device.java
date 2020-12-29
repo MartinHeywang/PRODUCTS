@@ -15,48 +15,51 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
-import java.math.BigInteger;
-
-import org.pf4j.ExtensionPoint;
-
 import io.github.martinheywang.products.api.model.Coordinate;
-import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
-import io.github.martinheywang.products.api.model.action.Iteration;
-import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
+import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.template.Template;
 import io.github.martinheywang.products.api.model.template.TemplateModel;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
 
+import org.pf4j.ExtensionPoint;
+
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+
 /**
- * @author Martin Heywang
+ * Base class for all devices. A Device is an unit (represented as a square in
+ * the game) that deals with {@link Resource resources}. These enters the device
+ * with a certain entry and leaves the device after some sort of transformation
+ * using another side of the device. The {@link Template} is the data structures
+ * that manages where resources can either enter or leave. Any device generates
+ * an {@link Action} when its triggered : it allows to get a trace of what the
+ * device do.
  */
 public abstract class Device implements ExtensionPoint {
 
-	// TODO verify fields
 	/**
 	 * The model is the part of the device that persists in the database.
-	 * 
-	 * @see DeviceModel
 	 */
-	protected final DeviceModel model;
+	protected final ObjectProperty<DeviceModel> model;
 
 	/**
 	 * The template defines all the entries and exits of the device.
-	 * 
-	 * 
-	 * @see io.github.martinheywang.products.api.model.template.Template
 	 */
-	protected Template template;
+	protected final ObjectProperty<Template> template;
 
 	/**
-	 * The IterationReport contains a lot of information about what happens in the
-	 * current iteration. A new instance of it is created each iteration.
+	 * All the actions done by this Device object.
 	 */
-	protected Iteration iteration = new Iteration(this);
+	protected final ListProperty<Action> actions;
 
 	/**
 	 * Creates a new Device.
@@ -64,8 +67,11 @@ public abstract class Device implements ExtensionPoint {
 	 * @param model the model to build this device.
 	 */
 	public Device(DeviceModel model) {
-		this.model = model;
-		this.model.setType(this.getClass());
+		this.model = new SimpleObjectProperty<>(model);
+		this.model.get().setType(this.getClass());
+
+		this.template = new SimpleObjectProperty<>();
+		this.actions = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 		this.generateTemplate();
 	}
@@ -99,99 +105,71 @@ public abstract class Device implements ExtensionPoint {
 	}
 
 	/**
-	 * Clears the current iteration by replacing it with a new one.
-	 */
-	public final void clearIteration() {
-		this.iteration = new Iteration(this);
-	}
-
-	/**
 	 * (Re-)Generates the template of the device, based on the device type and the
 	 * rotation.
 	 */
 	public final void generateTemplate() {
 		final TemplateModel templateModel = StaticDeviceDataRetriever.getDefaultTemplate(this.getClass());
-		this.template = templateModel.create(this.getPosition(), this.getDirection());
+		this.template.set(templateModel.create(this.getPosition(), this.getDirection()));
+	}
+
+	/**
+	 * The model is the part of the device that is persistant.
+	 * 
+	 * @return the model property
+	 */
+	public ReadOnlyObjectProperty<DeviceModel> modelProperty() {
+		return model;
+	}
+
+	/**
+	 * The template indicates where resources can enter and leave the device after
+	 * treatment.
+	 * 
+	 * @return the template property
+	 */
+	public ReadOnlyObjectProperty<Template> templateProperty() {
+		return template;
+	}
+
+	/**
+	 * All the actions done by the device.
+	 * 
+	 * @return the actions
+	 */
+	public ReadOnlyListProperty<Action> actionsProperty() {
+		return actions;
+	}
+
+	/**
+	 * @return the model
+	 * @see #modelProperty()
+	 */
+	public DeviceModel getModel() {
+		return model.get();
+	}
+
+	/**
+	 * @return the position
+	 * @see DeviceModel#getPosition()
+	 */
+	public Coordinate getPosition() {
+		return model.get().getPosition();
+	}
+
+	/**
+	 * @return the direction
+	 * @see DeviceModel#getDirection()
+	 */
+	public Direction getDirection() {
+		return model.get().getDirection();
 	}
 
 	/**
 	 * @return the template
+	 * @see #templateProperty()
 	 */
-	public final Template getTemplate() {
-		return this.template;
-	}
-
-	/**
-	 * Shortcut to
-	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever}.
-	 * 
-	 * @return the action cost
-	 */
-	protected final BigInteger getActionCost() {
-		if (this.getClass().isAnnotationPresent(ActionCost.class))
-			return new BigInteger(this.getClass().getAnnotation(ActionCost.class).value());
-
-		return new BigInteger("5");
-	}
-
-	/**
-	 * Shortcut of
-	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getEntriesCount(Class)}.
-	 * 
-	 * @return the entries count
-	 */
-	public final int getEntriesCount() {
-		return StaticDeviceDataRetriever.getEntriesCount(this.getClass());
-	}
-
-	/**
-	 * Shortcut of
-	 * {@link io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever#getExitsCount(Class)}.
-	 * 
-	 * @return the exits count
-	 */
-	public final int getExitsCount() {
-		return StaticDeviceDataRetriever.getExitsCount(this.getClass());
-	}
-
-	/**
-	 * 
-	 * @return the model (persistent data)
-	 */
-	public final DeviceModel getModel() {
-		return this.model;
-	}
-
-	/**
-	 * 
-	 * @return the game of this Device object.
-	 */
-	public final Game getGame() {
-		return this.model.getGame();
-	}
-
-	/**
-	 * 
-	 * @return the direction of this Device object.
-	 */
-	public final Direction getDirection() {
-		return this.model.getDirection();
-	}
-
-	/**
-	 * 
-	 * @return the position of this Device object.
-	 */
-	public final Coordinate getPosition() {
-		return this.model.getPosition();
-	}
-
-	/**
-	 * Returns the current IterationReport.
-	 * 
-	 * @return the current report.
-	 */
-	public final Iteration getCurrentIteration() {
-		return this.iteration;
+	public Template getTemplate() {
+		return template.get();
 	}
 }
