@@ -1,14 +1,3 @@
-package io.github.martinheywang.products.api.model;
-
-import io.github.martinheywang.products.api.model.device.DeviceModel;
-import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
-import io.github.martinheywang.products.api.model.properties.SimpleResourceProperty;
-import io.github.martinheywang.products.api.model.resource.Resource;
-
-import java.math.BigInteger;
-
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 /*
    Copyright 2020 Martin Heywang
@@ -24,17 +13,19 @@ import com.j256.ormlite.table.DatabaseTable;
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+*/
 package io.github.martinheywang.products.api.model;
-
-import java.math.BigInteger;
-
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleResourceProperty;
 import io.github.martinheywang.products.api.model.resource.Resource;
+import io.github.martinheywang.products.api.persistent.Persistable;
+
+import java.math.BigInteger;
+
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * <p>
@@ -58,7 +49,7 @@ import io.github.martinheywang.products.api.model.resource.Resource;
  * @author Martin Heywang
  */
 @DatabaseTable
-public final class Pack {
+public final class Pack implements Persistable {
 
 	@DatabaseField(columnName = "id", generatedId = true)
 	private Long id;
@@ -104,18 +95,12 @@ public final class Pack {
 		this.model = model;
 	}
 
-	/**
-	 * 
-	 * @return the id
-	 */
+	@Override
 	public Long getID() {
 		return this.id;
 	}
 
-	/**
-	 * 
-	 * @param id the id to set
-	 */
+	@Override
 	public void setID(Long id) {
 		this.id = id;
 	}

@@ -15,6 +15,8 @@
 */
 package io.github.martinheywang.products.api.model;
 
+import io.github.martinheywang.products.api.persistent.Persistable;
+
 import java.io.Serializable;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -44,7 +46,7 @@ import javafx.beans.property.SimpleIntegerProperty;
  * </p>
  */
 @DatabaseTable
-public final class Coordinate implements Serializable {
+public final class Coordinate implements Serializable, Persistable {
 
     /**
      *
@@ -93,14 +95,14 @@ public final class Coordinate implements Serializable {
         this.y = new SimpleIntegerProperty(y);
     }
 
-    /**
-     * Returns the id of this coordinate in the database. May be null if it hasn't
-     * got one.
-     * 
-     * @return id
-     */
+    @Override
     public Long getID() {
         return this.id;
+    }
+
+    @Override
+    public void setID(Long id){
+        this.id = id;
     }
 
     /**

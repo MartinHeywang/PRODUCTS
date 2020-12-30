@@ -15,6 +15,11 @@
 */
 package io.github.martinheywang.products.api.model;
 
+import io.github.martinheywang.products.api.model.device.DeviceModel;
+import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
+import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
+import io.github.martinheywang.products.api.persistent.Persistable;
+
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,9 +29,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import io.github.martinheywang.products.api.model.device.DeviceModel;
-import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
-import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -61,7 +63,7 @@ import javafx.beans.property.StringProperty;
  * @author Martin Heywang
  */
 @DatabaseTable(tableName = "game")
-public final class Game {
+public final class Game implements Persistable {
 
     @DatabaseField(columnName = "id", generatedId = true)
     private Long id;
@@ -175,14 +177,14 @@ public final class Game {
         return maxIndependent;
     }
 
-    /**
-     * Returns the ID of this object. The id may be null if this Game object isn't
-     * persistant.
-     * 
-     * @return the id
-     */
-    public Long getID() {
+    @Override
+    public Long getID(){
         return id;
+    }
+
+    @Override
+    public void setID(Long id){
+        this.id = id;
     }
 
     /**
