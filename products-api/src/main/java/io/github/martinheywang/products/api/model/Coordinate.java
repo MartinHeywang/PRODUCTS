@@ -15,7 +15,7 @@
 */
 package io.github.martinheywang.products.api.model;
 
-import io.github.martinheywang.products.api.persistent.Persistable;
+import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.io.Serializable;
 

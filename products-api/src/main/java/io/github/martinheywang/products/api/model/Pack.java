@@ -20,7 +20,7 @@ import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleResourceProperty;
 import io.github.martinheywang.products.api.model.resource.Resource;
-import io.github.martinheywang.products.api.persistent.Persistable;
+import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.math.BigInteger;
 

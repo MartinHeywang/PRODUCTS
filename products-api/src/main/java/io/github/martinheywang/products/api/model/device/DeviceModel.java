@@ -21,6 +21,7 @@ import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.properties.SimpleClassProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleDirectionProperty;
+import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +58,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Heywang
  */
 @DatabaseTable
-public final class DeviceModel {
+public final class DeviceModel implements Persistable {
 
     @DatabaseField(generatedId = true)
     private Long id;
@@ -72,7 +73,7 @@ public final class DeviceModel {
     private Game game;
     @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoCreate = true, foreignAutoRefresh = true, uniqueCombo = true)
     private Coordinate position;
-    
+
     @ForeignCollectionField
     private Collection<Pack> packs;
 
@@ -93,8 +94,7 @@ public final class DeviceModel {
      * @param game      the game
      * @param position  the position
      */
-    public DeviceModel(Class<? extends Device> clazz, Direction direction, Game game,
-            Coordinate position) {
+    public DeviceModel(Class<? extends Device> clazz, Direction direction, Game game, Coordinate position) {
 
         this.clazz = new SimpleClassProperty(clazz);
         this.direction = new SimpleDirectionProperty(direction);
@@ -141,9 +141,7 @@ public final class DeviceModel {
         return direction;
     }
 
-    /**
-     * @return the id, if it has got one.
-     */
+    @Override
     public Long getID() {
         return this.id;
     }
@@ -195,6 +193,11 @@ public final class DeviceModel {
         this.direction.set(direction);
     }
 
+    @Override
+    public void setID(Long id) {
+        this.id = id;
+    }
+
     /**
      * 
      * @param game the new game
@@ -219,9 +222,11 @@ public final class DeviceModel {
      * @return true if the properties of the compared models are the same
      */
     public boolean propertiesEquals(DeviceModel other) {
-        if (this.clazz == other.clazz && this.direction == other.direction
-                && this.game == other.game && this.position.propertiesEquals(other.position))
+        if (direction.get() == other.direction.get() && game == other.game
+                && position.propertiesEquals(other.position).get()) {
             return true;
+        }
+
         return false;
     }
 

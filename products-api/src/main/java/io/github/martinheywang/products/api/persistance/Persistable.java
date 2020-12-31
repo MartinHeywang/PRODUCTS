@@ -1,4 +1,4 @@
-package io.github.martinheywang.products.api.persistent;
+package io.github.martinheywang.products.api.persistance;
 
 /**
  * The Persistable interface is an interface that defines the implementing

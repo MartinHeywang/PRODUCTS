@@ -18,7 +18,7 @@ package io.github.martinheywang.products.api.model;
 import io.github.martinheywang.products.api.model.device.DeviceModel;
 import io.github.martinheywang.products.api.model.properties.SimpleBigIntegerProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleDateTimeProperty;
-import io.github.martinheywang.products.api.persistent.Persistable;
+import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
