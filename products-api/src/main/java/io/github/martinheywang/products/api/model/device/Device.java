@@ -18,12 +18,15 @@ package io.github.martinheywang.products.api.model.device;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
+import io.github.martinheywang.products.api.model.device.annotation.ActionCost;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.exception.MoneyException;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.template.Template;
 import io.github.martinheywang.products.api.model.template.TemplateModel;
 import io.github.martinheywang.products.api.utils.StaticDeviceDataRetriever;
+
+import java.math.BigInteger;
 
 import org.pf4j.ExtensionPoint;
 
@@ -171,5 +174,13 @@ public abstract class Device implements ExtensionPoint {
 	 */
 	public Template getTemplate() {
 		return template.get();
+	}
+
+	/**
+	 * @return the action cost
+	 * @see ActionCost
+	 */
+	public BigInteger getActionCost() {
+		return StaticDeviceDataRetriever.getActionCost(this.getClass());
 	}
 }

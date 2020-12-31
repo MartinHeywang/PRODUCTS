@@ -158,6 +158,12 @@
 				<artifactId>ormlite-jdbc</artifactId>
 				<version>5.1</version>
 			</dependency>
+			<!-- Google collections-->
+			<dependency>
+				<groupId>com.google.collections</groupId>
+				<artifactId>google-collections</artifactId>
+				<version>1.0</version>
+			</dependency>
 			<!-- Java FX -->
 			<dependency>
 				<groupId>org.openjfx</groupId>

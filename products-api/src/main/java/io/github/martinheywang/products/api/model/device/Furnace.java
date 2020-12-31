@@ -73,7 +73,7 @@ public final class Furnace extends Device {
 			Resource transformed;
 			try {
 				transformed = (Resource) annotation.clazz().getField(annotation.field()).get(null);
-				final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+				final Coordinate output = this.template.get().getPointersFor(PointerType.EXIT).get(0);
 				action.setOutput(output);
 				action.setGivenPack(new Pack(transformed, resources.getQuantity()));
 				action.markAsSuccessful();

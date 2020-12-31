@@ -55,7 +55,7 @@ public class Conveyor extends Device {
 	public final Action act(Pack resources) throws MoneyException {
 		final Action action = new Action(this, resources);
 
-		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+		final Coordinate output = this.template.get().getPointersFor(PointerType.EXIT).get(0);
 		action.setOutput(output);
 		action.setGivenPack(resources);
 		action.addCost(this.getActionCost());

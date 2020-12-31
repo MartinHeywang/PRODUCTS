@@ -15,6 +15,19 @@
 */
 package io.github.martinheywang.products.api.database;
 
+import io.github.martinheywang.products.api.database.persisters.LevelPropertyPersister;
+import io.github.martinheywang.products.api.model.Coordinate;
+import io.github.martinheywang.products.api.model.Game;
+import io.github.martinheywang.products.api.model.Pack;
+import io.github.martinheywang.products.api.model.device.DeviceModel;
+import io.github.martinheywang.products.database.persisters.BigIntegerPropertyPersister;
+import io.github.martinheywang.products.database.persisters.ClassPropertyPersister;
+import io.github.martinheywang.products.database.persisters.DateTimePropertyPersister;
+import io.github.martinheywang.products.database.persisters.DirectionPropertyPersister;
+import io.github.martinheywang.products.database.persisters.IntegerPropertyPersister;
+import io.github.martinheywang.products.database.persisters.ResourcePropertyPersister;
+import io.github.martinheywang.products.database.persisters.StringPropertyPersister;
+
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
@@ -23,19 +36,6 @@ import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-
-import io.github.martinheywang.products.api.database.persisters.BigIntegerPropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.ClassPropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.DateTimePropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.DirectionPropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.IntegerPropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.LevelPropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.ResourcePropertyPersister;
-import io.github.martinheywang.products.api.database.persisters.StringPropertyPersister;
-import io.github.martinheywang.products.api.model.Coordinate;
-import io.github.martinheywang.products.api.model.Game;
-import io.github.martinheywang.products.api.model.Pack;
-import io.github.martinheywang.products.api.model.device.DeviceModel;
 
 /**
  * <p>

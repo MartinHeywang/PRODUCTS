@@ -13,14 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package io.github.martinheywang.products.kit.resource;
+package io.github.martinheywang.products.api.model.resource;
 
-import java.math.BigInteger;
-
-import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPack;
 import io.github.martinheywang.products.api.model.resource.annotation.AnnotationPackGroup;
 import io.github.martinheywang.products.api.model.resource.annotation.Tag;
+
+import java.math.BigInteger;
 
 /**
  * This class register all the ores that can be found in the game. Each of them

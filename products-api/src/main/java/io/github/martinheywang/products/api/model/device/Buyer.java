@@ -15,7 +15,6 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
-import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.action.Action;
@@ -31,14 +30,14 @@ import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.persistance.Packs;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
 
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.j256.ormlite.dao.Dao;
+import com.google.common.collect.Iterables;
 
 /**
  * <p>
@@ -103,28 +102,11 @@ public final class Buyer extends Device {
 	 * Loads the distributed resource when the device is created
 	 */
 	private void loadDistributedResource() {
-		this.distributedResource = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
-		try {
-			final Dao<Pack, Long> dao = Database.createDao(Pack.class);
-
-			// If the id is null (when just created), the id is null so it can't
-			// have a
-			// associated pack already
-			if (this.model.getID() == null)
-				/*
-				 * Here this exception is practical because it sets the packs without printing
-				 * out the message
-				 */
-				throw new IndexOutOfBoundsException();
-
-			final Pack fetched = dao.queryForEq("model", this.model.getID()).get(0);
-			this.setDistributedResource(fetched.getResource());
-
-		} catch (final SQLException e) {
-			System.err.println("Error fetching pack for buyer at location : "+this.getPosition());
-			e.printStackTrace();
-		} catch (final IndexOutOfBoundsException e) {
-			System.err.println("Buyer at "+this.getPosition()+" couldn't not retrieve any resource with the given filters.");
+		if(this.model.get().getPacks().size() > 0){
+			this.distributedResource = Iterables.get(this.model.get().getPacks(), 0);
+		}else{
+			this.distributedResource = new Pack(DefaultResource.NONE, BigInteger.ZERO, model.get());
+			Packs.getSingleton().create(this.distributedResource);
 		}
 	}
 
@@ -136,7 +118,7 @@ public final class Buyer extends Device {
 			// Return early; the distributed resource isn't a valid one.
 			return action;
 
-		final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+		final Coordinate output = this.template.get().getPointersFor(PointerType.EXIT).get(0);
 
 		action.addCost(this.getActionCost().add(this.resourceCost));
 		action.setGivenPack(new Pack(this.distributedResource.getResource(), BigInteger.ONE));
@@ -147,17 +129,7 @@ public final class Buyer extends Device {
 
 	@Override
 	public void saveElements() {
-		/*
-		 * <?> What is that ? Well here we don't change anything as far as I know, this
-		 * is necessary in order to save the pack.
-		 */
-		this.distributedResource.setModel(this.model);
-		try {
-			// Updates the distributed resource
-			Database.createDao(Pack.class).createOrUpdate(this.distributedResource);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+		Packs.getSingleton().update(this.distributedResource);
 	}
 
 	/**

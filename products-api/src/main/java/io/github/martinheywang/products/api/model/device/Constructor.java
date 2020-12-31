@@ -15,7 +15,6 @@
 */
 package io.github.martinheywang.products.api.model.device;
 
-import io.github.martinheywang.products.api.database.Database;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Pack;
 import io.github.martinheywang.products.api.model.Recipe;
@@ -31,15 +30,15 @@ import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
+import io.github.martinheywang.products.api.persistance.Packs;
 import io.github.martinheywang.products.api.utils.PackUtils;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
 
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.j256.ormlite.dao.Dao;
+import com.google.common.collect.Iterables;
 
 /**
  * <p>
@@ -76,43 +75,23 @@ public final class Constructor extends Device {
 	 */
 	public Constructor(final DeviceModel model) {
 		super(model);
-		
+
 		if (acceptedResources.isEmpty()) {
 			// Iterating over all the resources
 			for (Resource resource : ResourceManager.getReferences()) {
 				if (ResourceUtils.hasGroup(resource, "recipe"))
-				acceptedResources.add(resource);
+					acceptedResources.add(resource);
 			}
 		}
 		this.loadProduct();
 	}
 
 	private void loadProduct() {
-		try {
-			final Dao<Pack, Long> dao = Database.createDao(Pack.class);
-
-			// If the id is null (when just created), the id is null so it can't
-			// have a
-			// associated pack already
-			if (this.model.getID() == null)
-				/*
-				 * Here this exception is practical because it sets the packs without printing
-				 * out the message
-				 */
-				throw new IndexOutOfBoundsException();
-
-			final Pack fetched = dao.queryForEq("model", this.model.getID()).get(0);
-			this.product = fetched;
-			this.product.setQuantity(BigInteger.ONE);
-
-		} catch (final SQLException e) {
-			// An error with the database occured
-			// contains any elements
-			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
-			e.printStackTrace();
-		} catch (final IndexOutOfBoundsException e) {
-			// The fetched list doesn't contain any elements
-			this.product = new Pack(DefaultResource.NONE, BigInteger.ONE, this.model);
+		if (this.model.get().getPacks().size() > 0) {
+			this.product = Iterables.get(this.model.get().getPacks(), 0);
+		} else {
+			this.product = new Pack(DefaultResource.NONE, BigInteger.ZERO, model.get());
+			Packs.getSingleton().create(this.product);
 		}
 		this.generateExtractedRecipe();
 	}
@@ -137,7 +116,7 @@ public final class Constructor extends Device {
 		action.markAsSuccessful();
 
 		if (this.checkIngredients()) {
-			final Coordinate output = this.template.getPointersFor(PointerType.EXIT).get(0);
+			final Coordinate output = this.template.get().getPointersFor(PointerType.EXIT).get(0);
 			action.setOutput(output);
 			action.setGivenPack(this.product);
 		}
@@ -185,13 +164,7 @@ public final class Constructor extends Device {
 
 	@Override
 	public void saveElements() {
-		this.product.setModel(this.model);
-		try {
-			// Updates the product
-			Database.createDao(Pack.class).createOrUpdate(this.product);
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
+		Packs.getSingleton().update(this.product);
 	}
 
 	/**
@@ -212,14 +185,7 @@ public final class Constructor extends Device {
 	 */
 	public void setProduct(final Resource res) {
 		this.product.setResource(res);
-		try {
-			// Updates the distributed resource
-			Database.createDao(Pack.class).createOrUpdate(this.product);
-			this.generateExtractedRecipe();
-		} catch (final SQLException e) {
-			e.printStackTrace();
-		}
-
+		this.generateExtractedRecipe();
 	}
 
 	/**

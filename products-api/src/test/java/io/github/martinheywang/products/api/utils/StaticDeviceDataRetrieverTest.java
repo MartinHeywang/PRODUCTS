@@ -24,18 +24,18 @@ import org.junit.jupiter.api.Test;
 import io.github.martinheywang.products.api.model.device.Device;
 
 public class StaticDeviceDataRetrieverTest {
-    
+
     @Test
-    public void getAccessibleName_returnsTheName_ofTheDeviceType(){
+    public void getAccessibleName_returnsTheName_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final String name = StaticDeviceDataRetriever.getAccessibleName(clazz);
 
         assertThat(name).isEqualTo("Aucun nom.");
     }
-    
+
     @Test
-    public void getDescription_returnsTheDescription_ofTheDeviceType(){
+    public void getDescription_returnsTheDescription_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final String desc = StaticDeviceDataRetriever.getDescription(clazz);
@@ -44,7 +44,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getBuildPrice_returnsZero_ofTheDeviceType(){
+    public void getBuildPrice_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getBuildPrice(clazz);
@@ -53,7 +53,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getUpgradeTo2Price_returnsZero_ofTheDeviceType(){
+    public void getUpgradeTo2Price_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getUpgradeTo2Price(clazz);
@@ -62,7 +62,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getUpgradeTo3Price_returnsZero_ofTheDeviceType(){
+    public void getUpgradeTo3Price_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getUpgradeTo3Price(clazz);
@@ -71,7 +71,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getDestoryAt1Gain_returnsZero_ofTheDeviceType(){
+    public void getDestoryAt1Gain_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getDestoryAt1Gain(clazz);
@@ -80,7 +80,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getDestoryAt2Gain_returnsZero_ofTheDeviceType(){
+    public void getDestoryAt2Gain_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getDestoryAt2Gain(clazz);
@@ -89,7 +89,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getDestoryAt3Price_returnsZero_ofTheDeviceType(){
+    public void getDestoryAt3Price_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger price = StaticDeviceDataRetriever.getDestoryAt3Gain(clazz);
@@ -98,7 +98,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getActionCost_returnsZero_ofTheDeviceType(){
+    public void getActionCost_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final BigInteger cost = StaticDeviceDataRetriever.getActionCost(clazz);
@@ -107,7 +107,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getEntriesCount_returnsZero_ofTheDeviceType(){
+    public void getEntriesCount_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final Integer cost = StaticDeviceDataRetriever.getEntriesCount(clazz);
@@ -116,7 +116,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void getExitsCount_returnsZero_ofTheDeviceType(){
+    public void getExitsCount_returnsZero_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final Integer cost = StaticDeviceDataRetriever.getExitsCount(clazz);
@@ -125,7 +125,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void isBuildable_retursFalse_ofTheDeviceType(){
+    public void isBuildable_retursFalse_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final boolean value = StaticDeviceDataRetriever.isBuildable(clazz);
@@ -134,7 +134,7 @@ public class StaticDeviceDataRetrieverTest {
     }
 
     @Test
-    public void isIndependent_retursFalse_ofTheDeviceType(){
+    public void isIndependent_retursFalse_ofTheDeviceType() {
         Class<? extends Device> clazz = Device.class;
 
         final boolean value = StaticDeviceDataRetriever.isIndependent(clazz);

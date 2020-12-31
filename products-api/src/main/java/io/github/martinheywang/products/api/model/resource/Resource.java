@@ -15,8 +15,6 @@
 */
 package io.github.martinheywang.products.api.model.resource;
 
-import io.github.martinheywang.products.api.persistance.Persistable;
-
 import java.math.BigInteger;
 
 import org.pf4j.ExtensionPoint;
@@ -62,7 +60,7 @@ import org.pf4j.ExtensionPoint;
  * @author Martin Heywang
  *
  */
-public interface Resource extends ExtensionPoint, Persistable {
+public interface Resource extends ExtensionPoint {
 
     /**
      * Returns the displayable name of the resource.
