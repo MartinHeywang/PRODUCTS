@@ -24,9 +24,6 @@ import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.math.BigInteger;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 /**
  * <p>
  * A Pack is a simple object that result in the combination of a
@@ -48,19 +45,11 @@ import com.j256.ormlite.table.DatabaseTable;
  * 
  * @author Martin Heywang
  */
-@DatabaseTable
 public final class Pack implements Persistable {
-
-	@DatabaseField(columnName = "id", generatedId = true)
+	
 	private Long id;
-
-	@DatabaseField
 	private SimpleResourceProperty resource;
-
-	@DatabaseField
 	private SimpleBigIntegerProperty quantity;
-
-	@DatabaseField(canBeNull = false, foreign = true)
 	private DeviceModel model;
 
 	/**

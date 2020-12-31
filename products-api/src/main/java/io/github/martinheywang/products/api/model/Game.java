@@ -25,10 +25,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -62,28 +58,16 @@ import javafx.beans.property.StringProperty;
  * 
  * @author Martin Heywang
  */
-@DatabaseTable(tableName = "game")
 public final class Game implements Persistable {
 
-    @DatabaseField(columnName = "id", generatedId = true)
     private Long id;
-    @DatabaseField
     private StringProperty name;
-    @DatabaseField
     private SimpleDateTimeProperty lastSave;
-    @DatabaseField
     private SimpleBigIntegerProperty money;
-
-    @ForeignCollectionField
     private Collection<DeviceModel> models;
-
-    @DatabaseField
     private IntegerProperty gridSize;
-    @DatabaseField
     private SimpleBigIntegerProperty grow;
-    @DatabaseField
     private IntegerProperty delay;
-    @DatabaseField
     private IntegerProperty maxIndependent;
 
     /**
@@ -178,12 +162,12 @@ public final class Game implements Persistable {
     }
 
     @Override
-    public Long getID(){
+    public Long getID() {
         return id;
     }
 
     @Override
-    public void setID(Long id){
+    public void setID(Long id) {
         this.id = id;
     }
 
@@ -214,7 +198,7 @@ public final class Game implements Persistable {
         return money.get();
     }
 
-    public Collection<DeviceModel> getModels(){
+    public Collection<DeviceModel> getModels() {
         return models;
     }
 

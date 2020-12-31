@@ -19,9 +19,6 @@ import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.io.Serializable;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -45,7 +42,6 @@ import javafx.beans.property.SimpleIntegerProperty;
  * {@link DatabaseTable}
  * </p>
  */
-@DatabaseTable
 public final class Coordinate implements Serializable, Persistable {
 
     /**
@@ -63,19 +59,16 @@ public final class Coordinate implements Serializable, Persistable {
      * The id of this coordinate, if its stored in the database. May be null in case
      * it isn't.
      */
-    @DatabaseField(columnName = "id", generatedId = true)
     private Long id;
 
     /**
      * X Value of the coordinate.
      */
-    @DatabaseField(uniqueCombo = true)
     private IntegerProperty x;
 
     /**
      * Y value of the coordinate.
      */
-    @DatabaseField(uniqueCombo = true)
     private IntegerProperty y;
 
     /**

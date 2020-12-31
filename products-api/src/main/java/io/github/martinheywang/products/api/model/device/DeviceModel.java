@@ -25,10 +25,7 @@ import io.github.martinheywang.products.api.persistance.Persistable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.util.Collections;
 
 /**
  * <p>
@@ -57,27 +54,14 @@ import com.j256.ormlite.table.DatabaseTable;
  * 
  * @author Heywang
  */
-@DatabaseTable
 public final class DeviceModel implements Persistable {
 
-    @DatabaseField(generatedId = true)
     private Long id;
-
-    @DatabaseField(columnName = "class")
     private SimpleClassProperty clazz;
-
-    @DatabaseField
     private SimpleDirectionProperty direction;
-
-    @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoRefresh = true, uniqueCombo = true)
     private Game game;
-    @DatabaseField(foreign = true, foreignColumnName = "id", foreignAutoCreate = true, foreignAutoRefresh = true, uniqueCombo = true)
     private Coordinate position;
-
-    @ForeignCollectionField
     private Collection<Pack> packs;
-
-    // TODO somehow add the research thing
 
     /**
      * Creates an empty device model.
@@ -147,7 +131,6 @@ public final class DeviceModel implements Persistable {
     }
 
     /**
-     * 
      * @return the type of this Device object.
      */
     @SuppressWarnings("unchecked")
@@ -156,7 +139,6 @@ public final class DeviceModel implements Persistable {
     }
 
     /**
-     * 
      * @return the direction of this Device object.
      */
     public Direction getDirection() {
@@ -164,7 +146,6 @@ public final class DeviceModel implements Persistable {
     }
 
     /**
-     * 
      * @return the position of this Device object.
      */
     public Coordinate getPosition() {
@@ -172,11 +153,17 @@ public final class DeviceModel implements Persistable {
     }
 
     /**
-     * 
      * @return the game of this Device object.
      */
     public Game getGame() {
         return this.game;
+    }
+
+    /**
+     * @return the packs associated to this DeviceModel object
+     */
+    public Collection<Pack> getPacks(){
+        return Collections.unmodifiableCollection(packs);
     }
 
     /**
