@@ -30,7 +30,7 @@ import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
-import io.github.martinheywang.products.api.persistance.Packs;
+import io.github.martinheywang.products.api.persistance.Request;
 import io.github.martinheywang.products.api.utils.PackUtils;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
 
@@ -91,7 +91,7 @@ public final class Constructor extends Device {
 			this.product = Iterables.get(this.model.get().getPacks(), 0);
 		} else {
 			this.product = new Pack(DefaultResource.NONE, BigInteger.ZERO, model.get());
-			Packs.getSingleton().create(this.product);
+			Request.getSingleton().create(this.product);
 		}
 		this.generateExtractedRecipe();
 	}
@@ -164,7 +164,7 @@ public final class Constructor extends Device {
 
 	@Override
 	public void saveElements() {
-		Packs.getSingleton().update(this.product);
+		Request.getSingleton().update(this.product);
 	}
 
 	/**

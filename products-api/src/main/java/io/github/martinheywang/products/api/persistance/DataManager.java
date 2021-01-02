@@ -23,7 +23,7 @@ public abstract class DataManager {
 
     private static DataManager instance;
 
-    private DataManager() {
+    protected DataManager() {
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class DataManager {
      * @return true if an update was actually performed
      * @throws RequestException if the update didn't happen properly
      */
-    public abstract boolean update(Persistable object) throws RequestException;
+    public abstract void update(Persistable object) throws RequestException;
 
     /**
      * Deletes the object with the same id as the object given as argument. The
@@ -76,14 +76,7 @@ public abstract class DataManager {
      * @return true if a deletion was actually performed
      * @throws RequestException if the deletion didn't happen properly
      */
-    public abstract boolean delete(Persistable object) throws RequestException;
-
-    /**
-     * Returns the singleton instance of this class.
-     * 
-     * @return the singleton
-     */
-    public abstract DataManager getSingleton();
+    public abstract void delete(Persistable object) throws RequestException;
 
     /**
      * Returns the data manager being used
@@ -101,9 +94,6 @@ public abstract class DataManager {
      * @param manager the manager to use
      */
     public static final void setDataManager(DataManager manager) {
-        if (instance != null) {
-            throw new IllegalStateException("Can't set twice the data manager.");
-        }
         instance = manager;
         try {
             manager.setUp();

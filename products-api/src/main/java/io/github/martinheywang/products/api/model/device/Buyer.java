@@ -30,7 +30,7 @@ import io.github.martinheywang.products.api.model.resource.DefaultResource;
 import io.github.martinheywang.products.api.model.resource.Resource;
 import io.github.martinheywang.products.api.model.resource.ResourceManager;
 import io.github.martinheywang.products.api.model.template.Template.PointerType;
-import io.github.martinheywang.products.api.persistance.Packs;
+import io.github.martinheywang.products.api.persistance.Request;
 import io.github.martinheywang.products.api.utils.ResourceUtils;
 
 import java.math.BigInteger;
@@ -106,7 +106,7 @@ public final class Buyer extends Device {
 			this.distributedResource = Iterables.get(this.model.get().getPacks(), 0);
 		}else{
 			this.distributedResource = new Pack(DefaultResource.NONE, BigInteger.ZERO, model.get());
-			Packs.getSingleton().create(this.distributedResource);
+			Request.getSingleton().create(this.distributedResource);
 		}
 	}
 
@@ -129,7 +129,7 @@ public final class Buyer extends Device {
 
 	@Override
 	public void saveElements() {
-		Packs.getSingleton().update(this.distributedResource);
+		Request.getSingleton().update(this.distributedResource);
 	}
 
 	/**

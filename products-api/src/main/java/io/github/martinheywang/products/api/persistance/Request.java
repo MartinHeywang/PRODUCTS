@@ -2,10 +2,14 @@ package io.github.martinheywang.products.api.persistance;
 
 import io.github.martinheywang.products.api.model.exception.RequestException;
 
-import java.util.Arrays;
 import java.util.List;
 
-abstract class Request {
+public class Request {
+
+    private static Request singleton = new Request();
+
+    protected Request() {
+    }
 
     /**
      * Counts and returns the number of persisted object of the given type. Throws
@@ -14,7 +18,7 @@ abstract class Request {
      * @param clazz the class of the persisted objects to count
      * @return the total count
      */
-    protected synchronized int countOf(Class<? extends Persistable> clazz) {
+    public synchronized int countOf(Class<? extends Persistable> clazz) {
         try {
             return DataManager.current().getAll(clazz).size();
         } catch (RequestException e) {
@@ -29,12 +33,11 @@ abstract class Request {
      * @param clazz the class of the persisted objects
      * @return the objects
      */
-    protected synchronized final <T extends Persistable> List<T> getAll(Class<T> clazz) {
+    public synchronized final <T extends Persistable> List<T> getAll(Class<T> clazz) {
         try {
             return DataManager.current().getAll(clazz);
         } catch (RequestException e) {
-            e.printStackTrace();
-            return Arrays.asList();
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -64,8 +67,11 @@ abstract class Request {
      * @param id    the id to search for
      * @return an object with the id, if found.
      */
-    protected synchronized Persistable getByID(Class<? extends Persistable> clazz, long id) {
-        for (Persistable o : getAll(clazz)) {
+    public synchronized <T extends Persistable> T getByID(Class<T> clazz, long id) {
+        if(id < 0){
+            throw new IllegalArgumentException("The given id must be a positive long number");
+        }
+        for (T o : getAll(clazz)) {
             if (o.getID() == id) {
                 return o;
             }
@@ -82,7 +88,10 @@ abstract class Request {
      * @param id    the id to search for
      * @return true if the id was found, otherwise false
      */
-    protected synchronized boolean idExists(Class<? extends Persistable> clazz, long id) {
+    public synchronized boolean idExists(Class<? extends Persistable> clazz, long id) {
+        if(id < 0){
+            throw new IllegalArgumentException("The given id must be a positive long number");
+        }
         // the diamond operator isn't useless !
         return getByID(clazz, id) == null ? false : true;
     }
@@ -98,14 +107,14 @@ abstract class Request {
      * </p>
      * <p>
      * Note that when fetching back the object, they (the fetched one and the one
-     * given as argument) won't be same, even though the value will be the same.
-     * That's because, persisted objects are re-created when fetching them back.
-     * You may consider them like twins.
+     * given as argument) won't be same, even though the values in the field will be the same.
+     * That's because persisted objects are re-created when fetching them back. You
+     * may consider them like twins.
      * </p>
      * 
      * @param object the object to persist
      */
-    protected synchronized final void create(Persistable object) {
+    public synchronized final void create(Persistable object) {
         try {
             DataManager.current().create(object);
         } catch (RequestException e) {
@@ -120,7 +129,7 @@ abstract class Request {
      * 
      * @param object the object to persist
      */
-    protected synchronized void createIfNotExists(Persistable object) {
+    public synchronized void createIfNotExists(Persistable object) {
         if (object.getID() == null) {
             create(object);
         } else if (!idExists(object.getClass(), object.getID())) {
@@ -137,7 +146,7 @@ abstract class Request {
      * 
      * @param object the object to either create or update
      */
-    protected synchronized void createOrUpdate(Persistable object) {
+    public synchronized void createOrUpdate(Persistable object) {
         if (object.getID() == null) {
             create(object);
         } else if (!idExists(object.getClass(), object.getID())) {
@@ -159,7 +168,7 @@ abstract class Request {
      * 
      * @param object the object to update
      */
-    protected synchronized void update(Persistable object) {
+    public synchronized void update(Persistable object) {
         try {
             DataManager.current().update(object);
         } catch (RequestException e) {
@@ -175,7 +184,7 @@ abstract class Request {
      * 
      * @param object the object to delete
      */
-    protected synchronized void delete(Persistable object) {
+    public synchronized void delete(Persistable object) {
         try {
             DataManager.current().delete(object);
         } catch (RequestException e) {
@@ -190,9 +199,13 @@ abstract class Request {
      * 
      * @param object the object to delete
      */
-    protected synchronized void deleteIfExists(Persistable object) {
+    public synchronized void deleteIfExists(Persistable object) {
         if (object.getID() != null && idExists(object.getClass(), object.getID())) {
             delete(object);
         }
+    }
+
+    public static Request getSingleton() {
+        return singleton;
     }
 }
