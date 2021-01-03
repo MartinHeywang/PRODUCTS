@@ -47,7 +47,7 @@ import java.math.BigInteger;
  */
 public final class Pack implements Persistable {
 	
-	private Long id;
+	private long id;
 	private SimpleResourceProperty resource;
 	private SimpleBigIntegerProperty quantity;
 	private DeviceModel model;
@@ -85,12 +85,12 @@ public final class Pack implements Persistable {
 	}
 
 	@Override
-	public Long getID() {
+	public long getID() {
 		return this.id;
 	}
 
 	@Override
-	public void setID(Long id) {
+	public void setID(long id) {
 		this.id = id;
 	}
 

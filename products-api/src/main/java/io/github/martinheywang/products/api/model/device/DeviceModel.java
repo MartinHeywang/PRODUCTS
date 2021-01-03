@@ -18,6 +18,7 @@ package io.github.martinheywang.products.api.model.device;
 import io.github.martinheywang.products.api.model.Coordinate;
 import io.github.martinheywang.products.api.model.Game;
 import io.github.martinheywang.products.api.model.Pack;
+import io.github.martinheywang.products.api.model.Research;
 import io.github.martinheywang.products.api.model.direction.Direction;
 import io.github.martinheywang.products.api.model.properties.SimpleClassProperty;
 import io.github.martinheywang.products.api.model.properties.SimpleDirectionProperty;
@@ -62,11 +63,9 @@ public final class DeviceModel implements Persistable {
     private Game game;
     private Coordinate position;
     private Collection<Pack> packs;
+    private Collection<Research> researches;
 
-    /**
-     * Creates an empty device model.
-     */
-    public DeviceModel() {
+    DeviceModel() {
     }
 
     /**
@@ -85,6 +84,7 @@ public final class DeviceModel implements Persistable {
         this.game = game;
         this.position = position;
         this.packs = new ArrayList<>();
+        this.researches = new ArrayList<>();
     }
 
     /**
@@ -126,7 +126,7 @@ public final class DeviceModel implements Persistable {
     }
 
     @Override
-    public Long getID() {
+    public long getID() {
         return this.id;
     }
 
@@ -167,6 +167,15 @@ public final class DeviceModel implements Persistable {
     }
 
     /**
+     * The researches associated to this device model
+     * 
+     * @return the researches
+     */
+    public Collection<Research> getResearches(){
+        return researches;
+    }
+
+    /**
      * @param clazz the new type
      */
     public void setType(Class<? extends Device> clazz) {
@@ -181,7 +190,7 @@ public final class DeviceModel implements Persistable {
     }
 
     @Override
-    public void setID(Long id) {
+    public void setID(long id) {
         this.id = id;
     }
 

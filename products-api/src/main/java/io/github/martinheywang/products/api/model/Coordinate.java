@@ -55,26 +55,14 @@ public final class Coordinate implements Serializable, Persistable {
      */
     private static int gridSize = 0;
 
-    /**
-     * The id of this coordinate, if its stored in the database. May be null in case
-     * it isn't.
-     */
-    private Long id;
-
-    /**
-     * X Value of the coordinate.
-     */
+    private long id;
     private IntegerProperty x;
-
-    /**
-     * Y value of the coordinate.
-     */
     private IntegerProperty y;
 
     /**
      * Creates an empty coordinate.
      */
-    public Coordinate() {
+    Coordinate() {
     }
 
     /**
@@ -89,12 +77,12 @@ public final class Coordinate implements Serializable, Persistable {
     }
 
     @Override
-    public Long getID() {
+    public long getID() {
         return this.id;
     }
 
     @Override
-    public void setID(Long id){
+    public void setID(long id){
         this.id = id;
     }
 

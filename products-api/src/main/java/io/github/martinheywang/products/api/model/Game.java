@@ -60,7 +60,7 @@ import javafx.beans.property.StringProperty;
  */
 public final class Game implements Persistable {
 
-    private Long id;
+    private long id;
     private StringProperty name;
     private SimpleDateTimeProperty lastSave;
     private SimpleBigIntegerProperty money;
@@ -162,12 +162,12 @@ public final class Game implements Persistable {
     }
 
     @Override
-    public Long getID() {
+    public long getID() {
         return id;
     }
 
     @Override
-    public void setID(Long id) {
+    public void setID(long id) {
         this.id = id;
     }
 

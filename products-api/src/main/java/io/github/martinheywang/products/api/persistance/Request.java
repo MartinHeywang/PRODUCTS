@@ -130,7 +130,7 @@ public class Request {
      * @param object the object to persist
      */
     public synchronized void createIfNotExists(Persistable object) {
-        if (object.getID() == null) {
+        if (object.getID() == 0) {
             create(object);
         } else if (!idExists(object.getClass(), object.getID())) {
             create(object);
@@ -147,7 +147,7 @@ public class Request {
      * @param object the object to either create or update
      */
     public synchronized void createOrUpdate(Persistable object) {
-        if (object.getID() == null) {
+        if (object.getID() == 0) {
             create(object);
         } else if (!idExists(object.getClass(), object.getID())) {
             create(object);
@@ -200,7 +200,7 @@ public class Request {
      * @param object the object to delete
      */
     public synchronized void deleteIfExists(Persistable object) {
-        if (object.getID() != null && idExists(object.getClass(), object.getID())) {
+        if (object.getID() != 0 && idExists(object.getClass(), object.getID())) {
             delete(object);
         }
     }
