@@ -106,6 +106,8 @@ public final class ResourceManager {
             final String canonicalName = str.substring(0, dotIndex);
             final String fieldName = str.substring(dotIndex, str.length());
             try {
+                // @SuppressWarning : the below instruction is unchecked, but the exception is
+                // caught whenever it happens.
                 @SuppressWarnings("unchecked")
                 final Class<? extends Resource> clazz = (Class<? extends Resource>) Class.forName(canonicalName);
                 fieldToResource(clazz.getField(fieldName));

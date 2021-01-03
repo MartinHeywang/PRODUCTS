@@ -1,8 +1,6 @@
-package io.github.martinheywang.products.kit.view.component;
+package io.github.martinheywang.products.view.component;
 
 import java.net.URL;
-
-import com.sun.webkit.WebPage;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.StackPane;
@@ -31,9 +29,10 @@ public final class SVGImage extends StackPane {
 
     private Effect viewEffect;
 
-    public SVGImage(){
+    public SVGImage() {
         this.setImage(null, 0d, 0d, 1d);
     }
+
     /**
      * Builds a new image using the url to the svg. This svg should not have
      * <code>width</code> or <code>height</code> properties.
@@ -72,6 +71,13 @@ public final class SVGImage extends StackPane {
     /**
      * Refreshes the displayed image (not the notification or whatver else).
      */
+    // Here the @SupressWarnings avoids a discouraged access (but actually it
+    // doesn't matter in that case)
+    // Take a look at com.sun.webkit.WebPage
+    // Only the IDE shows this warning
+    // Maven has nothing wrong with it
+    // But it's annoying, so I prefer add it.
+    @SuppressWarnings("restriction")
     public void refresh() {
         this.getChildren().clear();
 
@@ -80,9 +86,9 @@ public final class SVGImage extends StackPane {
 
         this.view = webView;
 
-        if(this.pathToImage != null){
+        if (this.pathToImage != null) {
             engine.load(pathToImage.toExternalForm());
-        }else{
+        } else {
             engine.load(null);
         }
         webView.setPrefSize(width * zoom, height * zoom);
@@ -91,13 +97,7 @@ public final class SVGImage extends StackPane {
         webView.setDisable(true); // Disable scroll
         webView.setEffect(this.viewEffect);
 
-        // Here the @SupressWarnings avoids a discouraged access (but actually it
-        // doesn't matter in that case)
-        // Only the IDE shows this warning
-        // Maven has nothing wrong with it
-        // But it's annoying, so I prefer add it.
-        @SuppressWarnings("restriction")
-        final WebPage page = com.sun.javafx.webkit.Accessor.getPageFor(engine);
+        final com.sun.webkit.WebPage page = com.sun.javafx.webkit.Accessor.getPageFor(engine);
         page.setBackgroundColor(0);
 
         this.getChildren().add(webView);

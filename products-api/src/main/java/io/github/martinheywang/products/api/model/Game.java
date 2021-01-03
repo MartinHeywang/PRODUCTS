@@ -32,28 +32,14 @@ import javafx.beans.property.StringProperty;
 
 /**
  * <p>
- * Sort of Java FX Beans that represents a game in the software.
+ * Data structure representing a Game. In PRODUCTS., the player can create
+ * multiple games. These are completely independent and does not depend on each
+ * other. But almost all other data structures depends (directly or not) on a
+ * specific game ({@link Pack}, {@link DeviceModel}...).
  * </p>
  * <p>
- * In PRODUCTS, the player can create games : this is the base class for it. It
- * contains a lot of informations about a game :
- * </p>
- * <ul>
- * <li>The name</li>
- * <li>The date of last save</li>
- * <li>The amount of money</li>
- * <li>The grid size</li>
- * <li>The grow amount (evolution of the money amount per second)</li>
- * <li>The delay applied to the game loop</li>
- * <li>The independent max count</li>
- * </ul>
- * <p>
- * Those are all informations that doesn't depends directly on other objects.
- * Even if the grid size depends on the count of devices, we doesn't need to
- * have the device to retrieve this kind of information.
- * </p>
- * <p>
- * This class is persistent.
+ * You can see a Game like a container storing other data structures. It is near
+ * a JavaFX bean (with observable properties). This type is persistable.
  * </p>
  * 
  * @author Martin Heywang

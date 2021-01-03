@@ -52,8 +52,6 @@ import java.util.Collections;
  * player goes on the party.
  * </p>
  * <em>More informations in the {@link Device Device class}.</em>
- * 
- * @author Heywang
  */
 public final class DeviceModel implements Persistable {
 
@@ -78,7 +76,6 @@ public final class DeviceModel implements Persistable {
      * @param position  the position
      */
     public DeviceModel(Class<? extends Device> clazz, Direction direction, Game game, Coordinate position) {
-
         this.clazz = new SimpleClassProperty(clazz);
         this.direction = new SimpleDirectionProperty(direction);
         this.game = game;
@@ -94,6 +91,8 @@ public final class DeviceModel implements Persistable {
      */
     public Device instantiate() {
         try {
+            // @SuppressWarning : SimpleClassProperty isn't generic, but I know that what the wrapped class
+            // is associable to Device
             @SuppressWarnings("unchecked")
             final Class<? extends Device> clazz = (Class<? extends Device>) this.clazz.get();
             final Device device = clazz.getConstructor(DeviceModel.class).newInstance(this);
@@ -133,6 +132,8 @@ public final class DeviceModel implements Persistable {
     /**
      * @return the type of this Device object.
      */
+    // @SuppressWarning : the stored type is controlled and it can only be
+    // assignable to Device
     @SuppressWarnings("unchecked")
     public Class<? extends Device> getType() {
         return (Class<? extends Device>) this.clazz.get();
@@ -162,7 +163,7 @@ public final class DeviceModel implements Persistable {
     /**
      * @return the packs associated to this DeviceModel object
      */
-    public Collection<Pack> getPacks(){
+    public Collection<Pack> getPacks() {
         return Collections.unmodifiableCollection(packs);
     }
 
@@ -171,7 +172,7 @@ public final class DeviceModel implements Persistable {
      * 
      * @return the researches
      */
-    public Collection<Research> getResearches(){
+    public Collection<Research> getResearches() {
         return researches;
     }
 

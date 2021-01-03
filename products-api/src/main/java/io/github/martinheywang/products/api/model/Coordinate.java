@@ -29,30 +29,18 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * <p>
- * A Coordinate is a location / position of a certain device on the grid. It
- * contains x and y values, corresponding respectively to the x and y position.
+ * A Coordinate is the combination of two integers values : x and y. It is a
+ * JavaFX bean (with observable properties).
  * </p>
  * <p>
- * Any x and y value can exist, like -1 as x and -1 as y. This class has got
- * some useful methods, like {@link #isInGrid()}. The name is pretty
- * self-explanatory. More informations on its description.
- * </p>
- * <p>
- * Instances of this class may be persistent, as it is marked with
- * {@link DatabaseTable}
+ * This type is persistable and has some utility methods : to check if two
+ * coordinates are near, if both represents the same position... Note that these
+ * methods returns observable values. They may change with time.
  * </p>
  */
 public final class Coordinate implements Serializable, Persistable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -4647555687321610658L;
-
-    /**
-     * The grid size is used to know whether this coordinate represents a coordinate
-     * that is in grid.
-     */
     private static int gridSize = 0;
 
     private long id;
@@ -82,7 +70,7 @@ public final class Coordinate implements Serializable, Persistable {
     }
 
     @Override
-    public void setID(long id){
+    public void setID(long id) {
         this.id = id;
     }
 

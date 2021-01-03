@@ -33,9 +33,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Data structures that defines a research in the game. A research is a list of
+ * Data structure that defines a research in the game. A research is a list of
  * {@link ResearchKey research keys}, with a name and descriptions. Those are
- * mainly associated with a {@link DeviceModel};
+ * mainly associated with a {@link DeviceModel}. These are used to upgrade
+ * progressively a DeviceModel. If you knew the level system in the APIv1, this
+ * class replaces it.
+ * 
+ * @since 2.0.0
  */
 public class Research implements Persistable {
 
@@ -169,7 +173,7 @@ public class Research implements Persistable {
     }
 
     @Override
-    public long getID(){
+    public long getID() {
         return id;
     }
 
@@ -198,7 +202,7 @@ public class Research implements Persistable {
     }
 
     @Override
-    public void setID(long id){
+    public void setID(long id) {
         this.id = id;
     }
 

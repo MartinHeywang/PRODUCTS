@@ -39,11 +39,8 @@ import java.math.BigInteger;
  * If it doesn't take place in the assembly line, it may be used by the devices
  * to store a resource. As example, the buyer needs to save the distributed
  * resource to find it the next time it loads. This time the {@link #getModel()}
- * will not return null, as it has a connection with a device model (Note: the
- * device model is the part of the device that is persistant)
+ * will not return null, as it has a connection with a {@link DeviceModel}
  * </p>
- * 
- * @author Martin Heywang
  */
 public final class Pack implements Persistable {
 	
@@ -52,12 +49,7 @@ public final class Pack implements Persistable {
 	private SimpleBigIntegerProperty quantity;
 	private DeviceModel model;
 
-	/**
-	 * Creates a new empty Pack. This is used by the ORM when creating the object.
-	 * Unless you inject values into the field, you won't be able to use the object
-	 * properly.
-	 */
-	public Pack() {
+	Pack() {
 	}
 
 	/**
